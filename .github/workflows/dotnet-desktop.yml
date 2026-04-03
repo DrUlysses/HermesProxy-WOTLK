@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  build-windows:
 
     strategy:
       matrix:
@@ -58,11 +58,121 @@ jobs:
     - name: Upload zip for release
       uses: actions/upload-artifact@v4
       with:
-        name: release-zip-${{ matrix.configuration }}
+        name: release-zip-windows-${{ matrix.configuration }}
         path: HermesProxy-windows-${{ matrix.configuration }}.zip
 
+  build-ubuntu:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
+
+    - name: Publish
+      run: dotnet publish HermesProxy/HermesProxy.csproj --configuration ${{ matrix.configuration }} --use-current-runtime -p:UsePublishBuildSettings=true --no-build
+
+    - name: Copy files
+      run: cp -r ./HermesProxy/bin/${{ matrix.configuration }}/*/publish/ publish
+
+    - name: Mark as executable
+      run: chmod a+x publish/HermesProxy
+
+    - name: Create tar.gz
+      run: |
+        mv publish HermesProxy-ubuntu-${{ matrix.configuration }}
+        tar -czvf HermesProxy-ubuntu-${{ matrix.configuration }}.tar.gz HermesProxy-ubuntu-${{ matrix.configuration }}
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: HermesProxy-ubuntu-${{ matrix.configuration }}-${{ github.sha }}
+        path: HermesProxy-ubuntu-${{ matrix.configuration }}.tar.gz
+        if-no-files-found: error
+
+    - name: Upload tar.gz for release
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-zip-ubuntu-${{ matrix.configuration }}
+        path: HermesProxy-ubuntu-${{ matrix.configuration }}.tar.gz
+
+  build-macos:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Publish (arm64)
+      run: dotnet publish HermesProxy/HermesProxy.csproj --configuration ${{ matrix.configuration }} --runtime osx-arm64 -p:UsePublishBuildSettings=true
+
+    - name: Publish (x64)
+      run: dotnet publish HermesProxy/HermesProxy.csproj --configuration ${{ matrix.configuration }} --runtime osx-x64 -p:UsePublishBuildSettings=true
+
+    - name: Create universal binary
+      run: |
+        lipo ./HermesProxy/bin/${{ matrix.configuration }}/*/publish/HermesProxy -create -output ./HermesProxy/bin/${{ matrix.configuration }}/osx-x64/publish/HermesProxy_universal
+        mv ./HermesProxy/bin/${{ matrix.configuration }}/osx-x64/publish/HermesProxy_universal ./HermesProxy/bin/${{ matrix.configuration }}/osx-x64/publish/HermesProxy
+        rm -rf ./HermesProxy/bin/${{ matrix.configuration }}/osx-arm64
+
+    - name: Copy files
+      run: cp -r ./HermesProxy/bin/${{ matrix.configuration }}/osx-x64/publish/ publish
+
+    - name: Mark as executable
+      run: chmod a+x publish/HermesProxy
+
+    - name: Create zip
+      run: |
+        mv publish HermesProxy-macos-universal-${{ matrix.configuration }}
+        zip -r HermesProxy-macos-universal-${{ matrix.configuration }}.zip HermesProxy-macos-universal-${{ matrix.configuration }}
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: HermesProxy-macos-universal-${{ matrix.configuration }}-${{ github.sha }}
+        path: HermesProxy-macos-universal-${{ matrix.configuration }}.zip
+        if-no-files-found: error
+
+    - name: Upload zip for release
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-zip-macos-${{ matrix.configuration }}
+        path: HermesProxy-macos-universal-${{ matrix.configuration }}.zip
+
   release:
-    needs: build
+    needs: [build-windows, build-ubuntu, build-macos]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     permissions:
@@ -89,5 +199,9 @@ jobs:
         files: |
           HermesProxy-windows-Debug.zip
           HermesProxy-windows-Release.zip
+          HermesProxy-ubuntu-Debug.tar.gz
+          HermesProxy-ubuntu-Release.tar.gz
+          HermesProxy-macos-universal-Debug.zip
+          HermesProxy-macos-universal-Release.zip
         draft: false
         prerelease: false
