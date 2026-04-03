@@ -30,14 +30,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    - name: Restore the application
-      run: dotnet restore $env:Solution_Name
-
-    - name: Build
-      run: dotnet build $env:Solution_Name --configuration ${{ matrix.configuration }} --no-restore
-
     - name: Publish
-      run: dotnet publish HermesProxy/HermesProxy.csproj --configuration ${{ matrix.configuration }} --use-current-runtime -p:UsePublishBuildSettings=true --no-build
+      run: dotnet publish HermesProxy/HermesProxy.csproj --configuration ${{ matrix.configuration }} --use-current-runtime -p:UsePublishBuildSettings=true
 
     - name: Copy files
       run: |
@@ -80,14 +74,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    - name: Restore
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --configuration ${{ matrix.configuration }} --no-restore
-
     - name: Publish
-      run: dotnet publish HermesProxy/HermesProxy.csproj --configuration ${{ matrix.configuration }} --use-current-runtime -p:UsePublishBuildSettings=true --no-build
+      run: dotnet publish HermesProxy/HermesProxy.csproj --configuration ${{ matrix.configuration }} --use-current-runtime -p:UsePublishBuildSettings=true
 
     - name: Copy files
       run: cp -r ./HermesProxy/bin/${{ matrix.configuration }}/*/publish/ publish
