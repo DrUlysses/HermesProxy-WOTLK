@@ -305,8 +305,9 @@ public static class ModernVersion
 			return typeof(HermesProxy.World.Enums.V2_5_2_39570.ResponseCodes);
 		case ClientVersionBuild.V1_14_1_40688:
 		case ClientVersionBuild.V2_5_3_41750:
-		case ClientVersionBuild.V3_4_3_54261:
 			return typeof(HermesProxy.World.Enums.V1_14_1_40688.ResponseCodes);
+		case ClientVersionBuild.V3_4_3_54261:
+			return typeof(HermesProxy.World.Enums.V3_4_3_54261.ResponseCodes);
 		default:
 			return null;
 		}

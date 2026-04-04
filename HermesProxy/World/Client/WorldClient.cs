@@ -8713,38 +8713,11 @@ public class WorldClient
 				}
 				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
 				{
-					// Player Unit blocks 0+1 crash the client - keep only Power (block 4)
+					// Player Unit/Player blocks crash the 3.4.3 client - strip all UnitData
+					// Power/MaxPower are already sent via SMSG_POWER_UPDATE so safe to remove
 					updateData2.ObjectData = new ObjectData();
 					updateData2.PlayerData = null;
-					if (updateData2.UnitData != null)
-					{
-						updateData2.UnitData.Health = null;
-						updateData2.UnitData.MaxHealth = null;
-						updateData2.UnitData.DisplayID = null;
-						updateData2.UnitData.Charm = null;
-						updateData2.UnitData.Summon = null;
-						updateData2.UnitData.CharmedBy = null;
-						updateData2.UnitData.SummonedBy = null;
-						updateData2.UnitData.CreatedBy = null;
-						updateData2.UnitData.Target = null;
-						updateData2.UnitData.ChannelData = null;
-						updateData2.UnitData.RaceId = null;
-						updateData2.UnitData.ClassId = null;
-						updateData2.UnitData.SexId = null;
-						updateData2.UnitData.Level = null;
-						updateData2.UnitData.EffectiveLevel = null;
-						updateData2.UnitData.FactionTemplate = null;
-						updateData2.UnitData.Flags = null;
-						updateData2.UnitData.Flags2 = null;
-						updateData2.UnitData.AuraState = null;
-						updateData2.UnitData.BoundingRadius = null;
-						updateData2.UnitData.CombatReach = null;
-						updateData2.UnitData.NativeDisplayID = null;
-						updateData2.UnitData.MountDisplayID = null;
-						updateData2.UnitData.HoverHeight = null;
-						updateData2.UnitData.GuildGUID = null;
-						updateData2.UnitData.NpcFlags = null;
-					}
+					updateData2.UnitData = null;
 				}
 				// Check if the update has any actual data to send.
 				// Empty Values updates (changedMask=0) crash the 3.4.3 client.

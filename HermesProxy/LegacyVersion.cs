@@ -246,8 +246,9 @@ public static class LegacyVersion
 		case ClientVersionBuild.V1_12_1_5875:
 			return typeof(HermesProxy.World.Enums.V1_12_1_5875.ResponseCodes);
 		case ClientVersionBuild.V2_4_3_8606:
-		case ClientVersionBuild.V3_3_5a_12340:
 			return typeof(HermesProxy.World.Enums.V2_4_3_8606.ResponseCodes);
+		case ClientVersionBuild.V3_3_5a_12340:
+			return typeof(HermesProxy.World.Enums.V3_3_5a_12340.ResponseCodes);
 		default:
 			return null;
 		}

@@ -484,8 +484,10 @@ public class ObjectUpdateBuilder
 		{
 			changedMask |= 0x20;
 		}
-		bool isPlayer = this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Player);
-		if (isPlayer && (hasObjectChanges || hasUnitChanges || hasActivePlayerChanges))
+		// Only set Player block when there are actual PlayerData changes (matching TC343)
+		// Writing an empty Player block (blocksMask=0) corrupts the packet for the client
+		bool hasPlayerChanges = this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Player) && this.m_updateData.PlayerData != null;
+		if (hasPlayerChanges)
 		{
 			changedMask |= 0x40;
 		}
@@ -506,7 +508,7 @@ public class ObjectUpdateBuilder
 		{
 			this.WriteUpdateUnitData(data);
 		}
-		if (isPlayer && (changedMask & 0x40) != 0)
+		if (hasPlayerChanges)
 		{
 			// Empty PlayerData: blocksMask=0 (4 bits), IsQuestLogChangesMaskSkipped=false (1 bit), FlushBits
 			data.WriteBits(0, 4);
