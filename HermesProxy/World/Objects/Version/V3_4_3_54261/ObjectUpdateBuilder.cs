@@ -177,6 +177,15 @@ public class ObjectUpdateBuilder
 
 	private void WriteValuesModern(WorldPacket packet)
 	{
+		// Dump full item create data for debugging login vs loot comparison
+		if (this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Item) && this.m_updateData.Type != UpdateTypeModern.Values)
+		{
+			ItemData item = this.m_updateData.ItemData;
+			string itemInfo = item != null ?
+				$"Owner={item.Owner} ContainedIn={item.ContainedIn} Stack={item.StackCount} Dur={item.Durability}/{item.MaxDurability} Flags={item.Flags} Charges=[{item.SpellCharges[0]},{item.SpellCharges[1]},{item.SpellCharges[2]},{item.SpellCharges[3]},{item.SpellCharges[4]}] PropSeed={item.PropertySeed} RandProp={item.RandomProperty}" :
+				"null";
+			Log.Print(LogType.Debug, $"[ItemCreate] {this.m_updateData.Guid} Entry={this.m_updateData.ObjectData?.EntryID} IsOwner={this.IsOwner} ItemData: {itemInfo}", "WriteValuesModern", "");
+		}
 		WorldPacket valuesBuffer = new WorldPacket();
 		if (this.m_updateData.Type == UpdateTypeModern.Values)
 		{
@@ -258,6 +267,175 @@ public class ObjectUpdateBuilder
 		}
 	}
 
+	/// Returns the WowGuid128 for a given modern 3.4.3 InvSlots index (0-140),
+	/// mapping from the separate legacy arrays in ActivePlayerData.
+	private static WowGuid128 GetModernInvSlot(ActivePlayerData a, int modernIdx)
+	{
+		if (modernIdx <= 18)
+		{
+			// Equipment slots
+			if (a.InvSlots != null && modernIdx < a.InvSlots.Length)
+				return a.InvSlots[modernIdx];
+		}
+		else if (modernIdx >= 30 && modernIdx <= 33)
+		{
+			// Bag slots: legacy InvSlots[19-22] -> modern [30-33]
+			int legacyIdx = 19 + (modernIdx - 30);
+			if (a.InvSlots != null && legacyIdx < a.InvSlots.Length)
+				return a.InvSlots[legacyIdx];
+		}
+		else if (modernIdx >= 35 && modernIdx <= 58)
+		{
+			// Backpack items: from PackSlots
+			int idx = modernIdx - 35;
+			if (a.PackSlots != null && idx < a.PackSlots.Length)
+				return a.PackSlots[idx];
+		}
+		else if (modernIdx >= 59 && modernIdx <= 86)
+		{
+			// Bank items
+			int idx = modernIdx - 59;
+			if (a.BankSlots != null && idx < a.BankSlots.Length)
+				return a.BankSlots[idx];
+		}
+		else if (modernIdx >= 87 && modernIdx <= 93)
+		{
+			// Bank bag slots
+			int idx = modernIdx - 87;
+			if (a.BankBagSlots != null && idx < a.BankBagSlots.Length)
+				return a.BankBagSlots[idx];
+		}
+		else if (modernIdx >= 94 && modernIdx <= 105)
+		{
+			// Buyback slots
+			int idx = modernIdx - 94;
+			if (a.BuyBackSlots != null && idx < a.BuyBackSlots.Length)
+				return a.BuyBackSlots[idx];
+		}
+		else if (modernIdx >= 106 && modernIdx <= 137)
+		{
+			// Keyring slots
+			int idx = modernIdx - 106;
+			if (a.KeyringSlots != null && idx < a.KeyringSlots.Length)
+				return a.KeyringSlots[idx];
+		}
+		return null;
+	}
+
+	private bool HasActivePlayerChanges()
+	{
+		if (!this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.ActivePlayer))
+			return false;
+		ActivePlayerData a = this.m_updateData.ActivePlayerData;
+		if (a == null) return false;
+		if (a.Coinage.HasValue || a.XP.HasValue || a.NextLevelXP.HasValue) return true;
+		// InvSlots disabled in update path for now - don't report changes
+		// TODO: re-enable when bitmask format is fixed
+		return false;
+	}
+
+	/// <summary>
+	/// Writes ActivePlayerData update using TC343 bitmask format.
+	/// The changesMask has 48 blocks of 32 bits each (1536 total bits).
+	/// Key bit indices from TC343 UpdateFields.h:
+	///   Bit 0: group bit for fields 1-37
+	///   Bit 28: Coinage, Bit 29: XP, Bit 30: NextLevelXP
+	///   Bit 124: InvSlots group, Bits 125-265: InvSlots[0-140]
+	/// </summary>
+	private void WriteUpdateActivePlayerData(WorldPacket data)
+	{
+		ActivePlayerData a = this.m_updateData.ActivePlayerData ?? new ActivePlayerData();
+
+		// Build changesMask (1536 bits = 48 blocks of 32)
+		uint[] blocks = new uint[48];
+
+		// Helper to set a bit in the changesMask
+		void SetBit(int bit)
+		{
+			blocks[bit / 32] |= (1u << (bit % 32));
+		}
+
+		// Group 0 scalar fields (bits 26-37)
+		if (a.Coinage.HasValue) { SetBit(0); SetBit(28); }
+		if (a.XP.HasValue) { SetBit(0); SetBit(29); }
+		if (a.NextLevelXP.HasValue) { SetBit(0); SetBit(30); }
+
+		// InvSlots disabled in update path - format crashes 3.4.3 client
+		// Items still show correctly on login via WriteCreateActivePlayerData
+		// TODO: debug bitmask format by comparing against TC343 packet captures
+		int invSlotsChanged = 0;
+
+		// Log what we're writing
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+		sb.Append($"[ActivePlayerUpdate] Coinage={a.Coinage.HasValue} XP={a.XP.HasValue} NextLevelXP={a.NextLevelXP.HasValue} InvSlots={invSlotsChanged}");
+		if (invSlotsChanged > 0)
+		{
+			sb.Append(" slots:[");
+			for (int i = 0; i < 141; i++)
+			{
+				int bit = 125 + i;
+				if ((blocks[bit / 32] & (1u << (bit % 32))) != 0)
+					sb.Append($"{i},");
+			}
+			sb.Append("]");
+		}
+		for (int b = 0; b < 48; b++)
+			if (blocks[b] != 0)
+				sb.Append($" blk{b}=0x{blocks[b]:X8}");
+		Log.Print(LogType.Debug, sb.ToString(), "WriteUpdateActivePlayerData", "");
+
+		// Write blocksMask: first uint32 for blocks 0-31, then 16 bits for blocks 32-47
+		uint blocksMask0 = 0;
+		for (int b = 0; b < 32; b++)
+			if (blocks[b] != 0) blocksMask0 |= (1u << b);
+		uint blocksMask1 = 0;
+		for (int b = 32; b < 48; b++)
+			if (blocks[b] != 0) blocksMask1 |= (1u << (b - 32));
+
+		data.WriteUInt32(blocksMask0);
+		data.WriteBits(blocksMask1, 16);
+
+		// Write each set block's 32-bit mask
+		for (int b = 0; b < 48; b++)
+		{
+			bool blockSet = (b < 32) ? ((blocksMask0 & (1u << b)) != 0) : ((blocksMask1 & (1u << (b - 32))) != 0);
+			if (blockSet)
+				data.WriteBits(blocks[b], 32);
+		}
+
+		// No dynamic fields used - two FlushBits for the two dynamic mask sections
+		data.FlushBits();
+		data.FlushBits();
+
+		// Write actual field values in TC343 order
+
+		// Group 0 scalar fields
+		if (blocks[0] != 0)
+		{
+			if ((blocks[0] & (1u << 28)) != 0)
+				data.WriteUInt64(a.Coinage.Value);
+			if ((blocks[0] & (1u << 29)) != 0)
+				data.WriteInt32(a.XP.Value);
+			if ((blocks[0] & (1u << 30)) != 0)
+				data.WriteInt32(a.NextLevelXP.Value);
+		}
+
+		// InvSlots (after all scalar groups, per TC343 write order)
+		if ((blocks[124 / 32] & (1u << (124 % 32))) != 0)
+		{
+			for (int i = 0; i < 141; i++)
+			{
+				int bit = 125 + i;
+				if ((blocks[bit / 32] & (1u << (bit % 32))) != 0)
+				{
+					WowGuid128 guid = GetModernInvSlot(a, i) ?? WowGuid128.Empty;
+					Log.Print(LogType.Debug, $"[ActivePlayerUpdate] InvSlot[{i}] = {guid}", "WriteUpdateActivePlayerData", "");
+					data.WritePackedGuid128(guid);
+				}
+			}
+		}
+	}
+
 	private bool HasAnyUnitFieldSet()
 	{
 		UnitData u = this.m_updateData.UnitData;
@@ -291,6 +469,9 @@ public class ObjectUpdateBuilder
 		bool hasObjectChanges = this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Object) && this.m_updateData.ObjectData != null && (this.m_updateData.ObjectData.EntryID.HasValue || this.m_updateData.ObjectData.DynamicFlags.HasValue || this.m_updateData.ObjectData.Scale.HasValue);
 		bool hasUnitChanges = this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit) && this.m_updateData.UnitData != null && this.HasAnyUnitFieldSet();
 		bool hasItemChanges = this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Item) && this.m_updateData.ItemData != null;
+
+		bool hasActivePlayerChanges = this.HasActivePlayerChanges();
+
 		if (hasObjectChanges)
 		{
 			changedMask |= 1;
@@ -303,12 +484,14 @@ public class ObjectUpdateBuilder
 		{
 			changedMask |= 0x20;
 		}
-		// For player objects, always include empty PlayerData block (0x40)
-		// The 3.4.3 client may require it when Unit data is present
 		bool isPlayer = this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Player);
-		if (isPlayer && (hasObjectChanges || hasUnitChanges))
+		if (isPlayer && (hasObjectChanges || hasUnitChanges || hasActivePlayerChanges))
 		{
 			changedMask |= 0x40;
+		}
+		if (hasActivePlayerChanges)
+		{
+			changedMask |= 0x80;
 		}
 		data.WriteUInt32(changedMask);
 		if (hasObjectChanges)
@@ -329,6 +512,10 @@ public class ObjectUpdateBuilder
 			data.WriteBits(0, 4);
 			data.WriteBit(false);
 			data.FlushBits();
+		}
+		if (hasActivePlayerChanges)
+		{
+			this.WriteUpdateActivePlayerData(data);
 		}
 	}
 
@@ -505,8 +692,110 @@ public class ObjectUpdateBuilder
 
 	private void WriteUpdateItemData(WorldPacket data)
 	{
-		data.WriteBits(0, 2);
+		ItemData item = this.m_updateData.ItemData;
+		if (item == null)
+		{
+			data.WriteBits(0, 2);
+			data.FlushBits();
+			return;
+		}
+
+		// ItemData changesMask: 43 bits = 2 blocks of 32
+		// TC343 bit layout:
+		//   0: group bit for bits 1-22
+		//   1: ArtifactPowers (dynamic), 2: Gems (dynamic)
+		//   3: Owner, 4: ContainedIn, 5: Creator, 6: GiftCreator
+		//   7: StackCount, 8: Expiration/Duration, 9: DynamicFlags/Flags
+		//  10: PropertySeed, 11: RandomPropertiesID, 12: Durability, 13: MaxDurability
+		//  14: CreatePlayedTime, 15: Context, 16: CreateTime, 17: ArtifactXP
+		//  18: ItemAppearanceModID, 19: Modifiers, 20: DynamicFlags2, 21: ItemBonusKey
+		//  22: DEBUGItemLevel
+		//  23: group bit for SpellCharges[5] (bits 24-28)
+		//  29: group bit for Enchantment[13] (bits 30-42)
+		uint[] blocks = new uint[2];
+		void SetBit(int bit) { blocks[bit / 32] |= (1u << (bit % 32)); }
+
+		if (item.Owner != null) { SetBit(0); SetBit(3); }
+		if (item.ContainedIn != null) { SetBit(0); SetBit(4); }
+		if (item.Creator != null) { SetBit(0); SetBit(5); }
+		if (item.GiftCreator != null) { SetBit(0); SetBit(6); }
+		if (item.StackCount.HasValue) { SetBit(0); SetBit(7); }
+		if (item.Duration.HasValue) { SetBit(0); SetBit(8); }
+		if (item.Flags.HasValue) { SetBit(0); SetBit(9); }
+		if (item.PropertySeed.HasValue) { SetBit(0); SetBit(10); }
+		if (item.RandomProperty.HasValue) { SetBit(0); SetBit(11); }
+		if (item.Durability.HasValue) { SetBit(0); SetBit(12); }
+		if (item.MaxDurability.HasValue) { SetBit(0); SetBit(13); }
+		if (item.CreatePlayedTime.HasValue) { SetBit(0); SetBit(14); }
+		if (item.Context.HasValue) { SetBit(0); SetBit(15); }
+		if (item.ArtifactXP.HasValue) { SetBit(0); SetBit(17); }
+		if (item.ItemAppearanceModID.HasValue) { SetBit(0); SetBit(18); }
+		for (int i = 0; i < 5; i++)
+			if (item.SpellCharges[i].HasValue) { SetBit(23); SetBit(24 + i); }
+		for (int i = 0; i < 13; i++)
+			if (item.Enchantment[i] != null) { SetBit(29); SetBit(30 + i); }
+
+		// Write blocksMask (2 bits) then each set block (32 bits)
+		byte blocksMask = 0;
+		if (blocks[0] != 0) blocksMask |= 1;
+		if (blocks[1] != 0) blocksMask |= 2;
+		data.WriteBits(blocksMask, 2);
+		for (int b = 0; b < 2; b++)
+			if ((blocksMask & (1 << b)) != 0)
+				data.WriteBits(blocks[b], 32);
+
+		// No dynamic fields (ArtifactPowers/Gems not used)
 		data.FlushBits();
+
+		// Group 0 scalar fields (bits 3-22)
+		if ((blocks[0] & 1) != 0)
+		{
+			if (item.Owner != null) data.WritePackedGuid128(item.Owner);
+			if (item.ContainedIn != null) data.WritePackedGuid128(item.ContainedIn);
+			if (item.Creator != null) data.WritePackedGuid128(item.Creator);
+			if (item.GiftCreator != null) data.WritePackedGuid128(item.GiftCreator);
+			if (item.StackCount.HasValue) data.WriteUInt32(item.StackCount.Value);
+			if (item.Duration.HasValue) data.WriteUInt32(item.Duration.Value);
+			if (item.Flags.HasValue) data.WriteUInt32(item.Flags.Value);
+			if (item.PropertySeed.HasValue) data.WriteInt32((int)item.PropertySeed.Value);
+			if (item.RandomProperty.HasValue) data.WriteInt32((int)item.RandomProperty.Value);
+			if (item.Durability.HasValue) data.WriteUInt32(item.Durability.Value);
+			if (item.MaxDurability.HasValue) data.WriteUInt32(item.MaxDurability.Value);
+			if (item.CreatePlayedTime.HasValue) data.WriteUInt32(item.CreatePlayedTime.Value);
+			if (item.Context.HasValue) data.WriteInt32(item.Context.Value);
+			if (item.ArtifactXP.HasValue) data.WriteUInt64(item.ArtifactXP.Value);
+			if (item.ItemAppearanceModID.HasValue) data.WriteUInt8((byte)item.ItemAppearanceModID.Value);
+		}
+
+		// SpellCharges array (group bit 23, entries 24-28)
+		if ((blocks[0] & (1u << 23)) != 0)
+		{
+			for (int i = 0; i < 5; i++)
+				if (item.SpellCharges[i].HasValue)
+					data.WriteInt32(item.SpellCharges[i].Value);
+		}
+
+		// Enchantment array (group bit 29, entries 30-42)
+		if ((blocks[0] & (1u << 29)) != 0)
+		{
+			for (int i = 0; i < 13; i++)
+			{
+				if (item.Enchantment[i] != null)
+				{
+					// ItemEnchantment WriteUpdate: 4-bit mask + fields
+					uint enchMask = 0;
+					if (item.Enchantment[i].ID.HasValue) enchMask |= 2;
+					if (item.Enchantment[i].Duration.HasValue) enchMask |= 4;
+					if (item.Enchantment[i].Charges.HasValue) enchMask |= 8;
+					if (enchMask != 0) enchMask |= 1;
+					data.WriteBits(enchMask, 4);
+					data.FlushBits();
+					if (item.Enchantment[i].ID.HasValue) data.WriteInt32(item.Enchantment[i].ID.Value);
+					if (item.Enchantment[i].Duration.HasValue) data.WriteUInt32(item.Enchantment[i].Duration.Value);
+					if (item.Enchantment[i].Charges.HasValue) data.WriteUInt16(item.Enchantment[i].Charges.Value);
+				}
+			}
+		}
 	}
 
 	private void WriteCreateContainerData(WorldPacket data)
@@ -1141,14 +1430,10 @@ public class ObjectUpdateBuilder
 	private void WriteCreateActivePlayerData(WorldPacket data)
 	{
 		ActivePlayerData active = this.m_updateData.ActivePlayerData ?? new ActivePlayerData();
+		// Modern 3.4.3 InvSlots[141] - mapped from legacy arrays via GetModernInvSlot
 		for (int i = 0; i < 141; i++)
 		{
-			WowGuid128 slot = null;
-			if (active.InvSlots != null && i < active.InvSlots.Length)
-			{
-				slot = active.InvSlots[i];
-			}
-			data.WritePackedGuid128(slot ?? WowGuid128.Empty);
+			data.WritePackedGuid128(GetModernInvSlot(active, i) ?? WowGuid128.Empty);
 		}
 		data.WritePackedGuid128(active.FarsightObject ?? WowGuid128.Empty);
 		data.WritePackedGuid128(WowGuid128.Empty);

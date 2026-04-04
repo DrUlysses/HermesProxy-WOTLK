@@ -8663,6 +8663,7 @@ public class WorldClient
 	private void HandleDestroyObject(WorldPacket packet)
 	{
 		WowGuid128 guid = packet.ReadGuid().To128(this.GetSession().GameState);
+		Log.Print(LogType.Debug, $"[DestroyObject] Destroying {guid} type={guid.GetHighType()}", "HandleDestroyObject", "");
 		this.GetSession().GameState.ObjectCacheMutex.WaitOne();
 		this.GetSession().GameState.ObjectCacheLegacy.Remove(guid);
 		this.GetSession().GameState.ObjectCacheModern.Remove(guid);
@@ -8712,12 +8713,9 @@ public class WorldClient
 				}
 				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
 				{
-					// TODO: Player Unit blocks 0+1 crash the client. Blocks 0+1 need fixing.
-					// When ready to fix: investigate WriteUpdateUnitData format for player objects.
-					// Currently: strip Object/Player/ActivePlayer, keep Unit block 4 (Power) only
+					// Player Unit blocks 0+1 crash the client - keep only Power (block 4)
 					updateData2.ObjectData = new ObjectData();
 					updateData2.PlayerData = null;
-					updateData2.ActivePlayerData = null;
 					if (updateData2.UnitData != null)
 					{
 						updateData2.UnitData.Health = null;
@@ -8748,7 +8746,36 @@ public class WorldClient
 						updateData2.UnitData.NpcFlags = null;
 					}
 				}
-				updateObject.ObjectUpdates.Add(updateData2);
+				// Check if the update has any actual data to send.
+				// Empty Values updates (changedMask=0) crash the 3.4.3 client.
+				bool hasAnythingToSend = false;
+				if (updateData2.ObjectData != null && (updateData2.ObjectData.EntryID.HasValue || updateData2.ObjectData.DynamicFlags.HasValue || updateData2.ObjectData.Scale.HasValue))
+					hasAnythingToSend = true;
+				if (updateData2.UnitData != null && (updateData2.UnitData.Health.HasValue || updateData2.UnitData.MaxHealth.HasValue ||
+					updateData2.UnitData.DisplayID.HasValue || updateData2.UnitData.Target != null ||
+					updateData2.UnitData.Flags.HasValue || updateData2.UnitData.Flags2.HasValue ||
+					updateData2.UnitData.Level.HasValue || updateData2.UnitData.FactionTemplate.HasValue ||
+					updateData2.UnitData.AuraState.HasValue || updateData2.UnitData.NativeDisplayID.HasValue))
+					hasAnythingToSend = true;
+				if (updateData2.UnitData != null && updateData2.UnitData.Power != null)
+					for (int p = 0; p < updateData2.UnitData.Power.Length; p++)
+						if (updateData2.UnitData.Power[p].HasValue) { hasAnythingToSend = true; break; }
+				if (updateData2.UnitData != null && updateData2.UnitData.MaxPower != null)
+					for (int p = 0; p < updateData2.UnitData.MaxPower.Length; p++)
+						if (updateData2.UnitData.MaxPower[p].HasValue) { hasAnythingToSend = true; break; }
+				// Skip all Item-only Values updates - WriteUpdateItemData crashes client
+				if (guid3.IsItem())
+					hasAnythingToSend = false;
+				if (updateData2.ActivePlayerData != null)
+				{
+					ActivePlayerData a = updateData2.ActivePlayerData;
+					if (a.Coinage.HasValue || a.XP.HasValue || a.NextLevelXP.HasValue)
+						hasAnythingToSend = true;
+				}
+				if (hasAnythingToSend)
+				{
+					updateObject.ObjectUpdates.Add(updateData2);
+				}
 				if (auraUpdate2.Auras.Count != 0)
 				{
 					auraUpdates.Add(auraUpdate2);
