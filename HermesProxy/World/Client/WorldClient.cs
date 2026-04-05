@@ -4232,6 +4232,25 @@ public class WorldClient
 		}
 	}
 
+	[PacketHandler(Opcode.SMSG_LOOT_LIST)]
+	private void HandleLootList(WorldPacket packet)
+	{
+		LootList list = new LootList();
+		WowGuid64 creatureGuid = packet.ReadGuid();
+		list.Owner = creatureGuid.To128(this.GetSession().GameState);
+		list.LootObj = creatureGuid.ToLootGuid();
+
+		WowGuid64 masterLooter = packet.ReadPackedGuid();
+		if (!masterLooter.IsEmpty())
+			list.Master = masterLooter.To128(this.GetSession().GameState);
+
+		WowGuid64 roundRobinWinner = packet.ReadPackedGuid();
+		if (!roundRobinWinner.IsEmpty())
+			list.RoundRobinWinner = roundRobinWinner.To128(this.GetSession().GameState);
+
+		this.SendPacketToClient(list);
+	}
+
 	[PacketHandler(Opcode.SMSG_LOOT_RESPONSE)]
 	private void HandleLootResponse(WorldPacket packet)
 	{
@@ -7638,6 +7657,8 @@ public class WorldClient
 		}
 		SpellGo spell = new SpellGo();
 		spell.Cast = this.HandleSpellStartOrGo(packet, isSpellGo: true);
+		// 3.3.5a SpellGo doesn't set CAST_FLAG_HAS_TRAJECTORY but 3.4.3 always expects it
+		spell.Cast.CastFlags |= (uint)CastFlag.HasTrajectory;
 		if (this.GetSession().GameState.CurrentPlayerGuid == spell.Cast.CasterUnit && this.GetSession().GameState.CurrentClientNormalCast != null && this.GetSession().GameState.CurrentClientNormalCast.SpellId == spell.Cast.SpellID)
 		{
 			spell.Cast.CastID = this.GetSession().GameState.CurrentClientNormalCast.ServerGUID;

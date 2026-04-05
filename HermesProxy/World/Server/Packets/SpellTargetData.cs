@@ -23,7 +23,7 @@ public class SpellTargetData
 
 	public void Read(WorldPacket data)
 	{
-		this.Flags = (SpellCastTargetFlags)data.ReadBits<uint>(26);
+		this.Flags = (SpellCastTargetFlags)data.ReadBits<uint>(28);
 		if (data.HasBit())
 		{
 			this.SrcLocation = new TargetLocation();
@@ -64,7 +64,7 @@ public class SpellTargetData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits((uint)this.Flags, 26);
+		data.WriteBits((uint)this.Flags, 28);
 		data.WriteBit(this.SrcLocation != null);
 		data.WriteBit(this.DstLocation != null);
 		data.WriteBit(this.Orientation.HasValue);

@@ -72,10 +72,6 @@ public class SpellCastData
 		data.WriteBit(this.AmmoDisplayId.HasValue);
 		data.WriteBit(this.AmmoInventoryType.HasValue);
 		data.FlushBits();
-		foreach (SpellMissStatus item in this.MissStatus)
-		{
-			item.Write(data);
-		}
 		this.Target.Write(data);
 		foreach (WowGuid128 hitTarget in this.HitTargets)
 		{
@@ -84,6 +80,10 @@ public class SpellCastData
 		foreach (WowGuid128 missTarget in this.MissTargets)
 		{
 			data.WritePackedGuid128(missTarget);
+		}
+		foreach (SpellMissStatus item in this.MissStatus)
+		{
+			item.Write(data);
 		}
 		foreach (SpellPowerData item2 in this.RemainingPower)
 		{
