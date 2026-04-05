@@ -55,6 +55,10 @@ public class UpdateObject : ServerPacket
 	{
 		if (ModernVersion.ExpansionVersion >= 3 && !UpdateObject._playerObjectSent)
 		{
+			Log.Print(LogType.Debug, $"[UpdateObject] _playerObjectSent=false, checking for player in {this.ObjectUpdates.Count} updates", "Write", "");
+		}
+		if (ModernVersion.ExpansionVersion >= 3 && !UpdateObject._playerObjectSent)
+		{
 			if (UpdateObject._pendingLoginUpdates == null)
 			{
 				UpdateObject.ResetLoginBuffer();

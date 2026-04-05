@@ -16,7 +16,11 @@ public class RideTicket
 		this.Id = data.ReadUInt32();
 		this.Type = (RideType)data.ReadUInt32();
 		this.Time = data.ReadInt64();
+		this.Unknown925 = data.HasBit();
+		data.ResetBitPos();
 	}
+
+	public bool Unknown925;
 
 	public void Write(WorldPacket data)
 	{
@@ -24,5 +28,7 @@ public class RideTicket
 		data.WriteUInt32(this.Id);
 		data.WriteUInt32((uint)this.Type);
 		data.WriteInt64(this.Time);
+		data.WriteBit(this.Unknown925);
+		data.FlushBits();
 	}
 }

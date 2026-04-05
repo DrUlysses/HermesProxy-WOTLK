@@ -1137,8 +1137,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GAME_OBJ_USE)]
 	private void HandleGameObjUse(GameObjUse use)
 	{
+		WowGuid64 guid64 = use.Guid.To64();
+		Framework.Logging.Log.Print(Framework.Logging.LogType.Debug, $"[GameObjUse] Modern GUID={use.Guid} -> Legacy GUID={guid64} raw=0x{guid64.GetLowValue():X16}");
 		WorldPacket packet = new WorldPacket(Opcode.CMSG_GAME_OBJ_USE);
-		packet.WriteGuid(use.Guid.To64());
+		packet.WriteGuid(guid64);
 		this.SendPacketToServer(packet);
 	}
 
@@ -1146,6 +1148,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleGameObjUse(GameObjReportUse use)
 	{
 		this.GetSession().GameState.CurrentInteractedWithGO = use.Guid;
+		WorldPacket packet = new WorldPacket(Opcode.CMSG_GAME_OBJ_REPORT_USE);
+		packet.WriteGuid(use.Guid.To64());
+		this.SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_PARTY_INVITE)]
@@ -2001,8 +2006,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		WorldPacket packet = new WorldPacket(Opcode.CMSG_SWAP_INV_ITEM);
 		byte slot1 = ModernVersion.AdjustInventorySlot(item.Slot1);
 		byte slot2 = ModernVersion.AdjustInventorySlot(item.Slot2);
-		packet.WriteUInt8(slot1);
+		// Modern client: Slot2=source, Slot1=destination (reversed from field names)
+		// Legacy server expects: srcSlot first, dstSlot second
 		packet.WriteUInt8(slot2);
+		packet.WriteUInt8(slot1);
 		this.SendPacketToServer(packet);
 	}
 
@@ -2670,6 +2677,67 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_DF_GET_SYSTEM_INFO)]
 	private void HandleDfGetSystemInfo(DfGetSystemInfoPkt packet)
 	{
+		if (packet.Player)
+		{
+			WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PLAYER_LOCK_INFO_REQUEST);
+			this.SendPacketToServer(legacyPacket);
+		}
+		else
+		{
+			WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PARTY_LOCK_INFO_REQUEST);
+			this.SendPacketToServer(legacyPacket);
+		}
+	}
+
+	[PacketHandler(Opcode.CMSG_DF_JOIN)]
+	private void HandleDfJoin(DfJoinPkt packet)
+	{
+		// Legacy 3.3.5a format: uint32 Roles, bool NoPartialClear, bool Achievements, uint8 slotCount, uint32[] Slots, uint8 needsCount(3), uint8[3] Needs, string Comment
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_JOIN);
+		legacyPacket.WriteUInt32((uint)packet.Roles);
+		legacyPacket.WriteUInt8(0); // NoPartialClear
+		legacyPacket.WriteUInt8(0); // Achievements
+		legacyPacket.WriteUInt8((byte)packet.Slots.Length);
+		for (int i = 0; i < packet.Slots.Length; i++)
+			legacyPacket.WriteUInt32(packet.Slots[i]);
+		legacyPacket.WriteUInt8(3); // Needs count
+		legacyPacket.WriteUInt8(0); // Need 1
+		legacyPacket.WriteUInt8(0); // Need 2
+		legacyPacket.WriteUInt8(0); // Need 3
+		legacyPacket.WriteCString(""); // Comment
+		this.SendPacketToServer(legacyPacket);
+	}
+
+	[PacketHandler(Opcode.CMSG_DF_PROPOSAL_RESPONSE)]
+	private void HandleDfProposalResponse(WorldPacket packet)
+	{
+		// Modern: RideTicket + uint64 InstanceID + uint32 ProposalID + bit Accepted
+		RideTicket ticket = new RideTicket();
+		ticket.Read(packet);
+		ulong instanceID = packet.ReadUInt64();
+		uint proposalID = packet.ReadUInt32();
+		bool accepted = packet.HasBit();
+		// Legacy: uint32 ProposalID + uint8 Accept
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PROPOSAL_RESULT);
+		legacyPacket.WriteUInt32(proposalID);
+		legacyPacket.WriteUInt8((byte)(accepted ? 1 : 0));
+		this.SendPacketToServer(legacyPacket);
+	}
+
+	[PacketHandler(Opcode.CMSG_DF_PROPOSAL_RESPONSE)]
+	private void HandleDfProposalResponse(DfProposalResponsePkt packet)
+	{
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PROPOSAL_RESULT);
+		legacyPacket.WriteUInt32(packet.ProposalID);
+		legacyPacket.WriteUInt8((byte)(packet.Accepted ? 1 : 0));
+		this.SendPacketToServer(legacyPacket);
+	}
+
+	[PacketHandler(Opcode.CMSG_DF_LEAVE)]
+	private void HandleDfLeave(DfLeavePkt packet)
+	{
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_LEAVE);
+		this.SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_DF_GET_JOIN_STATUS)]
@@ -4945,8 +5013,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		if (code == BattlenetRpcErrorCode.Ok)
 		{
 			response.SuccessInfo = new AuthResponse.AuthSuccessInfo();
-			response.SuccessInfo.ActiveExpansionLevel = (byte)(LegacyVersion.ExpansionVersion - 1);
-			response.SuccessInfo.AccountExpansionLevel = (byte)(LegacyVersion.ExpansionVersion - 1);
+			response.SuccessInfo.ActiveExpansionLevel = (byte)LegacyVersion.ExpansionVersion;
+			response.SuccessInfo.AccountExpansionLevel = (byte)LegacyVersion.ExpansionVersion;
 			response.SuccessInfo.VirtualRealmAddress = this._realmId.GetAddress();
 			response.SuccessInfo.Time = (uint)Time.UnixTime;
 			Realm realm = this.GetSession().RealmManager.GetRealm(this._realmId);
@@ -5080,7 +5148,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		features.BpayStoreEnabled = false;
 		features.MaxCharactersPerRealm = 10;
 		features.MinimumExpansionLevel = 0;
-		features.MaximumExpansionLevel = 2;
+		features.MaximumExpansionLevel = (int)LegacyVersion.ExpansionVersion;
+		features.ActiveSeason = 2;
 		features.Unk14 = true;
 		EuropaTicketConfig europaTicketConfig = new EuropaTicketConfig();
 		europaTicketConfig.ThrottleState.MaxTries = 10u;

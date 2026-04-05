@@ -2399,6 +2399,13 @@ public class WorldClient
 			party.LootSettings.Method = (LootMethod)packet.ReadUInt8();
 			party.LootSettings.LootMaster = packet.ReadGuid().To128(this.GetSession().GameState);
 			party.LootSettings.Threshold = packet.ReadUInt8();
+			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958) && packet.CanRead())
+			{
+				packet.ReadUInt8(); // Dungeon Difficulty
+				packet.ReadUInt8(); // Raid Difficulty
+				if (packet.CanRead())
+					packet.ReadUInt8(); // Dynamic Raid Difficulty (heroic flag)
+			}
 			this.GetSession().GameState.WeWantToLeaveGroup = false;
 			this.GetSession().GameState.CurrentGroups[party.PartyIndex] = party;
 		}
@@ -2425,12 +2432,27 @@ public class WorldClient
 	{
 		PartyUpdate party = new PartyUpdate();
 		party.SequenceNum = this.GetSession().GameState.GroupUpdateCounter++;
-		bool isRaid = packet.ReadBool();
-		bool isBattleground = packet.ReadBool();
+		byte groupType = packet.ReadUInt8(); // group type flags
+		bool isRaid = (groupType & 0x01) != 0;
+		bool isBattleground = (groupType & 0x04) != 0;
+		bool isLfg = (groupType & 0x08) != 0;
 		byte ownSubGroup = packet.ReadUInt8();
 		byte ownGroupFlags = packet.ReadUInt8();
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958))
+		{
+			packet.ReadUInt8(); // LFG roles
+		}
+		if (isLfg)
+		{
+			packet.ReadUInt8(); // LFG dungeon status
+			packet.ReadUInt32(); // LFG dungeon ID
+		}
 		party.PartyIndex = (byte)(isBattleground ? 1u : 0u);
 		party.PartyGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958))
+		{
+			packet.ReadUInt32(); // group counter
+		}
 		if (party.PartyIndex != 0)
 		{
 			party.PartyFlags |= GroupFlags.FakeRaid;
@@ -2467,6 +2489,10 @@ public class WorldClient
 				member.Status = (GroupMemberOnlineStatus)packet.ReadUInt8();
 				member.Subgroup = packet.ReadUInt8();
 				member.Flags = (GroupMemberFlags)packet.ReadUInt8();
+				if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958))
+				{
+					packet.ReadUInt8(); // LFG roles
+				}
 				member.ClassId = this.GetSession().GameState.GetUnitClass(member.GUID);
 				if (!member.Flags.HasAnyFlag(GroupMemberFlags.Assistant))
 				{
@@ -5036,6 +5062,96 @@ public class WorldClient
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
+			AllAchievementData data = new AllAchievementData();
+			uint realmAddress = this.GetSession().RealmId.GetAddress();
+			WowGuid128 playerGuid = this.GetSession().GameState.CurrentPlayerGuid;
+
+			// 3.3.5a format: earned achievements (terminated by -1), then criteria progress (terminated by -1)
+			// Earned achievements
+			while (true)
+			{
+				uint achievementId = packet.ReadUInt32();
+				if (achievementId == 0xFFFFFFFF) // -1 terminator
+					break;
+				uint datePackedTime = packet.ReadUInt32();
+				long dateUnix = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+
+				EarnedAchievement earned = new EarnedAchievement();
+				earned.Id = achievementId;
+				earned.Date = dateUnix;
+				earned.Owner = playerGuid;
+				earned.VirtualRealmAddress = realmAddress;
+				earned.NativeRealmAddress = realmAddress;
+				data.Earned.Add(earned);
+			}
+
+			// Criteria progress
+			while (true)
+			{
+				uint criteriaId = packet.ReadUInt32();
+				if (criteriaId == 0xFFFFFFFF) // -1 terminator
+					break;
+				ulong counter = packet.ReadPackedGuid().Low; // counter packed as guid
+				WowGuid64 playerGuid64 = packet.ReadPackedGuid();
+				uint timedFlag = packet.ReadUInt32();
+				uint datePackedTime = packet.ReadUInt32();
+				long dateUnix = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+				uint timeFromStart = packet.ReadUInt32();
+				uint timeFromCreate = packet.ReadUInt32();
+
+				CriteriaProgressPkt progress = new CriteriaProgressPkt();
+				progress.Id = criteriaId;
+				progress.Quantity = counter;
+				progress.Player = playerGuid;
+				progress.Flags = timedFlag;
+				progress.Date = dateUnix;
+				progress.TimeFromStart = timeFromStart;
+				progress.TimeFromCreate = timeFromCreate;
+				data.Progress.Add(progress);
+			}
+
+			this.SendPacketToClient(data);
+		}
+	}
+
+	[PacketHandler(Opcode.SMSG_CRITERIA_UPDATE)]
+	private void HandleCriteriaUpdate(WorldPacket packet)
+	{
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
+		{
+			CriteriaUpdatePkt update = new CriteriaUpdatePkt();
+			update.CriteriaID = packet.ReadUInt32();
+			update.Quantity = packet.ReadPackedGuid().Low; // counter packed as guid
+			WowGuid64 playerGuid64 = packet.ReadPackedGuid();
+			update.Flags = packet.ReadUInt32(); // timed flag
+			uint datePackedTime = packet.ReadUInt32();
+			update.CurrentTime = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+			update.ElapsedTime = packet.ReadUInt32();
+			update.CreationTime = packet.ReadUInt32();
+			update.PlayerGUID = this.GetSession().GameState.CurrentPlayerGuid;
+			this.SendPacketToClient(update);
+		}
+	}
+
+	[PacketHandler(Opcode.SMSG_ACHIEVEMENT_EARNED)]
+	private void HandleAchievementEarned(WorldPacket packet)
+	{
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
+		{
+			AchievementEarnedPkt earned = new AchievementEarnedPkt();
+			WowGuid64 playerGuid64 = packet.ReadPackedGuid();
+			earned.AchievementID = packet.ReadUInt32();
+			uint datePackedTime = packet.ReadUInt32();
+			earned.Time = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+			packet.ReadUInt32(); // unknown/reserved (0)
+
+			uint realmAddress = this.GetSession().RealmId.GetAddress();
+			earned.Sender = this.GetSession().GameState.CurrentPlayerGuid;
+			earned.Earner = playerGuid64.To128(this.GetSession().GameState);
+			earned.EarnerNativeRealm = realmAddress;
+			earned.EarnerVirtualRealm = realmAddress;
+			earned.Initial = false;
+			this.SendPacketToClient(earned);
 		}
 	}
 
@@ -5047,6 +5163,176 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_INSTANCE_DIFFICULTY)]
 	private void HandleInstanceDifficulty(WorldPacket packet)
 	{
+	}
+
+	[PacketHandler(Opcode.SMSG_LFG_PLAYER_INFO)]
+	private void HandleLfgPlayerInfo(WorldPacket packet)
+	{
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958))
+		{
+			LfgPlayerInfoPkt info = new LfgPlayerInfoPkt();
+
+			// 3.3.5a format: random dungeons, then locked dungeons
+			// Random dungeons (available)
+			byte randomCount = packet.ReadUInt8();
+			for (int i = 0; i < randomCount; i++)
+			{
+				LfgPlayerDungeonInfo dungeon = new LfgPlayerDungeonInfo();
+				dungeon.Slot = packet.ReadUInt32(); // dungeon entry (id + type)
+				bool isDone = packet.ReadUInt8() != 0;
+				dungeon.FirstReward = !isDone;
+				dungeon.CompletionQuantity = isDone ? 1 : 0;
+				dungeon.CompletionLimit = 1;
+
+				LfgPlayerQuestReward rewards = new LfgPlayerQuestReward();
+				rewards.Items = new List<LfgPlayerQuestRewardItem>();
+				rewards.Currency = new List<LfgPlayerQuestRewardCurrency>();
+				rewards.BonusCurrency = new List<LfgPlayerQuestRewardCurrency>();
+				rewards.RewardMoney = (int)packet.ReadUInt32();
+				rewards.RewardXP = (int)packet.ReadUInt32();
+				packet.ReadUInt32(); // unknown
+				packet.ReadUInt32(); // unknown
+				byte itemCount = packet.ReadUInt8();
+				for (int j = 0; j < itemCount; j++)
+				{
+					LfgPlayerQuestRewardItem item = new LfgPlayerQuestRewardItem();
+					item.ItemID = (int)packet.ReadUInt32();
+					packet.ReadUInt32(); // displayInfo
+					item.Quantity = (int)packet.ReadUInt32();
+					rewards.Items.Add(item);
+				}
+				dungeon.Rewards = rewards;
+				info.Dungeons.Add(dungeon);
+			}
+
+			// Locked dungeons (blacklist)
+			LfgBlackList blackList = new LfgBlackList();
+			blackList.Slots = new List<LfgBlackListSlot>();
+			uint lockCount = packet.ReadUInt32();
+			for (uint i = 0; i < lockCount; i++)
+			{
+				LfgBlackListSlot slot = new LfgBlackListSlot();
+				slot.Slot = packet.ReadUInt32(); // dungeon entry
+				slot.Reason = packet.ReadUInt32(); // lock status
+				blackList.Slots.Add(slot);
+			}
+			info.BlackList = blackList;
+
+			this.SendPacketToClient(info);
+		}
+	}
+
+	[PacketHandler(Opcode.SMSG_LFG_JOIN_RESULT)]
+	private void HandleLfgJoinResult(WorldPacket packet)
+	{
+		DfJoinResult result = new DfJoinResult();
+		result.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		result.Ticket.Id = 1;
+		result.Ticket.Type = RideType.Lfg;
+		result.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		result.Result = (byte)packet.ReadUInt32(); // joinData.result
+		result.ResultDetail = (byte)packet.ReadUInt32(); // joinData.state
+		if (packet.CanRead())
+		{
+			byte partySize = packet.ReadUInt8();
+			for (int p = 0; p < partySize; p++)
+			{
+				DfJoinBlackList blackList = new DfJoinBlackList();
+				blackList.PlayerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+				uint dungeonCount = packet.ReadUInt32();
+				for (uint d = 0; d < dungeonCount; d++)
+				{
+					DfJoinBlackListSlot slot = new DfJoinBlackListSlot();
+					slot.Slot = packet.ReadUInt32();
+					slot.Reason = packet.ReadUInt32();
+					blackList.Slots.Add(slot);
+				}
+				result.BlackList.Add(blackList);
+			}
+		}
+		this.SendPacketToClient(result);
+	}
+
+	[PacketHandler(Opcode.SMSG_LFG_UPDATE_PLAYER)]
+	private void HandleLfgUpdatePlayer(WorldPacket packet)
+	{
+		DfUpdateStatus status = new DfUpdateStatus();
+		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		status.Ticket.Id = 1;
+		status.Ticket.Type = RideType.Lfg;
+		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		byte updateType = packet.ReadUInt8();
+		status.SubType = updateType;
+		bool hasExtraInfo = packet.ReadUInt8() != 0;
+		if (hasExtraInfo)
+		{
+			status.Queued = packet.ReadUInt8() != 0;
+			packet.ReadUInt8(); // unk
+			packet.ReadUInt8(); // unk
+			byte dungeonCount = packet.ReadUInt8();
+			for (int i = 0; i < dungeonCount; i++)
+			{
+				status.Slots.Add(packet.ReadUInt32());
+			}
+			status.Joined = true;
+			status.LfgJoined = true;
+			status.NotifyUI = true;
+			packet.ReadCString(); // comment - not used in modern
+		}
+		this.SendPacketToClient(status);
+	}
+
+	[PacketHandler(Opcode.SMSG_LFG_QUEUE_STATUS)]
+	private void HandleLfgQueueStatus(WorldPacket packet)
+	{
+		DfQueueStatus status = new DfQueueStatus();
+		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		status.Ticket.Id = 1;
+		status.Ticket.Type = RideType.Lfg;
+		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		status.Slot = packet.ReadUInt32();
+		status.AvgWaitTime = (uint)packet.ReadInt32();
+		status.AvgWaitTimeMe = (uint)packet.ReadInt32();
+		status.AvgWaitTimeByRole[0] = (uint)packet.ReadInt32(); // Tank
+		status.AvgWaitTimeByRole[1] = (uint)packet.ReadInt32(); // Healer
+		status.AvgWaitTimeByRole[2] = (uint)packet.ReadInt32(); // DPS
+		status.LastNeeded[0] = packet.ReadUInt8(); // Tanks needed
+		status.LastNeeded[1] = packet.ReadUInt8(); // Healers needed
+		status.LastNeeded[2] = packet.ReadUInt8(); // DPS needed
+		status.QueuedTime = packet.ReadUInt32();
+		this.SendPacketToClient(status);
+	}
+
+	[PacketHandler(Opcode.SMSG_LFG_PROPOSAL_UPDATE)]
+	private void HandleLfgProposalUpdate(WorldPacket packet)
+	{
+		DfProposalUpdate proposal = new DfProposalUpdate();
+		proposal.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		proposal.Ticket.Id = 1;
+		proposal.Ticket.Type = RideType.Lfg;
+		proposal.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		uint dungeonEntry = packet.ReadUInt32();
+		proposal.Slot = dungeonEntry;
+		proposal.State = (sbyte)packet.ReadUInt8();
+		proposal.ProposalID = packet.ReadUInt32();
+		proposal.CompletedMask = packet.ReadUInt32();
+		bool silent = packet.ReadUInt8() != 0;
+		proposal.ProposalSilent = silent;
+		byte playerCount = packet.ReadUInt8();
+		for (int i = 0; i < playerCount; i++)
+		{
+			DfProposalPlayer player = new DfProposalPlayer();
+			player.Roles = (byte)packet.ReadUInt32();
+			player.Me = packet.ReadUInt8() != 0;
+			bool inDungeon = packet.ReadUInt8() != 0;
+			bool sameGroup = packet.ReadUInt8() != 0;
+			player.SameParty = sameGroup;
+			player.MyParty = inDungeon;
+			player.Responded = packet.ReadUInt8() != 0;
+			player.Accepted = packet.ReadUInt8() != 0;
+			proposal.Players.Add(player);
+		}
+		this.SendPacketToClient(proposal);
 	}
 
 	[PacketHandler(Opcode.SMSG_LEARNED_DANCE_MOVES)]
@@ -5766,9 +6052,12 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_SPIRIT_HEALER_CONFIRM)]
 	private void HandleSpiritHealerConfirm(WorldPacket packet)
 	{
-		SpiritHealerConfirm confirm = new SpiritHealerConfirm();
-		confirm.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(confirm);
+		// 3.4.3 client has no SMSG_SPIRIT_HEALER_CONFIRM opcode — spirit healer works directly.
+		// Auto-accept by sending CMSG_SPIRIT_HEALER_ACTIVATE back to the legacy server.
+		WowGuid64 guid = packet.ReadGuid();
+		WorldPacket activate = new WorldPacket(Opcode.CMSG_SPIRIT_HEALER_ACTIVATE);
+		activate.WriteGuid(guid);
+		this.SendPacket(activate);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_SPELLS_MESSAGE)]
@@ -8833,6 +9122,12 @@ public class WorldClient
 					ActivePlayerData a = updateData2.ActivePlayerData;
 					if (a.Coinage.HasValue || a.XP.HasValue || a.NextLevelXP.HasValue)
 						hasAnythingToSend = true;
+					if (a.InvSlots != null)
+						for (int s = 0; s < a.InvSlots.Length; s++)
+							if (a.InvSlots[s] != null) { hasAnythingToSend = true; break; }
+					if (a.PackSlots != null)
+						for (int s = 0; s < a.PackSlots.Length; s++)
+							if (a.PackSlots[s] != null) { hasAnythingToSend = true; break; }
 				}
 				if (updateData2.PlayerData != null)
 				{
@@ -11748,7 +12043,7 @@ public class WorldClient
 		{
 			this.SendPacketToClient(new SetupCurrency());
 		}
-		this.SendPacketToClient(new AllAccountCriteria());
+		// AllAccountCriteria removed — was sending empty criteria after real SMSG_ALL_ACHIEVEMENT_DATA
 		if (this.GetSession().GameState.HasWsgHordeFlagCarrier || this.GetSession().GameState.HasWsgAllyFlagCarrier)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);

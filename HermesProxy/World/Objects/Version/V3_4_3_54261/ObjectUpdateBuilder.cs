@@ -330,8 +330,12 @@ public class ObjectUpdateBuilder
 		ActivePlayerData a = this.m_updateData.ActivePlayerData;
 		if (a == null) return false;
 		if (a.Coinage.HasValue || a.XP.HasValue || a.NextLevelXP.HasValue) return true;
-		// InvSlots disabled in update path for now - don't report changes
-		// TODO: re-enable when bitmask format is fixed
+		// Check if any InvSlots changed
+		for (int i = 0; i < 141; i++)
+		{
+			WowGuid128 slot = GetModernInvSlot(a, i);
+			if (slot != null) return true;
+		}
 		return false;
 	}
 
@@ -361,10 +365,18 @@ public class ObjectUpdateBuilder
 		if (a.XP.HasValue) { SetBit(0); SetBit(29); }
 		if (a.NextLevelXP.HasValue) { SetBit(0); SetBit(30); }
 
-		// InvSlots disabled in update path - format crashes 3.4.3 client
-		// Items still show correctly on login via WriteCreateActivePlayerData
-		// TODO: debug bitmask format by comparing against TC343 packet captures
+		// InvSlots: bit 124 = group bit, bits 125-265 = individual slots
 		int invSlotsChanged = 0;
+		for (int i = 0; i < 141; i++)
+		{
+			WowGuid128 slot = GetModernInvSlot(a, i);
+			if (slot != null)
+			{
+				SetBit(124); // group bit
+				SetBit(125 + i);
+				invSlotsChanged++;
+			}
+		}
 
 		// Log what we're writing
 		System.Text.StringBuilder sb = new System.Text.StringBuilder();

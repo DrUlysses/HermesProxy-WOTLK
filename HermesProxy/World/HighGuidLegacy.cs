@@ -69,7 +69,9 @@ public class HighGuidLegacy : HighGuid
 		this.high = high;
 		if (!HighGuidLegacy.HighLegacyToHighType.ContainsKey(high))
 		{
-			throw new ArgumentOutOfRangeException("0x" + high.ToString("X"));
+			Framework.Logging.Log.Print(Framework.Logging.LogType.Warn, $"Unknown HighGuidTypeLegacy: 0x{high:X}, defaulting to Null", "HighGuidLegacy", "");
+			base.highGuidType = HighGuidType.Null;
+			return;
 		}
 		base.highGuidType = HighGuidLegacy.HighLegacyToHighType[high];
 	}

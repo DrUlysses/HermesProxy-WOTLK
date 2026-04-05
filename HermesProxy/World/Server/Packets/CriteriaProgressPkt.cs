@@ -12,9 +12,9 @@ public struct CriteriaProgressPkt
 
 	public long Date;
 
-	public uint TimeFromStart;
+	public long TimeFromStart;
 
-	public uint TimeFromCreate;
+	public long TimeFromCreate;
 
 	public ulong? RafAcceptanceID;
 
@@ -23,10 +23,11 @@ public struct CriteriaProgressPkt
 		data.WriteUInt32(this.Id);
 		data.WriteUInt64(this.Quantity);
 		data.WritePackedGuid128(this.Player);
+		data.WriteUInt32(0); // Unused_10_1_5
+		data.WriteUInt32(this.Flags);
 		data.WritePackedTime(this.Date);
-		data.WriteUInt32(this.TimeFromStart);
-		data.WriteUInt32(this.TimeFromCreate);
-		data.WriteBits(this.Flags, 4);
+		data.WriteInt64(this.TimeFromStart);
+		data.WriteInt64(this.TimeFromCreate);
 		data.WriteBit(this.RafAcceptanceID.HasValue);
 		data.FlushBits();
 		if (this.RafAcceptanceID.HasValue)

@@ -513,12 +513,12 @@ public static class ModernVersion
 			// Bag slots: modern 30-33 → legacy 19-22
 			offset = 11;
 		}
-		else if (slot >= 35 && slot < 47)
+		else if (slot >= 35 && slot < 51)
 		{
 			// Backpack items: modern 35-50 → legacy 23-38
 			offset = 12;
 		}
-		else if (slot >= 47 && slot < 75)
+		else if (slot >= 51 && slot < 75)
 		{
 			offset = (byte)(LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) ? 8 : ((!LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056)) ? 8 : 8));
 		}
