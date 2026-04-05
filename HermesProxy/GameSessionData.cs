@@ -69,6 +69,9 @@ public class GameSessionData
 
 	public WowGuid128 CurrentPlayerGuid;
 
+	// Cached quest log: QuestID per slot (0-24), updated on create and values updates
+	public int[] QuestLogQuestIDs = new int[25];
+
 	public long CurrentPlayerCreateTime;
 
 	public OwnCharacterInfo CurrentPlayerInfo;

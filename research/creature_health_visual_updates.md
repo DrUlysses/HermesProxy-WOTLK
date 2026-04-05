@@ -47,6 +47,16 @@ for (int bi = 0; bi < 8; bi++)
 
 This fixed creature death and player combat (Health in block 0, Power in block 4).
 
+## CONFIRMED: CorpseData WriteCreate Was Completely Wrong (FIXED)
+
+The decompiled WriteCreateCorpseData had THREE bugs:
+1. DynamicFlags was after Flags — TC343 puts it FIRST
+2. Customizations.size() was uint8(0) — should be uint32(0)
+3. Extra uint32(0) at the end that TC343 doesn't have
+
+This caused EVERY death to crash because the Corpse object had garbled data.
+The client read Owner GUID where DynamicFlags should be → null pointer → ACCESS_VIOLATION at 0x08.
+
 ## CONFIRMED: Player ObjectData.DynamicFlags Crashes on Loot
 
 Sending ObjectData (DynamicFlags) for the player during loot causes DC. Emptying ObjectData for the player prevents this. The server sends DynamicFlags=0 for the player during loot state changes.

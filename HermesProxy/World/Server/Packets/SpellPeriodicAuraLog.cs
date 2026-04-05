@@ -44,6 +44,7 @@ internal class SpellPeriodicAuraLog : ServerPacket
 			data.WriteUInt32(this.SchoolMaskOrPower);
 			data.WriteUInt32(this.AbsorbedOrAmplitude);
 			data.WriteUInt32(this.Resisted);
+			data.WriteUInt32(0u); // Supporters.size() = 0
 			data.WriteBit(this.Crit);
 			data.WriteBit(this.DebugInfo != null);
 			data.WriteBit(this.ContentTuning != null);

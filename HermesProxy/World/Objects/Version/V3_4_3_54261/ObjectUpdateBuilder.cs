@@ -1359,6 +1359,7 @@ public class ObjectUpdateBuilder
 	private void WriteCreatePlayerData(WorldPacket data)
 	{
 		PlayerData player = this.m_updateData.PlayerData ?? new PlayerData();
+		Log.Print(LogType.Debug, $"[PlayerDataCreate] PlayerFlags=0x{player.PlayerFlags.GetValueOrDefault():X8} FlagsEx=0x{player.PlayerFlagsEx.GetValueOrDefault():X8} DuelArbiter={player.DuelArbiter} WowAccount={player.WowAccount} LootTarget={player.LootTargetGUID}", "WriteCreatePlayerData", "");
 		data.WritePackedGuid128(player.DuelArbiter ?? WowGuid128.Empty);
 		data.WritePackedGuid128(player.WowAccount ?? WowGuid128.Empty);
 		data.WritePackedGuid128(player.LootTargetGUID ?? WowGuid128.Empty);
@@ -1462,7 +1463,7 @@ public class ObjectUpdateBuilder
 	{
 		PlayerData p = this.m_updateData.PlayerData;
 		if (p == null) return false;
-		// Check quest log entries (including cleared slots with QuestID=0)
+		// Check quest log entries
 		if (p.QuestLog != null)
 			for (int i = 0; i < p.QuestLog.Length; i++)
 				if (p.QuestLog[i] != null && p.QuestLog[i].QuestID.HasValue) return true;
@@ -1517,6 +1518,9 @@ public class ObjectUpdateBuilder
 				hasAnyVisibleItem = true;
 			}
 		}
+
+		// Log which fields are set
+		Log.Print(LogType.Debug, $"[PlayerDataUpdate] Flags={p.PlayerFlags.HasValue} FlagsEx={p.PlayerFlagsEx.HasValue} GuildTS={p.GuildTimeStamp.HasValue} Title={p.ChosenTitle.HasValue} QuestLog={hasAnyQuestLog} VisItems={hasAnyVisibleItem} blocks=[0x{blocks[0]:X8},0x{blocks[1]:X8},0x{blocks[2]:X8},0x{blocks[3]:X8}]", "WriteUpdatePlayerData", "");
 
 		// Write blocksMask (4 bits)
 		byte blocksMask = 0;
@@ -1875,6 +1879,8 @@ public class ObjectUpdateBuilder
 	private void WriteCreateCorpseData(WorldPacket data)
 	{
 		CorpseData corpse = this.m_updateData.CorpseData ?? new CorpseData();
+		// TC343 field order: DynamicFlags FIRST, then Owner, Party, Guild, etc.
+		data.WriteUInt32(corpse.DynamicFlags.GetValueOrDefault());
 		data.WritePackedGuid128(corpse.Owner ?? WowGuid128.Empty);
 		data.WritePackedGuid128(corpse.PartyGUID ?? WowGuid128.Empty);
 		data.WritePackedGuid128(corpse.GuildGUID ?? WowGuid128.Empty);
@@ -1887,11 +1893,10 @@ public class ObjectUpdateBuilder
 		data.WriteUInt8(corpse.RaceId.GetValueOrDefault());
 		data.WriteUInt8(corpse.SexId.GetValueOrDefault());
 		data.WriteUInt8(corpse.ClassId.GetValueOrDefault());
-		data.WriteUInt8(0);
+		data.WriteUInt32(0u); // Customizations.size() = 0
 		data.WriteUInt32(corpse.Flags.GetValueOrDefault());
-		data.WriteUInt32(corpse.DynamicFlags.GetValueOrDefault());
 		data.WriteInt32(corpse.FactionTemplate.GetValueOrDefault());
-		data.WriteUInt32(0u);
+		// Customizations loop would go here if size > 0
 	}
 
 	public void SetCreateObjectBits()

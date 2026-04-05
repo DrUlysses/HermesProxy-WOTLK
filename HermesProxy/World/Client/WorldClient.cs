@@ -1077,7 +1077,12 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_LOGIN_VERIFY_WORLD)]
 	private void HandleLoginVerifyWorld(WorldPacket packet)
 	{
-		UpdateObject.ResetLoginBuffer();
+		// Only reset buffer on first login, not on teleports
+		// Teleports don't send a new player CreateObject so _playerObjectSent would never become true
+		if (!this.GetSession().GameState.IsInWorld)
+		{
+			UpdateObject.ResetLoginBuffer();
+		}
 		LoginVerifyWorld verify = new LoginVerifyWorld();
 		verify.MapID = packet.ReadUInt32();
 		this.GetSession().GameState.CurrentMapId = verify.MapID;
@@ -5128,7 +5133,7 @@ public class WorldClient
 			update.CurrentTime = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
 			update.ElapsedTime = packet.ReadUInt32();
 			update.CreationTime = packet.ReadUInt32();
-			update.PlayerGUID = this.GetSession().GameState.CurrentPlayerGuid;
+			update.PlayerGUID = this.GetSession().GameState.CurrentPlayerGuid ?? WowGuid128.Empty;
 			this.SendPacketToClient(update);
 		}
 	}
@@ -9063,38 +9068,47 @@ public class WorldClient
 				}
 				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
 				{
-					// Keep PlayerData for WriteUpdatePlayerData (quest log, flags, etc.)
-					// Keep useful UnitData fields; strip the rest + Power (sent via SMSG_POWER_UPDATE)
+					// Strip Object (DynamicFlags crashes on loot)
+					// Keep PlayerData + ActivePlayerData for flags/bags/gold/XP
+					// Strip Object + UnitData for player — blocks 0+1 crash in batch with creatures
+					// Health from combat packets, Power from SMSG_POWER_UPDATE
+					// Keep PlayerData + ActivePlayerData for flags/bags/gold/XP
 					updateData2.ObjectData = new ObjectData();
 					if (updateData2.UnitData != null)
 					{
-						// Keep: Health, MaxHealth, Level, EffectiveLevel, DisplayID, Target, Flags, Flags2
-						// Strip everything else to avoid unknown block issues
+						// Strip blocks 0-3 (crash when in batch with creatures)
+						// Keep blocks 4+ (Power, Stats) — these work fine
+						// Block 0: Health/MaxHealth/DisplayID/Charm/Summon/etc
+						updateData2.UnitData.Health = null;
+						updateData2.UnitData.MaxHealth = null;
+						updateData2.UnitData.DisplayID = null;
 						updateData2.UnitData.Charm = null;
 						updateData2.UnitData.Summon = null;
 						updateData2.UnitData.CharmedBy = null;
 						updateData2.UnitData.SummonedBy = null;
 						updateData2.UnitData.CreatedBy = null;
+						updateData2.UnitData.Target = null;
 						updateData2.UnitData.ChannelData = null;
 						updateData2.UnitData.RaceId = null;
 						updateData2.UnitData.ClassId = null;
 						updateData2.UnitData.SexId = null;
+						updateData2.UnitData.Level = null;
+						updateData2.UnitData.EffectiveLevel = null;
+						// Block 1: FactionTemplate/Flags/AuraState/etc
 						updateData2.UnitData.FactionTemplate = null;
+						updateData2.UnitData.Flags = null;
+						updateData2.UnitData.Flags2 = null;
 						updateData2.UnitData.AuraState = null;
 						updateData2.UnitData.BoundingRadius = null;
 						updateData2.UnitData.CombatReach = null;
 						updateData2.UnitData.NativeDisplayID = null;
 						updateData2.UnitData.MountDisplayID = null;
+						// Block 2: HoverHeight
 						updateData2.UnitData.HoverHeight = null;
+						// Block 3: GuildGUID/NpcFlags
 						updateData2.UnitData.GuildGUID = null;
 						updateData2.UnitData.NpcFlags = null;
-						// Power/MaxPower already sent via SMSG_POWER_UPDATE
-						if (updateData2.UnitData.Power != null)
-							for (int p = 0; p < updateData2.UnitData.Power.Length; p++)
-								updateData2.UnitData.Power[p] = null;
-						if (updateData2.UnitData.MaxPower != null)
-							for (int p = 0; p < updateData2.UnitData.MaxPower.Length; p++)
-								updateData2.UnitData.MaxPower[p] = null;
+						// Keep blocks 4+ (Power at 137+, Stats at 174+)
 					}
 				}
 				// Check if the update has any actual data to send.
@@ -9141,6 +9155,10 @@ public class WorldClient
 				if (hasAnythingToSend)
 				{
 					updateObject.ObjectUpdates.Add(updateData2);
+				}
+				else if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
+				{
+					Log.Print(LogType.Debug, "[PlayerUpdate] DROPPED - no sendable data", "HandleUpdateObject", "");
 				}
 				if (auraUpdate2.Auras.Count != 0)
 				{

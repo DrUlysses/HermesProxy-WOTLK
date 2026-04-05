@@ -492,6 +492,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		this.SendPacketToServer(packet);
 	}
 
+	[PacketHandler(Opcode.CMSG_BATTLEFIELD_LIST)]
+	private void HandleBattlefieldList(BattlefieldListRequest request)
+	{
+		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_LIST);
+		packet.WriteUInt32((uint)request.ListID);
+		packet.WriteUInt8(0); // fromWhere: 0=battlemaster, 1=UI
+		packet.WriteUInt8(1); // canGainXP
+		this.SendPacketToServer(packet);
+	}
+
 	[PacketHandler(Opcode.CMSG_BATTLEFIELD_LEAVE)]
 	private void HandleBattlefieldLeave(BattlefieldLeave leave)
 	{
@@ -3988,6 +3998,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		castRequest.ClientGUID = use.Cast.CastID;
 		castRequest.ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, this.GetSession().GameState.CurrentMapId.Value, use.Cast.SpellID, 10000 + use.Cast.CastID.GetCounter());
 		castRequest.ItemGUID = use.CastItem;
+		Log.Print(LogType.Debug, $"[UseItem] SpellID={use.Cast.SpellID} PackSlot={use.PackSlot} Slot={use.Slot} ItemGUID={use.CastItem} PendingCast={this.GetSession().GameState.CurrentClientNormalCast != null}", "HandleUseItem", "");
 		if (this.GetSession().GameState.CurrentClientNormalCast != null)
 		{
 			if (this.GetSession().GameState.CurrentClientNormalCast.HasStarted)
@@ -4017,14 +4028,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			WorldPacket packet = new WorldPacket(Opcode.CMSG_USE_ITEM);
 			byte containerSlot = ((use.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.PackSlot) : use.PackSlot);
 			byte slot = ((use.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.Slot) : use.Slot);
-			packet.WriteUInt8(containerSlot);
-			packet.WriteUInt8(slot);
-			packet.WriteUInt8(this.GetSession().GameState.GetItemSpellSlot(use.CastItem, use.Cast.SpellID));
-			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
-			{
-				packet.WriteUInt8(0);
-				packet.WriteGuid(use.CastItem.To64());
-			}
+			packet.WriteUInt8(containerSlot); // bagIndex
+			packet.WriteUInt8(slot); // slot
+			packet.WriteUInt8(this.GetSession().GameState.GetItemSpellSlot(use.CastItem, use.Cast.SpellID)); // castCount
+			packet.WriteUInt32(use.Cast.SpellID); // spellId
+			packet.WriteGuid(use.CastItem.To64()); // itemGUID
+			packet.WriteUInt32(0u); // glyphIndex
+			packet.WriteUInt8(0); // castFlags
 			SpellCastTargetFlags targetFlags = this.ConvertSpellTargetFlags(use.Cast.Target);
 			this.WriteSpellTargets(use.Cast.Target, targetFlags, packet);
 			this.SendPacketToServer(packet);
