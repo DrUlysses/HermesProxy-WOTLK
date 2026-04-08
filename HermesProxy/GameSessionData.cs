@@ -184,6 +184,9 @@ public class GameSessionData
 
 	public HashSet<uint> RequestedItemSparseHotfixes = new HashSet<uint>();
 
+	// Buffer item CreateObjects until their templates arrive via hotfix
+	public Dictionary<uint, List<ObjectUpdate>> PendingItemCreates = new Dictionary<uint, List<ObjectUpdate>>();
+
 	private GameSessionData()
 	{
 	}

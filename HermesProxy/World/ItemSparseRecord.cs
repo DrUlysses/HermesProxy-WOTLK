@@ -24,6 +24,8 @@ public class ItemSparseRecord
 
 	public uint BagFamily;
 
+	public int StartQuestID;
+
 	public float RangeMod;
 
 	public float[] StatPercentageOfSocket = new float[10];
@@ -33,6 +35,8 @@ public class ItemSparseRecord
 	public int Stackable;
 
 	public int MaxCount;
+
+	public int MinReputation;
 
 	public uint RequiredAbility;
 
@@ -49,6 +53,12 @@ public class ItemSparseRecord
 	public uint[] Flags = new uint[4];
 
 	public int OppositeFactionItemId;
+
+	public int ModifiedCraftingReagentItemID;
+
+	public int ContentTuningID;
+
+	public int PlayerLevelToItemLevelCurveID;
 
 	public uint MaxDurability;
 
@@ -102,6 +112,8 @@ public class ItemSparseRecord
 
 	public ushort ScalingStatDistributionId;
 
+	public short[] StatModifierBonusAmount = new short[10];
+
 	public byte ExpansionId = 254;
 
 	public byte ArtifactId;
@@ -139,8 +151,6 @@ public class ItemSparseRecord
 	public byte OverallQualityId;
 
 	public byte AmmoType;
-
-	public sbyte[] StatValue = new sbyte[10];
 
 	public sbyte RequiredLevel;
 }

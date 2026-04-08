@@ -1953,16 +1953,19 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 					reply.Status = HotfixStatus.Valid;
 					GameData.WriteItemHotfix(item, reply.Data);
 				}
-				else if (!this.GetSession().GameState.RequestedItemHotfixes.Contains(id) && this.GetSession().WorldClient != null && this.GetSession().WorldClient.IsConnected())
+				else if (this.GetSession().WorldClient != null && this.GetSession().WorldClient.IsConnected())
 				{
-					this.GetSession().GameState.RequestedItemHotfixes.Add(id);
-					WorldPacket packet2 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
-					packet2.WriteUInt32(id);
-					if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
+					if (!this.GetSession().GameState.RequestedItemHotfixes.Contains(id))
 					{
-						packet2.WriteGuid(WowGuid64.Empty);
+						this.GetSession().GameState.RequestedItemHotfixes.Add(id);
+						WorldPacket packet2 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
+						packet2.WriteUInt32(id);
+						if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
+						{
+							packet2.WriteGuid(WowGuid64.Empty);
+						}
+						this.SendPacketToServer(packet2);
 					}
-					this.SendPacketToServer(packet2);
 					continue;
 				}
 			}
@@ -1974,16 +1977,19 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 					reply.Status = HotfixStatus.Valid;
 					GameData.WriteItemSparseHotfix(item2, reply.Data);
 				}
-				else if (!this.GetSession().GameState.RequestedItemSparseHotfixes.Contains(id) && this.GetSession().WorldClient != null && this.GetSession().WorldClient.IsConnected())
+				else if (this.GetSession().WorldClient != null && this.GetSession().WorldClient.IsConnected())
 				{
-					this.GetSession().GameState.RequestedItemSparseHotfixes.Add(id);
-					WorldPacket packet3 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
-					packet3.WriteUInt32(id);
-					if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
+					if (!this.GetSession().GameState.RequestedItemSparseHotfixes.Contains(id))
 					{
-						packet3.WriteGuid(WowGuid64.Empty);
+						this.GetSession().GameState.RequestedItemSparseHotfixes.Add(id);
+						WorldPacket packet3 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
+						packet3.WriteUInt32(id);
+						if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
+						{
+							packet3.WriteGuid(WowGuid64.Empty);
+						}
+						this.SendPacketToServer(packet3);
 					}
-					this.SendPacketToServer(packet3);
 					continue;
 				}
 			}
@@ -4572,6 +4578,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_IGNORE_TRADE)]
 	private void HandleEmptyTradePacket(EmptyClientPacket trade)
 	{
+		// Only forward if a trade session is active — modern client sends CANCEL_TRADE
+		// on NPC interaction as a safety measure, which spams server errors
+		if (trade.GetUniversalOpcode() == Opcode.CMSG_CANCEL_TRADE && this.GetSession().GameState.CurrentTrade == null)
+			return;
 		WorldPacket packet = new WorldPacket(trade.GetUniversalOpcode());
 		this.SendPacketToServer(packet);
 	}

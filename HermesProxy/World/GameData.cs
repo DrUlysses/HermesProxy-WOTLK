@@ -918,16 +918,16 @@ public static class GameData
 			row.InventoryType = byte.Parse(fields[113]);
 			row.OverallQualityId = byte.Parse(fields[114]);
 			row.AmmoType = byte.Parse(fields[115]);
-			row.StatValue[0] = sbyte.Parse(fields[116]);
-			row.StatValue[1] = sbyte.Parse(fields[117]);
-			row.StatValue[2] = sbyte.Parse(fields[118]);
-			row.StatValue[3] = sbyte.Parse(fields[119]);
-			row.StatValue[4] = sbyte.Parse(fields[120]);
-			row.StatValue[5] = sbyte.Parse(fields[121]);
-			row.StatValue[6] = sbyte.Parse(fields[122]);
-			row.StatValue[7] = sbyte.Parse(fields[123]);
-			row.StatValue[8] = sbyte.Parse(fields[124]);
-			row.StatValue[9] = sbyte.Parse(fields[125]);
+			row.StatModifierBonusAmount[0] = sbyte.Parse(fields[116]);
+			row.StatModifierBonusAmount[1] = sbyte.Parse(fields[117]);
+			row.StatModifierBonusAmount[2] = sbyte.Parse(fields[118]);
+			row.StatModifierBonusAmount[3] = sbyte.Parse(fields[119]);
+			row.StatModifierBonusAmount[4] = sbyte.Parse(fields[120]);
+			row.StatModifierBonusAmount[5] = sbyte.Parse(fields[121]);
+			row.StatModifierBonusAmount[6] = sbyte.Parse(fields[122]);
+			row.StatModifierBonusAmount[7] = sbyte.Parse(fields[123]);
+			row.StatModifierBonusAmount[8] = sbyte.Parse(fields[124]);
+			row.StatModifierBonusAmount[9] = sbyte.Parse(fields[125]);
 			row.RequiredLevel = sbyte.Parse(fields[126]);
 			GameData.ItemSparseRecordsStore.Add((uint)row.Id, row);
 		}
@@ -2309,6 +2309,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt32(durationInInventory);
 			record.HotfixContent.WriteFloat(qualityModifier);
 			record.HotfixContent.WriteUInt32(bagFamily);
+			record.HotfixContent.WriteInt32(0); // StartQuestID
 			record.HotfixContent.WriteFloat(rangeMod);
 			record.HotfixContent.WriteFloat(statPercentageOfSocket1);
 			record.HotfixContent.WriteFloat(statPercentageOfSocket2);
@@ -2332,6 +2333,7 @@ public static class GameData
 			record.HotfixContent.WriteInt32(statPercentEditor10);
 			record.HotfixContent.WriteInt32(stackable);
 			record.HotfixContent.WriteInt32(maxCount);
+			record.HotfixContent.WriteInt32(0); // MinReputation
 			record.HotfixContent.WriteUInt32(requiredAbility);
 			record.HotfixContent.WriteUInt32(sellPrice);
 			record.HotfixContent.WriteUInt32(buyPrice);
@@ -2343,6 +2345,9 @@ public static class GameData
 			record.HotfixContent.WriteInt32(flags3);
 			record.HotfixContent.WriteInt32(flags4);
 			record.HotfixContent.WriteInt32(oppositeFactionItemId);
+			record.HotfixContent.WriteInt32(0); // ModifiedCraftingReagentItemID
+			record.HotfixContent.WriteInt32(0); // ContentTuningID
+			record.HotfixContent.WriteInt32(0); // PlayerLevelToItemLevelCurveID
 			record.HotfixContent.WriteUInt32(maxDurability);
 			record.HotfixContent.WriteUInt16(itemNameDescriptionId);
 			record.HotfixContent.WriteUInt16(requiredTransmogHoliday);
@@ -2356,7 +2361,6 @@ public static class GameData
 			record.HotfixContent.WriteUInt16(zoneBound2);
 			record.HotfixContent.WriteUInt16(itemSet);
 			record.HotfixContent.WriteUInt16(lockId);
-			record.HotfixContent.WriteUInt16(startQuestId);
 			record.HotfixContent.WriteUInt16(pageText);
 			record.HotfixContent.WriteUInt16(delay);
 			record.HotfixContent.WriteUInt16(requiredReputationId);
@@ -2384,6 +2388,17 @@ public static class GameData
 			record.HotfixContent.WriteInt16(shadowResistance);
 			record.HotfixContent.WriteInt16(arcaneResistance);
 			record.HotfixContent.WriteUInt16(scalingStatDistributionId);
+			// StatModifierBonusAmount[10] - use CSV statValue fields as int16
+			record.HotfixContent.WriteInt16(statValue1);
+			record.HotfixContent.WriteInt16(statValue2);
+			record.HotfixContent.WriteInt16(statValue3);
+			record.HotfixContent.WriteInt16(statValue4);
+			record.HotfixContent.WriteInt16(statValue5);
+			record.HotfixContent.WriteInt16(statValue6);
+			record.HotfixContent.WriteInt16(statValue7);
+			record.HotfixContent.WriteInt16(statValue8);
+			record.HotfixContent.WriteInt16(statValue9);
+			record.HotfixContent.WriteInt16(statValue10);
 			record.HotfixContent.WriteUInt8(expansionId);
 			record.HotfixContent.WriteUInt8(artifactId);
 			record.HotfixContent.WriteUInt8(spellWeight);
@@ -2414,16 +2429,6 @@ public static class GameData
 			record.HotfixContent.WriteUInt8(inventoryType);
 			record.HotfixContent.WriteUInt8(overallQualityId);
 			record.HotfixContent.WriteUInt8(ammoType);
-			record.HotfixContent.WriteInt8(statValue1);
-			record.HotfixContent.WriteInt8(statValue2);
-			record.HotfixContent.WriteInt8(statValue3);
-			record.HotfixContent.WriteInt8(statValue4);
-			record.HotfixContent.WriteInt8(statValue5);
-			record.HotfixContent.WriteInt8(statValue6);
-			record.HotfixContent.WriteInt8(statValue7);
-			record.HotfixContent.WriteInt8(statValue8);
-			record.HotfixContent.WriteInt8(statValue9);
-			record.HotfixContent.WriteInt8(statValue10);
 			record.HotfixContent.WriteInt8(requiredLevel);
 			GameData.Hotfixes.Add(record.HotfixId, record);
 		}
@@ -2431,18 +2436,10 @@ public static class GameData
 
 	public static void WriteItemSparseHotfix(ItemTemplate item, ByteBuffer buffer)
 	{
-		int[] StatValues = new int[10];
+		short[] StatValues = new short[10];
 		for (int i = 0; i < item.StatsCount; i++)
 		{
-			StatValues[i] = item.StatValues[i];
-			if (StatValues[i] > 127)
-			{
-				StatValues[i] = 127;
-			}
-			if (StatValues[i] < -127)
-			{
-				StatValues[i] = -127;
-			}
+			StatValues[i] = (short)Math.Clamp(item.StatValues[i], short.MinValue, short.MaxValue);
 		}
 		buffer.WriteInt64(item.AllowedRaces);
 		buffer.WriteCString(item.Description);
@@ -2450,99 +2447,89 @@ public static class GameData
 		buffer.WriteCString(item.Name[2]);
 		buffer.WriteCString(item.Name[1]);
 		buffer.WriteCString(item.Name[0]);
-		buffer.WriteFloat(1f);
-		buffer.WriteUInt32(item.Duration);
-		buffer.WriteFloat(0f);
-		buffer.WriteUInt32(item.BagFamily);
-		buffer.WriteFloat(item.RangedMod);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteFloat(0f);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(item.MaxStackSize);
-		buffer.WriteInt32(item.MaxCount);
-		buffer.WriteUInt32(item.RequiredSpell);
-		buffer.WriteUInt32(item.SellPrice);
-		buffer.WriteUInt32(item.BuyPrice);
-		buffer.WriteUInt32(item.BuyCount);
-		buffer.WriteFloat(1f);
-		buffer.WriteFloat(1f);
-		buffer.WriteUInt32(item.Flags);
-		buffer.WriteUInt32(item.FlagsExtra);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteInt32(0);
-		buffer.WriteUInt32(item.MaxDurability);
-		buffer.WriteUInt16(0);
-		buffer.WriteUInt16(0);
-		buffer.WriteUInt16((ushort)item.HolidayID);
-		buffer.WriteUInt16((ushort)item.ItemLimitCategory);
-		buffer.WriteUInt16((ushort)item.GemProperties);
-		buffer.WriteUInt16((ushort)item.SocketBonus);
-		buffer.WriteUInt16((ushort)item.TotemCategory);
-		buffer.WriteUInt16((ushort)item.MapID);
-		buffer.WriteUInt16((ushort)item.AreaID);
-		buffer.WriteUInt16(0);
-		buffer.WriteUInt16((ushort)item.ItemSet);
-		buffer.WriteUInt16((ushort)item.LockId);
-		buffer.WriteUInt16((ushort)item.StartQuestId);
-		buffer.WriteUInt16((ushort)item.PageText);
-		buffer.WriteUInt16((ushort)item.Delay);
-		buffer.WriteUInt16((ushort)item.RequiredRepFaction);
-		buffer.WriteUInt16((ushort)item.RequiredSkillLevel);
-		buffer.WriteUInt16((ushort)item.RequiredSkillId);
-		buffer.WriteUInt16((ushort)item.ItemLevel);
-		buffer.WriteInt16((short)item.AllowedClasses);
-		buffer.WriteUInt16((ushort)item.RandomSuffix);
-		buffer.WriteUInt16((ushort)item.RandomProperty);
-		buffer.WriteUInt16((ushort)item.DamageMins[0]);
+		buffer.WriteFloat(1f);                              // DmgVariance
+		buffer.WriteUInt32(item.Duration);                  // DurationInInventory
+		buffer.WriteFloat(0f);                              // QualityModifier
+		buffer.WriteUInt32(item.BagFamily);                 // BagFamily
+		buffer.WriteInt32((int)item.StartQuestId);          // StartQuestID
+		buffer.WriteFloat(item.RangedMod);                  // ItemRange
+		for (int i = 0; i < 10; i++)
+			buffer.WriteFloat(0f);                          // StatPercentageOfSocket[10]
+		for (int i = 0; i < 10; i++)
+			buffer.WriteInt32(0);                           // StatPercentEditor[10]
+		buffer.WriteInt32(item.MaxStackSize);               // Stackable
+		buffer.WriteInt32(item.MaxCount);                   // MaxCount
+		buffer.WriteInt32((int)item.RequiredRepValue);      // MinReputation
+		buffer.WriteUInt32(item.RequiredSpell);             // RequiredAbility
+		buffer.WriteUInt32(item.SellPrice);                 // SellPrice
+		buffer.WriteUInt32(item.BuyPrice);                  // BuyPrice
+		buffer.WriteUInt32(item.BuyCount);                  // VendorStackCount
+		buffer.WriteFloat(1f);                              // PriceVariance
+		buffer.WriteFloat(1f);                              // PriceRandomValue
+		buffer.WriteUInt32(item.Flags);                     // Flags[0]
+		buffer.WriteUInt32(item.FlagsExtra);                // Flags[1]
+		buffer.WriteInt32(0);                               // Flags[2]
+		buffer.WriteInt32(0);                               // Flags[3]
+		buffer.WriteInt32(0);                               // FactionRelated (OppositeFactionItemId)
+		buffer.WriteInt32(0);                               // ModifiedCraftingReagentItemID
+		buffer.WriteInt32(0);                               // ContentTuningID
+		buffer.WriteInt32(0);                               // PlayerLevelToItemLevelCurveID
+		buffer.WriteUInt32(item.MaxDurability);             // MaxDurability
+		buffer.WriteUInt16(0);                              // ItemNameDescriptionID
+		buffer.WriteUInt16(0);                              // RequiredTransmogHoliday
+		buffer.WriteUInt16((ushort)item.HolidayID);         // RequiredHoliday
+		buffer.WriteUInt16((ushort)item.ItemLimitCategory); // LimitCategory
+		buffer.WriteUInt16((ushort)item.GemProperties);     // GemProperties
+		buffer.WriteUInt16((ushort)item.SocketBonus);       // SocketMatchEnchantmentId
+		buffer.WriteUInt16((ushort)item.TotemCategory);     // TotemCategoryID
+		buffer.WriteUInt16((ushort)item.MapID);             // InstanceBound
+		buffer.WriteUInt16((ushort)item.AreaID);            // ZoneBound[0]
+		buffer.WriteUInt16(0);                              // ZoneBound[1]
+		buffer.WriteUInt16((ushort)item.ItemSet);           // ItemSet
+		buffer.WriteUInt16((ushort)item.LockId);            // LockID
+		buffer.WriteUInt16((ushort)item.PageText);          // PageID
+		buffer.WriteUInt16((ushort)item.Delay);             // ItemDelay
+		buffer.WriteUInt16((ushort)item.RequiredRepFaction); // MinFactionID
+		buffer.WriteUInt16((ushort)item.RequiredSkillLevel); // RequiredSkillRank
+		buffer.WriteUInt16((ushort)item.RequiredSkillId);   // RequiredSkill
+		buffer.WriteUInt16((ushort)item.ItemLevel);         // ItemLevel
+		buffer.WriteInt16((short)item.AllowedClasses);      // AllowableClass
+		buffer.WriteUInt16((ushort)item.RandomSuffix);      // ItemRandomSuffixGroupID
+		buffer.WriteUInt16((ushort)item.RandomProperty);    // RandomSelect
+		buffer.WriteUInt16((ushort)item.DamageMins[0]);     // MinDamage[0]
 		buffer.WriteUInt16((ushort)item.DamageMins[1]);
 		buffer.WriteUInt16((ushort)item.DamageMins[2]);
 		buffer.WriteUInt16((ushort)item.DamageMins[3]);
 		buffer.WriteUInt16((ushort)item.DamageMins[4]);
-		buffer.WriteUInt16((ushort)item.DamageMaxs[0]);
+		buffer.WriteUInt16((ushort)item.DamageMaxs[0]);     // MaxDamage[0]
 		buffer.WriteUInt16((ushort)item.DamageMaxs[1]);
 		buffer.WriteUInt16((ushort)item.DamageMaxs[2]);
 		buffer.WriteUInt16((ushort)item.DamageMaxs[3]);
 		buffer.WriteUInt16((ushort)item.DamageMaxs[4]);
-		buffer.WriteInt16((short)item.Armor);
-		buffer.WriteInt16((short)item.HolyResistance);
+		buffer.WriteInt16((short)item.Armor);               // Resistances[0]
+		buffer.WriteInt16((short)item.HolyResistance);      // Resistances[1]
 		buffer.WriteInt16((short)item.FireResistance);
 		buffer.WriteInt16((short)item.NatureResistance);
 		buffer.WriteInt16((short)item.FrostResistance);
 		buffer.WriteInt16((short)item.ShadowResistance);
-		buffer.WriteInt16((short)item.ArcaneResistance);
-		buffer.WriteUInt16((ushort)item.ScalingStatDistribution);
-		buffer.WriteUInt8(254);
-		buffer.WriteUInt8(0);
-		buffer.WriteUInt8(0);
-		buffer.WriteUInt8(0);
-		buffer.WriteUInt8((byte)item.ItemSocketColors[0]);
+		buffer.WriteInt16((short)item.ArcaneResistance);    // Resistances[6]
+		buffer.WriteUInt16((ushort)item.ScalingStatDistribution); // ScalingStatDistributionID
+		for (int i = 0; i < 10; i++)
+			buffer.WriteInt16(StatValues[i]);               // StatModifierBonusAmount[10]
+		buffer.WriteUInt8(254);                             // ExpansionID
+		buffer.WriteUInt8(0);                               // ArtifactID
+		buffer.WriteUInt8(0);                               // SpellWeight
+		buffer.WriteUInt8(0);                               // SpellWeightCategory
+		buffer.WriteUInt8((byte)item.ItemSocketColors[0]);  // SocketType[0]
 		buffer.WriteUInt8((byte)item.ItemSocketColors[1]);
 		buffer.WriteUInt8((byte)item.ItemSocketColors[2]);
-		buffer.WriteUInt8((byte)item.SheathType);
-		buffer.WriteUInt8((byte)item.Material);
-		buffer.WriteUInt8((byte)item.PageMaterial);
-		buffer.WriteUInt8((byte)item.Language);
-		buffer.WriteUInt8((byte)item.Bonding);
-		buffer.WriteUInt8((byte)item.DamageTypes[0]);
-		buffer.WriteInt8((sbyte)item.StatTypes[0]);
+		buffer.WriteUInt8((byte)item.SheathType);           // SheatheType
+		buffer.WriteUInt8((byte)item.Material);             // Material
+		buffer.WriteUInt8((byte)item.PageMaterial);         // PageMaterialID
+		buffer.WriteUInt8((byte)item.Language);             // LanguageID
+		buffer.WriteUInt8((byte)item.Bonding);              // Bonding
+		buffer.WriteUInt8((byte)item.DamageTypes[0]);       // DamageDamageType
+		buffer.WriteInt8((sbyte)item.StatTypes[0]);         // StatModifierBonusStat[0]
 		buffer.WriteInt8((sbyte)item.StatTypes[1]);
 		buffer.WriteInt8((sbyte)item.StatTypes[2]);
 		buffer.WriteInt8((sbyte)item.StatTypes[3]);
@@ -2552,41 +2539,18 @@ public static class GameData
 		buffer.WriteInt8((sbyte)item.StatTypes[7]);
 		buffer.WriteInt8((sbyte)item.StatTypes[8]);
 		buffer.WriteInt8((sbyte)item.StatTypes[9]);
-		buffer.WriteUInt8((byte)item.ContainerSlots);
-		buffer.WriteUInt8((byte)item.RequiredRepValue);
-		buffer.WriteUInt8((byte)item.RequiredCityRank);
-		buffer.WriteUInt8((byte)item.RequiredHonorRank);
-		buffer.WriteUInt8((byte)item.InventoryType);
-		buffer.WriteUInt8((byte)item.Quality);
-		buffer.WriteUInt8((byte)item.AmmoType);
-		buffer.WriteInt8((sbyte)StatValues[0]);
-		buffer.WriteInt8((sbyte)StatValues[1]);
-		buffer.WriteInt8((sbyte)StatValues[2]);
-		buffer.WriteInt8((sbyte)StatValues[3]);
-		buffer.WriteInt8((sbyte)StatValues[4]);
-		buffer.WriteInt8((sbyte)StatValues[5]);
-		buffer.WriteInt8((sbyte)StatValues[6]);
-		buffer.WriteInt8((sbyte)StatValues[7]);
-		buffer.WriteInt8((sbyte)StatValues[8]);
-		buffer.WriteInt8((sbyte)StatValues[9]);
-		buffer.WriteInt8((sbyte)item.RequiredLevel);
+		buffer.WriteUInt8((byte)item.ContainerSlots);       // ContainerSlots
+		buffer.WriteUInt8((byte)item.RequiredRepValue);     // RequiredPVPMedal
+		buffer.WriteUInt8((byte)item.RequiredCityRank);     // RequiredPVPRank
+		buffer.WriteUInt8((byte)item.RequiredHonorRank);    // (unused)
+		buffer.WriteInt8((sbyte)item.InventoryType);        // InventoryType
+		buffer.WriteInt8((sbyte)item.Quality);              // OverallQualityID
+		buffer.WriteUInt8((byte)item.AmmoType);             // AmmunitionType
+		buffer.WriteInt8((sbyte)item.RequiredLevel);        // RequiredLevel
 	}
 
 	public static void WriteItemSparseHotfix(ItemSparseRecord row, ByteBuffer buffer)
 	{
-		int[] StatValues = new int[10];
-		for (int i = 0; i < 10; i++)
-		{
-			StatValues[i] = row.StatValue[i];
-			if (StatValues[i] > 127)
-			{
-				StatValues[i] = 127;
-			}
-			if (StatValues[i] < -127)
-			{
-				StatValues[i] = -127;
-			}
-		}
 		buffer.WriteInt64(row.AllowableRace);
 		buffer.WriteCString(row.Description);
 		buffer.WriteCString(row.Name4);
@@ -2597,6 +2561,7 @@ public static class GameData
 		buffer.WriteUInt32(row.DurationInInventory);
 		buffer.WriteFloat(row.QualityModifier);
 		buffer.WriteUInt32(row.BagFamily);
+		buffer.WriteInt32(row.StartQuestID);
 		buffer.WriteFloat(row.RangeMod);
 		buffer.WriteFloat(row.StatPercentageOfSocket[0]);
 		buffer.WriteFloat(row.StatPercentageOfSocket[1]);
@@ -2620,6 +2585,7 @@ public static class GameData
 		buffer.WriteInt32(row.StatPercentEditor[9]);
 		buffer.WriteInt32(row.Stackable);
 		buffer.WriteInt32(row.MaxCount);
+		buffer.WriteInt32(row.MinReputation);
 		buffer.WriteUInt32(row.RequiredAbility);
 		buffer.WriteUInt32(row.SellPrice);
 		buffer.WriteUInt32(row.BuyPrice);
@@ -2631,6 +2597,9 @@ public static class GameData
 		buffer.WriteUInt32(row.Flags[2]);
 		buffer.WriteUInt32(row.Flags[3]);
 		buffer.WriteInt32(row.OppositeFactionItemId);
+		buffer.WriteInt32(row.ModifiedCraftingReagentItemID);
+		buffer.WriteInt32(row.ContentTuningID);
+		buffer.WriteInt32(row.PlayerLevelToItemLevelCurveID);
 		buffer.WriteUInt32(row.MaxDurability);
 		buffer.WriteUInt16(row.ItemNameDescriptionId);
 		buffer.WriteUInt16(row.RequiredTransmogHoliday);
@@ -2644,7 +2613,6 @@ public static class GameData
 		buffer.WriteUInt16(row.ZoneBound[1]);
 		buffer.WriteUInt16(row.ItemSet);
 		buffer.WriteUInt16(row.LockId);
-		buffer.WriteUInt16(row.StartQuestId);
 		buffer.WriteUInt16(row.PageText);
 		buffer.WriteUInt16(row.Delay);
 		buffer.WriteUInt16(row.RequiredReputationId);
@@ -2672,6 +2640,8 @@ public static class GameData
 		buffer.WriteInt16(row.Resistances[5]);
 		buffer.WriteInt16(row.Resistances[6]);
 		buffer.WriteUInt16(row.ScalingStatDistributionId);
+		for (int i = 0; i < 10; i++)
+			buffer.WriteInt16(row.StatModifierBonusAmount[i]);
 		buffer.WriteUInt8(row.ExpansionId);
 		buffer.WriteUInt8(row.ArtifactId);
 		buffer.WriteUInt8(row.SpellWeight);
@@ -2702,16 +2672,6 @@ public static class GameData
 		buffer.WriteUInt8(row.InventoryType);
 		buffer.WriteUInt8(row.OverallQualityId);
 		buffer.WriteUInt8(row.AmmoType);
-		buffer.WriteInt8((sbyte)StatValues[0]);
-		buffer.WriteInt8((sbyte)StatValues[1]);
-		buffer.WriteInt8((sbyte)StatValues[2]);
-		buffer.WriteInt8((sbyte)StatValues[3]);
-		buffer.WriteInt8((sbyte)StatValues[4]);
-		buffer.WriteInt8((sbyte)StatValues[5]);
-		buffer.WriteInt8((sbyte)StatValues[6]);
-		buffer.WriteInt8((sbyte)StatValues[7]);
-		buffer.WriteInt8((sbyte)StatValues[8]);
-		buffer.WriteInt8((sbyte)StatValues[9]);
 		buffer.WriteInt8(row.RequiredLevel);
 	}
 
@@ -3109,7 +3069,7 @@ public static class GameData
 		GameData.ItemSparseRecordsStore.TryGetValue(item.Entry, out var row);
 		if (row != null)
 		{
-			if (!row.Description.Equals(item.Description) || !row.Name4.Equals(item.Name[3]) || !row.Name3.Equals(item.Name[2]) || !row.Name2.Equals(item.Name[1]) || !row.Name1.Equals(item.Name[0]) || row.DurationInInventory != item.Duration || row.BagFamily != item.BagFamily || row.RangeMod != item.RangedMod || row.RequiredAbility != item.RequiredSpell || row.SellPrice != item.SellPrice || row.BuyPrice != item.BuyPrice || row.MaxDurability != item.MaxDurability || row.RequiredHoliday != (ushort)item.HolidayID || row.LimitCategory != (ushort)item.ItemLimitCategory || row.GemProperties != (ushort)item.GemProperties || row.SocketMatchEnchantmentId != (ushort)item.SocketBonus || row.TotemCategoryId != (ushort)item.TotemCategory || row.InstanceBound != (ushort)item.MapID || row.ZoneBound[0] != (ushort)item.AreaID || row.ItemSet != (ushort)item.ItemSet || row.LockId != (ushort)item.LockId || row.StartQuestId != (ushort)item.StartQuestId || row.PageText != (ushort)item.PageText || row.Delay != (ushort)item.Delay || row.RequiredReputationId != (ushort)item.RequiredRepFaction || row.RequiredSkillRank != (ushort)item.RequiredSkillLevel || row.RequiredSkill != (ushort)item.RequiredSkillId || row.ItemLevel != (ushort)item.ItemLevel || row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix || row.RandomProperty != (ushort)item.RandomProperty || row.Resistances[1] != (short)item.HolyResistance || row.Resistances[2] != (short)item.FireResistance || row.Resistances[3] != (short)item.NatureResistance || row.Resistances[4] != (short)item.FrostResistance || row.Resistances[5] != (short)item.ShadowResistance || row.Resistances[6] != (short)item.ArcaneResistance || row.ScalingStatDistributionId != (ushort)item.ScalingStatDistribution || row.SocketType[0] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[0]) || row.SocketType[1] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[1]) || row.SocketType[2] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[2]) || row.SheatheType != (byte)item.SheathType || row.Material != (byte)item.Material || row.PageMaterial != (byte)item.PageMaterial || row.PageLanguage != (byte)item.Language || row.Bonding != (byte)item.Bonding || row.DamageType != (byte)item.DamageTypes[0] || (row.StatType[0] != (sbyte)item.StatTypes[0] && (row.StatValue[0] != 0 || item.StatValues[0] != 0)) || (row.StatType[1] != (sbyte)item.StatTypes[1] && (row.StatValue[1] != 0 || item.StatValues[1] != 0)) || (row.StatType[2] != (sbyte)item.StatTypes[2] && (row.StatValue[2] != 0 || item.StatValues[2] != 0)) || (row.StatType[3] != (sbyte)item.StatTypes[3] && (row.StatValue[3] != 0 || item.StatValues[3] != 0)) || (row.StatType[4] != (sbyte)item.StatTypes[4] && (row.StatValue[4] != 0 || item.StatValues[4] != 0)) || (row.StatType[5] != (sbyte)item.StatTypes[5] && (row.StatValue[5] != 0 || item.StatValues[5] != 0)) || (row.StatType[6] != (sbyte)item.StatTypes[6] && (row.StatValue[6] != 0 || item.StatValues[6] != 0)) || (row.StatType[7] != (sbyte)item.StatTypes[7] && (row.StatValue[7] != 0 || item.StatValues[7] != 0)) || (row.StatType[8] != (sbyte)item.StatTypes[8] && (row.StatValue[8] != 0 || item.StatValues[8] != 0)) || (row.StatType[9] != (sbyte)item.StatTypes[9] && (row.StatValue[9] != 0 || item.StatValues[9] != 0)) || row.ContainerSlots != (byte)item.ContainerSlots || row.RequiredReputationRank != (byte)item.RequiredRepValue || row.RequiredCityRank != (byte)item.RequiredCityRank || row.RequiredHonorRank != (byte)item.RequiredHonorRank || row.InventoryType != (byte)item.InventoryType || row.OverallQualityId != (byte)item.Quality || row.AmmoType != (byte)item.AmmoType || row.StatValue[0] != (sbyte)item.StatValues[0] || row.StatValue[1] != (sbyte)item.StatValues[1] || row.StatValue[2] != (sbyte)item.StatValues[2] || row.StatValue[3] != (sbyte)item.StatValues[3] || row.StatValue[4] != (sbyte)item.StatValues[4] || row.StatValue[5] != (sbyte)item.StatValues[5] || row.StatValue[6] != (sbyte)item.StatValues[6] || row.StatValue[7] != (sbyte)item.StatValues[7] || row.StatValue[8] != (sbyte)item.StatValues[8] || row.StatValue[9] != (sbyte)item.StatValues[9] || row.RequiredLevel != (sbyte)item.RequiredLevel)
+			if (!row.Description.Equals(item.Description) || !row.Name4.Equals(item.Name[3]) || !row.Name3.Equals(item.Name[2]) || !row.Name2.Equals(item.Name[1]) || !row.Name1.Equals(item.Name[0]) || row.DurationInInventory != item.Duration || row.BagFamily != item.BagFamily || row.RangeMod != item.RangedMod || row.RequiredAbility != item.RequiredSpell || row.SellPrice != item.SellPrice || row.BuyPrice != item.BuyPrice || row.MaxDurability != item.MaxDurability || row.RequiredHoliday != (ushort)item.HolidayID || row.LimitCategory != (ushort)item.ItemLimitCategory || row.GemProperties != (ushort)item.GemProperties || row.SocketMatchEnchantmentId != (ushort)item.SocketBonus || row.TotemCategoryId != (ushort)item.TotemCategory || row.InstanceBound != (ushort)item.MapID || row.ZoneBound[0] != (ushort)item.AreaID || row.ItemSet != (ushort)item.ItemSet || row.LockId != (ushort)item.LockId || row.StartQuestId != (ushort)item.StartQuestId || row.PageText != (ushort)item.PageText || row.Delay != (ushort)item.Delay || row.RequiredReputationId != (ushort)item.RequiredRepFaction || row.RequiredSkillRank != (ushort)item.RequiredSkillLevel || row.RequiredSkill != (ushort)item.RequiredSkillId || row.ItemLevel != (ushort)item.ItemLevel || row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix || row.RandomProperty != (ushort)item.RandomProperty || row.Resistances[1] != (short)item.HolyResistance || row.Resistances[2] != (short)item.FireResistance || row.Resistances[3] != (short)item.NatureResistance || row.Resistances[4] != (short)item.FrostResistance || row.Resistances[5] != (short)item.ShadowResistance || row.Resistances[6] != (short)item.ArcaneResistance || row.ScalingStatDistributionId != (ushort)item.ScalingStatDistribution || row.SocketType[0] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[0]) || row.SocketType[1] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[1]) || row.SocketType[2] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[2]) || row.SheatheType != (byte)item.SheathType || row.Material != (byte)item.Material || row.PageMaterial != (byte)item.PageMaterial || row.PageLanguage != (byte)item.Language || row.Bonding != (byte)item.Bonding || row.DamageType != (byte)item.DamageTypes[0] || (row.StatType[0] != (sbyte)item.StatTypes[0] && (row.StatModifierBonusAmount[0] != 0 || item.StatValues[0] != 0)) || (row.StatType[1] != (sbyte)item.StatTypes[1] && (row.StatModifierBonusAmount[1] != 0 || item.StatValues[1] != 0)) || (row.StatType[2] != (sbyte)item.StatTypes[2] && (row.StatModifierBonusAmount[2] != 0 || item.StatValues[2] != 0)) || (row.StatType[3] != (sbyte)item.StatTypes[3] && (row.StatModifierBonusAmount[3] != 0 || item.StatValues[3] != 0)) || (row.StatType[4] != (sbyte)item.StatTypes[4] && (row.StatModifierBonusAmount[4] != 0 || item.StatValues[4] != 0)) || (row.StatType[5] != (sbyte)item.StatTypes[5] && (row.StatModifierBonusAmount[5] != 0 || item.StatValues[5] != 0)) || (row.StatType[6] != (sbyte)item.StatTypes[6] && (row.StatModifierBonusAmount[6] != 0 || item.StatValues[6] != 0)) || (row.StatType[7] != (sbyte)item.StatTypes[7] && (row.StatModifierBonusAmount[7] != 0 || item.StatValues[7] != 0)) || (row.StatType[8] != (sbyte)item.StatTypes[8] && (row.StatModifierBonusAmount[8] != 0 || item.StatValues[8] != 0)) || (row.StatType[9] != (sbyte)item.StatTypes[9] && (row.StatModifierBonusAmount[9] != 0 || item.StatValues[9] != 0)) || row.ContainerSlots != (byte)item.ContainerSlots || row.RequiredReputationRank != (byte)item.RequiredRepValue || row.RequiredCityRank != (byte)item.RequiredCityRank || row.RequiredHonorRank != (byte)item.RequiredHonorRank || row.InventoryType != (byte)item.InventoryType || row.OverallQualityId != (byte)item.Quality || row.AmmoType != (byte)item.AmmoType || row.StatModifierBonusAmount[0] != (sbyte)item.StatValues[0] || row.StatModifierBonusAmount[1] != (sbyte)item.StatValues[1] || row.StatModifierBonusAmount[2] != (sbyte)item.StatValues[2] || row.StatModifierBonusAmount[3] != (sbyte)item.StatValues[3] || row.StatModifierBonusAmount[4] != (sbyte)item.StatValues[4] || row.StatModifierBonusAmount[5] != (sbyte)item.StatValues[5] || row.StatModifierBonusAmount[6] != (sbyte)item.StatValues[6] || row.StatModifierBonusAmount[7] != (sbyte)item.StatValues[7] || row.StatModifierBonusAmount[8] != (sbyte)item.StatValues[8] || row.StatModifierBonusAmount[9] != (sbyte)item.StatValues[9] || row.RequiredLevel != (sbyte)item.RequiredLevel)
 			{
 				Log.Print(LogType.Storage, $"ItemSparse #{item.Entry} needs to be updated.", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
 				if (!row.Description.Equals(item.Description))
@@ -3293,7 +3253,7 @@ public static class GameData
 				}
 				for (int j = 0; j < 10; j++)
 				{
-					if (row.StatType[j] != (sbyte)item.StatTypes[j] && (row.StatValue[j] != 0 || item.StatValues[j] != 0))
+					if (row.StatType[j] != (sbyte)item.StatTypes[j] && (row.StatModifierBonusAmount[j] != 0 || item.StatValues[j] != 0))
 					{
 						Log.Print(LogType.Storage, $"StatType[{j}] {row.StatType[j]} vs {item.StatTypes[j]}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
 					}
@@ -3328,9 +3288,9 @@ public static class GameData
 				}
 				for (int k = 0; k < 10; k++)
 				{
-					if (row.StatValue[0] != (sbyte)item.StatValues[0])
+					if (row.StatModifierBonusAmount[0] != (sbyte)item.StatValues[0])
 					{
-						Log.Print(LogType.Storage, $"StatValue[{k}] {row.StatValue[k]} vs {item.StatValues[k]}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"StatValue[{k}] {row.StatModifierBonusAmount[k]} vs {item.StatValues[k]}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
 					}
 				}
 				if (row.RequiredLevel != (sbyte)item.RequiredLevel)
@@ -3593,19 +3553,6 @@ public static class GameData
 
 	public static void UpdateItemSparseRecord(ItemSparseRecord row, ItemTemplate item)
 	{
-		int[] StatValues = new int[10];
-		for (int i = 0; i < item.StatsCount; i++)
-		{
-			StatValues[i] = item.StatValues[i];
-			if (StatValues[i] > 127)
-			{
-				StatValues[i] = 127;
-			}
-			if (StatValues[i] < -127)
-			{
-				StatValues[i] = -127;
-			}
-		}
 		row.AllowableRace = item.AllowedRaces;
 		row.Description = item.Description;
 		row.Name4 = item.Name[3];
@@ -3614,9 +3561,11 @@ public static class GameData
 		row.Name1 = item.Name[0];
 		row.DurationInInventory = item.Duration;
 		row.BagFamily = item.BagFamily;
+		row.StartQuestID = (int)item.StartQuestId;
 		row.RangeMod = item.RangedMod;
 		row.Stackable = item.MaxStackSize;
 		row.MaxCount = item.MaxCount;
+		row.MinReputation = (int)item.RequiredRepValue;
 		row.RequiredAbility = item.RequiredSpell;
 		row.SellPrice = item.SellPrice;
 		row.BuyPrice = item.BuyPrice;
@@ -3686,16 +3635,8 @@ public static class GameData
 		row.InventoryType = (byte)item.InventoryType;
 		row.OverallQualityId = (byte)item.Quality;
 		row.AmmoType = (byte)item.AmmoType;
-		row.StatValue[0] = (sbyte)StatValues[0];
-		row.StatValue[1] = (sbyte)StatValues[1];
-		row.StatValue[2] = (sbyte)StatValues[2];
-		row.StatValue[3] = (sbyte)StatValues[3];
-		row.StatValue[4] = (sbyte)StatValues[4];
-		row.StatValue[5] = (sbyte)StatValues[5];
-		row.StatValue[6] = (sbyte)StatValues[6];
-		row.StatValue[7] = (sbyte)StatValues[7];
-		row.StatValue[8] = (sbyte)StatValues[8];
-		row.StatValue[9] = (sbyte)StatValues[9];
+		for (int i = 0; i < item.StatsCount && i < 10; i++)
+			row.StatModifierBonusAmount[i] = (short)Math.Clamp(item.StatValues[i], short.MinValue, short.MaxValue);
 		row.RequiredLevel = (sbyte)item.RequiredLevel;
 		if (GameData.ItemSparseRecordsStore.ContainsKey(item.Entry))
 		{

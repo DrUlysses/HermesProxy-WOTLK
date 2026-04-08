@@ -1688,9 +1688,12 @@ public class ObjectUpdateBuilder
 		// QuestLog[25] - gated by PartyMember flag (0x02) in TC343
 		if (this.IsOwner)
 		{
+			int questCount = 0;
 			for (int q = 0; q < 25; q++)
 			{
 				QuestLog quest = (player.QuestLog != null && q < player.QuestLog.Length) ? player.QuestLog[q] : null;
+				if (quest != null && quest.QuestID.HasValue && quest.QuestID.Value != 0)
+					questCount++;
 				data.WriteInt64(quest?.EndTime ?? 0);
 				data.WriteInt32(quest?.QuestID ?? 0);
 				data.WriteUInt32(quest?.StateFlags ?? 0);
@@ -1698,6 +1701,17 @@ public class ObjectUpdateBuilder
 				{
 					data.WriteUInt16((ushort)(quest?.ObjectiveProgress[obj] ?? 0));
 				}
+			}
+			if (questCount > 0)
+			{
+				string questSlots = "";
+				for (int qi = 0; qi < 25; qi++)
+				{
+					QuestLog qe = (player.QuestLog != null && qi < player.QuestLog.Length) ? player.QuestLog[qi] : null;
+					if (qe != null && qe.QuestID.HasValue && qe.QuestID.Value != 0)
+						questSlots += $" slot{qi}=QID:{qe.QuestID.Value}";
+				}
+				Log.Print(LogType.Debug, $"[QuestLogCreate] Writing {questCount} quests:{questSlots}", "WriteCreatePlayerData", "");
 			}
 		}
 		for (int j = 0; j < 19; j++)

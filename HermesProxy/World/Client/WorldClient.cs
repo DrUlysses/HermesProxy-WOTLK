@@ -4439,6 +4439,17 @@ public class WorldClient
 		item.Slot = packet.ReadUInt8();
 		item.SlotInBag = packet.ReadInt32();
 		item.Item.ItemID = packet.ReadUInt32();
+		// Pre-query this item's template if not cached, so hotfix is ready before client requests it
+		if (!GameData.ItemTemplates.ContainsKey(item.Item.ItemID))
+		{
+			WorldPacket queryPacket = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
+			queryPacket.WriteUInt32(item.Item.ItemID);
+			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
+			{
+				queryPacket.WriteGuid(WowGuid64.Empty);
+			}
+			this.SendPacketToServer(queryPacket);
+		}
 		item.Item.RandomPropertiesSeed = packet.ReadUInt32();
 		item.Item.RandomPropertiesID = packet.ReadUInt32();
 		item.Quantity = packet.ReadUInt32();
@@ -7176,24 +7187,12 @@ public class WorldClient
 		KeyValuePair<int, bool> entry = packet.ReadEntry();
 		if (entry.Value)
 		{
-			if (this.GetSession().GameState.RequestedItemHotfixes.Contains((uint)entry.Key))
-			{
-				DBReply reply = new DBReply();
-				reply.RecordID = (uint)entry.Key;
-				reply.TableHash = DB2Hash.Item;
-				reply.Status = HotfixStatus.Invalid;
-				reply.Timestamp = (uint)Time.UnixTime;
-				this.SendPacketToClient(reply);
-			}
-			if (this.GetSession().GameState.RequestedItemSparseHotfixes.Contains((uint)entry.Key))
-			{
-				DBReply reply2 = new DBReply();
-				reply2.RecordID = (uint)entry.Key;
-				reply2.TableHash = DB2Hash.ItemSparse;
-				reply2.Status = HotfixStatus.Invalid;
-				reply2.Timestamp = (uint)Time.UnixTime;
-				this.SendPacketToClient(reply2);
-			}
+			// Server doesn't have this item - remove from requested sets but do NOT send
+			// Invalid DBReply, as that would poison the client's hotfix cache before a
+			// valid hotfix can arrive from a different query
+			this.GetSession().GameState.RequestedItemHotfixes.Remove((uint)entry.Key);
+			this.GetSession().GameState.RequestedItemSparseHotfixes.Remove((uint)entry.Key);
+			Log.Print(LogType.Debug, $"Item #{entry.Key} not found on legacy server, skipping Invalid DBReply.", "HandleItemQueryResponse", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\QueryHandler.cs");
 		}
 		else
 		{
@@ -7201,6 +7200,23 @@ public class WorldClient
 			item.ReadFromLegacyPacket((uint)entry.Key, packet);
 			this.SendItemUpdatesIfNeeded(item);
 			GameData.StoreItemTemplate((uint)entry.Key, item);
+
+			// Flush any buffered item CreateObjects that were waiting for this template
+			uint itemEntryKey = (uint)entry.Key;
+			if (this.GetSession().GameState.PendingItemCreates.TryGetValue(itemEntryKey, out var pendingUpdates))
+			{
+				this.GetSession().GameState.PendingItemCreates.Remove(itemEntryKey);
+				UpdateObject updateObject = new UpdateObject(this.GetSession().GameState);
+				foreach (var pending in pendingUpdates)
+				{
+					updateObject.ObjectUpdates.Add(pending);
+					Log.Print(LogType.Debug, $"Flushing buffered item CreateObject {pending.Guid} entry={itemEntryKey} after template arrived.", "HandleItemQueryResponse", "");
+				}
+				if (updateObject.ObjectUpdates.Count > 0)
+				{
+					this.SendPacketToClient(updateObject);
+				}
+			}
 		}
 	}
 
@@ -7624,6 +7640,17 @@ public class WorldClient
 			};
 		}
 		this.ReadExtraQuestInfo(packet, quest.QuestData.Rewards, readFlags: true);
+		// Cache quest template for reward selection (HandleQuestGiverChooseReward needs it)
+		if (GameData.GetQuestTemplate(quest.QuestData.QuestID) == null)
+		{
+			QuestTemplate cached = new QuestTemplate();
+			for (int ci = 0; ci < quest.QuestData.Rewards.ChoiceItemCount && ci < 6; ci++)
+			{
+				cached.UnfilteredChoiceItems[ci].ItemID = quest.QuestData.Rewards.ChoiceItems[ci].Item.ItemID;
+				cached.UnfilteredChoiceItems[ci].Quantity = quest.QuestData.Rewards.ChoiceItems[ci].Quantity;
+			}
+			GameData.StoreQuestTemplate(quest.QuestData.QuestID, cached);
+		}
 		this.SendPacketToClient(quest);
 	}
 
@@ -9622,9 +9649,15 @@ public class WorldClient
 				}
 				if (guid4.IsItem() && updateData4.ObjectData.EntryID.HasValue && !GameData.ItemTemplates.ContainsKey((uint)updateData4.ObjectData.EntryID.Value))
 				{
-					missingItemTemplates.Add((uint)updateData4.ObjectData.EntryID.Value);
+					uint entryId4 = (uint)updateData4.ObjectData.EntryID.Value;
+					missingItemTemplates.Add(entryId4);
+					// Buffer this item create until its template arrives via hotfix
+					if (!this.GetSession().GameState.PendingItemCreates.ContainsKey(entryId4))
+						this.GetSession().GameState.PendingItemCreates[entryId4] = new List<ObjectUpdate>();
+					this.GetSession().GameState.PendingItemCreates[entryId4].Add(updateData4);
+					Log.Print(LogType.Debug, $"Buffering item CreateObject {guid4} entry={entryId4} until template arrives.", "HandleUpdateObject", "");
 				}
-				if (updateData4.CreateData.MoveInfo != null || !guid4.IsWorldObject())
+				else if (updateData4.CreateData.MoveInfo != null || !guid4.IsWorldObject())
 				{
 					updateObject.ObjectUpdates.Add(updateData4);
 					if (auraUpdate3.Auras.Count != 0)
@@ -9657,9 +9690,15 @@ public class WorldClient
 				this.ReadCreateObjectBlock(packet, guid, updateData, auraUpdate, i);
 				if (guid.IsItem() && updateData.ObjectData.EntryID.HasValue && !GameData.ItemTemplates.ContainsKey((uint)updateData.ObjectData.EntryID.Value))
 				{
-					missingItemTemplates.Add((uint)updateData.ObjectData.EntryID.Value);
+					uint entryId2 = (uint)updateData.ObjectData.EntryID.Value;
+					missingItemTemplates.Add(entryId2);
+					// Buffer this item create until its template arrives via hotfix
+					if (!this.GetSession().GameState.PendingItemCreates.ContainsKey(entryId2))
+						this.GetSession().GameState.PendingItemCreates[entryId2] = new List<ObjectUpdate>();
+					this.GetSession().GameState.PendingItemCreates[entryId2].Add(updateData);
+					Log.Print(LogType.Debug, $"Buffering item CreateObject {guid} entry={entryId2} until template arrives.", "HandleUpdateObject", "");
 				}
-				if (updateData.CreateData.MoveInfo != null || !guid.IsWorldObject())
+				else if (updateData.CreateData.MoveInfo != null || !guid.IsWorldObject())
 				{
 					updateObject.ObjectUpdates.Add(updateData);
 					if (auraUpdate.Auras.Count != 0)
@@ -10515,10 +10554,12 @@ public class WorldClient
 	public QuestLog ReadQuestLogEntry(int i, BitArray updateMaskArray, Dictionary<int, UpdateField> updates)
 	{
 		int PLAYER_QUEST_LOG_1_1 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_QUEST_LOG_1_1);
-		int sizePerEntry = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 4 : 3);
+		// 3.3.5a quest log: 5 fields per entry (QuestID, StateFlags, Progress, [gap], Timer)
+		// Fields: _1=QuestID(+0), _2=StateFlags(+1), _3=Progress(+2), skip(+3), _4/_5=Timer(+4)
+		int sizePerEntry = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 5 : 3);
 		int stateOffset = 1;
 		int progressOffset = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 2 : (-1));
-		int timerOffset = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 3 : 2);
+		int timerOffset = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 4 : 2);
 		QuestLog questLog = null;
 		int index = PLAYER_QUEST_LOG_1_1 + i * sizePerEntry;
 		if ((updateMaskArray != null && updateMaskArray[index]) || (updateMaskArray == null && updates.ContainsKey(index)))
@@ -10528,6 +10569,9 @@ public class WorldClient
 				questLog = new QuestLog();
 			}
 			questLog.QuestID = updates[index].Int32Value;
+			// Cache the QuestID for this slot
+			this.GetSession().GameState.QuestLogQuestIDs[i] = questLog.QuestID.Value;
+			Log.Print(LogType.Debug, $"[QuestLogRead] slot={i} QuestID={questLog.QuestID.Value} fieldIndex={index}", "ReadQuestLogEntry", "");
 		}
 		if ((updateMaskArray != null && updateMaskArray[index + stateOffset]) || (updateMaskArray == null && updates.ContainsKey(index + stateOffset)))
 		{
@@ -10567,6 +10611,21 @@ public class WorldClient
 				questLog = new QuestLog();
 			}
 			questLog.EndTime = updates[index + timerOffset].UInt32Value;
+		}
+		// If we have quest data (StateFlags/Progress) but no QuestID in this update,
+		// fill QuestID from the cache (set during CreateObject or earlier Values update)
+		if (questLog != null && !questLog.QuestID.HasValue)
+		{
+			int cachedId = this.GetSession().GameState.QuestLogQuestIDs[i];
+			if (cachedId != 0)
+			{
+				questLog.QuestID = cachedId;
+			}
+		}
+		// If QuestID was explicitly set to 0, clear the cache (quest abandoned/completed)
+		if (questLog != null && questLog.QuestID.HasValue && questLog.QuestID.Value == 0)
+		{
+			this.GetSession().GameState.QuestLogQuestIDs[i] = 0;
 		}
 		return questLog;
 	}
