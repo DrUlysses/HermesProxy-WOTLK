@@ -76,7 +76,7 @@ namespace Framework.Logging
         {
             try
             {
-                _logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+                _logDir = Path.Combine(Directory.GetCurrentDirectory(), "logs");
                 Directory.CreateDirectory(_logDir);
                 string logFile = Path.Combine(_logDir, $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
                 _logWriter = new StreamWriter(logFile, append: true, encoding: Encoding.UTF8) { AutoFlush = true };
