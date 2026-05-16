@@ -26,15 +26,15 @@ internal class Server
 
 	public static void ServerMain(CommandLineArguments args)
 	{
-		Log.Print(LogType.Server, "Starting Hermes Proxy...", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
-		Log.Print(LogType.Server, "Version " + Server.GetVersionInformation(), "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+		Log.Print(LogType.Server, "Starting Hermes Proxy...", "ServerMain", "Server.cs");
+		Log.Print(LogType.Server, "Version " + Server.GetVersionInformation(), "ServerMain", "Server.cs");
 		Log.Start();
 		if (Environment.CurrentDirectory != Path.GetDirectoryName(AppContext.BaseDirectory))
 		{
-			Log.Print(LogType.Storage, "Switching working directory", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
-			Log.Print(LogType.Storage, "Old: " + Environment.CurrentDirectory, "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+			Log.Print(LogType.Storage, "Switching working directory", "ServerMain", "Server.cs");
+			Log.Print(LogType.Storage, "Old: " + Environment.CurrentDirectory, "ServerMain", "Server.cs");
 			Environment.CurrentDirectory = Path.GetDirectoryName(AppContext.BaseDirectory);
-			Log.Print(LogType.Storage, "New: " + Environment.CurrentDirectory, "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+			Log.Print(LogType.Storage, "New: " + Environment.CurrentDirectory, "ServerMain", "Server.cs");
 			Thread.Sleep(TimeSpan.FromSeconds(1.0));
 		}
 		ConfigurationParser config;
@@ -44,36 +44,36 @@ internal class Server
 		}
 		catch (FileNotFoundException)
 		{
-			Log.Print(LogType.Error, "Config loading failed", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+			Log.Print(LogType.Error, "Config loading failed", "ServerMain", "Server.cs");
 			return;
 		}
 		if (!Settings.LoadAndVerifyFrom(config))
 		{
-			Log.Print(LogType.Error, "The verification of the config failed", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+			Log.Print(LogType.Error, "The verification of the config failed", "ServerMain", "Server.cs");
 			return;
 		}
 		Log.DebugLogEnabled = Settings.DebugOutput;
-		Log.Print(LogType.Debug, "Debug logging enabled", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+		Log.Print(LogType.Debug, "Debug logging enabled", "ServerMain", "Server.cs");
 		if (!AesGcm.IsSupported)
 		{
-			Log.Print(LogType.Error, "AesGcm is not supported on your platform", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+			Log.Print(LogType.Error, "AesGcm is not supported on your platform", "ServerMain", "Server.cs");
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 			{
-				Log.Print(LogType.Error, "Since you are on MacOS, you can install openssl@3 via homebrew", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
-				Log.Print(LogType.Error, "Run this:      brew install openssl@3", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
-				Log.Print(LogType.Error, "Start Hermes:  DYLD_LIBRARY_PATH=/opt/homebrew/opt/openssl@3/lib ./HermesProxy", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+				Log.Print(LogType.Error, "Since you are on MacOS, you can install openssl@3 via homebrew", "ServerMain", "Server.cs");
+				Log.Print(LogType.Error, "Run this:      brew install openssl@3", "ServerMain", "Server.cs");
+				Log.Print(LogType.Error, "Start Hermes:  DYLD_LIBRARY_PATH=/opt/homebrew/opt/openssl@3/lib ./HermesProxy", "ServerMain", "Server.cs");
 			}
 			return;
 		}
-		Log.Print(LogType.Server, $"Modern (Client) Build: {Settings.ClientBuild}", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
-		Log.Print(LogType.Server, $"Legacy (Server) Build: {Settings.ServerBuild}", "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+		Log.Print(LogType.Server, $"Modern (Client) Build: {Settings.ClientBuild}", "ServerMain", "Server.cs");
+		Log.Print(LogType.Server, $"Legacy (Server) Build: {Settings.ServerBuild}", "ServerMain", "Server.cs");
 		GameData.LoadEverything();
 		IPAddress bindIp = NetworkUtils.ResolveOrDirectIPv64(Settings.ExternalAddress);
 		if (!IPAddress.IsLoopback(bindIp))
 		{
 			bindIp = IPAddress.Any;
 		}
-		Log.Print(LogType.Network, "External IP: " + Settings.ExternalAddress, "ServerMain", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+		Log.Print(LogType.Network, "External IP: " + Settings.ExternalAddress, "ServerMain", "Server.cs");
 		Singleton<LoginServiceManager>.Instance.Initialize();
 		SocketManager<BnetTcpSession> bnetSocketServer = Server.StartServer<BnetTcpSession>(new IPEndPoint(bindIp, Settings.BNetPort));
 		SocketManager<BnetRestApiSession> restSocketServer = Server.StartServer<BnetRestApiSession>(new IPEndPoint(bindIp, Settings.RestPort));
@@ -92,7 +92,7 @@ internal class Server
 	private static SocketManager<TSocketType> StartServer<TSocketType>(IPEndPoint bindIp) where TSocketType : ISocket
 	{
 		SocketManager<TSocketType> socketManager = new SocketManager<TSocketType>();
-		Log.Print(LogType.Server, $"Starting {typeof(TSocketType).Name} service on {bindIp}...", "StartServer", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Server.cs");
+		Log.Print(LogType.Server, $"Starting {typeof(TSocketType).Name} service on {bindIp}...", "StartServer", "Server.cs");
 		if (!socketManager.StartNetwork(bindIp.Address.ToString(), bindIp.Port))
 		{
 			throw new Exception("Failed to start " + typeof(TSocketType).Name + " service");

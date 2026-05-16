@@ -46,11 +46,11 @@ public static class ModernVersion
 		ModernVersion.UpdateFieldNameDictionary = new Dictionary<Type, Dictionary<string, int>>();
 		if (!ModernVersion.LoadUFDictionariesInto(ModernVersion.UpdateFieldDictionary, ModernVersion.UpdateFieldNameDictionary))
 		{
-			Log.Print(LogType.Error, "Could not load update fields for current modern version.", ".cctor", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+			Log.Print(LogType.Error, "Could not load update fields for current modern version.", ".cctor", "VersionChecker.cs");
 		}
 		if (!ModernVersion.LoadOpcodeDictionaries())
 		{
-			Log.Print(LogType.Error, "Could not load opcodes for current modern version.", ".cctor", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+			Log.Print(LogType.Error, "Could not load opcodes for current modern version.", ".cctor", "VersionChecker.cs");
 		}
 	}
 
@@ -72,7 +72,7 @@ public static class ModernVersion
 			HermesProxy.World.Enums.Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
 			if (universalOpcode == HermesProxy.World.Enums.Opcode.UNKNOWN_SMSG && oldOpcodeName != "MSG_NULL_ACTION")
 			{
-				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "LoadOpcodeDictionaries", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "LoadOpcodeDictionaries", "VersionChecker.cs");
 				continue;
 			}
 			if (!ModernVersion.CurrentToUniversalOpcodeDictionary.ContainsKey(opcodeValue))
@@ -88,7 +88,7 @@ public static class ModernVersion
 		{
 			return false;
 		}
-		Log.Print(LogType.Server, $"Loaded {ModernVersion.CurrentToUniversalOpcodeDictionary.Count} modern opcodes ({ModernVersion.UniversalToCurrentOpcodeDictionary.Count} universal mappings).", "LoadOpcodeDictionaries", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+		Log.Print(LogType.Server, $"Loaded {ModernVersion.CurrentToUniversalOpcodeDictionary.Count} modern opcodes ({ModernVersion.UniversalToCurrentOpcodeDictionary.Count} universal mappings).", "LoadOpcodeDictionaries", "VersionChecker.cs");
 		return true;
 	}
 

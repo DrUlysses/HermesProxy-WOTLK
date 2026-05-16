@@ -641,7 +641,7 @@ public static class GameData
 
 	public static void LoadEverything()
 	{
-		Log.Print(LogType.Storage, "Loading data files...", "LoadEverything", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, "Loading data files...", "LoadEverything", "GameData.cs");
 		GameData.LoadBuildAuthSeeds();
 		GameData.LoadBroadcastTexts();
 		GameData.LoadItemDisplayIds();
@@ -676,7 +676,7 @@ public static class GameData
 		GameData.LoadTaxiPathNodesGraph();
 		GameData.LoadQuestBits();
 		GameData.LoadHotfixes();
-		Log.Print(LogType.Storage, "Finished loading data.", "LoadEverything", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, "Finished loading data.", "LoadEverything", "GameData.cs");
 	}
 
 	public static void LoadBuildAuthSeeds()
@@ -2987,7 +2987,7 @@ public static class GameData
 				{
 					record2.Status = HotfixStatus.Invalid;
 					record2.HotfixContent = new ByteBuffer();
-					Log.Print(LogType.Storage, $"Got duplicate record for record {record2.RecordId} in {record2.TableHash}", "UpdateHotfix", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Got duplicate record for record {record2.RecordId} in {record2.TableHash}", "UpdateHotfix", "GameData.cs");
 				}
 				HotfixRecord recordToOverwrite = oldRecords.Last();
 				recordToOverwrite.HotfixContent = new ByteBuffer();
@@ -3005,81 +3005,81 @@ public static class GameData
 			int iconFileDataId = (int)GameData.GetItemIconFileDataIdByDisplayId(item.DisplayID);
 			if (row.ClassId != (byte)item.Class || row.SubclassId != (byte)item.SubClass || row.Material != (byte)item.Material || row.InventoryType != (sbyte)item.InventoryType || row.RequiredLevel != (int)item.RequiredLevel || row.SheatheType != (byte)item.SheathType || row.RandomProperty != (ushort)item.RandomProperty || row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix || (row.IconFileDataId != iconFileDataId && iconFileDataId != 0) || row.MaxDurability != item.MaxDurability || row.AmmoType != (byte)item.AmmoType || row.DamageType[0] != (byte)item.DamageTypes[0] || row.DamageType[1] != (byte)item.DamageTypes[1] || row.DamageType[2] != (byte)item.DamageTypes[2] || row.DamageType[3] != (byte)item.DamageTypes[3] || row.DamageType[4] != (byte)item.DamageTypes[4] || row.Resistances[1] != (short)item.HolyResistance || row.Resistances[2] != (short)item.FireResistance || row.Resistances[3] != (short)item.NatureResistance || row.Resistances[4] != (short)item.FrostResistance || row.Resistances[5] != (short)item.ShadowResistance || row.Resistances[6] != (short)item.ArcaneResistance)
 			{
-				Log.Print(LogType.Storage, $"Item #{item.Entry} needs to be updated.", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+				Log.Print(LogType.Storage, $"Item #{item.Entry} needs to be updated.", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				if (row.ClassId != (byte)item.Class)
 				{
-					Log.Print(LogType.Storage, $"ClassId {row.ClassId} vs {item.Class}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ClassId {row.ClassId} vs {item.Class}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.SubclassId != (byte)item.SubClass)
 				{
-					Log.Print(LogType.Storage, $"SubclassId {row.SubclassId} vs {item.SubClass}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"SubclassId {row.SubclassId} vs {item.SubClass}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Material != (byte)item.Material)
 				{
-					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.InventoryType != (sbyte)item.InventoryType)
 				{
-					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredLevel != (int)item.RequiredLevel)
 				{
-					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.SheatheType != (byte)item.SheathType)
 				{
-					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RandomProperty != (ushort)item.RandomProperty)
 				{
-					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix)
 				{
-					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.IconFileDataId != iconFileDataId)
 				{
-					Log.Print(LogType.Storage, $"IconFileDataId {row.IconFileDataId} vs {iconFileDataId}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"IconFileDataId {row.IconFileDataId} vs {iconFileDataId}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.MaxDurability != item.MaxDurability)
 				{
-					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.AmmoType != (byte)item.AmmoType)
 				{
-					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				for (int i = 0; i < 5; i++)
 				{
 					if (row.DamageType[i] != (byte)item.DamageTypes[i])
 					{
-						Log.Print(LogType.Storage, $"DamageType[{i}] {row.DamageType[i]} vs {item.DamageTypes[i]}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"DamageType[{i}] {row.DamageType[i]} vs {item.DamageTypes[i]}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 					}
 				}
 				if (row.Resistances[1] != (short)item.HolyResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[2] != (short)item.FireResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[3] != (short)item.NatureResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[3] {row.Resistances[3]} vs {item.NatureResistance}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[3] {row.Resistances[3]} vs {item.NatureResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[4] != (short)item.FrostResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[5] != (short)item.ShadowResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[6] != (short)item.ArcaneResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GenerateItemUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
 				}
 				GameData.UpdateItemRecord(row, item);
 				GameData.UpdateHotfix(row);
@@ -3103,231 +3103,231 @@ public static class GameData
 		{
 			if (!row.Description.Equals(item.Description) || !row.Name4.Equals(item.Name[3]) || !row.Name3.Equals(item.Name[2]) || !row.Name2.Equals(item.Name[1]) || !row.Name1.Equals(item.Name[0]) || row.DurationInInventory != item.Duration || row.BagFamily != item.BagFamily || row.RangeMod != item.RangedMod || row.RequiredAbility != item.RequiredSpell || row.SellPrice != item.SellPrice || row.BuyPrice != item.BuyPrice || row.MaxDurability != item.MaxDurability || row.RequiredHoliday != (ushort)item.HolidayID || row.LimitCategory != (ushort)item.ItemLimitCategory || row.GemProperties != (ushort)item.GemProperties || row.SocketMatchEnchantmentId != (ushort)item.SocketBonus || row.TotemCategoryId != (ushort)item.TotemCategory || row.InstanceBound != (ushort)item.MapID || row.ZoneBound[0] != (ushort)item.AreaID || row.ItemSet != (ushort)item.ItemSet || row.LockId != (ushort)item.LockId || row.StartQuestId != (ushort)item.StartQuestId || row.PageText != (ushort)item.PageText || row.Delay != (ushort)item.Delay || row.RequiredReputationId != (ushort)item.RequiredRepFaction || row.RequiredSkillRank != (ushort)item.RequiredSkillLevel || row.RequiredSkill != (ushort)item.RequiredSkillId || row.ItemLevel != (ushort)item.ItemLevel || row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix || row.RandomProperty != (ushort)item.RandomProperty || row.Resistances[1] != (short)item.HolyResistance || row.Resistances[2] != (short)item.FireResistance || row.Resistances[3] != (short)item.NatureResistance || row.Resistances[4] != (short)item.FrostResistance || row.Resistances[5] != (short)item.ShadowResistance || row.Resistances[6] != (short)item.ArcaneResistance || row.ScalingStatDistributionId != (ushort)item.ScalingStatDistribution || row.SocketType[0] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[0]) || row.SocketType[1] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[1]) || row.SocketType[2] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[2]) || row.SheatheType != (byte)item.SheathType || row.Material != (byte)item.Material || row.PageMaterial != (byte)item.PageMaterial || row.PageLanguage != (byte)item.Language || row.Bonding != (byte)item.Bonding || row.DamageType != (byte)item.DamageTypes[0] || (row.StatType[0] != (sbyte)item.StatTypes[0] && (row.StatModifierBonusAmount[0] != 0 || item.StatValues[0] != 0)) || (row.StatType[1] != (sbyte)item.StatTypes[1] && (row.StatModifierBonusAmount[1] != 0 || item.StatValues[1] != 0)) || (row.StatType[2] != (sbyte)item.StatTypes[2] && (row.StatModifierBonusAmount[2] != 0 || item.StatValues[2] != 0)) || (row.StatType[3] != (sbyte)item.StatTypes[3] && (row.StatModifierBonusAmount[3] != 0 || item.StatValues[3] != 0)) || (row.StatType[4] != (sbyte)item.StatTypes[4] && (row.StatModifierBonusAmount[4] != 0 || item.StatValues[4] != 0)) || (row.StatType[5] != (sbyte)item.StatTypes[5] && (row.StatModifierBonusAmount[5] != 0 || item.StatValues[5] != 0)) || (row.StatType[6] != (sbyte)item.StatTypes[6] && (row.StatModifierBonusAmount[6] != 0 || item.StatValues[6] != 0)) || (row.StatType[7] != (sbyte)item.StatTypes[7] && (row.StatModifierBonusAmount[7] != 0 || item.StatValues[7] != 0)) || (row.StatType[8] != (sbyte)item.StatTypes[8] && (row.StatModifierBonusAmount[8] != 0 || item.StatValues[8] != 0)) || (row.StatType[9] != (sbyte)item.StatTypes[9] && (row.StatModifierBonusAmount[9] != 0 || item.StatValues[9] != 0)) || row.ContainerSlots != (byte)item.ContainerSlots || row.RequiredReputationRank != (byte)item.RequiredRepValue || row.RequiredCityRank != (byte)item.RequiredCityRank || row.RequiredHonorRank != (byte)item.RequiredHonorRank || row.InventoryType != (byte)item.InventoryType || row.OverallQualityId != (byte)item.Quality || row.AmmoType != (byte)item.AmmoType || row.StatModifierBonusAmount[0] != (sbyte)item.StatValues[0] || row.StatModifierBonusAmount[1] != (sbyte)item.StatValues[1] || row.StatModifierBonusAmount[2] != (sbyte)item.StatValues[2] || row.StatModifierBonusAmount[3] != (sbyte)item.StatValues[3] || row.StatModifierBonusAmount[4] != (sbyte)item.StatValues[4] || row.StatModifierBonusAmount[5] != (sbyte)item.StatValues[5] || row.StatModifierBonusAmount[6] != (sbyte)item.StatValues[6] || row.StatModifierBonusAmount[7] != (sbyte)item.StatValues[7] || row.StatModifierBonusAmount[8] != (sbyte)item.StatValues[8] || row.StatModifierBonusAmount[9] != (sbyte)item.StatValues[9] || row.RequiredLevel != (sbyte)item.RequiredLevel)
 			{
-				Log.Print(LogType.Storage, $"ItemSparse #{item.Entry} needs to be updated.", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+				Log.Print(LogType.Storage, $"ItemSparse #{item.Entry} needs to be updated.", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				if (!row.Description.Equals(item.Description))
 				{
-					Log.Print(LogType.Storage, $"Description \"{row.Description}\" vs \"{item.Description}\"", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Description \"{row.Description}\" vs \"{item.Description}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (!row.Name4.Equals(item.Name[3]))
 				{
-					Log.Print(LogType.Storage, $"Name4 \"{row.Name4}\" vs \"{item.Name[3]}\"", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Name4 \"{row.Name4}\" vs \"{item.Name[3]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (!row.Name3.Equals(item.Name[2]))
 				{
-					Log.Print(LogType.Storage, $"Name3 \"{row.Name3}\" vs \"{item.Name[2]}\"", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Name3 \"{row.Name3}\" vs \"{item.Name[2]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (!row.Name2.Equals(item.Name[1]))
 				{
-					Log.Print(LogType.Storage, $"Name2 \"{row.Name2}\" vs \"{item.Name[1]}\"", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Name2 \"{row.Name2}\" vs \"{item.Name[1]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (!row.Name1.Equals(item.Name[0]))
 				{
-					Log.Print(LogType.Storage, $"Name1 \"{row.Name1}\" vs \"{item.Name[0]}\"", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Name1 \"{row.Name1}\" vs \"{item.Name[0]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.DurationInInventory != item.Duration)
 				{
-					Log.Print(LogType.Storage, $"DurationInInventory {row.DurationInInventory} vs {item.Duration}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"DurationInInventory {row.DurationInInventory} vs {item.Duration}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.BagFamily != item.BagFamily)
 				{
-					Log.Print(LogType.Storage, $"BagFamily {row.BagFamily} vs {item.BagFamily}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"BagFamily {row.BagFamily} vs {item.BagFamily}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RangeMod != item.RangedMod)
 				{
-					Log.Print(LogType.Storage, $"RangeMod {row.RangeMod} vs {item.RangedMod}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RangeMod {row.RangeMod} vs {item.RangedMod}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredAbility != item.RequiredSpell)
 				{
-					Log.Print(LogType.Storage, $"RequiredAbility {row.RequiredAbility} vs {item.RequiredSpell}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredAbility {row.RequiredAbility} vs {item.RequiredSpell}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.SellPrice != item.SellPrice)
 				{
-					Log.Print(LogType.Storage, $"SellPrice {row.SellPrice} vs {item.SellPrice}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"SellPrice {row.SellPrice} vs {item.SellPrice}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.BuyPrice != item.BuyPrice)
 				{
-					Log.Print(LogType.Storage, $"BuyPrice {row.BuyPrice} vs {item.BuyPrice}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"BuyPrice {row.BuyPrice} vs {item.BuyPrice}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.MaxDurability != item.MaxDurability)
 				{
-					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredHoliday != (ushort)item.HolidayID)
 				{
-					Log.Print(LogType.Storage, $"RequiredHoliday {row.RequiredHoliday} vs {item.HolidayID}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredHoliday {row.RequiredHoliday} vs {item.HolidayID}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.LimitCategory != (ushort)item.ItemLimitCategory)
 				{
-					Log.Print(LogType.Storage, $"LimitCategory {row.LimitCategory} vs {item.ItemLimitCategory}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"LimitCategory {row.LimitCategory} vs {item.ItemLimitCategory}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.GemProperties != (ushort)item.GemProperties)
 				{
-					Log.Print(LogType.Storage, $"GemProperties {row.GemProperties} vs {item.GemProperties}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"GemProperties {row.GemProperties} vs {item.GemProperties}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.SocketMatchEnchantmentId != (ushort)item.SocketBonus)
 				{
-					Log.Print(LogType.Storage, $"SocketMatchEnchantmentId {row.SocketMatchEnchantmentId} vs {item.SocketBonus}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"SocketMatchEnchantmentId {row.SocketMatchEnchantmentId} vs {item.SocketBonus}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.TotemCategoryId != (ushort)item.TotemCategory)
 				{
-					Log.Print(LogType.Storage, $"TotemCategoryId {row.TotemCategoryId} vs {item.TotemCategory}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"TotemCategoryId {row.TotemCategoryId} vs {item.TotemCategory}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.InstanceBound != (ushort)item.MapID)
 				{
-					Log.Print(LogType.Storage, $"InstanceBound {row.InstanceBound} vs {item.MapID}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"InstanceBound {row.InstanceBound} vs {item.MapID}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.ZoneBound[0] != (ushort)item.AreaID)
 				{
-					Log.Print(LogType.Storage, $"ZoneBound[0] {row.ZoneBound[0]} vs {item.AreaID}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ZoneBound[0] {row.ZoneBound[0]} vs {item.AreaID}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.ItemSet != (ushort)item.ItemSet)
 				{
-					Log.Print(LogType.Storage, $"ItemSet {row.ItemSet} vs {item.ItemSet}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ItemSet {row.ItemSet} vs {item.ItemSet}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.LockId != (ushort)item.LockId)
 				{
-					Log.Print(LogType.Storage, $"LockId {row.LockId} vs {item.LockId}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"LockId {row.LockId} vs {item.LockId}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.StartQuestId != (ushort)item.StartQuestId)
 				{
-					Log.Print(LogType.Storage, $"StartQuestId {row.StartQuestId} vs {item.StartQuestId}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"StartQuestId {row.StartQuestId} vs {item.StartQuestId}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.PageText != (ushort)item.PageText)
 				{
-					Log.Print(LogType.Storage, $"PageText {row.PageText} vs {item.PageText}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"PageText {row.PageText} vs {item.PageText}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Delay != (ushort)item.Delay)
 				{
-					Log.Print(LogType.Storage, $"Delay {row.Delay} vs {item.Delay}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Delay {row.Delay} vs {item.Delay}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredReputationId != (ushort)item.RequiredRepFaction)
 				{
-					Log.Print(LogType.Storage, $"RequiredReputationId {row.RequiredReputationId} vs {item.RequiredRepFaction}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredReputationId {row.RequiredReputationId} vs {item.RequiredRepFaction}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredSkillRank != (ushort)item.RequiredSkillLevel)
 				{
-					Log.Print(LogType.Storage, $"RequiredSkillRank {row.RequiredSkillRank} vs {item.RequiredSkillLevel}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredSkillRank {row.RequiredSkillRank} vs {item.RequiredSkillLevel}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredSkill != (ushort)item.RequiredSkillId)
 				{
-					Log.Print(LogType.Storage, $"RequiredSkill {row.RequiredSkill} vs {item.RequiredSkillId}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredSkill {row.RequiredSkill} vs {item.RequiredSkillId}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.ItemLevel != (ushort)item.ItemLevel)
 				{
-					Log.Print(LogType.Storage, $"ItemLevel {row.ItemLevel} vs {item.ItemLevel}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ItemLevel {row.ItemLevel} vs {item.ItemLevel}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix)
 				{
-					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RandomProperty != (ushort)item.RandomProperty)
 				{
-					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[1] != (short)item.HolyResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[2] != (short)item.FireResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[3] != (short)item.NatureResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[3]  {row.Resistances[3]} vs {item.NatureResistance}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[3]  {row.Resistances[3]} vs {item.NatureResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[4] != (short)item.FrostResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[5] != (short)item.ShadowResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Resistances[6] != (short)item.ArcaneResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.ScalingStatDistributionId != (ushort)item.ScalingStatDistribution)
 				{
-					Log.Print(LogType.Storage, $"ScalingStatDistributionId {row.ScalingStatDistributionId} vs {item.ScalingStatDistribution}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ScalingStatDistributionId {row.ScalingStatDistributionId} vs {item.ScalingStatDistribution}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				for (int i = 0; i < 3; i++)
 				{
 					if (row.SocketType[i] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[i]))
 					{
-						Log.Print(LogType.Storage, $"SocketType[{i}] {row.SocketType[i]} vs {ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[i])}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"SocketType[{i}] {row.SocketType[i]} vs {ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[i])}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 					}
 				}
 				if (row.SheatheType != (byte)item.SheathType)
 				{
-					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Material != (byte)item.Material)
 				{
-					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.PageMaterial != (byte)item.PageMaterial)
 				{
-					Log.Print(LogType.Storage, $"PageMaterial {row.PageMaterial} vs {item.PageMaterial}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"PageMaterial {row.PageMaterial} vs {item.PageMaterial}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.PageLanguage != (byte)item.Language)
 				{
-					Log.Print(LogType.Storage, $"PageLanguage {row.PageLanguage} vs {item.Language}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"PageLanguage {row.PageLanguage} vs {item.Language}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.Bonding != (byte)item.Bonding)
 				{
-					Log.Print(LogType.Storage, $"Bonding {row.Bonding} vs {item.Bonding}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"Bonding {row.Bonding} vs {item.Bonding}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.DamageType != (byte)item.DamageTypes[0])
 				{
-					Log.Print(LogType.Storage, $"DamageType {row.DamageType} vs {item.DamageTypes[0]}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"DamageType {row.DamageType} vs {item.DamageTypes[0]}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				for (int j = 0; j < 10; j++)
 				{
 					if (row.StatType[j] != (sbyte)item.StatTypes[j] && (row.StatModifierBonusAmount[j] != 0 || item.StatValues[j] != 0))
 					{
-						Log.Print(LogType.Storage, $"StatType[{j}] {row.StatType[j]} vs {item.StatTypes[j]}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"StatType[{j}] {row.StatType[j]} vs {item.StatTypes[j]}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 					}
 				}
 				if (row.ContainerSlots != (byte)item.ContainerSlots)
 				{
-					Log.Print(LogType.Storage, $"ContainerSlots {row.ContainerSlots} vs {item.ContainerSlots}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ContainerSlots {row.ContainerSlots} vs {item.ContainerSlots}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredReputationRank != (byte)item.RequiredRepValue)
 				{
-					Log.Print(LogType.Storage, $"RequiredReputationRank {row.RequiredReputationRank} vs {item.RequiredRepValue}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredReputationRank {row.RequiredReputationRank} vs {item.RequiredRepValue}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredCityRank != (byte)item.RequiredCityRank)
 				{
-					Log.Print(LogType.Storage, $"RequiredCityRank {row.RequiredCityRank} vs {item.RequiredCityRank}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredCityRank {row.RequiredCityRank} vs {item.RequiredCityRank}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.RequiredHonorRank != (byte)item.RequiredHonorRank)
 				{
-					Log.Print(LogType.Storage, $"RequiredHonorRank {row.RequiredHonorRank} vs {item.RequiredHonorRank}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredHonorRank {row.RequiredHonorRank} vs {item.RequiredHonorRank}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.InventoryType != (byte)item.InventoryType)
 				{
-					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.OverallQualityId != (byte)item.Quality)
 				{
-					Log.Print(LogType.Storage, $"OverallQualityId {row.OverallQualityId} vs {item.Quality}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"OverallQualityId {row.OverallQualityId} vs {item.Quality}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				if (row.AmmoType != (byte)item.AmmoType)
 				{
-					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				for (int k = 0; k < 10; k++)
 				{
 					if (row.StatModifierBonusAmount[0] != (sbyte)item.StatValues[0])
 					{
-						Log.Print(LogType.Storage, $"StatValue[{k}] {row.StatModifierBonusAmount[k]} vs {item.StatValues[k]}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"StatValue[{k}] {row.StatModifierBonusAmount[k]} vs {item.StatValues[k]}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 					}
 				}
 				if (row.RequiredLevel != (sbyte)item.RequiredLevel)
 				{
-					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GenerateItemSparseUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
 				}
 				GameData.UpdateItemSparseRecord(row, item);
 				GameData.UpdateHotfix(row);
@@ -3375,30 +3375,30 @@ public static class GameData
 			{
 				if (item.TriggeredSpellIds[slot] > 0)
 				{
-					Log.Print(LogType.Storage, $"ItemEffect for item #{item.Entry} slot #{slot} needs to be updated.", "GenerateItemEffectUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ItemEffect for item #{item.Entry} slot #{slot} needs to be updated.", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
 					if (effect.TriggerType != item.TriggeredSpellTypes[slot])
 					{
-						Log.Print(LogType.Storage, $"TriggerType {effect.TriggerType} vs {item.TriggeredSpellTypes[slot]}", "GenerateItemEffectUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"TriggerType {effect.TriggerType} vs {item.TriggeredSpellTypes[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
 					}
 					if (effect.Charges != item.TriggeredSpellCharges[slot])
 					{
-						Log.Print(LogType.Storage, $"Charges {effect.Charges} vs {item.TriggeredSpellCharges[slot]}", "GenerateItemEffectUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"Charges {effect.Charges} vs {item.TriggeredSpellCharges[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
 					}
 					if (wrongCooldown)
 					{
-						Log.Print(LogType.Storage, $"CoolDownMSec {effect.CoolDownMSec} vs {item.TriggeredSpellCooldowns[slot]}", "GenerateItemEffectUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"CoolDownMSec {effect.CoolDownMSec} vs {item.TriggeredSpellCooldowns[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
 					}
 					if (wrongCatCooldown)
 					{
-						Log.Print(LogType.Storage, $"CategoryCoolDownMSec {effect.CategoryCoolDownMSec} vs {item.TriggeredSpellCategoryCooldowns[slot]}", "GenerateItemEffectUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"CategoryCoolDownMSec {effect.CategoryCoolDownMSec} vs {item.TriggeredSpellCategoryCooldowns[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
 					}
 					if (wrongCategory)
 					{
-						Log.Print(LogType.Storage, $"SpellCategoryId {effect.SpellCategoryID} vs {item.TriggeredSpellCategories[slot]}", "GenerateItemEffectUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"SpellCategoryId {effect.SpellCategoryID} vs {item.TriggeredSpellCategories[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
 					}
 					if (effect.SpellID != item.TriggeredSpellIds[slot])
 					{
-						Log.Print(LogType.Storage, $"SpellId {effect.SpellID} vs {item.TriggeredSpellIds[slot]}", "GenerateItemEffectUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+						Log.Print(LogType.Storage, $"SpellId {effect.SpellID} vs {item.TriggeredSpellIds[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
 					}
 					effect.TriggerType = (sbyte)item.TriggeredSpellTypes[slot];
 					effect.Charges = (short)item.TriggeredSpellCharges[slot];
@@ -3452,14 +3452,14 @@ public static class GameData
 			GameData.ItemAppearanceStore.TryGetValue((uint)modAppearance.ItemAppearanceID, out var appearance);
 			if (appearance == null || appearance.ItemDisplayInfoID != item.DisplayID)
 			{
-				Log.Print(LogType.Storage, $"ItemModifiedAppearance #{modAppearance.Id} for item #{item.Entry} needs to be updated.", "GenerateItemModifiedAppearanceUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+				Log.Print(LogType.Storage, $"ItemModifiedAppearance #{modAppearance.Id} for item #{item.Entry} needs to be updated.", "GenerateItemModifiedAppearanceUpdateIfNeeded", "GameData.cs");
 				if (appearance == null)
 				{
-					Log.Print(LogType.Storage, $"ItemAppearance #{modAppearance.ItemAppearanceID} missing.", "GenerateItemModifiedAppearanceUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"ItemAppearance #{modAppearance.ItemAppearanceID} missing.", "GenerateItemModifiedAppearanceUpdateIfNeeded", "GameData.cs");
 				}
 				else if (appearance.ItemDisplayInfoID != item.DisplayID)
 				{
-					Log.Print(LogType.Storage, $"DisplayID {appearance.ItemDisplayInfoID} vs {item.DisplayID}", "GenerateItemModifiedAppearanceUpdateIfNeeded", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+					Log.Print(LogType.Storage, $"DisplayID {appearance.ItemDisplayInfoID} vs {item.DisplayID}", "GenerateItemModifiedAppearanceUpdateIfNeeded", "GameData.cs");
 				}
 				GameData.UpdateItemModifiedAppearanceRecord(modAppearance, item);
 				GameData.UpdateHotfix(modAppearance);
@@ -3481,7 +3481,7 @@ public static class GameData
 		HotFixMessage reply = new HotFixMessage();
 		if (obj == null)
 		{
-			Log.Print(LogType.Error, "DBReply for NULL object requested!", "GenerateHotFixMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+			Log.Print(LogType.Error, "DBReply for NULL object requested!", "GenerateHotFixMessage", "GameData.cs");
 			return null;
 		}
 		Type type = obj.GetType();
@@ -3509,7 +3509,7 @@ public static class GameData
 		{
 			if (!(obj is ItemModifiedAppearance))
 			{
-				Log.Print(LogType.Error, $"Unsupported DBReply requested! ({type})", "GenerateHotFixMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+				Log.Print(LogType.Error, $"Unsupported DBReply requested! ({type})", "GenerateHotFixMessage", "GameData.cs");
 				return null;
 			}
 			List<HotfixRecord> records5 = GameData.FindHotfixesByRecordIdAndTable((uint)((ItemModifiedAppearance)obj).Id, DB2Hash.ItemModifiedAppearance);
@@ -3524,7 +3524,7 @@ public static class GameData
 		record.Id = (int)item.Entry;
 		GameData.UpdateItemRecord(record, item);
 		GameData.ItemRecordsStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"Item #{record.Id} created.", "AddItemRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, $"Item #{record.Id} created.", "AddItemRecord", "GameData.cs");
 		return record;
 	}
 
@@ -3579,7 +3579,7 @@ public static class GameData
 		record.Id = (int)item.Entry;
 		GameData.UpdateItemSparseRecord(record, item);
 		GameData.ItemSparseRecordsStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemSparse #{record.Id} created.", "AddItemSparseRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, $"ItemSparse #{record.Id} created.", "AddItemSparseRecord", "GameData.cs");
 		return record;
 	}
 
@@ -3683,7 +3683,7 @@ public static class GameData
 		record.LegacySlotIndex = slot;
 		GameData.UpdateItemEffectRecord(record, item);
 		GameData.ItemEffectStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemEffect #{record.Id} created for item #{item.Entry} slot #{slot}.", "AddItemEffectRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, $"ItemEffect #{record.Id} created for item #{item.Entry} slot #{slot}.", "AddItemEffectRecord", "GameData.cs");
 		return record;
 	}
 
@@ -3707,7 +3707,7 @@ public static class GameData
 	public static void RemoveItemEffectRecord(ItemEffect effect)
 	{
 		GameData.ItemEffectStore.Remove((uint)effect.Id);
-		Log.Print(LogType.Storage, $"ItemEffect #{effect.Id} removed for item #{effect.ParentItemID} slot #{effect.LegacySlotIndex}.", "RemoveItemEffectRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, $"ItemEffect #{effect.Id} removed for item #{effect.ParentItemID} slot #{effect.LegacySlotIndex}.", "RemoveItemEffectRecord", "GameData.cs");
 	}
 
 	public static ItemAppearance AddItemAppearanceRecord(ItemTemplate item)
@@ -3716,7 +3716,7 @@ public static class GameData
 		record.Id = (int)GameData.GetFirstFreeId(GameData.ItemAppearanceStore);
 		GameData.UpdateItemAppearanceRecord(record, item);
 		GameData.ItemAppearanceStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemAppearance #{record.Id} created for DisplayID #{item.DisplayID}.", "AddItemAppearanceRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, $"ItemAppearance #{record.Id} created for DisplayID #{item.DisplayID}.", "AddItemAppearanceRecord", "GameData.cs");
 		return record;
 	}
 
@@ -3740,11 +3740,11 @@ public static class GameData
 		GameData.UpdateItemModifiedAppearanceRecord(record, item);
 		if (record.ItemID != item.Entry)
 		{
-			Log.Print(LogType.Error, $"ItemModifiedAppearance #{record.Id} create failed for item #{record.ItemID}.", "AddItemModifiedAppearanceRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+			Log.Print(LogType.Error, $"ItemModifiedAppearance #{record.Id} create failed for item #{record.ItemID}.", "AddItemModifiedAppearanceRecord", "GameData.cs");
 			return null;
 		}
 		GameData.ItemModifiedAppearanceStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemModifiedAppearance #{record.Id} created for item #{record.ItemID}.", "AddItemModifiedAppearanceRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+		Log.Print(LogType.Storage, $"ItemModifiedAppearance #{record.Id} created for item #{record.ItemID}.", "AddItemModifiedAppearanceRecord", "GameData.cs");
 		return record;
 	}
 
@@ -3753,7 +3753,7 @@ public static class GameData
 		ItemAppearance appearance = GameData.GetItemAppearanceByDisplayId(item.DisplayID);
 		if (appearance == null)
 		{
-			Log.Print(LogType.Error, $"ItemModifiedAppearance #{modAppearance.Id} update failed: no ItemAppearance for DisplayID #{item.DisplayID}", "UpdateItemModifiedAppearanceRecord", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\GameData.cs");
+			Log.Print(LogType.Error, $"ItemModifiedAppearance #{modAppearance.Id} update failed: no ItemAppearance for DisplayID #{item.DisplayID}", "UpdateItemModifiedAppearanceRecord", "GameData.cs");
 			return;
 		}
 		modAppearance.ItemID = (int)item.Entry;

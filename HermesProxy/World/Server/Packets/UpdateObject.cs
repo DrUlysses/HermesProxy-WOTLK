@@ -67,7 +67,7 @@ public class UpdateObject : ServerPacket
 			{
 				this._gameState.PendingLoginUpdates.AddRange(this.ObjectUpdates);
 				this._gameState.PendingLoginDestroys.AddRange(this.DestroyedGuids);
-				Log.Print(LogType.Debug, $"[UpdateObject] Buffering {this.ObjectUpdates.Count} updates (total: {this._gameState.PendingLoginUpdates.Count})", "Write", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\Packets\\UpdatePackets.cs");
+				Log.Print(LogType.Debug, $"[UpdateObject] Buffering {this.ObjectUpdates.Count} updates (total: {this._gameState.PendingLoginUpdates.Count})", "Write", "Packets\\UpdatePackets.cs");
 				base.SkipSend = true;
 				return;
 			}
@@ -78,7 +78,7 @@ public class UpdateObject : ServerPacket
 				this.ObjectUpdates = merged;
 				this.DestroyedGuids.AddRange(this._gameState.PendingLoginDestroys);
 				this._gameState.PlayerObjectSent = true;
-				Log.Print(LogType.Debug, $"[UpdateObject] Merged {this._gameState.PendingLoginUpdates.Count} buffered + sending {this.ObjectUpdates.Count} total updates", "Write", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\Packets\\UpdatePackets.cs");
+				Log.Print(LogType.Debug, $"[UpdateObject] Merged {this._gameState.PendingLoginUpdates.Count} buffered + sending {this.ObjectUpdates.Count} total updates", "Write", "Packets\\UpdatePackets.cs");
 			}
 		}
 		this.MapID = (ushort)this._gameState.CurrentMapId.Value;

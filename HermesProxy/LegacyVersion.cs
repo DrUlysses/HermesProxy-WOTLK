@@ -46,11 +46,11 @@ public static class LegacyVersion
 		LegacyVersion.UpdateFieldNameDictionary = new Dictionary<Type, Dictionary<string, int>>();
 		if (!LegacyVersion.LoadUFDictionariesInto(LegacyVersion.UpdateFieldDictionary, LegacyVersion.UpdateFieldNameDictionary))
 		{
-			Log.Print(LogType.Error, "Could not load update fields for current legacy version.", ".cctor", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+			Log.Print(LogType.Error, "Could not load update fields for current legacy version.", ".cctor", "VersionChecker.cs");
 		}
 		if (!LegacyVersion.LoadOpcodeDictionaries())
 		{
-			Log.Print(LogType.Error, "Could not load opcodes for current legacy version.", ".cctor", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+			Log.Print(LogType.Error, "Could not load opcodes for current legacy version.", ".cctor", "VersionChecker.cs");
 		}
 	}
 
@@ -67,7 +67,7 @@ public static class LegacyVersion
 			HermesProxy.World.Enums.Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
 			if (universalOpcode == HermesProxy.World.Enums.Opcode.MSG_NULL_ACTION && oldOpcodeName != "MSG_NULL_ACTION")
 			{
-				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "LoadOpcodeDictionaries", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "LoadOpcodeDictionaries", "VersionChecker.cs");
 				continue;
 			}
 			LegacyVersion.CurrentToUniversalOpcodeDictionary.Add((uint)item, universalOpcode);
@@ -77,7 +77,7 @@ public static class LegacyVersion
 		{
 			return false;
 		}
-		Log.Print(LogType.Server, $"Loaded {LegacyVersion.CurrentToUniversalOpcodeDictionary.Count} legacy opcodes.", "LoadOpcodeDictionaries", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+		Log.Print(LogType.Server, $"Loaded {LegacyVersion.CurrentToUniversalOpcodeDictionary.Count} legacy opcodes.", "LoadOpcodeDictionaries", "VersionChecker.cs");
 		return true;
 	}
 
@@ -87,7 +87,7 @@ public static class LegacyVersion
 		{
 			return universalOpcode;
 		}
-		Log.Print(LogType.Warn, $"Unknown legacy opcode 0x{opcode:X4} received from server!", "GetUniversalOpcode", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\VersionChecker.cs");
+		Log.Print(LogType.Warn, $"Unknown legacy opcode 0x{opcode:X4} received from server!", "GetUniversalOpcode", "VersionChecker.cs");
 		return HermesProxy.World.Enums.Opcode.UNKNOWN_SMSG;
 	}
 

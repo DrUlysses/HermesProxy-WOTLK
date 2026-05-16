@@ -78,13 +78,13 @@ internal class EnterEncryptedMode : ServerPacket
 		hash.Process(BitConverter.GetBytes(this.Enabled), 1);
 		hash.Finish(EnterEncryptedMode.EnableEncryptionSeedRSA, 16);
 		byte[] toSign = hash.Digest;
-		Log.Print(LogType.Debug, "EnterEncryptedMode Ed25519: toSign=" + BitConverter.ToString(toSign, 0, 16) + "...", "WriteEd25519", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\Packets\\AuthenticationPackets.cs");
+		Log.Print(LogType.Debug, "EnterEncryptedMode Ed25519: toSign=" + BitConverter.ToString(toSign, 0, 16) + "...", "WriteEd25519", "Packets\\AuthenticationPackets.cs");
 		Ed25519PrivateKeyParameters privateKeyParams = new Ed25519PrivateKeyParameters(EnterEncryptedMode.Ed25519PrivateKey, 0);
 		Ed25519ctxSigner signer = new Ed25519ctxSigner(EnterEncryptedMode.EnableEncryptionContext);
 		signer.Init(forSigning: true, privateKeyParams);
 		signer.BlockUpdate(toSign, 0, toSign.Length);
 		byte[] signature = signer.GenerateSignature();
-		Log.Print(LogType.Debug, $"EnterEncryptedMode Ed25519: signature={BitConverter.ToString(signature, 0, 16)}... ({signature.Length} bytes)", "WriteEd25519", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\Packets\\AuthenticationPackets.cs");
+		Log.Print(LogType.Debug, $"EnterEncryptedMode Ed25519: signature={BitConverter.ToString(signature, 0, 16)}... ({signature.Length} bytes)", "WriteEd25519", "Packets\\AuthenticationPackets.cs");
 		base._worldPacket.WriteBytes(signature);
 		base._worldPacket.WriteBit(this.Enabled);
 		base._worldPacket.FlushBits();

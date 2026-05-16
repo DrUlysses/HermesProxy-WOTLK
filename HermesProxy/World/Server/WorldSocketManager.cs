@@ -24,7 +24,7 @@ public class WorldSocketManager : SocketManager<WorldSocket>
 		this._instanceAcceptor = new AsyncAcceptor();
 		if (!this._instanceAcceptor.Start(bindIp, Settings.InstancePort))
 		{
-			Log.Print(LogType.Error, "StartNetwork failed to start instance AsyncAcceptor", "StartNetwork", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocketManager.cs");
+			Log.Print(LogType.Error, "StartNetwork failed to start instance AsyncAcceptor", "StartNetwork", "WorldSocketManager.cs");
 			return false;
 		}
 		this._instanceAcceptor.AsyncAcceptSocket(OnSocketOpen);
@@ -40,7 +40,7 @@ public class WorldSocketManager : SocketManager<WorldSocket>
 
 	public override void OnSocketOpen(Socket sock)
 	{
-		Log.Print(LogType.Network, "Instance socket open.", "OnSocketOpen", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocketManager.cs");
+		Log.Print(LogType.Network, "Instance socket open.", "OnSocketOpen", "WorldSocketManager.cs");
 		try
 		{
 			if (this._socketSendBufferSize >= 0)
@@ -51,7 +51,7 @@ public class WorldSocketManager : SocketManager<WorldSocket>
 		}
 		catch (SocketException ex)
 		{
-			Log.Print(LogType.Error, ((object)ex).ToString(), "OnSocketOpen", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocketManager.cs");
+			Log.Print(LogType.Error, ((object)ex).ToString(), "OnSocketOpen", "WorldSocketManager.cs");
 			return;
 		}
 		base.OnSocketOpen(sock);

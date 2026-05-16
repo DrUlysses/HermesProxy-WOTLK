@@ -120,8 +120,8 @@ public class SupportTicketSubmitComplaint : ClientPacket
 		}
 		if (base._worldPacket.ReadUInt32() != 0)
 		{
-			Log.Print(LogType.Error, "You reported something that we do not handle (?)", "Read", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\Packets\\SupportTicketPackets.cs");
-			Log.Print(LogType.Error, "Please create a new issue on GitHub and tell us what you did", "Read", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\Packets\\SupportTicketPackets.cs");
+			Log.Print(LogType.Error, "You reported something that we do not handle (?)", "Read", "Packets\\SupportTicketPackets.cs");
+			Log.Print(LogType.Error, "Please create a new issue on GitHub and tell us what you did", "Read", "Packets\\SupportTicketPackets.cs");
 			return;
 		}
 		if (hasMailInfo)

@@ -126,6 +126,10 @@ namespace Framework.Logging
             Console.WriteLine($"| {text}");
         }
 
+        /// <param name="type">Type of the log message</param>
+        /// <param name="text">Text of the log message</param>
+        /// <param name="method">Name of the method the log is called from</param>
+        /// <param name="path">The relative path of the file.</param>
         public static void Print(LogType type, object text, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
         {
             string formattedText = $"{FormatCaller(method, path)} | {text}";

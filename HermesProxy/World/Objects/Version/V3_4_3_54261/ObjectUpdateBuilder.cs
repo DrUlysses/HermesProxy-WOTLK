@@ -175,7 +175,7 @@ public class ObjectUpdateBuilder
 
 	public void WriteToPacket(WorldPacket packet)
 	{
-		Log.Print(LogType.Debug, $"[UpdateBuilder] Writing {this.m_updateData.Type} for {this.m_updateData.Guid} objType={this.m_objectType} typeMask=0x{ObjectUpdateBuilder.ConvertTypeMask(this.m_objectTypeMask):X4}", "WriteToPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+		Log.Print(LogType.Debug, $"[UpdateBuilder] Writing {this.m_updateData.Type} for {this.m_updateData.Guid} objType={this.m_objectType} typeMask=0x{ObjectUpdateBuilder.ConvertTypeMask(this.m_objectTypeMask):X4}", "WriteToPacket", "ObjectUpdateBuilder.cs");
 		packet.WriteUInt8((byte)this.m_updateData.Type);
 		packet.WritePackedGuid128(this.m_updateData.Guid);
 		if (this.m_updateData.Type != UpdateTypeModern.Values)
@@ -183,7 +183,7 @@ public class ObjectUpdateBuilder
 			ObjectTypeBCC headerType = this.m_objectType;
 			packet.WriteUInt8(ObjectUpdateBuilder.ConvertTypeId(headerType));
 			this.SetCreateObjectBits();
-			Log.Print(LogType.Debug, $"[UpdateBuilder] CreateBits: Move={this.m_createBits.MovementUpdate} Stationary={this.m_createBits.Stationary} Vehicle={this.m_createBits.Vehicle} ActivePlayer={this.m_createBits.ActivePlayer} Transport={this.m_createBits.MovementTransport} Rotation={this.m_createBits.Rotation}", "WriteToPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[UpdateBuilder] CreateBits: Move={this.m_createBits.MovementUpdate} Stationary={this.m_createBits.Stationary} Vehicle={this.m_createBits.Vehicle} ActivePlayer={this.m_createBits.ActivePlayer} Transport={this.m_createBits.MovementTransport} Rotation={this.m_createBits.Rotation}", "WriteToPacket", "ObjectUpdateBuilder.cs");
 			this.BuildMovementUpdate(packet);
 		}
 		this.WriteValuesModern(packet);
@@ -236,12 +236,12 @@ public class ObjectUpdateBuilder
 		int sectionStart = data.GetData().Length;
 		this.WriteCreateObjectData(data);
 		int afterObj = data.GetData().Length;
-		Log.Print(LogType.Debug, $"[Sizes] ObjectData={afterObj - sectionStart} bytes", "WriteValuesCreate", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+		Log.Print(LogType.Debug, $"[Sizes] ObjectData={afterObj - sectionStart} bytes", "WriteValuesCreate", "ObjectUpdateBuilder.cs");
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.Item))
 		{
 			this.WriteCreateItemData(data);
 			int afterItem = data.GetData().Length;
-			Log.Print(LogType.Debug, $"[Sizes] ItemData={afterItem - afterObj} bytes", "WriteValuesCreate", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[Sizes] ItemData={afterItem - afterObj} bytes", "WriteValuesCreate", "ObjectUpdateBuilder.cs");
 		}
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.Container))
 		{
@@ -252,21 +252,21 @@ public class ObjectUpdateBuilder
 			int beforeUnit = data.GetData().Length;
 			this.WriteCreateUnitData(data);
 			int afterUnit = data.GetData().Length;
-			Log.Print(LogType.Debug, $"[Sizes] UnitData={afterUnit - beforeUnit} bytes", "WriteValuesCreate", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[Sizes] UnitData={afterUnit - beforeUnit} bytes", "WriteValuesCreate", "ObjectUpdateBuilder.cs");
 		}
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.Player))
 		{
 			int beforePlayer = data.GetData().Length;
 			this.WriteCreatePlayerData(data);
 			int afterPlayer = data.GetData().Length;
-			Log.Print(LogType.Debug, $"[Sizes] PlayerData={afterPlayer - beforePlayer} bytes", "WriteValuesCreate", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[Sizes] PlayerData={afterPlayer - beforePlayer} bytes", "WriteValuesCreate", "ObjectUpdateBuilder.cs");
 		}
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.ActivePlayer))
 		{
 			int beforeActive = data.GetData().Length;
 			this.WriteCreateActivePlayerData(data);
 			int afterActive = data.GetData().Length;
-			Log.Print(LogType.Debug, $"[Sizes] ActivePlayerData={afterActive - beforeActive} bytes", "WriteValuesCreate", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[Sizes] ActivePlayerData={afterActive - beforeActive} bytes", "WriteValuesCreate", "ObjectUpdateBuilder.cs");
 		}
 		if (this.m_objectTypeMask.HasAnyFlag(ObjectTypeMask.GameObject))
 		{
@@ -762,7 +762,7 @@ public class ObjectUpdateBuilder
 				dbgBlocks.Append($" blk{b}=0x{blocks[b]:X8}");
 			}
 		}
-		Log.Print(LogType.Debug, $"[ActivePlayerUpdate] {setBlockCount} blocks set, InvSlots={invSlotsChanged}{dbgBlocks}", "WriteUpdateActivePlayerData", "");
+		Log.Print(LogType.Debug, $"[ActivePlayerUpdate] {setBlockCount} blocks set, InvSlots={invSlotsChanged}{dbgBlocks}", "WriteUpdateActivePlayerData", "ObjectUpdateBuilder");
 
 		// ============================================================
 		// WRITE BLOCK MASKS
@@ -1675,7 +1675,7 @@ public class ObjectUpdateBuilder
 		ObjectData obj = this.m_updateData.ObjectData;
 		if (this.IsOwner)
 		{
-			Log.Print(LogType.Debug, $"[PlayerUnitData] DisplayID={unit.DisplayID} NativeDisplayID={unit.NativeDisplayID} Race={unit.RaceId} Class={unit.ClassId} Sex={unit.SexId} Health={unit.Health}/{unit.MaxHealth} Level={unit.Level}", "WriteCreateUnitData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[PlayerUnitData] DisplayID={unit.DisplayID} NativeDisplayID={unit.NativeDisplayID} Race={unit.RaceId} Class={unit.ClassId} Sex={unit.SexId} Health={unit.Health}/{unit.MaxHealth} Level={unit.Level}", "WriteCreateUnitData", "ObjectUpdateBuilder.cs");
 		}
 		data.WriteInt64(unit.Health.GetValueOrDefault());
 		data.WriteInt64(unit.MaxHealth.GetValueOrDefault());
@@ -2537,13 +2537,13 @@ public class ObjectUpdateBuilder
 				customizationCount++;
 				if (this.IsOwner)
 				{
-					Log.Print(LogType.Debug, $"[Customization] Option={player.Customizations[i].ChrCustomizationOptionID} Choice={player.Customizations[i].ChrCustomizationChoiceID}", "WriteCreatePlayerData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+					Log.Print(LogType.Debug, $"[Customization] Option={player.Customizations[i].ChrCustomizationOptionID} Choice={player.Customizations[i].ChrCustomizationChoiceID}", "WriteCreatePlayerData", "ObjectUpdateBuilder.cs");
 				}
 			}
 		}
 		if (this.IsOwner)
 		{
-			Log.Print(LogType.Debug, $"[Customization] Total count={customizationCount}", "WriteCreatePlayerData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[Customization] Total count={customizationCount}", "WriteCreatePlayerData", "ObjectUpdateBuilder.cs");
 		}
 		data.WriteUInt32((uint)customizationCount);
 		data.WriteUInt8(player.PartyType.GetValueOrDefault());
@@ -3267,7 +3267,7 @@ public class ObjectUpdateBuilder
 			int beforeMove = data.GetData().Length;
 			moveInfo.WriteMovementInfoModern(data, this.m_updateData.Guid);
 			int afterMoveInfo = data.GetData().Length;
-			Log.Print(LogType.Debug, $"[Movement] MoveInfo={afterMoveInfo - beforeMove}b Speeds: Walk={moveInfo.WalkSpeed} Run={moveInfo.RunSpeed} Swim={moveInfo.SwimSpeed} Flight={moveInfo.FlightSpeed} Turn={moveInfo.TurnRate} Pitch={moveInfo.PitchRate}", "BuildMovementUpdate", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\Version\\V3_4_3_54261\\ObjectUpdateBuilder.cs");
+			Log.Print(LogType.Debug, $"[Movement] MoveInfo={afterMoveInfo - beforeMove}b Speeds: Walk={moveInfo.WalkSpeed} Run={moveInfo.RunSpeed} Swim={moveInfo.SwimSpeed} Flight={moveInfo.FlightSpeed} Turn={moveInfo.TurnRate} Pitch={moveInfo.PitchRate}", "BuildMovementUpdate", "ObjectUpdateBuilder.cs");
 			data.WriteFloat(moveInfo.WalkSpeed);
 			data.WriteFloat(moveInfo.RunSpeed);
 			data.WriteFloat(moveInfo.RunBackSpeed);

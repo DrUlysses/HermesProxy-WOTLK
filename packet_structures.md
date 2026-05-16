@@ -1032,7 +1032,7 @@ this.SendPacketToServer(packet);
 {
 if (this._bnetRpc == null)
 {
-Log.Print(LogType.Error, $"Client tried {108} without authentication", "HandleBattlenetRequest", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SessionHandler.cs");
+Log.Print(LogType.Error, $"Client tried {108} without authentication", "HandleBattlenetRequest", "SessionHandler.cs");
 }
 else
 {
@@ -1471,7 +1471,7 @@ ChangeRealmTicketResponse response = new ChangeRealmTicketResponse();
 response.Token = request.Token;
 if (!this.GetSession().AuthClient.IsConnected() && this.GetSession().AuthClient.Reconnect() != HermesProxy.Auth.AuthResult.SUCCESS)
 {
-Log.Print(LogType.Error, "Failed to reconnect to auth server.", "HandleChangeRealmTicket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SessionHandler.cs");
+Log.Print(LogType.Error, "Failed to reconnect to auth server.", "HandleChangeRealmTicket", "SessionHandler.cs");
 response.Allow = false;
 this.SendPacket(response);
 }
@@ -1852,7 +1852,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -1893,7 +1893,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -1934,7 +1934,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -1975,7 +1975,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -2016,7 +2016,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -2057,7 +2057,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -2098,7 +2098,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -2164,7 +2164,7 @@ case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
 type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 break;
 default:
-Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 ```
 
 ---
@@ -2213,7 +2213,7 @@ this.GetSession().GameState.AddonPrefixes.Clear();
 TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 if (tradeSession == null)
 {
-Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleClearTradeItem", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\TradeHandler.cs");
+Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleClearTradeItem", "TradeHandler.cs");
 }
 else
 {
@@ -2283,7 +2283,7 @@ this.SendPacketToServer(packet);
 break;
 }
 default:
-Log.Print(LogType.Error, $"Unhandled respec type {respec.RespecType}.", "HandleConfirmRespecWipe", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\NPCHandler.cs");
+Log.Print(LogType.Error, $"Unhandled respec type {respec.RespecType}.", "HandleConfirmRespecWipe", "NPCHandler.cs");
 break;
 }
 }
@@ -2401,7 +2401,7 @@ reply.RecordID = id;
 reply.TableHash = query.TableHash;
 reply.Status = HotfixStatus.Invalid;
 reply.Timestamp = (uint)Time.UnixTime;
-Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"DB_QUERY_BULK requested ({query.TableHash}) #{id}", "HandleDbQueryBulk", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\HotfixHandler.cs");
+Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"DB_QUERY_BULK requested ({query.TableHash}) #{id}", "HandleDbQueryBulk", "HotfixHandler.cs");
 if (query.TableHash == DB2Hash.BroadcastText)
 {
 BroadcastText bct = GameData.GetBroadcastText(id);
@@ -3482,7 +3482,7 @@ foreach (uint id in request.Hotfixes)
 {
 if (GameData.Hotfixes.TryGetValue(id, out var record))
 {
-Log.Print(LogType.Debug, $"Hotfix record {record.RecordId} from {record.TableHash}.", "HandleHotfixRequest", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\HotfixHandler.cs");
+Log.Print(LogType.Debug, $"Hotfix record {record.RecordId} from {record.TableHash}.", "HandleHotfixRequest", "HotfixHandler.cs");
 connect.Hotfixes.Add(record);
 }
 }
@@ -5882,7 +5882,7 @@ this.SendPacketToServer(packet);
 
 ```csharp
 {
-Log.Print(LogType.Error, $"Object update failed for {fail.ObjectGuid}.", "HandleObjectUpdateFailed", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\MiscHandler.cs");
+Log.Print(LogType.Error, $"Object update failed for {fail.ObjectGuid}.", "HandleObjectUpdateFailed", "MiscHandler.cs");
 }
 ```
 
@@ -6255,7 +6255,7 @@ this.SendCastRequestFailed(castRequest, isPet: true);
 }
 else if (this.GetSession().GameState.CurrentClientPetCast.Timestamp + 10000 < castRequest.Timestamp)
 {
-Log.Print(LogType.Warn, $"Clearing CurrentClientPetCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientPetCast.SpellId} newSpell:{castRequest.SpellId})", "HandlePetCastSpell", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SpellHandler.cs");
+Log.Print(LogType.Warn, $"Clearing CurrentClientPetCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientPetCast.SpellId} newSpell:{castRequest.SpellId})", "HandlePetCastSpell", "SpellHandler.cs");
 this.SendCastRequestFailed(this.GetSession().GameState.CurrentClientPetCast, isPet: true);
 this.GetSession().GameState.CurrentClientPetCast = null;
 foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientPetCasts)
@@ -6355,13 +6355,13 @@ this.SendPacketToServer(packet);
 {
 if (!this.GetSession().GameState.CachedPlayers.TryGetValue(playerLogin.Guid, out var selectedChar))
 {
-Log.Print(LogType.Error, $"Player tried to log in with unknown char id: {playerLogin.Guid}", "HandlePlayerLogin", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\CharacterHandler.cs");
+Log.Print(LogType.Error, $"Player tried to log in with unknown char id: {playerLogin.Guid}", "HandlePlayerLogin", "CharacterHandler.cs");
 return;
 }
 Realm realm = this.GetSession().RealmManager.GetRealm(this.GetSession().RealmId);
 if (realm == null)
 {
-Log.Print(LogType.Error, $"Player tried to log in to unknown realm id: {this.GetSession().RealmId}", "HandlePlayerLogin", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\CharacterHandler.cs");
+Log.Print(LogType.Error, $"Player tried to log in to unknown realm id: {this.GetSession().RealmId}", "HandlePlayerLogin", "CharacterHandler.cs");
 return;
 }
 this.GetSession().AccountMetaDataMgr.SaveLastSelectedCharacter(realm.Name, selectedChar.Name, playerLogin.Guid.Low, Time.UnixTime);
@@ -6778,7 +6778,7 @@ if (quest.Choice.Item.ItemID != 0)
 QuestTemplate questTemplate = GameData.GetQuestTemplate(quest.QuestID);
 if (questTemplate == null)
 {
-Log.Print(LogType.Error, "Unable to select quest reward because quest template is missing. Try again.", "HandleQuestGiverChooseReward", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\QuestHandler.cs");
+Log.Print(LogType.Error, "Unable to select quest reward because quest template is missing. Try again.", "HandleQuestGiverChooseReward", "QuestHandler.cs");
 WorldPacket packet2 = new WorldPacket(Opcode.CMSG_QUERY_QUEST_INFO);
 packet2.WriteUInt32(quest.QuestID);
 this.SendPacketToServer(packet2);
@@ -7190,7 +7190,7 @@ this.SendPacketToServer(packet);
 {
 if (this.GetSession().AccountDataMgr.Data[data.DataType] == null)
 {
-Log.Print(LogType.Error, $"Client requested missing account data {data.DataType}.", "HandleRequestAccountData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ClientConfigHandler.cs");
+Log.Print(LogType.Error, $"Client requested missing account data {data.DataType}.", "HandleRequestAccountData", "ClientConfigHandler.cs");
 this.GetSession().AccountDataMgr.Data[data.DataType] = new AccountData();
 this.GetSession().AccountDataMgr.Data[data.DataType].Type = data.DataType;
 this.GetSession().AccountDataMgr.Data[data.DataType].Timestamp = Time.UnixTime;
@@ -7948,7 +7948,7 @@ this.SendPacketToServer(packet);
 TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 if (tradeSession == null)
 {
-Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeGold", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\TradeHandler.cs");
+Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeGold", "TradeHandler.cs");
 }
 else
 {
@@ -7977,7 +7977,7 @@ this.SendPacketToServer(packet);
 TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 if (tradeSession == null)
 {
-Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeItem", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\TradeHandler.cs");
+Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeItem", "TradeHandler.cs");
 return;
 }
 tradeSession.ClientStateIndex++;
@@ -8862,7 +8862,7 @@ this.SendCastRequestFailed(castRequest, isPet: false);
 }
 else if (this.GetSession().GameState.CurrentClientNormalCast.Timestamp + 10000 < castRequest.Timestamp)
 {
-Log.Print(LogType.Warn, $"Clearing CurrentClientNormalCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientNormalCast.SpellId} newSpell:{castRequest.SpellId})", "HandleUseItem", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SpellHandler.cs");
+Log.Print(LogType.Warn, $"Clearing CurrentClientNormalCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientNormalCast.SpellId} newSpell:{castRequest.SpellId})", "HandleUseItem", "SpellHandler.cs");
 this.SendCastRequestFailed(this.GetSession().GameState.CurrentClientNormalCast, isPet: false);
 this.GetSession().GameState.CurrentClientNormalCast = null;
 foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientCasts)
@@ -12164,7 +12164,7 @@ this.GetSession().GameState.CurrentGuildCreateTime = (uint)Time.DateTimeToUnixTi
 }
 catch
 {
-Log.Print(LogType.Error, $"Invalid guild create date: {day}-{month}-{year}", "HandleGuildInfo", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\GuildHandler.cs");
+Log.Print(LogType.Error, $"Invalid guild create date: {day}-{month}-{year}", "HandleGuildInfo", "World\\Client\\PacketHandlers\\GuildHandler.cs");
 }
 }
 packet.ReadUInt32();
@@ -13176,7 +13176,7 @@ verify.Pos.X = packet.ReadFloat();
 verify.Pos.Y = packet.ReadFloat();
 verify.Pos.Z = packet.ReadFloat();
 verify.Pos.Orientation = packet.ReadFloat();
-Log.Print(LogType.Server, $"[LoginVerifyWorld] Map={verify.MapID} Pos=({verify.Pos.X}, {verify.Pos.Y}, {verify.Pos.Z}) Orient={verify.Pos.Orientation}", "HandleLoginVerifyWorld", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\CharacterHandler.cs");
+Log.Print(LogType.Server, $"[LoginVerifyWorld] Map={verify.MapID} Pos=({verify.Pos.X}, {verify.Pos.Y}, {verify.Pos.Z}) Orient={verify.Pos.Orientation}", "HandleLoginVerifyWorld", "World\\Client\\PacketHandlers\\CharacterHandler.cs");
 this.SendPacketToClient(verify);
 this.GetSession().GameState.IsInWorld = true;
 if (ModernVersion.ExpansionVersion >= 3)
@@ -15979,7 +15979,7 @@ uint petNumber = packet.ReadUInt32();
 WowGuid128 guid = this.GetSession().GameState.GetPetGuidByNumber(petNumber);
 if (guid == null)
 {
-Log.Print(LogType.Error, $"Pet name query response for unknown pet {petNumber}!", "HandleQueryPetNameResponse", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\QueryHandler.cs");
+Log.Print(LogType.Error, $"Pet name query response for unknown pet {petNumber}!", "HandleQueryPetNameResponse", "World\\Client\\PacketHandlers\\QueryHandler.cs");
 return;
 }
 QueryPetNameResponse response = new QueryPetNameResponse();
@@ -18154,7 +18154,7 @@ TradeStatus status = trade.Status;
 TradeStatus tradeStatus = status;
 if ((uint)(tradeStatus - 1) > 1u)
 {
-Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS without trade session (status: {trade.Status})", "HandleTradeStatus", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\TradeHandler.cs");
+Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS without trade session (status: {trade.Status})", "HandleTradeStatus", "World\\Client\\PacketHandlers\\TradeHandler.cs");
 this.SendPacketToClient(new TradeStatusPkt
 {
 Status = TradeStatus.Cancelled
@@ -18211,7 +18211,7 @@ trade.Id = packet.ReadUInt32();
 TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 if (tradeSession == null)
 {
-Log.Print(LogType.Error, "Got SMSG_TRADE_STATUS_EXTENDED without trade session", "HandleTradeStatusExtended", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\TradeHandler.cs");
+Log.Print(LogType.Error, "Got SMSG_TRADE_STATUS_EXTENDED without trade session", "HandleTradeStatusExtended", "World\\Client\\PacketHandlers\\TradeHandler.cs");
 return;
 }
 tradeSession.ServerStateIndex++;
@@ -18222,7 +18222,7 @@ if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 uint actualTradeId = packet.ReadUInt32();
 if (actualTradeId != trade.Id)
 {
-Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS_EXTENDED with wrong tradeId (expected {trade.Id} but got {actualTradeId})", "HandleTradeStatusExtended", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\TradeHandler.cs");
+Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS_EXTENDED with wrong tradeId (expected {trade.Id} but got {actualTradeId})", "HandleTradeStatusExtended", "World\\Client\\PacketHandlers\\TradeHandler.cs");
 return;
 }
 }
@@ -18376,7 +18376,7 @@ this.GetSession().GameState.IsWaitingForNewWorld = false;
 {
 if (this.GetSession().GameState.IsWaitingForWorldPortAck)
 {
-Log.Print(LogType.Error, "Skipping SMSG_TRANSFER_PENDING, client is already being teleported.", "HandleTransferPending", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\MovementHandler.cs");
+Log.Print(LogType.Error, "Skipping SMSG_TRANSFER_PENDING, client is already being teleported.", "HandleTransferPending", "World\\Client\\PacketHandlers\\MovementHandler.cs");
 return;
 }
 TransferPending transfer = new TransferPending();
@@ -28554,7 +28554,7 @@ if (!hasPlayer && this.ObjectUpdates.Count > 0)
 {
 this._gameState.PendingLoginUpdates.AddRange(this.ObjectUpdates);
 this._gameState.PendingLoginDestroys.AddRange(this.DestroyedGuids);
-Log.Print(LogType.Debug, $"[UpdateObject] Buffering {this.ObjectUpdates.Count} updates (total: {this._gameState.PendingLoginUpdates.Count})", "Write", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\Packets\\UpdatePackets.cs");
+Log.Print(LogType.Debug, $"[UpdateObject] Buffering {this.ObjectUpdates.Count} updates (total: {this._gameState.PendingLoginUpdates.Count})", "Write", "Packets\\UpdatePackets.cs");
 ```
 
 ---

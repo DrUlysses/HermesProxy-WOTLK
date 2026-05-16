@@ -1,14 +1,14 @@
 import re
 
 # Read WPP opcodes
-with open('f:/Ampps/HermesProxy-master/tmp_certs/wpp_opcodes_343.cs', 'r') as f:
+with open('wpp_opcodes_343.cs', 'r') as f:
     wpp = f.read()
 wpp_opcodes = {}
 for m in re.finditer(r'Opcode\.(\w+),\s*(0x[0-9A-Fa-f]+)', wpp):
     wpp_opcodes[m.group(1)] = m.group(2)
 
 # Read current file
-with open('f:/Ampps/HermesProxy-master/HermesProxy/World/Enums/V3_4_3_54261/Opcode.cs', 'r') as f:
+with open('../HermesProxy/World/Enums/V3_4_3_54261/Opcode.cs', 'r') as f:
     hermes = f.read()
 
 # Name mappings: HermesProxy -> WowPacketParser
@@ -137,5 +137,5 @@ print(f'Opcodes still at 0x0000: {remaining_zeros}')
 remaining = re.findall(r'(\w+)\s*=\s*0x0000', hermes)
 print(f'Remaining unmatched: {remaining[:40]}')
 
-with open('f:/Ampps/HermesProxy-master/HermesProxy/World/Enums/V3_4_3_54261/Opcode.cs', 'w') as f:
+with open('../HermesProxy/World/Enums/V3_4_3_54261/Opcode.cs', 'w') as f:
     f.write(hermes)

@@ -34,7 +34,7 @@ public class ConfigurationParser
 		}
 		catch
 		{
-			Log.Print(LogType.Error, "Fail to load config file '" + configFile + "'", "ParseFromFile", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\ConfigurationParser.cs");
+			Log.Print(LogType.Error, "Fail to load config file '" + configFile + "'", "ParseFromFile", "ConfigurationParser.cs");
 			throw;
 		}
 		foreach (KeyValuePair<string, string> pair in overwrittenValues)

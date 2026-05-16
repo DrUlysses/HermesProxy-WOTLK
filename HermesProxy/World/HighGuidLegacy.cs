@@ -69,7 +69,7 @@ public class HighGuidLegacy : HighGuid
 		this.high = high;
 		if (!HighGuidLegacy.HighLegacyToHighType.ContainsKey(high))
 		{
-			Framework.Logging.Log.Print(Framework.Logging.LogType.Warn, $"Unknown HighGuidTypeLegacy: 0x{high:X}, defaulting to Null", "HighGuidLegacy", "");
+			Framework.Logging.Log.Print(Framework.Logging.LogType.Warn, $"Unknown HighGuidTypeLegacy: 0x{high:X}, defaulting to Null", "HighGuidLegacy", "HighGuidLegacy.cs");
 			base.highGuidType = HighGuidType.Null;
 			return;
 		}

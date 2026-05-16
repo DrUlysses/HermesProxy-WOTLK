@@ -73,52 +73,52 @@ public static class Settings
 	{
 		if (Settings.ClientSeed.Length != 16)
 		{
-			Log.Print(LogType.Server, "ClientSeed must have byte length of 16 (32 characters)", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, "ClientSeed must have byte length of 16 (32 characters)", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (!VersionChecker.IsSupportedModernVersion(Settings.ClientBuild))
 		{
-			Log.Print(LogType.Server, $"Unsupported ClientBuild '{Settings.ClientBuild}'", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, $"Unsupported ClientBuild '{Settings.ClientBuild}'", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (!VersionChecker.IsSupportedLegacyVersion(Settings.ServerBuild))
 		{
-			Log.Print(LogType.Server, $"Unsupported ServerBuild '{Settings.ServerBuild}', use 'auto' to select best", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, $"Unsupported ServerBuild '{Settings.ServerBuild}', use 'auto' to select best", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (!IsValidPortNumber(Settings.RestPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.RestPort}) out of allowed range (1-65535)", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.RestPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (!IsValidPortNumber(Settings.ServerPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.BNetPort}) out of allowed range (1-65535)", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.BNetPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (!IsValidPortNumber(Settings.BNetPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.BNetPort}) out of allowed range (1-65535)", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.BNetPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (!IsValidPortNumber(Settings.RealmPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.RealmPort}) out of allowed range (1-65535)", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.RealmPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (!IsValidPortNumber(Settings.InstancePort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.InstancePort}) out of allowed range (1-65535)", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.InstancePort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (Settings.ServerSpellDelay < 0)
 		{
-			Log.Print(LogType.Server, "ServerSpellDelay must be larger than or equal to 0", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, "ServerSpellDelay must be larger than or equal to 0", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		if (Settings.ClientSpellDelay < 0)
 		{
-			Log.Print(LogType.Server, "ClientSpellDelay must be larger than or equal to 0", "VerifyConfig", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Configuration\\Settings.cs");
+			Log.Print(LogType.Server, "ClientSpellDelay must be larger than or equal to 0", "VerifyConfig", "Settings.cs");
 			return false;
 		}
 		return true;
