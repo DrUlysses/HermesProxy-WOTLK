@@ -13066,7 +13066,7 @@ public class WorldClient
 		}
 		while (!this._isSuccessful.HasValue)
 		{
-			Log.Print(LogType.Debug, "Waiting for connect. Current is: " + this._isSuccessful.ToString(), "ConnectToWorldServer", "WorldClient.cs");
+			Thread.Sleep(100);
 		}
 		return this._isSuccessful.Value;
 	}
