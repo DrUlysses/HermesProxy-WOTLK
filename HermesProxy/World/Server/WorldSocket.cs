@@ -4793,6 +4793,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		return true;
 	}
 
+	private static readonly HashSet<Opcode> _suppressedLogOpcodes = new HashSet<Opcode>
+	{
+		Opcode.CMSG_HOTFIX_REQUEST,
+		Opcode.UNKNOWN_SMSG,
+	};
+
 	private ReadDataHandlerResult ReadData()
 	{
 		PacketHeader header = new PacketHeader();
@@ -4806,7 +4812,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		this._packetBuffer.Reset();
 		Opcode opcode = packet.GetUniversalOpcode(isModern: true);
 		Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"Received opcode {opcode.ToString()} ({packet.GetOpcode()}).", "ReadData", "WorldSocket.cs");
-		if (opcode != Opcode.CMSG_HOTFIX_REQUEST && !header.IsValidSize())
+		if (!_suppressedLogOpcodes.Contains(opcode) && !header.IsValidSize())
 		{
 			Log.Print(LogType.Error, $"WorldSocket.ReadHeaderHandler(): client {base.GetRemoteIpAddress()} sent malformed packet (size: {header.Size})", "ReadData", "WorldSocket.cs");
 			return ReadDataHandlerResult.Error;

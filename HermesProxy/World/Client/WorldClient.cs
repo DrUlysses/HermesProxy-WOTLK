@@ -13438,6 +13438,7 @@ public class WorldClient
 		Opcode.MSG_MOVE_START_FORWARD,
 		Opcode.MSG_MOVE_STOP,
 		Opcode.MSG_MOVE_SET_FACING,
+		Opcode.SMSG_MOVE_SET_COLLISION_HGT,
 	};
 
 	private void HandlePacket(WorldPacket packet)
