@@ -2053,7 +2053,7 @@ public class WorldClient
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
 		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] HIGHEST_THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleHighestThreatUpdate", "");
+		Log.Print(LogType.Debug, $"[Combat] HIGHEST_THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleHighestThreatUpdate", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_CLEAR)]
@@ -2061,7 +2061,7 @@ public class WorldClient
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
 		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] THREAT_CLEAR unit={unitGuid} (consumed, not forwarded)", "HandleThreatClear", "");
+		Log.Print(LogType.Debug, $"[Combat] THREAT_CLEAR unit={unitGuid} (consumed, not forwarded)", "HandleThreatClear", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_UPDATE)]
@@ -2069,7 +2069,7 @@ public class WorldClient
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
 		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleThreatUpdate", "");
+		Log.Print(LogType.Debug, $"[Combat] THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleThreatUpdate", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_REMOVE)]
@@ -2500,7 +2500,7 @@ public class WorldClient
 				int rangedIdx = PLAYER_VISIBLE_ITEM_1_ENTRYID + 17 * offset;
 				if (visibleItems != null && visibleItems.ContainsKey(rangedIdx) && visibleItems[rangedIdx].UInt32Value != 0)
 				{
-					Log.Print(LogType.Debug, "[Combat] Suppressing ATTACKSWING_NOTINRANGE - player has ranged weapon equipped", "HandleAttackSwingNotInRange", "");
+					Log.Print(LogType.Debug, "[Combat] Suppressing ATTACKSWING_NOTINRANGE - player has ranged weapon equipped", "HandleAttackSwingNotInRange", "WorldClient.cs");
 					return;
 				}
 			}
@@ -4664,7 +4664,7 @@ public class WorldClient
 		sell.VendorGUID = packet.ReadGuid().To128(this.GetSession().GameState);
 		sell.ItemGUID = packet.ReadGuid().To128(this.GetSession().GameState);
 		sell.Reason = packet.ReadUInt8();
-		Log.Print(LogType.Debug, $"[SellResponse] Item={sell.ItemGUID} Vendor={sell.VendorGUID} Reason={sell.Reason}", "HandleSellResponse", "");
+		Log.Print(LogType.Debug, $"[SellResponse] Item={sell.ItemGUID} Vendor={sell.VendorGUID} Reason={sell.Reason}", "HandleSellResponse", "WorldClient.cs");
 		this.SendPacketToClient(sell);
 	}
 
@@ -5260,7 +5260,7 @@ public class WorldClient
 		DeathReleaseLoc death = new DeathReleaseLoc();
 		death.MapID = packet.ReadInt32();
 		death.Location = packet.ReadVector3();
-		Log.Print(LogType.Debug, $"[DeathReleaseLoc] MapID={death.MapID} Pos={death.Location}", "HandleDeathReleaseLoc", "");
+		Log.Print(LogType.Debug, $"[DeathReleaseLoc] MapID={death.MapID} Pos={death.Location}", "HandleDeathReleaseLoc", "WorldClient.cs");
 		this.SendPacketToClient(death);
 	}
 

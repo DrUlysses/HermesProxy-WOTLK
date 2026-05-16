@@ -25,7 +25,7 @@ public class Program
 			if (!File.Exists(value))
 			{
 				result.ErrorMessage = "Error: config file '" + value + "' does not exist";
-				return (string?)null;
+				return null;
 			}
 			return value;
 		}, isDefault: true, "The config file that will be used");

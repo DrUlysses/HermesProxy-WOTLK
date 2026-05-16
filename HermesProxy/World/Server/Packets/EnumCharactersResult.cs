@@ -202,8 +202,8 @@ public class EnumCharactersResult : ServerPacket
 			string hex = BitConverter.ToString(allData, dumpStart, dumpLen);
 			int lastStart = Math.Max(0, (int)totalSize - 30);
 			string lastHex = BitConverter.ToString(allData, dumpStart + lastStart, (int)totalSize - lastStart);
-			Log.Print(LogType.Debug, $"CharacterInfo: name={this.Name} race={this.RaceId} class={this.ClassId} level={this.ExperienceLevel} visItems={visualItemCount} totalBytes={totalSize}", "Write", "Packets\\CharacterPackets.cs");
-			Log.Print(LogType.Debug, "CharacterInfo LAST 30 bytes: " + lastHex, "Write", "Packets\\CharacterPackets.cs");
+			Log.Print(LogType.Debug, $"CharacterInfo: name={this.Name} race={this.RaceId} class={this.ClassId} level={this.ExperienceLevel} visItems={visualItemCount} totalBytes={totalSize}", "Write", "CharacterPackets.cs");
+			Log.Print(LogType.Debug, "CharacterInfo LAST 30 bytes: " + lastHex, "Write", "CharacterPackets.cs");
 		}
 	}
 

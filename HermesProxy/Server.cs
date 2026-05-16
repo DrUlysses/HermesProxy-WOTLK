@@ -112,7 +112,7 @@ internal class Server
 			using HttpClient client = new HttpClient();
 			client.Timeout = TimeSpan.FromSeconds(5.0);
 			client.DefaultRequestHeaders.Add("User-Agent", "curl/7.0.0");
-			HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/WowLegacyCore/HermesProxy/releases/latest");
+			HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/advocaite/HermesProxy-WOTLK/releases/latest");
 			response.EnsureSuccessStatusCode();
 			Dictionary<string, object> parsedJson = JsonSerializer.Deserialize<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
 			string commitDateStr = parsedJson["created_at"].ToString();
@@ -124,7 +124,7 @@ internal class Server
 				Console.WriteLine("------------------------");
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine($"HermesProxy update available v{GitVersionInformation.Major}.{GitVersionInformation.Minor} => {parsedJson["tag_name"]} ({commitDate:yyyy-MM-dd})");
-				Console.WriteLine("Please download new version from https://github.com/WowLegacyCore/HermesProxy/releases/latest");
+				Console.WriteLine("Please download new version from https://github.com/advocaite/HermesProxy-WOTLK/releases/latest");
 				Console.ResetColor();
 				Console.WriteLine("------------------------");
 				Console.WriteLine();
