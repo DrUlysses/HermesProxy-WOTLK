@@ -30,6 +30,21 @@ public class Program
 			return value;
 		}, isDefault: true, "The config file that will be used");
 
+		public static readonly Option<string?> WorkingDirectory = new Option<string>("--workDir", delegate(ArgumentResult result)
+		{
+			if (result.Tokens.Count == 0)
+			{
+				return ".";
+			}
+			string value = result.Tokens.Single().Value;
+			if (!Directory.Exists(value))
+			{
+				result.ErrorMessage = "Error: directory '" + value + "' does not exist";
+				return null;
+			}
+			return value;
+		}, isDefault: true, "The working directory that will be used");
+
 		public static readonly Option<bool> DisableVersionCheck = new Option<bool>("--no-version-check", "Disables the initial version update check");
 
 		public static readonly Option<string[]> OverwrittenConfigValues = new Option<string[]>("--set", "Overwrites a specific config value. Example: --set ServerAddress=logon.example.com");
@@ -42,6 +57,7 @@ public class Program
 		RootCommand commandTree = new RootCommand("Hermes Proxy: Allows you to play on legacy WoW server with modern client")
 		{
 			CommandLineArgumentsTemplate.ConfigFileLocation,
+			CommandLineArgumentsTemplate.WorkingDirectory,
 			CommandLineArgumentsTemplate.DisableVersionCheck,
 			CommandLineArgumentsTemplate.OverwrittenConfigValues
 		};
@@ -52,6 +68,7 @@ public class Program
 			CommandLineArguments args2 = new CommandLineArguments
 			{
 				ConfigFileLocation = parseResult.GetValueForOption(CommandLineArgumentsTemplate.ConfigFileLocation),
+				WorkingDirectory = parseResult.GetValueForOption(CommandLineArgumentsTemplate.WorkingDirectory),
 				DisableVersionCheck = parseResult.GetValueForOption(CommandLineArgumentsTemplate.DisableVersionCheck),
 				OverwrittenConfigValues = Program.ParseMultiArgument(parseResult.GetValueForOption(CommandLineArgumentsTemplate.OverwrittenConfigValues))
 			};

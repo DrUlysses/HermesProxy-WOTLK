@@ -29,11 +29,13 @@ internal class Server
 		Log.Print(LogType.Server, "Starting Hermes Proxy...", "ServerMain", "Server.cs");
 		Log.Print(LogType.Server, "Version " + Server.GetVersionInformation(), "ServerMain", "Server.cs");
 		Log.Start();
-		if (Environment.CurrentDirectory != Path.GetDirectoryName(AppContext.BaseDirectory))
+		String workingDirectory = args.WorkingDirectory ?? Path.GetDirectoryName(AppContext.BaseDirectory) ?? ".";
+
+		if (Environment.CurrentDirectory != workingDirectory)
 		{
 			Log.Print(LogType.Storage, "Switching working directory", "ServerMain", "Server.cs");
 			Log.Print(LogType.Storage, "Old: " + Environment.CurrentDirectory, "ServerMain", "Server.cs");
-			Environment.CurrentDirectory = Path.GetDirectoryName(AppContext.BaseDirectory);
+			Environment.CurrentDirectory = workingDirectory;
 			Log.Print(LogType.Storage, "New: " + Environment.CurrentDirectory, "ServerMain", "Server.cs");
 			Thread.Sleep(TimeSpan.FromSeconds(1.0));
 		}
