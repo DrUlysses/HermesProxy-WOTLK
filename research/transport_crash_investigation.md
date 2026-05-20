@@ -39,7 +39,7 @@ Currently filtered out in UpdateObject.cs with debug logging.
 
 #### Legacy field definitions:
 - `Enums/V3_3_5a_12340/` — look for GameObjectField enum, find GAMEOBJECT_TYPE_ID, GAMEOBJECT_FLAGS, GAMEOBJECT_STATE (likely in GAMEOBJECT_BYTES_1)
-- AzerothCore: `F:/Ampps/azerothcore-wotlk-master/src/server/game/Entities/GameObject/GameObject.cpp` — search for GAMEOBJECT_BYTES_1 packing format
+- AzerothCore: `Entities/GameObject/GameObject.cpp` — search for GAMEOBJECT_BYTES_1 packing format
 - In 3.3.5a, GAMEOBJECT_BYTES_1 packs: State (byte 0), TypeID (byte 1), ArtKit (byte 2), AnimProgress (byte 3)
 
 #### Rotation quaternion:
@@ -50,14 +50,14 @@ Currently filtered out in UpdateObject.cs with debug logging.
 - MoveInfo.Rotation is a Quaternion — check if X/Y/Z/W mapping matches between legacy read and modern write
 
 ### AzerothCore References
-- `F:/Ampps/azerothcore-wotlk-master/src/server/game/Entities/Transport/Transport.cpp` — MotionTransport/StaticTransport constructors
-- `F:/Ampps/azerothcore-wotlk-master/src/server/game/Entities/Object/Object.cpp:~458` — UPDATEFLAG_TRANSPORT writes uint32 PathProgress
+- `Entities/Transport/Transport.cpp` — MotionTransport/StaticTransport constructors
+- `Entities/Object/Object.cpp:~458` — UPDATEFLAG_TRANSPORT writes uint32 PathProgress
 - m_updateFlag for transports = UPDATEFLAG_TRANSPORT | UPDATEFLAG_LOWGUID | UPDATEFLAG_STATIONARY_POSITION | UPDATEFLAG_ROTATION
 
 ### TC343 References  
-- `f:/Ampps/TC343/src/server/game/Entities/Transport/Transport.cpp:92` — m_updateFlag.ServerTime = true
-- `f:/Ampps/TC343/src/server/game/Entities/Object/Object.cpp:410` — ServerTime writes GameTime::GetGameTimeMS()
-- `f:/Ampps/TC343/src/server/game/Entities/Object/Updates/UpdateFields.cpp:4272` — GameObjectData::WriteCreate
+- `Entities/Transport/Transport.cpp:92` — m_updateFlag.ServerTime = true
+- `Entities/Object/Object.cpp:410` — ServerTime writes GameTime::GetGameTimeMS()
+- `Entities/Object/Updates/UpdateFields.cpp:4272` — GameObjectData::WriteCreate
 
 ## Fix Plan
 1. Find where legacy GAMEOBJECT_BYTES_1 is read — extract TypeID (byte 1) and State (byte 0) into GameObjectData

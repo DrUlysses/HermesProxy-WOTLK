@@ -76,7 +76,7 @@ namespace Framework.Logging
         {
             try
             {
-                _logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+                _logDir = Path.Combine(Directory.GetCurrentDirectory(), "logs");
                 Directory.CreateDirectory(_logDir);
                 string logFile = Path.Combine(_logDir, $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
                 _logWriter = new StreamWriter(logFile, append: true, encoding: Encoding.UTF8) { AutoFlush = true };
@@ -126,6 +126,10 @@ namespace Framework.Logging
             Console.WriteLine($"| {text}");
         }
 
+        /// <param name="type">Type of the log message</param>
+        /// <param name="text">Text of the log message</param>
+        /// <param name="method">Name of the method the log is called from</param>
+        /// <param name="path">The relative path of the file.</param>
         public static void Print(LogType type, object text, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
         {
             string formattedText = $"{FormatCaller(method, path)} | {text}";

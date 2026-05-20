@@ -39,6 +39,7 @@ HermesProxy provides some internal chat commands:
 
 ## Start Arguments
  - `--config <filename>` to specify a config (default `HermesProxy.config`)
+ - `--workDir <dirname>` to specify a working directory (default `.`)
  - `--set <key>=<value>` to overwrite a specific config value (example `--set ServerAddress=logon.example.com`)
  - `--no-version-check`  to disable the check for newer versions
 

@@ -618,7 +618,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LOADING_SCREEN_NOTIFY)]
 	private void HandleLoadScreen(LoadingScreenNotify loadingScreenNotify)
 	{
-		if (loadingScreenNotify.MapID >= 0)
+		// Only update CurrentMapId when the loading screen is appearing (Showing=true).
+		// When it dismisses (Showing=false) the client may send MapID=0, which would
+		// incorrectly reset CurrentMapId and cause all subsequent UpdateObject packets
+		// to advertise MapID=0 instead of the player's actual map.
+		if (loadingScreenNotify.Showing && loadingScreenNotify.MapID > 0)
 		{
 			this.GetSession().GameState.CurrentMapId = loadingScreenNotify.MapID;
 		}
@@ -648,13 +652,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!this.GetSession().GameState.CachedPlayers.TryGetValue(playerLogin.Guid, out var selectedChar))
 		{
-			Log.Print(LogType.Error, $"Player tried to log in with unknown char id: {playerLogin.Guid}", "HandlePlayerLogin", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\CharacterHandler.cs");
+			Log.Print(LogType.Error, $"Player tried to log in with unknown char id: {playerLogin.Guid}", "HandlePlayerLogin", "CharacterHandler.cs");
 			return;
 		}
 		Realm realm = this.GetSession().RealmManager.GetRealm(this.GetSession().RealmId);
 		if (realm == null)
 		{
-			Log.Print(LogType.Error, $"Player tried to log in to unknown realm id: {this.GetSession().RealmId}", "HandlePlayerLogin", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\CharacterHandler.cs");
+			Log.Print(LogType.Error, $"Player tried to log in to unknown realm id: {this.GetSession().RealmId}", "HandlePlayerLogin", "CharacterHandler.cs");
 			return;
 		}
 		this.GetSession().AccountMetaDataMgr.SaveLastSelectedCharacter(realm.Name, selectedChar.Name, playerLogin.Guid.Low, Time.UnixTime);
@@ -1014,7 +1018,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			type = ((!this.GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
 			break;
 		default:
-			Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ChatHandler.cs");
+			Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "HandleChatMessage", "ChatHandler.cs");
 			return;
 		}
 		List<string> toBeSentTextParts = WorldSocket.ConvertTextMessageIntoMaxLengthParts(packet.Text);
@@ -1132,7 +1136,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (this.GetSession().AccountDataMgr.Data[data.DataType] == null)
 		{
-			Log.Print(LogType.Error, $"Client requested missing account data {data.DataType}.", "HandleRequestAccountData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\ClientConfigHandler.cs");
+			Log.Print(LogType.Error, $"Client requested missing account data {data.DataType}.", "HandleRequestAccountData", "ClientConfigHandler.cs");
 			this.GetSession().AccountDataMgr.Data[data.DataType] = new AccountData();
 			this.GetSession().AccountDataMgr.Data[data.DataType].Type = data.DataType;
 			this.GetSession().AccountDataMgr.Data[data.DataType].Timestamp = Time.UnixTime;
@@ -1914,7 +1918,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			reply.TableHash = query.TableHash;
 			reply.Status = HotfixStatus.Invalid;
 			reply.Timestamp = (uint)Time.UnixTime;
-			Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"DB_QUERY_BULK requested ({query.TableHash}) #{id}", "HandleDbQueryBulk", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\HotfixHandler.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"DB_QUERY_BULK requested ({query.TableHash}) #{id}", "HandleDbQueryBulk", "HotfixHandler.cs");
 			if (query.TableHash == DB2Hash.BroadcastText)
 			{
 				BroadcastText bct = GameData.GetBroadcastText(id);
@@ -2011,7 +2015,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			if (GameData.Hotfixes.TryGetValue(id, out var record))
 			{
-				Log.Print(LogType.Debug, $"Hotfix record {record.RecordId} from {record.TableHash}.", "HandleHotfixRequest", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\HotfixHandler.cs");
+				Log.Print(LogType.Debug, $"Hotfix record {record.RecordId} from {record.TableHash}.", "HandleHotfixRequest", "HotfixHandler.cs");
 				connect.Hotfixes.Add(record);
 			}
 		}
@@ -2758,7 +2762,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_OBJECT_UPDATE_FAILED)]
 	private void HandleObjectUpdateFailed(ObjectUpdateFailed fail)
 	{
-		Log.Print(LogType.Error, $"Object update failed for {fail.ObjectGuid}.", "HandleObjectUpdateFailed", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\MiscHandler.cs");
+		Log.Print(LogType.Error, $"Object update failed for {fail.ObjectGuid}.", "HandleObjectUpdateFailed", "MiscHandler.cs");
 	}
 
 	[PacketHandler(Opcode.CMSG_SET_DUNGEON_DIFFICULTY)]
@@ -3273,7 +3277,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			break;
 		}
 		default:
-			Log.Print(LogType.Error, $"Unhandled respec type {respec.RespecType}.", "HandleConfirmRespecWipe", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\NPCHandler.cs");
+			Log.Print(LogType.Error, $"Unhandled respec type {respec.RespecType}.", "HandleConfirmRespecWipe", "NPCHandler.cs");
 			break;
 		}
 	}
@@ -3702,7 +3706,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			QuestTemplate questTemplate = GameData.GetQuestTemplate(quest.QuestID);
 			if (questTemplate == null)
 			{
-				Log.Print(LogType.Error, "Unable to select quest reward because quest template is missing. Try again.", "HandleQuestGiverChooseReward", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\QuestHandler.cs");
+				Log.Print(LogType.Error, "Unable to select quest reward because quest template is missing. Try again.", "HandleQuestGiverChooseReward", "QuestHandler.cs");
 				WorldPacket packet2 = new WorldPacket(Opcode.CMSG_QUERY_QUEST_INFO);
 				packet2.WriteUInt32(quest.QuestID);
 				this.SendPacketToServer(packet2);
@@ -3804,7 +3808,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		response.Token = request.Token;
 		if (!this.GetSession().AuthClient.IsConnected() && this.GetSession().AuthClient.Reconnect() != HermesProxy.Auth.AuthResult.SUCCESS)
 		{
-			Log.Print(LogType.Error, "Failed to reconnect to auth server.", "HandleChangeRealmTicket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SessionHandler.cs");
+			Log.Print(LogType.Error, "Failed to reconnect to auth server.", "HandleChangeRealmTicket", "SessionHandler.cs");
 			response.Allow = false;
 			this.SendPacket(response);
 		}
@@ -3822,7 +3826,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (this._bnetRpc == null)
 		{
-			Log.Print(LogType.Error, $"Client tried {108} without authentication", "HandleBattlenetRequest", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SessionHandler.cs");
+			Log.Print(LogType.Error, $"Client tried {108} without authentication", "HandleBattlenetRequest", "SessionHandler.cs");
 		}
 		else
 		{
@@ -4093,8 +4097,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				}
 				else if (this.GetSession().GameState.CurrentClientNormalCast.Timestamp + 10000 < castRequest2.Timestamp)
 				{
-					Log.Print(LogType.Warn, $"Clearing CurrentClientNormalCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientNormalCast.SpellId} newSpell:{castRequest2.SpellId})", "HandleCastSpell", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SpellHandler.cs");
-					Log.Print(LogType.Warn, "Are you playing on a server with another patch?", "HandleCastSpell", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SpellHandler.cs");
+					Log.Print(LogType.Warn, $"Clearing CurrentClientNormalCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientNormalCast.SpellId} newSpell:{castRequest2.SpellId})", "HandleCastSpell", "SpellHandler.cs");
+					Log.Print(LogType.Warn, "Are you playing on a server with another patch?", "HandleCastSpell", "SpellHandler.cs");
 					this.SendCastRequestFailed(this.GetSession().GameState.CurrentClientNormalCast, isPet: false);
 					this.GetSession().GameState.CurrentClientNormalCast = null;
 					foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientCasts)
@@ -4162,7 +4166,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			}
 			else if (this.GetSession().GameState.CurrentClientPetCast.Timestamp + 10000 < castRequest.Timestamp)
 			{
-				Log.Print(LogType.Warn, $"Clearing CurrentClientPetCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientPetCast.SpellId} newSpell:{castRequest.SpellId})", "HandlePetCastSpell", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SpellHandler.cs");
+				Log.Print(LogType.Warn, $"Clearing CurrentClientPetCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientPetCast.SpellId} newSpell:{castRequest.SpellId})", "HandlePetCastSpell", "SpellHandler.cs");
 				this.SendCastRequestFailed(this.GetSession().GameState.CurrentClientPetCast, isPet: true);
 				this.GetSession().GameState.CurrentClientPetCast = null;
 				foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientPetCasts)
@@ -4220,7 +4224,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			}
 			else if (this.GetSession().GameState.CurrentClientNormalCast.Timestamp + 10000 < castRequest.Timestamp)
 			{
-				Log.Print(LogType.Warn, $"Clearing CurrentClientNormalCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientNormalCast.SpellId} newSpell:{castRequest.SpellId})", "HandleUseItem", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\SpellHandler.cs");
+				Log.Print(LogType.Warn, $"Clearing CurrentClientNormalCast because of 10 sec timeout! (oldSpell:{this.GetSession().GameState.CurrentClientNormalCast.SpellId} newSpell:{castRequest.SpellId})", "HandleUseItem", "SpellHandler.cs");
 				this.SendCastRequestFailed(this.GetSession().GameState.CurrentClientNormalCast, isPet: false);
 				this.GetSession().GameState.CurrentClientNormalCast = null;
 				foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientCasts)
@@ -4577,7 +4581,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
-			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeGold", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\TradeHandler.cs");
+			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeGold", "TradeHandler.cs");
 		}
 		else
 		{
@@ -4617,7 +4621,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
-			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleClearTradeItem", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\TradeHandler.cs");
+			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleClearTradeItem", "TradeHandler.cs");
 		}
 		else
 		{
@@ -4634,7 +4638,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
-			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeItem", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\PacketHandlers\\TradeHandler.cs");
+			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "HandleSetTradeItem", "TradeHandler.cs");
 			return;
 		}
 		tradeSession.ClientStateIndex++;
@@ -4720,7 +4724,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			if (z_res1 != 0)
 			{
 				base.CloseSocket();
-				Log.Print(LogType.Error, $"Can't initialize packet compression (zlib: deflateInit2_) Error code: {z_res1}", "InitializeHandler", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+				Log.Print(LogType.Error, $"Can't initialize packet compression (zlib: deflateInit2_) Error code: {z_res1}", "InitializeHandler", "WorldSocket.cs");
 			}
 			else
 			{
@@ -4789,22 +4793,28 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		return true;
 	}
 
+	private static readonly HashSet<Opcode> _suppressedLogOpcodes = new HashSet<Opcode>
+	{
+		Opcode.CMSG_HOTFIX_REQUEST,
+		Opcode.UNKNOWN_SMSG,
+	};
+
 	private ReadDataHandlerResult ReadData()
 	{
 		PacketHeader header = new PacketHeader();
 		header.Read(this._headerBuffer.GetData());
 		if (!this._worldCrypt.Decrypt(this._packetBuffer.GetData(), header.Tag))
 		{
-			Log.Print(LogType.Error, $"WorldSocket.ReadData(): client {base.GetRemoteIpAddress()} failed to decrypt packet (size: {header.Size})", "ReadData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Error, $"WorldSocket.ReadData(): client {base.GetRemoteIpAddress()} failed to decrypt packet (size: {header.Size})", "ReadData", "WorldSocket.cs");
 			return ReadDataHandlerResult.Error;
 		}
 		WorldPacket packet = new WorldPacket(this._packetBuffer.GetData());
 		this._packetBuffer.Reset();
 		Opcode opcode = packet.GetUniversalOpcode(isModern: true);
-		Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"Received opcode {opcode.ToString()} ({packet.GetOpcode()}).", "ReadData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
-		if (opcode != Opcode.CMSG_HOTFIX_REQUEST && !header.IsValidSize())
+		Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"Received opcode {opcode.ToString()} ({packet.GetOpcode()}).", "ReadData", "WorldSocket.cs");
+		if (!_suppressedLogOpcodes.Contains(opcode) && !header.IsValidSize())
 		{
-			Log.Print(LogType.Error, $"WorldSocket.ReadHeaderHandler(): client {base.GetRemoteIpAddress()} sent malformed packet (size: {header.Size})", "ReadData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Error, $"WorldSocket.ReadHeaderHandler(): client {base.GetRemoteIpAddress()} sent malformed packet (size: {header.Size})", "ReadData", "WorldSocket.cs");
 			return ReadDataHandlerResult.Error;
 		}
 		switch (opcode)
@@ -4840,7 +4850,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		case Opcode.CMSG_LOG_DISCONNECT:
 		{
 			uint reason = packet.ReadUInt32();
-			Log.Print(LogType.Server, $"Client disconnected with reason {reason}.", "ReadData", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Server, $"Client disconnected with reason {reason}.", "ReadData", "WorldSocket.cs");
 			if (this._connectType == ConnectionType.Realm)
 			{
 				if (this.GetSession().AuthClient != null)
@@ -4896,7 +4906,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			handler.Invoke(this, packet);
 			return;
 		}
-		Log.PrintNet(LogType.Warn, LogNetDir.C2P, $"No handler for opcode {universalOpcode} ({packet.GetOpcode()}) (Got unknown packet from ModernClient)", "HandlePacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+		Log.PrintNet(LogType.Warn, LogNetDir.C2P, $"No handler for opcode {universalOpcode} ({packet.GetOpcode()}) (Got unknown packet from ModernClient)", "HandlePacket", "WorldSocket.cs");
 		MissingOpcodeTracker.LogUnhandledCMSG(universalOpcode, packet.GetOpcode());
 	}
 
@@ -4907,7 +4917,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			this.GetSession().WorldClient.SendPacketToServer(packet, delayUntilOpcode);
 			return;
 		}
-		Log.Print(LogType.Error, $"Attempt to send opcode {packet.GetUniversalOpcode(isModern: false)} ({packet.GetOpcode()}) while WorldClient is disconnected!", "SendPacketToServer", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+		Log.Print(LogType.Error, $"Attempt to send opcode {packet.GetUniversalOpcode(isModern: false)} ({packet.GetOpcode()}) while WorldClient is disconnected!", "SendPacketToServer", "WorldSocket.cs");
 	}
 
 	public PacketHandler GetHandler(Opcode opcode)
@@ -4919,7 +4929,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!base.IsOpen())
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't send {packet.GetUniversalOpcode()}, socket is closed!", "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't send {packet.GetUniversalOpcode()}, socket is closed!", "SendPacket", "WorldSocket.cs");
 			if (this.GetSession() != null)
 			{
 				if (this.GetSession().RealmSocket == this)
@@ -4949,13 +4959,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		ushort opcode = (ushort)packet.GetOpcode();
 		if (opcode == 0 && universalOpcode != Opcode.MSG_NULL_ACTION)
 		{
-			Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Dropping packet {universalOpcode} - missing modern opcode mapping! (size={data.Length})", "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Dropping packet {universalOpcode} - missing modern opcode mapping! (size={data.Length})", "SendPacket", "WorldSocket.cs");
 			MissingOpcodeTracker.LogDroppedSMSG(universalOpcode, data.Length);
 			this._sendMutex.ReleaseMutex();
 			return;
 		}
 		if (universalOpcode != Opcode.SMSG_ON_MONSTER_MOVE)
-			Log.PrintNet(LogType.Debug, LogNetDir.P2C, $"Sending opcode {universalOpcode} ({opcode}), size={data.Length}.", "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.P2C, $"Sending opcode {universalOpcode} ({opcode}), size={data.Length}.", "SendPacket", "WorldSocket.cs");
 		ByteBuffer buffer = new ByteBuffer();
 		int packetSize = data.Length;
 		if (packetSize > 1024 && this._worldCrypt.IsInitialized && ModernVersion.ExpansionVersion < 3)
@@ -4999,7 +5009,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		int z_res = ZLib.deflate(this._compressionStream, 2);
 		if (z_res != 0)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't compress packet data (zlib: deflate) Error code: {z_res} msg: {this._compressionStream.msg}", "CompressPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't compress packet data (zlib: deflate) Error code: {z_res} msg: {this._compressionStream.msg}", "CompressPacket", "WorldSocket.cs");
 			return 0u;
 		}
 		return bufferSize - this._compressionStream.avail_out;
@@ -5041,7 +5051,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		if (buildInfo == null)
 		{
 			this.SendAuthResponseError(BattlenetRpcErrorCode.BadVersion);
-			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSessionCallback: Missing auth seed for realm build {this.GetSession().Build} ({base.GetRemoteIpAddress()}).", "HandleAuthSessionCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSessionCallback: Missing auth seed for realm build {this.GetSession().Build} ({base.GetRemoteIpAddress()}).", "HandleAuthSessionCallback", "WorldSocket.cs");
 			base.CloseSocket();
 			this.GetSession().OnDisconnect();
 			return;
@@ -5049,7 +5059,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		IPEndPoint address = base.GetRemoteIpAddress();
 		if (this.GetSession().OS != "Wn64" && this.GetSession().OS != "Mc64" && this.GetSession().OS != "MacA")
 		{
-			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSession: Unknown OS for account: {this.GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') address: {address}", "HandleAuthSessionCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSession: Unknown OS for account: {this.GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') address: {address}", "HandleAuthSessionCallback", "WorldSocket.cs");
 			base.CloseSocket();
 			this.GetSession().OnDisconnect();
 			return;
@@ -5057,10 +5067,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		byte[] platformSeed = buildInfo.BuildSeeds.GetValueOrDefault(this.GetSession().OS);
 		if (platformSeed == null || !TrySeed(platformSeed))
 		{
-			Log.Print(LogType.Debug, "WorldSocket.HandleAuthSession: Fallback to static seed", "HandleAuthSessionCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Debug, "WorldSocket.HandleAuthSession: Fallback to static seed", "HandleAuthSessionCallback", "WorldSocket.cs");
 			if (!TrySeed(buildInfo.FallbackStaticSeed))
 			{
-				Log.Print(LogType.Warn, $"WorldSocket.HandleAuthSession: Seed mismatch for account: {this.GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') - BYPASSING for testing", "HandleAuthSessionCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+				Log.Print(LogType.Warn, $"WorldSocket.HandleAuthSession: Seed mismatch for account: {this.GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') - BYPASSING for testing", "HandleAuthSessionCallback", "WorldSocket.cs");
 			}
 		}
 		Sha256 keyData = new Sha256();
@@ -5078,13 +5088,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		encryptKeyGen.Finish(WorldSocket.EncryptionKeySeed, 16);
 		Buffer.BlockCopy(encryptKeyGen.Digest, 0, this._encryptKey, 0, 16);
 		this.GetSession().SessionKey = this._sessionKey;
-		Log.Print(LogType.Server, $"WorldSocket:HandleAuthSession: Client '{authSession.RealmJoinTicket}' authenticated successfully from {address}.", "HandleAuthSessionCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+		Log.Print(LogType.Server, $"WorldSocket:HandleAuthSession: Client '{authSession.RealmJoinTicket}' authenticated successfully from {address}.", "HandleAuthSessionCallback", "WorldSocket.cs");
 		this._realmId = new RealmId((byte)authSession.RegionID, (byte)authSession.BattlegroupID, authSession.RealmID);
 		this.GetSession().WorldClient = new WorldClient();
 		if (!this.GetSession().WorldClient.ConnectToWorldServer(this.GetSession().RealmManager.GetRealm(this._realmId), this.GetSession()))
 		{
 			this.SendAuthResponseError(BattlenetRpcErrorCode.BadServer);
-			Log.Print(LogType.Error, "The WorldClient failed to connect to the selected world server!", "HandleAuthSessionCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Error, "The WorldClient failed to connect to the selected world server!", "HandleAuthSessionCallback", "WorldSocket.cs");
 			this.Session.AccountMetaDataMgr.InvalidateLastSelectedCharacter();
 			base.CloseSocket();
 			this.GetSession().OnDisconnect();
@@ -5140,7 +5150,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		hmac.Finish(WorldSocket.ContinuedSessionSeed, 16);
 		if (!hmac.Digest.Compare(authSession.Digest))
 		{
-			Log.Print(LogType.Error, $"WorldSocket.HandleAuthContinuedSession: Authentication failed for account: {accountId} ('{login}') address: {base.GetRemoteIpAddress()}", "HandleAuthContinuedSessionCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Error, $"WorldSocket.HandleAuthContinuedSession: Authentication failed for account: {accountId} ('{login}') address: {base.GetRemoteIpAddress()}", "HandleAuthContinuedSessionCallback", "WorldSocket.cs");
 			base.CloseSocket();
 		}
 		else
@@ -5211,7 +5221,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			this.SendConnectToInstance(ConnectToSerial.WorldAttempt5);
 			break;
 		case ConnectToSerial.WorldAttempt5:
-			Log.Print(LogType.Error, "Failed to connect 5 times to world socket, aborting login", "HandleConnectToFailed", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Error, "Failed to connect 5 times to world socket, aborting login", "HandleConnectToFailed", "WorldSocket.cs");
 			this.AbortLogin(LoginFailureReason.NoWorld);
 			break;
 		}
@@ -5249,7 +5259,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		else
 		{
-			Log.Print(LogType.Server, "Client has connected to the instance server.", "HandleEnterEncryptedModeAck", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+			Log.Print(LogType.Server, "Client has connected to the instance server.", "HandleEnterEncryptedModeAck", "WorldSocket.cs");
 			this.SendPacket(new ResumeComms(ConnectionType.Instance));
 			this.GetSession().GameState.IsConnectedToInstance = true;
 			this.GetSession().InstanceSocket = this;
@@ -5492,7 +5502,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			seasonInfo.PreviousSeason = 1;
 		}
 		uint resolved = ModernVersion.GetCurrentOpcode(Opcode.SMSG_SEASON_INFO);
-		Log.Print(LogType.Debug, $"SeasonInfo opcode resolved to: {resolved} (0x{resolved:X4})", "SendSeasonInfo", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+		Log.Print(LogType.Debug, $"SeasonInfo opcode resolved to: {resolved} (0x{resolved:X4})", "SendSeasonInfo", "WorldSocket.cs");
 		this.SendPacket(seasonInfo);
 	}
 
@@ -5592,18 +5602,18 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				}
 				if (this._clientPacketTable.ContainsKey(msgAttr.Opcode))
 				{
-					Log.Print(LogType.Error, $"Tried to override OpcodeHandler of {this._clientPacketTable[msgAttr.Opcode].ToString()} with {methodInfo.Name} (Opcode {msgAttr.Opcode})", "InitializePacketHandlers", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+					Log.Print(LogType.Error, $"Tried to override OpcodeHandler of {this._clientPacketTable[msgAttr.Opcode].ToString()} with {methodInfo.Name} (Opcode {msgAttr.Opcode})", "InitializePacketHandlers", "WorldSocket.cs");
 				}
 				else
 				{
 					ParameterInfo[] parameters = methodInfo.GetParameters();
 					if (parameters.Length == 0)
 					{
-						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " Has no paramters", "InitializePacketHandlers", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " Has no paramters", "InitializePacketHandlers", "WorldSocket.cs");
 					}
 					else if (!typeof(ClientPacket).IsAssignableFrom(parameters[0].ParameterType))
 					{
-						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " has wrong BaseType", "InitializePacketHandlers", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\WorldSocket.cs");
+						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " has wrong BaseType", "InitializePacketHandlers", "WorldSocket.cs");
 					}
 					else
 					{

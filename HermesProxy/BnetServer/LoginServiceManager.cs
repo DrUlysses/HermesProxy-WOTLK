@@ -26,20 +26,20 @@ public class LoginServiceManager : Singleton<LoginServiceManager>
 		int port = Settings.RestPort;
 		if (port < 0 || port > 65535)
 		{
-			Log.Print(LogType.Error, $"Specified login service port ({port}) out of allowed range (1-65535), defaulting to 8081", "Initialize", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Managers\\LoginServiceManager.cs");
+			Log.Print(LogType.Error, $"Specified login service port ({port}) out of allowed range (1-65535), defaulting to 8081", "Initialize", "LoginServiceManager.cs");
 			port = 8081;
 		}
 		string configuredAddress = Settings.ExternalAddress;
 		if (!IPAddress.TryParse(configuredAddress, out IPAddress address))
 		{
-			Log.Print(LogType.Error, "Could not resolve LoginREST.ExternalAddress " + configuredAddress, "Initialize", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Managers\\LoginServiceManager.cs");
+			Log.Print(LogType.Error, "Could not resolve LoginREST.ExternalAddress " + configuredAddress, "Initialize", "LoginServiceManager.cs");
 			return;
 		}
 		this.externalAddress = new IPEndPoint(address, port);
 		configuredAddress = "127.0.0.1";
 		if (!IPAddress.TryParse(configuredAddress, out address))
 		{
-			Log.Print(LogType.Error, "Could not resolve local address.", "Initialize", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Managers\\LoginServiceManager.cs");
+			Log.Print(LogType.Error, "Could not resolve local address.", "Initialize", "LoginServiceManager.cs");
 			return;
 		}
 		this.localAddress = new IPEndPoint(address, port);

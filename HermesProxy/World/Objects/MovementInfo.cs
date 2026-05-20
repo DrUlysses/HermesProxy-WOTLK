@@ -481,7 +481,7 @@ public sealed class MovementInfo
 		{
 			if (check)
 			{
-				Log.Print(LogType.Error, $"Violation of MovementFlags found ({check}). MovementFlags: {this.Flags}, MovementFlags2: {this.FlagsExtra}. Mask {maskToRemove} will be removed.", "ValidateMovementInfo", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\MovementInfo.cs");
+				Log.Print(LogType.Error, $"Violation of MovementFlags found ({check}). MovementFlags: {this.Flags}, MovementFlags2: {this.FlagsExtra}. Mask {maskToRemove} will be removed.", "ValidateMovementInfo", "World\\Objects\\MovementInfo.cs");
 				this.RemoveMovementFlag(maskToRemove);
 			}
 		};

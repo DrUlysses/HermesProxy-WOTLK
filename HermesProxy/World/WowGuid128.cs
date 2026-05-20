@@ -82,7 +82,7 @@ public class WowGuid128 : WowGuid
 		case HighGuidType703.Guild:
 			return WowGuid128.RealmSpecificCreate(type, counter);
 		default:
-			Log.Print(LogType.Error, $"This guid type cannot be constructed using Create(HighGuid: {type} ulong counter).", "Create", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\WowGuid.cs");
+			Log.Print(LogType.Error, $"This guid type cannot be constructed using Create(HighGuid: {type} ulong counter).", "Create", "WowGuid.cs");
 			return WowGuid128.Empty;
 		}
 	}

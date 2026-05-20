@@ -29,7 +29,7 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 	public override void Accept()
 	{
 		string ipAddress = base.GetRemoteIpEndPoint().ToString();
-		Log.Print(LogType.Server, "Accepting connection from " + ipAddress + ".", "Accept", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Networking\\BnetTcpSession.cs");
+		Log.Print(LogType.Server, "Accepting connection from " + ipAddress + ".", "Accept", "BnetTcpSession.cs");
 		base.AsyncHandshake(BnetServerCertificate.Certificate);
 	}
 
@@ -46,7 +46,7 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 	{
 		if (base.IsOpen())
 		{
-			Log.Print(LogType.Debug, $"BnetTcp received {receivedLength} bytes: {BitConverter.ToString(data, 0, Math.Min(receivedLength, 16))}", "ReadHandler", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Networking\\BnetTcpSession.cs");
+			Log.Print(LogType.Debug, $"BnetTcp received {receivedLength} bytes: {BitConverter.ToString(data, 0, Math.Min(receivedLength, 16))}", "ReadHandler", "BnetTcpSession.cs");
 			this._currentBuffer.AddRange(data.Take(receivedLength));
 			await this.ProcessCurrentBuffer();
 			await base.AsyncRead();

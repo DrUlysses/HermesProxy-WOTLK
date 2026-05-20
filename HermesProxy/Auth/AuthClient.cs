@@ -64,14 +64,14 @@ public class AuthClient
 		try
 		{
 			IPAddress serverIpAddress = NetworkUtils.ResolveOrDirectIPv4(Settings.ServerAddress);
-			Log.PrintNet(LogType.Network, LogNetDir.P2S, $"Connecting to auth server... (realmlist addr: {Settings.ServerAddress}:{Settings.ServerPort}) (resolved as: {serverIpAddress}:{Settings.ServerPort})", "ConnectToAuthServer", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.PrintNet(LogType.Network, LogNetDir.P2S, $"Connecting to auth server... (realmlist addr: {Settings.ServerAddress}:{Settings.ServerPort}) (resolved as: {serverIpAddress}:{Settings.ServerPort})", "ConnectToAuthServer", "Auth\\AuthClient.cs");
 			this._clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			IPEndPoint endPoint = new IPEndPoint(serverIpAddress, Settings.ServerPort);
 			this._clientSocket.BeginConnect(endPoint, ConnectCallback, null);
 		}
 		catch (Exception ex)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Socket Error: " + ex.Message, "ConnectToAuthServer", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Socket Error: " + ex.Message, "ConnectToAuthServer", "Auth\\AuthClient.cs");
 			this._response.SetResult(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 		this._response.Task.Wait();
@@ -86,14 +86,14 @@ public class AuthClient
 		try
 		{
 			IPAddress serverIpAddress = NetworkUtils.ResolveOrDirectIPv4(Settings.ServerAddress);
-			Log.PrintNet(LogType.Network, LogNetDir.P2S, $"Reconnecting to auth server... (realmlist addr: {Settings.ServerAddress}:{Settings.ServerPort}) (resolved as: {serverIpAddress}:{Settings.ServerPort})", "Reconnect", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.PrintNet(LogType.Network, LogNetDir.P2S, $"Reconnecting to auth server... (realmlist addr: {Settings.ServerAddress}:{Settings.ServerPort}) (resolved as: {serverIpAddress}:{Settings.ServerPort})", "Reconnect", "Auth\\AuthClient.cs");
 			this._clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			IPEndPoint endPoint = new IPEndPoint(serverIpAddress, Settings.ServerPort);
 			this._clientSocket.BeginConnect(endPoint, ConnectCallback, null);
 		}
 		catch (Exception ex)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Socket Error: " + ex.Message, "Reconnect", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Socket Error: " + ex.Message, "Reconnect", "Auth\\AuthClient.cs");
 			this._response.SetResult(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 		this._response.Task.Wait();
@@ -136,7 +136,7 @@ public class AuthClient
 		}
 		catch (Exception ex)
 		{
-			Log.Print(LogType.Error, "Connect Error: " + ex.Message, "ConnectCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.Print(LogType.Error, "Connect Error: " + ex.Message, "ConnectCallback", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 	}
@@ -153,7 +153,7 @@ public class AuthClient
 		}
 		catch (Exception ex)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Connect Error: " + ex.Message, "ReconnectCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Connect Error: " + ex.Message, "ReconnectCallback", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 	}
@@ -166,7 +166,7 @@ public class AuthClient
 			if (received == 0)
 			{
 				this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
-				Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By Server", "ReceiveCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+				Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By Server", "ReceiveCallback", "Auth\\AuthClient.cs");
 				return;
 			}
 			byte[] oldBuffer = (byte[])AR.AsyncState;
@@ -176,7 +176,7 @@ public class AuthClient
 		}
 		catch (Exception ex)
 		{
-			Log.Print(LogType.Error, "Packet Read Error: " + ex.Message, "ReceiveCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.Print(LogType.Error, "Packet Read Error: " + ex.Message, "ReceiveCallback", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 	}
@@ -189,7 +189,7 @@ public class AuthClient
 		}
 		catch (Exception ex)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Send Error: " + ex.Message, "SendCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Send Error: " + ex.Message, "SendCallback", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 	}
@@ -202,7 +202,7 @@ public class AuthClient
 		}
 		catch (Exception ex)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Write Error: " + ex.Message, "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Write Error: " + ex.Message, "SendPacket", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 	}
@@ -211,7 +211,7 @@ public class AuthClient
 	{
 		ByteBuffer packet = new ByteBuffer(buffer);
 		AuthCommand opcode = (AuthCommand)packet.ReadUInt8();
-		Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Received opcode {opcode} size {size}.", "HandlePacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+		Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Received opcode {opcode} size {size}.", "HandlePacket", "Auth\\AuthClient.cs");
 		switch (opcode)
 		{
 		case AuthCommand.LOGON_CHALLENGE:
@@ -230,7 +230,7 @@ public class AuthClient
 			this.HandleRealmList(packet);
 			return;
 		}
-		Log.PrintNet(LogType.Error, LogNetDir.S2P, $"No handler for opcode {opcode}!", "HandlePacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+		Log.PrintNet(LogType.Error, LogNetDir.S2P, $"No handler for opcode {opcode}!", "HandlePacket", "Auth\\AuthClient.cs");
 		this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 	}
 
@@ -264,7 +264,7 @@ public class AuthClient
 		AuthResult error = (AuthResult)packet.ReadUInt8();
 		if (error != AuthResult.SUCCESS)
 		{
-			Log.Print(LogType.Error, $"Login failed. Reason: {error}", "HandleLogonChallenge", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.Print(LogType.Error, $"Login failed. Reason: {error}", "HandleLogonChallenge", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(error);
 			return;
 		}
@@ -359,7 +359,7 @@ public class AuthClient
 		AuthResult error = (AuthResult)packet.ReadUInt8();
 		if (error != AuthResult.SUCCESS)
 		{
-			Log.Print(LogType.Error, $"Login failed. Reason: {error}", "HandleLogonProof", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.Print(LogType.Error, $"Login failed. Reason: {error}", "HandleLogonProof", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(error);
 			return;
 		}
@@ -390,12 +390,12 @@ public class AuthClient
 		}
 		if (!equal)
 		{
-			Log.Print(LogType.Error, "Authentication failed!", "HandleLogonProof", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.Print(LogType.Error, "Authentication failed!", "HandleLogonProof", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 		}
 		else
 		{
-			Log.Print(LogType.Network, "Authentication succeeded!", "HandleLogonProof", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.Print(LogType.Network, "Authentication succeeded!", "HandleLogonProof", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(AuthResult.SUCCESS);
 		}
 	}
@@ -429,7 +429,7 @@ public class AuthClient
 		AuthResult error = (AuthResult)packet.ReadUInt8();
 		if (error != AuthResult.SUCCESS)
 		{
-			Log.Print(LogType.Error, $"Reconnect failed. Reason: {error}", "HandleReconnectProof", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+			Log.Print(LogType.Error, $"Reconnect failed. Reason: {error}", "HandleReconnectProof", "Auth\\AuthClient.cs");
 			this.SetAuthResponse(error);
 		}
 		else
@@ -440,7 +440,7 @@ public class AuthClient
 
 	public void SendRealmListUpdateRequest()
 	{
-		Log.Print(LogType.Server, "Requesting RealmList update for " + this._username, "SendRealmListUpdateRequest", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+		Log.Print(LogType.Server, "Requesting RealmList update for " + this._username, "SendRealmListUpdateRequest", "Auth\\AuthClient.cs");
 		ByteBuffer buffer = new ByteBuffer();
 		buffer.WriteUInt8(16);
 		for (int i = 0; i < 4; i++)
@@ -457,7 +457,7 @@ public class AuthClient
 		packet.ReadUInt32();
 		ushort realmsCount = 0;
 		realmsCount = ((Settings.ServerBuild >= ClientVersionBuild.V2_0_3_6299) ? packet.ReadUInt16() : packet.ReadUInt8());
-		Log.Print(LogType.Network, $"Received {realmsCount} realms.", "HandleRealmList", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\Auth\\AuthClient.cs");
+		Log.Print(LogType.Network, $"Received {realmsCount} realms.", "HandleRealmList", "AuthClient.cs");
 		List<RealmInfo> realmList = new List<RealmInfo>();
 		for (ushort i = 0; i < realmsCount; i++)
 		{

@@ -19,7 +19,7 @@ public static class MissingOpcodeTracker
 		{
 			if (MissingOpcodeTracker._logPath == null)
 			{
-				MissingOpcodeTracker._logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "missing_opcodes.log");
+				MissingOpcodeTracker._logPath = Path.Combine(Directory.GetCurrentDirectory(), "logs", "missing_opcodes.log");
 			}
 			return MissingOpcodeTracker._logPath;
 		}

@@ -81,14 +81,14 @@ public class BnetServices
 						(OriginalHash, uint) key = (serviceAttr.ServiceHash, serviceAttr.MethodId);
 						if (ServiceManager._serviceHandlers.ContainsKey(key))
 						{
-							Log.Print(LogType.Error, $"Tried to override ServiceHandler: {ServiceManager._serviceHandlers[key]} with {methodInfo.Name} (ServiceHash: {serviceAttr.ServiceHash} MethodId: {serviceAttr.MethodId})", ".cctor", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Services\\BnetServices.ServiceManager.cs");
+							Log.Print(LogType.Error, $"Tried to override ServiceHandler: {ServiceManager._serviceHandlers[key]} with {methodInfo.Name} (ServiceHash: {serviceAttr.ServiceHash} MethodId: {serviceAttr.MethodId})", ".cctor", "BnetServices.ServiceManager.cs");
 						}
 						else
 						{
 							ParameterInfo[] parameters = methodInfo.GetParameters();
 							if (parameters.Length == 0)
 							{
-								Log.Print(LogType.Error, "Method: " + methodInfo.Name + " needs atleast one parameter", ".cctor", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Services\\BnetServices.ServiceManager.cs");
+								Log.Print(LogType.Error, "Method: " + methodInfo.Name + " needs atleast one parameter", ".cctor", "BnetServices.ServiceManager.cs");
 							}
 							else
 							{
@@ -247,7 +247,7 @@ public class BnetServices
 			}
 		}
 		prefix.Append(']');
-		Log.Print(type, $"{prefix} {message}", "ServiceLog", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\BnetServer\\Services\\BnetServices.cs");
+		Log.Print(type, $"{prefix} {message}", "ServiceLog", "BnetServices.cs");
 	}
 
 	public ServiceRequirement CurrentMatchingRequirement()

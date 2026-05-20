@@ -510,7 +510,7 @@ public class WorldClient
 				break;
 			}
 			default:
-				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "HandleBattlefieldStatusVanilla", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\BattleGroundHandler.cs");
+				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "HandleBattlefieldStatusVanilla", "BattleGroundHandler.cs");
 				break;
 			}
 		}
@@ -612,7 +612,7 @@ public class WorldClient
 				break;
 			}
 			default:
-				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "HandleBattlefieldStatusTBC", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\BattleGroundHandler.cs");
+				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "HandleBattlefieldStatusTBC", "BattleGroundHandler.cs");
 				break;
 			}
 		}
@@ -1098,7 +1098,7 @@ public class WorldClient
 		verify.Pos.Y = packet.ReadFloat();
 		verify.Pos.Z = packet.ReadFloat();
 		verify.Pos.Orientation = packet.ReadFloat();
-		Log.Print(LogType.Server, $"[LoginVerifyWorld] Map={verify.MapID} Pos=({verify.Pos.X}, {verify.Pos.Y}, {verify.Pos.Z}) Orient={verify.Pos.Orientation}", "HandleLoginVerifyWorld", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\CharacterHandler.cs");
+		Log.Print(LogType.Server, $"[LoginVerifyWorld] Map={verify.MapID} Pos=({verify.Pos.X}, {verify.Pos.Y}, {verify.Pos.Z}) Orient={verify.Pos.Orientation}", "HandleLoginVerifyWorld", "CharacterHandler.cs");
 		this.SendPacketToClient(verify);
 		this.GetSession().GameState.IsInWorld = true;
 		if (ModernVersion.ExpansionVersion >= 3)
@@ -2053,7 +2053,7 @@ public class WorldClient
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
 		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] HIGHEST_THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleHighestThreatUpdate", "");
+		Log.Print(LogType.Debug, $"[Combat] HIGHEST_THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleHighestThreatUpdate", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_CLEAR)]
@@ -2061,7 +2061,7 @@ public class WorldClient
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
 		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] THREAT_CLEAR unit={unitGuid} (consumed, not forwarded)", "HandleThreatClear", "");
+		Log.Print(LogType.Debug, $"[Combat] THREAT_CLEAR unit={unitGuid} (consumed, not forwarded)", "HandleThreatClear", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_UPDATE)]
@@ -2069,7 +2069,7 @@ public class WorldClient
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
 		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleThreatUpdate", "");
+		Log.Print(LogType.Debug, $"[Combat] THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleThreatUpdate", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_REMOVE)]
@@ -2500,7 +2500,7 @@ public class WorldClient
 				int rangedIdx = PLAYER_VISIBLE_ITEM_1_ENTRYID + 17 * offset;
 				if (visibleItems != null && visibleItems.ContainsKey(rangedIdx) && visibleItems[rangedIdx].UInt32Value != 0)
 				{
-					Log.Print(LogType.Debug, "[Combat] Suppressing ATTACKSWING_NOTINRANGE - player has ranged weapon equipped", "HandleAttackSwingNotInRange", "");
+					Log.Print(LogType.Debug, "[Combat] Suppressing ATTACKSWING_NOTINRANGE - player has ranged weapon equipped", "HandleAttackSwingNotInRange", "WorldClient.cs");
 					return;
 				}
 			}
@@ -4078,7 +4078,7 @@ public class WorldClient
 			}
 			catch
 			{
-				Log.Print(LogType.Error, $"Invalid guild create date: {day}-{month}-{year}", "HandleGuildInfo", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\GuildHandler.cs");
+				Log.Print(LogType.Error, $"Invalid guild create date: {day}-{month}-{year}", "HandleGuildInfo", "GuildHandler.cs");
 			}
 		}
 		packet.ReadUInt32();
@@ -4664,7 +4664,7 @@ public class WorldClient
 		sell.VendorGUID = packet.ReadGuid().To128(this.GetSession().GameState);
 		sell.ItemGUID = packet.ReadGuid().To128(this.GetSession().GameState);
 		sell.Reason = packet.ReadUInt8();
-		Log.Print(LogType.Debug, $"[SellResponse] Item={sell.ItemGUID} Vendor={sell.VendorGUID} Reason={sell.Reason}", "HandleSellResponse", "");
+		Log.Print(LogType.Debug, $"[SellResponse] Item={sell.ItemGUID} Vendor={sell.VendorGUID} Reason={sell.Reason}", "HandleSellResponse", "WorldClient.cs");
 		this.SendPacketToClient(sell);
 	}
 
@@ -5260,7 +5260,7 @@ public class WorldClient
 		DeathReleaseLoc death = new DeathReleaseLoc();
 		death.MapID = packet.ReadInt32();
 		death.Location = packet.ReadVector3();
-		Log.Print(LogType.Debug, $"[DeathReleaseLoc] MapID={death.MapID} Pos={death.Location}", "HandleDeathReleaseLoc", "");
+		Log.Print(LogType.Debug, $"[DeathReleaseLoc] MapID={death.MapID} Pos={death.Location}", "HandleDeathReleaseLoc", "WorldClient.cs");
 		this.SendPacketToClient(death);
 	}
 
@@ -5989,7 +5989,7 @@ public class WorldClient
 	{
 		if (this.GetSession().GameState.IsWaitingForWorldPortAck)
 		{
-			Log.Print(LogType.Error, "Skipping SMSG_TRANSFER_PENDING, client is already being teleported.", "HandleTransferPending", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\MovementHandler.cs");
+			Log.Print(LogType.Error, "Skipping SMSG_TRANSFER_PENDING, client is already being teleported.", "HandleTransferPending", "MovementHandler.cs");
 			return;
 		}
 		TransferPending transfer = new TransferPending();
@@ -6072,7 +6072,13 @@ public class WorldClient
 		this.SendPacketToClient(info);
 	}
 
-	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_FLIGHT_BACK_SPEED)]
+	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_WALK_BACK_SPEED)]
+	private void HandleMoveSplineSetWalkBackSpeed(WorldPacket packet)
+	{
+		// Walk back speed does not exist in WotLK Classic 3.4.3 - silently drop
+	}
+
+		[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_FLIGHT_BACK_SPEED)]
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_FLIGHT_SPEED)]
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_PITCH_RATE)]
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_RUN_BACK_SPEED)]
@@ -6080,7 +6086,6 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_SWIM_BACK_SPEED)]
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_SWIM_SPEED)]
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_TURN_RATE)]
-	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_WALK_BACK_SPEED)]
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_WALK_SPEED)]
 	private void HandleMoveSplineSetSpeed(WorldPacket packet)
 	{
@@ -7318,7 +7323,7 @@ public class WorldClient
 			// valid hotfix can arrive from a different query
 			this.GetSession().GameState.RequestedItemHotfixes.Remove((uint)entry.Key);
 			this.GetSession().GameState.RequestedItemSparseHotfixes.Remove((uint)entry.Key);
-			Log.Print(LogType.Debug, $"Item #{entry.Key} not found on legacy server, skipping Invalid DBReply.", "HandleItemQueryResponse", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\QueryHandler.cs");
+			Log.Print(LogType.Debug, $"Item #{entry.Key} not found on legacy server, skipping Invalid DBReply.", "HandleItemQueryResponse", "QueryHandler.cs");
 		}
 		else
 		{
@@ -7407,7 +7412,7 @@ public class WorldClient
 		WowGuid128 guid = this.GetSession().GameState.GetPetGuidByNumber(petNumber);
 		if (guid == null)
 		{
-			Log.Print(LogType.Error, $"Pet name query response for unknown pet {petNumber}!", "HandleQueryPetNameResponse", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\QueryHandler.cs");
+			Log.Print(LogType.Error, $"Pet name query response for unknown pet {petNumber}!", "HandleQueryPetNameResponse", "QueryHandler.cs");
 			return;
 		}
 		QueryPetNameResponse response = new QueryPetNameResponse();
@@ -9523,7 +9528,7 @@ public class WorldClient
 			TradeStatus tradeStatus = status;
 			if ((uint)(tradeStatus - 1) > 1u)
 			{
-				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS without trade session (status: {trade.Status})", "HandleTradeStatus", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\TradeHandler.cs");
+				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS without trade session (status: {trade.Status})", "HandleTradeStatus", "TradeHandler.cs");
 				this.SendPacketToClient(new TradeStatusPkt
 				{
 					Status = TradeStatus.Cancelled
@@ -9588,7 +9593,7 @@ public class WorldClient
 		TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
-			Log.Print(LogType.Error, "Got SMSG_TRADE_STATUS_EXTENDED without trade session", "HandleTradeStatusExtended", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\TradeHandler.cs");
+			Log.Print(LogType.Error, "Got SMSG_TRADE_STATUS_EXTENDED without trade session", "HandleTradeStatusExtended", "TradeHandler.cs");
 			return;
 		}
 		tradeSession.ServerStateIndex++;
@@ -9599,7 +9604,7 @@ public class WorldClient
 			uint actualTradeId = packet.ReadUInt32();
 			if (actualTradeId != trade.Id)
 			{
-				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS_EXTENDED with wrong tradeId (expected {trade.Id} but got {actualTradeId})", "HandleTradeStatusExtended", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\TradeHandler.cs");
+				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS_EXTENDED with wrong tradeId (expected {trade.Id} but got {actualTradeId})", "HandleTradeStatusExtended", "TradeHandler.cs");
 				return;
 			}
 		}
@@ -9930,7 +9935,7 @@ public class WorldClient
 				}
 				else
 				{
-					Log.Print(LogType.Error, $"Broken create1 without position for {guid4}", "HandleUpdateObject", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\UpdateHandler.cs");
+					Log.Print(LogType.Error, $"Broken create1 without position for {guid4}", "HandleUpdateObject", "UpdateHandler.cs");
 				}
 				break;
 			}
@@ -9977,7 +9982,7 @@ public class WorldClient
 				}
 				else
 				{
-					Log.Print(LogType.Error, $"Broken create2 without position for {guid}", "HandleUpdateObject", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\PacketHandlers\\UpdateHandler.cs");
+					Log.Print(LogType.Error, $"Broken create2 without position for {guid}", "HandleUpdateObject", "UpdateHandler.cs");
 				}
 				break;
 			}
@@ -13045,22 +13050,23 @@ public class WorldClient
 		this._isSuccessful = null;
 		this._delayedPacketsToServer = new Dictionary<Opcode, List<WorldPacket>>();
 		this._delayedPacketsToClient = new Dictionary<Opcode, List<ServerPacket>>();
-		Log.Print(LogType.Network, "Connecting to world server...", "ConnectToWorldServer", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+		Log.Print(LogType.Network, "Connecting to world server...", "ConnectToWorldServer", "WorldClient.cs");
 		try
 		{
 			IPAddress ip = NetworkUtils.ResolveOrDirectIPv4(realm.ExternalAddress);
-			Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{realm.Port}", "ConnectToWorldServer", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{realm.Port}", "ConnectToWorldServer", "WorldClient.cs");
 			this._clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			IPEndPoint endPoint = new IPEndPoint(ip, realm.Port);
 			this._clientSocket.BeginConnect(endPoint, ConnectCallback, null);
 		}
 		catch (Exception ex)
 		{
-			Log.Print(LogType.Error, "Socket Error: " + ex.Message, "ConnectToWorldServer", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.Print(LogType.Error, "Socket Error: " + ex.Message, "ConnectToWorldServer", "WorldClient.cs");
 			this._isSuccessful = false;
 		}
 		while (!this._isSuccessful.HasValue)
 		{
+			Thread.Sleep(100);
 		}
 		return this._isSuccessful.Value;
 	}
@@ -13119,14 +13125,14 @@ public class WorldClient
 	{
 		try
 		{
-			Log.Print(LogType.Network, "Connection established!", "ConnectCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.Print(LogType.Network, "Connection established!", "ConnectCallback", "WorldClient.cs");
 			this._clientSocket.EndConnect(AR);
 			this._clientSocket.ReceiveBufferSize = 65535;
 			Task.Run((Func<Task?>)ReceiveLoop);
 		}
 		catch (Exception ex)
 		{
-			Log.Print(LogType.Error, "Connect Error: " + ex.Message, "ConnectCallback", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.Print(LogType.Error, "Connect Error: " + ex.Message, "ConnectCallback", "WorldClient.cs");
 			if (!this._isSuccessful.HasValue)
 			{
 				this._isSuccessful = false;
@@ -13158,7 +13164,7 @@ public class WorldClient
 				byte[] headerBuffer = new byte[4];
 				if (!(await this.ReceiveBufferFully(headerBuffer)))
 				{
-					Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (header)", "ReceiveLoop", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+					Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (header)", "ReceiveLoop", "WorldClient.cs");
 					if (!this._isSuccessful.HasValue)
 					{
 						this._isSuccessful = false;
@@ -13178,7 +13184,7 @@ public class WorldClient
 				ushort packetSize = header.Size;
 				if (header.Opcode != 221)
 				{
-					Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Decoded header: size={packetSize}, opcode={header.Opcode} (0x{header.Opcode:X4}), crypt={((this._worldCrypt != null) ? "ON" : "OFF")}", "ReceiveLoop", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+					Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Decoded header: size={packetSize}, opcode={header.Opcode} (0x{header.Opcode:X4}), crypt={((this._worldCrypt != null) ? "ON" : "OFF")}", "ReceiveLoop", "WorldClient.cs");
 				}
 				if (packetSize != 0)
 				{
@@ -13194,7 +13200,7 @@ public class WorldClient
 					this.HandlePacket(packet);
 				}
 			}
-			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (payload)", "ReceiveLoop", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (payload)", "ReceiveLoop", "WorldClient.cs");
 			if (!this._isSuccessful.HasValue)
 			{
 				this._isSuccessful = false;
@@ -13207,7 +13213,7 @@ public class WorldClient
 		catch (Exception ex)
 		{
 			Exception e = ex;
-			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Packet Read Error: " + e.Message + Environment.NewLine + e.StackTrace, "ReceiveLoop", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Packet Read Error: " + e.Message + Environment.NewLine + e.StackTrace, "ReceiveLoop", "WorldClient.cs");
 			if (!this._isSuccessful.HasValue)
 			{
 				this._isSuccessful = false;
@@ -13228,9 +13234,9 @@ public class WorldClient
 			header.Size = (ushort)(packet.GetSize() + 4);
 			header.Opcode = packet.GetOpcode();
 			header.Write(buffer);
-			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Sending opcode {LegacyVersion.GetUniversalOpcode(header.Opcode)} ({header.Opcode}) with size {header.Size}.", "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Sending opcode {LegacyVersion.GetUniversalOpcode(header.Opcode)} ({header.Opcode}) with size {header.Size}.", "SendPacket", "WorldClient.cs");
 			byte[] headerArray = buffer.GetData();
-			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Raw header ({headerArray.Length} bytes): {BitConverter.ToString(headerArray, 0, Math.Min(headerArray.Length, 6))}", "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Raw header ({headerArray.Length} bytes): {BitConverter.ToString(headerArray, 0, Math.Min(headerArray.Length, 6))}", "SendPacket", "WorldClient.cs");
 			if (this._worldCrypt != null)
 			{
 				this._worldCrypt.Encrypt(headerArray, 6);
@@ -13239,12 +13245,12 @@ public class WorldClient
 			buffer.WriteBytes(headerArray);
 			buffer.WriteBytes(packet.GetData(), packet.GetSize());
 			byte[] finalData = buffer.GetData();
-			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Total bytes on wire: {finalData.Length}, first 16: {BitConverter.ToString(finalData, 0, Math.Min(finalData.Length, 16))}", "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Total bytes on wire: {finalData.Length}, first 16: {BitConverter.ToString(finalData, 0, Math.Min(finalData.Length, 16))}", "SendPacket", "WorldClient.cs");
 			this._clientSocket.Send(finalData, SocketFlags.None);
 		}
 		catch (Exception ex)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Write Error: " + ex.Message, "SendPacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Write Error: " + ex.Message, "SendPacket", "WorldClient.cs");
 			if (!this._isSuccessful.HasValue)
 			{
 				this._isSuccessful = false;
@@ -13278,7 +13284,7 @@ public class WorldClient
 	{
 		if (this.GetSession()?.GameState == null)
 		{
-			Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Dropping {packet.GetUniversalOpcode()} - session/gamestate not ready", "SendPacketToClientDirect", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Dropping {packet.GetUniversalOpcode()} - session/gamestate not ready", "SendPacketToClientDirect", "WorldClient.cs");
 			return;
 		}
 		Queue<ServerPacket> pendingPackets = this.GetSession().GameState.PendingUninstancedPackets;
@@ -13286,7 +13292,7 @@ public class WorldClient
 		{
 			if (this.GetSession().RealmSocket == null)
 			{
-				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Queuing {packet.GetUniversalOpcode()} - RealmSocket not ready yet", "SendPacketToClientDirect", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Queuing {packet.GetUniversalOpcode()} - RealmSocket not ready yet", "SendPacketToClientDirect", "WorldClient.cs");
 				lock (pendingPackets)
 				{
 					pendingPackets.Enqueue(packet);
@@ -13315,14 +13321,14 @@ public class WorldClient
 				if (this.GetSession().InstanceSocket == null && !this.GetSession().GameState.IsConnectedToInstance)
 				{
 					pendingPackets.Enqueue(packet);
-					Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (Initial Check)", "SendPacketToClientDirect", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+					Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (Initial Check)", "SendPacketToClientDirect", "WorldClient.cs");
 					return;
 				}
 			}
 		}
 		while (this.GetSession().InstanceSocket == null && this.GetSession().GameState.IsConnectedToInstance)
 		{
-			Log.PrintNet(LogType.Network, LogNetDir.P2C, $"Waiting to send {packet.GetUniversalOpcode()} ({packet.GetOpcode()}).", "SendPacketToClientDirect", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Network, LogNetDir.P2C, $"Waiting to send {packet.GetUniversalOpcode()} ({packet.GetOpcode()}).", "SendPacketToClientDirect", "WorldClient.cs");
 			Thread.Sleep(200);
 			if (this.GetSession()?.GameState == null) return;
 		}
@@ -13331,7 +13337,7 @@ public class WorldClient
 			lock (pendingPackets)
 			{
 				pendingPackets.Enqueue(packet);
-				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (State: {this.GetSession().GameState.IsConnectedToInstance})", "SendPacketToClientDirect", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (State: {this.GetSession().GameState.IsConnectedToInstance})", "SendPacketToClientDirect", "WorldClient.cs");
 				return;
 			}
 		}
@@ -13432,13 +13438,14 @@ public class WorldClient
 		Opcode.MSG_MOVE_START_FORWARD,
 		Opcode.MSG_MOVE_STOP,
 		Opcode.MSG_MOVE_SET_FACING,
+		Opcode.SMSG_MOVE_SET_COLLISION_HGT,
 	};
 
 	private void HandlePacket(WorldPacket packet)
 	{
 		Opcode universalOpcode = packet.GetUniversalOpcode(isModern: false);
 		if (!_suppressedLogOpcodes.Contains(universalOpcode))
-			Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Received opcode {universalOpcode} ({packet.GetOpcode()}).", "HandlePacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Received opcode {universalOpcode} ({packet.GetOpcode()}).", "HandlePacket", "WorldClient.cs");
 		switch (universalOpcode)
 		{
 		case Opcode.SMSG_AUTH_CHALLENGE:
@@ -13460,7 +13467,7 @@ public class WorldClient
 				}
 				break;
 			}
-			Log.PrintNet(LogType.Warn, LogNetDir.S2P, $"No handler for opcode {universalOpcode} ({packet.GetOpcode()}) (Got unknown packet from WorldServer)", "HandlePacket", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.PrintNet(LogType.Warn, LogNetDir.S2P, $"No handler for opcode {universalOpcode} ({packet.GetOpcode()}) (Got unknown packet from WorldServer)", "HandlePacket", "WorldClient.cs");
 			MissingOpcodeTracker.LogUnhandledLegacySMSG(universalOpcode, packet.GetOpcode());
 			if (!this._isSuccessful.HasValue)
 			{
@@ -13572,7 +13579,7 @@ public class WorldClient
 		switch (result)
 		{
 		case AuthResult.AUTH_OK:
-			Log.Print(LogType.Network, "Authentication succeeded!", "HandleAuthResponse", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.Print(LogType.Network, "Authentication succeeded!", "HandleAuthResponse", "WorldClient.cs");
 			if (this._queuePosition != 0 && this.GetSession().RealmSocket != null)
 			{
 				this._queuePosition = 0u;
@@ -13591,7 +13598,7 @@ public class WorldClient
 			break;
 		case AuthResult.AUTH_WAIT_QUEUE:
 			this._queuePosition = packet.ReadUInt32();
-			Log.Print(LogType.Network, $"Position in queue is {this._queuePosition}.", "HandleAuthResponse", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.Print(LogType.Network, $"Position in queue is {this._queuePosition}.", "HandleAuthResponse", "WorldClient.cs");
 			if (this._isSuccessful.HasValue && this.GetSession().RealmSocket != null)
 			{
 				this.GetSession().RealmSocket.SendAuthWaitQue(this._queuePosition);
@@ -13599,7 +13606,7 @@ public class WorldClient
 			this._isSuccessful = true;
 			break;
 		default:
-			Log.Print(LogType.Network, "Authentication failed!", "HandleAuthResponse", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+			Log.Print(LogType.Network, "Authentication failed!", "HandleAuthResponse", "WorldClient.cs");
 			this._isSuccessful = false;
 			break;
 		}
@@ -13630,19 +13637,19 @@ public class WorldClient
 				}
 				if (this._packetHandlers.ContainsKey(msgAttr.Opcode))
 				{
-					Log.Print(LogType.Error, $"Tried to override OpcodeHandler of {this._packetHandlers[msgAttr.Opcode]} with {methodInfo.Name} (Opcode {msgAttr.Opcode})", "InitializePacketHandlers", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+					Log.Print(LogType.Error, $"Tried to override OpcodeHandler of {this._packetHandlers[msgAttr.Opcode]} with {methodInfo.Name} (Opcode {msgAttr.Opcode})", "InitializePacketHandlers", "WorldClient.cs");
 				}
 				else
 				{
 					ParameterInfo[] parameters = methodInfo.GetParameters();
 					if (parameters.Length == 0)
 					{
-						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " Has no parameters", "InitializePacketHandlers", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " Has no parameters", "InitializePacketHandlers", "WorldClient.cs");
 						continue;
 					}
 					if (parameters[0].ParameterType != typeof(WorldPacket))
 					{
-						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " has wrong BaseType", "InitializePacketHandlers", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Client\\WorldClient.cs");
+						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " has wrong BaseType", "InitializePacketHandlers", "WorldClient.cs");
 						continue;
 					}
 					Action<WorldPacket> del = (Action<WorldPacket>)Delegate.CreateDelegate(typeof(Action<WorldPacket>), this, methodInfo);

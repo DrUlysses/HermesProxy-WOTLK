@@ -40,7 +40,7 @@ public class UpdateFieldsArray
 		{
 			if (offset > 3)
 			{
-				Log.Print(LogType.Error, $"SetUpdateField<UInt8>: Wrong offset: {offset}", "SetUpdateField", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\UpdateFieldsArray.cs");
+				Log.Print(LogType.Error, $"SetUpdateField<UInt8>: Wrong offset: {offset}", "SetUpdateField", "UpdateFieldsArray.cs");
 			}
 			else if ((byte)(this.m_updateValues[(int)index].UnsignedValue >> offset * 8) != byteValue)
 			{
@@ -53,7 +53,7 @@ public class UpdateFieldsArray
 		{
 			if (offset > 1)
 			{
-				Log.Print(LogType.Error, $"SetUpdateField<UInt16>: Wrong offset: {offset}", "SetUpdateField", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\UpdateFieldsArray.cs");
+				Log.Print(LogType.Error, $"SetUpdateField<UInt16>: Wrong offset: {offset}", "SetUpdateField", "UpdateFieldsArray.cs");
 			}
 			else if ((ushort)(this.GetUpdateField<uint>(index, 0) >> offset * 16) != ushortValue)
 			{
@@ -265,7 +265,7 @@ public class UpdateFieldsArray
 	{
 		if (offset > 4)
 		{
-			Log.Print(LogType.Error, $"Object.SetByteFlag: Wrong offset {offset}", "AddByteFlag", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\UpdateFieldsArray.cs");
+			Log.Print(LogType.Error, $"Object.SetByteFlag: Wrong offset {offset}", "AddByteFlag", "UpdateFieldsArray.cs");
 		}
 		else if ((((byte)this.m_updateValues[(int)index].UnsignedValue >> offset * 8) & (int)newFlag) == 0)
 		{
@@ -278,7 +278,7 @@ public class UpdateFieldsArray
 	{
 		if (offset > 4)
 		{
-			Log.Print(LogType.Error, $"Object.RemoveByteFlag: Wrong offset {offset}", "RemoveByteFlag", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Objects\\UpdateFieldsArray.cs");
+			Log.Print(LogType.Error, $"Object.RemoveByteFlag: Wrong offset {offset}", "RemoveByteFlag", "UpdateFieldsArray.cs");
 		}
 		else if ((((byte)this.m_updateValues[(int)index].UnsignedValue >> offset * 8) & (int)oldFlag) != 0)
 		{

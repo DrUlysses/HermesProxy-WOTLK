@@ -54,7 +54,7 @@ public class AccountMetaDataManager
 		string[] content = rawContent.Split(',');
 		if (content.Length != 4)
 		{
-			Log.Print(LogType.Error, "Invalid split size in 'GetLastSelectedCharacter' for account '" + this._accountName + "'", "GetLastSelectedCharacter", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\AccountDataManager.cs");
+			Log.Print(LogType.Error, "Invalid split size in 'GetLastSelectedCharacter' for account '" + this._accountName + "'", "GetLastSelectedCharacter", "AccountDataManager.cs");
 			return null;
 		}
 		return (content[0], content[1], ulong.Parse(content[3]), long.Parse(content[2]));
@@ -65,7 +65,7 @@ public class AccountMetaDataManager
 		string dir = this.GetAccountMetaDataDirectory();
 		string path = Path.Combine(dir, "last_character.txt");
 		File.WriteAllText(path, $"{realmName},{charName},{charLowerGuid},{lastLoginUnixSec}", Encoding.UTF8);
-		Log.Print(LogType.Debug, "Saved last selected char in '" + path + "'", "SaveLastSelectedCharacter", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\AccountDataManager.cs");
+		Log.Print(LogType.Debug, "Saved last selected char in '" + path + "'", "SaveLastSelectedCharacter", "AccountDataManager.cs");
 	}
 
 	public void InvalidateLastSelectedCharacter()
@@ -75,7 +75,7 @@ public class AccountMetaDataManager
 		if (File.Exists(path))
 		{
 			File.WriteAllText(path, "");
-			Log.Print(LogType.Debug, "Invalidated last selected character entry in '" + path + "'", "InvalidateLastSelectedCharacter", "F:\\Ampps\\HermesProxy-master\\HermesProxy\\World\\Server\\AccountDataManager.cs");
+			Log.Print(LogType.Debug, "Invalidated last selected character entry in '" + path + "'", "InvalidateLastSelectedCharacter", "AccountDataManager.cs");
 		}
 	}
 
