@@ -11,7 +11,7 @@ public class QueryPlayerNamesResponse : ServerPacket
 	{
 		public WowGuid128 Player;
 		public byte Result;
-		public PlayerGuidLookupData Data;
+		public PlayerGuidLookupData? Data;
 	}
 
 	public List<NameCacheLookupResult> Players = new();

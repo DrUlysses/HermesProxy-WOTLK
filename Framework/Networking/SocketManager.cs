@@ -23,8 +23,8 @@ namespace Framework.Networking
 {
     public class SocketManager<TSocketType> where TSocketType : ISocket
     {
-        public AsyncAcceptor Acceptor;
-        NetworkThread<TSocketType>[] _threads;
+        public AsyncAcceptor? Acceptor;
+        NetworkThread<TSocketType>[]? _threads;
         int _threadCount;
 
         public bool IsListening => Acceptor.IsListening;

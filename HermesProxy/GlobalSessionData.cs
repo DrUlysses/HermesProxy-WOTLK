@@ -42,7 +42,7 @@ public class GlobalSessionData
 
 	public WorldSocket RealmSocket;
 
-	public WorldSocket InstanceSocket;
+	public WorldSocket? InstanceSocket;
 
 	public AuthClient AuthClient;
 

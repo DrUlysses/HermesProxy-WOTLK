@@ -270,6 +270,6 @@ namespace Framework.IO
 
         private string activestring;
         private int activeposition;
-        private string Current;
+        private string? Current;
     }
 }

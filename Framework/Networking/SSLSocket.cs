@@ -32,7 +32,7 @@ namespace Framework.Networking
         Socket _socket;
         internal readonly SslStream _stream;
         IPEndPoint _remoteEndPoint;
-        byte[] _receiveBuffer;
+        byte[]? _receiveBuffer;
 
         protected SSLSocket(Socket socket)
         {

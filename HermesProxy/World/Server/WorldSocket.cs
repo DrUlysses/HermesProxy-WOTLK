@@ -4041,9 +4041,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 	}
 
-	public void SendCastRequestFailed(ClientCastRequest castRequest, bool isPet)
+	public void SendCastRequestFailed(ClientCastRequest? castRequest, bool isPet)
 	{
-		if (!castRequest.HasStarted)
+		if (castRequest?.HasStarted == false)
 		{
 			var prepare2 = new SpellPrepare
 			{
@@ -4056,9 +4056,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			var failed = new PetCastFailed
 			{
-				SpellID = castRequest.SpellId,
+				SpellID = castRequest?.SpellId,
 				Reason = 123u,
-				CastID = castRequest.ServerGUID
+				CastID = castRequest?.ServerGUID
 			};
 			SendPacket(failed);
 		}
@@ -4066,10 +4066,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			var failed2 = new CastFailed
 			{
-				SpellID = castRequest.SpellId,
-				SpellXSpellVisualID = castRequest.SpellXSpellVisualId,
+				SpellID = castRequest?.SpellId,
+				SpellXSpellVisualID = castRequest?.SpellXSpellVisualId,
 				Reason = 123u,
-				CastID = castRequest.ServerGUID
+				CastID = castRequest?.ServerGUID
 			};
 			SendPacket(failed2);
 		}
@@ -4790,7 +4790,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				return;
 			}
 			_compressionStream = new ZLib.z_stream();
-			var z_res1 = ZLib.deflateInit2(_compressionStream, 1, 8, -15, 8, 0);
+			var z_res1 = ZLib.DeflateInit2(_compressionStream, 1, 8, -15, 8, 0);
 			if (z_res1 != 0)
 			{
 				CloseSocket();
@@ -5070,7 +5070,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	public uint CompressPacket(byte[] data, ushort opcode, out byte[] outData)
 	{
 		var uncompressedData = BitConverter.GetBytes(opcode).Combine(data);
-		var bufferSize = ZLib.deflateBound(_compressionStream, (uint)data.Length);
+		var bufferSize = ZLib.DeflateBound(_compressionStream, (uint)data.Length);
 		outData = new byte[bufferSize];
 		_compressionStream.next_out = 0;
 		_compressionStream.avail_out = bufferSize;

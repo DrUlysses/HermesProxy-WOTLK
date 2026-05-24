@@ -81,7 +81,7 @@ public class GameSessionData
 
     public uint GroupReadyCheckResponses;
 
-    public readonly PartyUpdate[] CurrentGroups = new PartyUpdate[2];
+    public readonly PartyUpdate?[] CurrentGroups = new PartyUpdate[2];
 
     public bool WeWantToLeaveGroup;
 
@@ -95,7 +95,7 @@ public class GameSessionData
     public MovementInfo LastSelfPlayerMoveInfo;
 
     // Cached quest log: QuestID per slot (0-24), updated on create and values updates
-    public readonly int[] QuestLogQuestIDs = new int[25];
+    public readonly int?[] QuestLogQuestIDs = new int?[25];
 
     public long CurrentPlayerCreateTime;
 
@@ -125,11 +125,11 @@ public class GameSessionData
 
     public readonly uint[] CurrentArenaTeamIds = new uint[3];
 
-    public ClientCastRequest CurrentClientNormalCast;
+    public ClientCastRequest? CurrentClientNormalCast;
 
-    public ClientCastRequest CurrentClientSpecialCast;
+    public ClientCastRequest? CurrentClientSpecialCast;
 
-    public ClientCastRequest CurrentClientPetCast;
+    public ClientCastRequest? CurrentClientPetCast;
 
     public readonly List<ClientCastRequest> PendingClientCasts = new();
 

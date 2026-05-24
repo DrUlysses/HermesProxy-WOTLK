@@ -30,7 +30,7 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 	{
 		var ipAddress = base.GetRemoteIpEndPoint().ToString();
 		Log.Print(LogType.Server, "Accepting connection from " + ipAddress + ".", "BnetTcpSession.cs");
-		AsyncHandshake(BnetServerCertificate.Certificate);
+		AsyncHandshake(BnetServerCertificate.Certificate).Wait();
 	}
 
 	public override bool Update()
@@ -104,7 +104,7 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 		{
 			buffer.WriteBytes(message.ToByteArray());
 		}
-		AsyncWrite(buffer.GetData());
+		AsyncWrite(buffer.GetData()).Wait();
 	}
 
 	private byte[] GetHeaderSize(Header header)

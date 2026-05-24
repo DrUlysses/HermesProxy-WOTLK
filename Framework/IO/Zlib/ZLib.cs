@@ -75,8 +75,8 @@ namespace Framework.IO
 			public uint avail_out;	// remaining free space at next_out
 			public uint total_out;	// total nb of bytes output so far
 
-			public string msg;		// last error message, NULL if no error
-			public object state;	// not visible by applications
+			public string? msg;		// last error message, NULL if no error
+			public object? state;	// not visible by applications
 
 			public uint adler;		// adler32 value of the uncompressed data
 
@@ -104,12 +104,12 @@ namespace Framework.IO
 			public uint time;			// modification time
 			public int xflags;			// extra flags (not used when writing a gzip file)
 			public int os;				// operating system
-			public byte[] extra;		// pointer to extra field or Z_NULL if none
+			public byte[]? extra;		// pointer to extra field or Z_NULL if none
 			public uint extra_len;		// extra field length (valid if extra != Z_NULL)
 			public uint extra_max;		// space at extra (only when reading header)
-			public byte[] name;			// pointer to zero-terminated file name or Z_NULL
+			public byte[]? name;			// pointer to zero-terminated file name or Z_NULL
 			public uint name_max;		// space at name (only when reading header)
-			public byte[] comment;		// pointer to zero-terminated comment or Z_NULL
+			public byte[]? comment;		// pointer to zero-terminated comment or Z_NULL
 			public uint comm_max;		// space at comment (only when reading header)
 			public int hcrc;			// true if there was or will be a header crc
 			public int done;			// true when done reading gzip header (not used when writing a gzip file)

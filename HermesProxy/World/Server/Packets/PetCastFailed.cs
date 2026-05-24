@@ -1,13 +1,14 @@
 using Framework.Constants;
+using Framework.Logging;
 using HermesProxy.World.Enums;
 
 namespace HermesProxy.World.Server.Packets;
 
 internal class PetCastFailed : ServerPacket
 {
-	public WowGuid128 CastID;
+	public WowGuid128? CastID;
 
-	public uint SpellID;
+	public uint? SpellID;
 
 	public uint Reason;
 
@@ -22,8 +23,18 @@ internal class PetCastFailed : ServerPacket
 
 	protected override void Write()
 	{
+		if (CastID == null)
+		{
+			Log.Print(LogType.Debug, $"CastID is null for PetCastFailed packet");
+			return;
+		}
+		if (SpellID == null)
+		{
+			Log.Print(LogType.Debug, $"SpellID is null for PetCastFailed packet with CastID: {CastID}");
+			return;
+		}
 		_worldPacket.WritePackedGuid128(CastID);
-		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteUInt32(SpellID.Value);
 		_worldPacket.WriteUInt32(Reason);
 		_worldPacket.WriteInt32(FailedArg1);
 		_worldPacket.WriteInt32(FailedArg2);

@@ -26,7 +26,7 @@ namespace Framework.Networking
         int _connections;
         volatile bool _stopped;
 
-        Thread _thread;
+        Thread? _thread;
 
         List<TSocketType> _Sockets = new();
         List<TSocketType> _newSockets = new();
@@ -36,19 +36,17 @@ namespace Framework.Networking
             _stopped = true;
         }
 
-        public bool Start()
+        public void Start()
         {
-            if (_thread != null)
-                return false;
+            if (_thread != null) return;
 
             _thread = new Thread(Run);
             _thread.Start();
-            return true;
         }
 
         public void Wait()
         {
-            _thread.Join();
+            _thread?.Join();
             _thread = null;
         }
 

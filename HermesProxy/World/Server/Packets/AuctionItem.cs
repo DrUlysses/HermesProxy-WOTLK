@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class AuctionItem
 {
-	public ItemInstance Item;
+	public ItemInstance? Item;
 
 	public int Count;
 
