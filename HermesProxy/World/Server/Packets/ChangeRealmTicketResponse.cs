@@ -16,7 +16,7 @@ internal class ChangeRealmTicketResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.Token);
 		base._worldPacket.WriteBit(this.Allow);

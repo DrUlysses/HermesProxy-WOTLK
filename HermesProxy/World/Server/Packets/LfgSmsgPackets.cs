@@ -15,7 +15,7 @@ public class DfJoinResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Ticket.Write(base._worldPacket);
 		base._worldPacket.WriteUInt8(this.Result);
@@ -77,7 +77,7 @@ public class DfUpdateStatus : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Ticket.Write(base._worldPacket);
 		base._worldPacket.WriteUInt8(this.SubType);
@@ -123,7 +123,7 @@ public class DfProposalUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Ticket.Write(base._worldPacket);
 		base._worldPacket.WriteUInt64(this.InstanceID);
@@ -176,7 +176,7 @@ public class DfQueueStatus : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Ticket.Write(base._worldPacket);
 		base._worldPacket.WriteUInt32(this.Slot);

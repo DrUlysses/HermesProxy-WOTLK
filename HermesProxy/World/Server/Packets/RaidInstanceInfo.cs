@@ -12,7 +12,7 @@ internal class RaidInstanceInfo : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.LockList.Count);
 		foreach (InstanceLock lockInfos in this.LockList)

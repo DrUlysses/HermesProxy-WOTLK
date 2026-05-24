@@ -11,7 +11,7 @@ public class EmptyAccountMountUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(bit: true);
 		base._worldPacket.WriteUInt32(0u);
@@ -28,7 +28,7 @@ public class AccountMountUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(true); // IsFullUpdate
 		base._worldPacket.WriteUInt32((uint)this.MountSpellIDs.Count);

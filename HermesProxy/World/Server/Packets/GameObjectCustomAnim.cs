@@ -16,7 +16,7 @@ internal class GameObjectCustomAnim : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.ObjectGUID);
 		base._worldPacket.WriteUInt32(this.CustomAnim);

@@ -21,7 +21,7 @@ public class DuelWinner : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.BeatenName.GetByteCount(), 6);
 		base._worldPacket.WriteBits(this.WinnerName.GetByteCount(), 6);

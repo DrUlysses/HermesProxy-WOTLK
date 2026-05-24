@@ -15,7 +15,7 @@ internal class ItemCooldown : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.ItemGuid);
 		base._worldPacket.WriteUInt32(this.SpellID);

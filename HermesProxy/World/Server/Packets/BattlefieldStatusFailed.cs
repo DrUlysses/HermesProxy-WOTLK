@@ -19,7 +19,7 @@ public class BattlefieldStatusFailed : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Ticket.Write(base._worldPacket);
 		ulong queueID = this.BattlefieldListId | 0x1F10000000000000L;

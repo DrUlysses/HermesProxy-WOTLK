@@ -13,7 +13,7 @@ internal class QuestPushResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.SenderGUID);
 		base._worldPacket.WriteUInt8((byte)this.Result);

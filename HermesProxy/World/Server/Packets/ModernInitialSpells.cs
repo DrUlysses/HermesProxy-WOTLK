@@ -9,7 +9,7 @@ public class ModernInitialSpells : ServerPacket
     public List<uint> Spells = new List<uint>();
     public ModernInitialSpells() : base(Opcode.SMSG_SEND_KNOWN_SPELLS) { }
 
-    public override void Write()
+    protected override void Write()
     {
         if (ModernVersion.ExpansionVersion >= 3)
         {

@@ -18,7 +18,7 @@ public class AuctionListItemsResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Items.Count);
 		base._worldPacket.WriteUInt32(0u); // Unknown830

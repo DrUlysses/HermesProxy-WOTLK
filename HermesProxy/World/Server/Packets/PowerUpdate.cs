@@ -16,7 +16,7 @@ public class PowerUpdate : ServerPacket
 		this.Powers = new List<PowerUpdatePower>();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Guid);
 		base._worldPacket.WriteInt32(this.Powers.Count);

@@ -25,7 +25,7 @@ public class GuildBankQueryResults : ServerPacket
 		this.TabInfo = new List<GuildBankTabInfo>();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt64(this.Money);
 		base._worldPacket.WriteInt32(this.Tab);

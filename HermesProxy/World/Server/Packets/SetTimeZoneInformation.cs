@@ -16,7 +16,7 @@ public class SetTimeZoneInformation : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.ServerTimeTZ.GetByteCount(), 7);
 		base._worldPacket.WriteBits(this.GameTimeTZ.GetByteCount(), 7);

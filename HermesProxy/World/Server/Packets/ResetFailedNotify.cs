@@ -9,7 +9,7 @@ internal class ResetFailedNotify : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 	}
 }

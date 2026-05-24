@@ -177,7 +177,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.Ratings != null);
 		base._worldPacket.WriteBit(this.ArenaTeams != null);

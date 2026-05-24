@@ -13,7 +13,7 @@ public class SetAllTaskProgress : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Tasks.Count);
 		foreach (TaskProgress task in this.Tasks)

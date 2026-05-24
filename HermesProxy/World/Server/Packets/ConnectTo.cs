@@ -51,7 +51,7 @@ internal class ConnectTo : ServerPacket
 		this.Payload = new ConnectPayload();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		ByteBuffer whereBuffer = new ByteBuffer();
 		whereBuffer.WriteUInt8((byte)this.Payload.Where.Type);

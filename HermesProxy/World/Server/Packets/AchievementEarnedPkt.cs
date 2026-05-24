@@ -18,7 +18,7 @@ public class AchievementEarnedPkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Sender);
 		base._worldPacket.WritePackedGuid128(this.Earner);

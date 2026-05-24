@@ -18,7 +18,7 @@ public class CriteriaUpdatePkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.CriteriaID);
 		base._worldPacket.WriteUInt64(this.Quantity);

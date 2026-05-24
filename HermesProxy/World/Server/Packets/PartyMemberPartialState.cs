@@ -88,7 +88,7 @@ internal class PartyMemberPartialState : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.ForEnemyChanged);
 		base._worldPacket.WriteBit(this.SetPvPInactive);

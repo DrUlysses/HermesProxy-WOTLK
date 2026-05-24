@@ -13,7 +13,7 @@ public class QuestGiverStatusMultiple : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.QuestGivers.Count);
 		foreach (QuestGiverInfo questGiver in this.QuestGivers)

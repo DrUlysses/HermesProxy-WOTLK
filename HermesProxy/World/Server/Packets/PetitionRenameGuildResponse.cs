@@ -14,7 +14,7 @@ public class PetitionRenameGuildResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.PetitionGuid);
 		base._worldPacket.WriteBits(this.NewGuildName.GetByteCount(), 7);

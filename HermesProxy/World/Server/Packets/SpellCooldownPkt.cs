@@ -17,7 +17,7 @@ public class SpellCooldownPkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Caster);
 		base._worldPacket.WriteUInt8(this.Flags);

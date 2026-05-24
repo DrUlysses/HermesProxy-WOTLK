@@ -34,7 +34,7 @@ public class InspectResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.DisplayInfo.Write(base._worldPacket);
 		base._worldPacket.WriteInt32(this.Glyphs.Count);

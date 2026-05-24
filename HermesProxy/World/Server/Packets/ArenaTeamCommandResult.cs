@@ -18,7 +18,7 @@ internal class ArenaTeamCommandResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8((byte)this.Action);
 		base._worldPacket.WriteUInt8((byte)this.Error);

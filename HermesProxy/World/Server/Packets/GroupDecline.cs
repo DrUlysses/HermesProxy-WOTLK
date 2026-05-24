@@ -12,7 +12,7 @@ internal class GroupDecline : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.Name.GetByteCount(), 9);
 		base._worldPacket.FlushBits();

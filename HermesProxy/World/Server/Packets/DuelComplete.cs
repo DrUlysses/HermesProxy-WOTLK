@@ -12,7 +12,7 @@ public class DuelComplete : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.Started);
 		base._worldPacket.FlushBits();

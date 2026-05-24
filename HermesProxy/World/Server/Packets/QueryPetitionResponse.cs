@@ -15,7 +15,7 @@ public class QueryPetitionResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.PetitionID);
 		base._worldPacket.WriteBit(this.Allow);

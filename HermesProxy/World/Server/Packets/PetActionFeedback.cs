@@ -13,7 +13,7 @@ public class PetActionFeedback : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.SpellID);
 		base._worldPacket.WriteUInt8(this.Response);

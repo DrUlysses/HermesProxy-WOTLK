@@ -15,7 +15,7 @@ public class ContactList : ServerPacket
 		this.Contacts = new List<ContactInfo>();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32((uint)this.Flags);
 		base._worldPacket.WriteBits(this.Contacts.Count, 8);

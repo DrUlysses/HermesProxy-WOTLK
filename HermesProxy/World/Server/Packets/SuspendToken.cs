@@ -14,7 +14,7 @@ internal class SuspendToken : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.SequenceIndex);
 		base._worldPacket.WriteBits(this.Reason, 2);

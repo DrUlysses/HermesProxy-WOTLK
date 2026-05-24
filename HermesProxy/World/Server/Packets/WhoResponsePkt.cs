@@ -14,7 +14,7 @@ public class WhoResponsePkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.RequestID);
 		base._worldPacket.WriteBits(this.Players.Count, 6);

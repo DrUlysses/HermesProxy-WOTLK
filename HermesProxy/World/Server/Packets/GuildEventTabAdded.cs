@@ -9,7 +9,7 @@ public class GuildEventTabAdded : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 	}
 }

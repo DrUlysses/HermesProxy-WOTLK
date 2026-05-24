@@ -15,7 +15,7 @@ public class MoveUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.MoveInfo.WriteMovementInfoModern(base._worldPacket, this.MoverGUID);
 	}

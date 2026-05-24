@@ -16,7 +16,7 @@ public class InspectPvP : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
 		base._worldPacket.WriteBits(this.Brackets.Count, 3);

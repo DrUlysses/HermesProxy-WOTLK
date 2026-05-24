@@ -13,7 +13,7 @@ internal class SetForcedReactions : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Reactions.Count);
 		foreach (ForcedReaction reaction2 in this.Reactions)

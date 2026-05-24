@@ -10,7 +10,7 @@ public class EmptyTalentData : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(0u);        // UnspentTalentPoints
 		base._worldPacket.WriteUInt8(0);          // ActiveGroup

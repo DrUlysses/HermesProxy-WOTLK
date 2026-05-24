@@ -11,7 +11,7 @@ public class TurnInPetitionResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.Result, 4);
 		base._worldPacket.FlushBits();

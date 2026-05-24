@@ -14,7 +14,7 @@ internal class ChatServerMessage : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.MessageID);
 		base._worldPacket.WriteBits(this.StringParam.GetByteCount(), 11);

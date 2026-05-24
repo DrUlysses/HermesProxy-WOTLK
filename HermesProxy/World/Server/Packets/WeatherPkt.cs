@@ -16,7 +16,7 @@ public class WeatherPkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32((uint)this.WeatherID);
 		base._worldPacket.WriteFloat(this.Intensity);

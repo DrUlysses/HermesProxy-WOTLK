@@ -18,7 +18,7 @@ internal class PetStableList : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.StableMaster);
 		base._worldPacket.WriteInt32(this.Pets.Count);

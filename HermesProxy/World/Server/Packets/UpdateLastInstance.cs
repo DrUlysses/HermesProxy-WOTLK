@@ -11,7 +11,7 @@ internal class UpdateLastInstance : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.MapID);
 	}

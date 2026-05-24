@@ -14,7 +14,7 @@ public class DeathReleaseLoc : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.MapID);
 		base._worldPacket.WriteVector3(this.Location);

@@ -10,7 +10,7 @@ public class EmptyAccountToyUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(bit: true);
 		base._worldPacket.FlushBits();

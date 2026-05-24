@@ -10,7 +10,7 @@ public class PetClearSpells : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 	}
 }

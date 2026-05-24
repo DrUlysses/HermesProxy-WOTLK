@@ -13,7 +13,7 @@ internal class ConnectionStatus : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.State, 2);
 		base._worldPacket.WriteBit(this.SuppressNotification);

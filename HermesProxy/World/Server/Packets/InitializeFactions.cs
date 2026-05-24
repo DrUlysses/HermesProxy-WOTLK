@@ -23,7 +23,7 @@ public class InitializeFactions : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		ushort count = InitializeFactions.GetFactionCount();
 		for (ushort i = 0; i < count; i++)

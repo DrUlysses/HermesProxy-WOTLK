@@ -9,7 +9,7 @@ public class GMTicketCaseStatus : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(0); // Cases.size() = 0, no open tickets
 	}

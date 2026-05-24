@@ -16,7 +16,7 @@ public class GuildEventTabModified : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Tab);
 		base._worldPacket.WriteBits(this.Name.GetByteCount(), 7);

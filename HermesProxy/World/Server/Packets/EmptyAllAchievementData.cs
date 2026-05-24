@@ -10,7 +10,7 @@ public class EmptyAllAchievementData : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(0);
 		base._worldPacket.WriteInt32(0);

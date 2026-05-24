@@ -12,7 +12,7 @@ public class AddonInfoPacket : ServerPacket
         this.AddonCount = count;
     }
 
-    public override void Write()
+    protected override void Write()
     {
         if (ModernVersion.ExpansionVersion >= 3)
         {

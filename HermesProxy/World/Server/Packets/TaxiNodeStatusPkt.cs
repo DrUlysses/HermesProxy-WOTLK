@@ -13,7 +13,7 @@ internal class TaxiNodeStatusPkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.FlightMaster);
 		base._worldPacket.WriteBits(this.Status, 2);

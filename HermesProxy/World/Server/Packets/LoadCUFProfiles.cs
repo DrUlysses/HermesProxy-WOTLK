@@ -12,7 +12,7 @@ public class LoadCUFProfiles : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBytes(this.Data);
 	}

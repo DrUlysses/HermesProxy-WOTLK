@@ -41,7 +41,7 @@ public class QueryPageTextResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.PageTextID);
 		base._worldPacket.WriteBit(this.Allow);

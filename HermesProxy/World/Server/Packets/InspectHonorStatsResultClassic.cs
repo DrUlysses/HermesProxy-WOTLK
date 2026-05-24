@@ -43,7 +43,7 @@ public class InspectHonorStatsResultClassic : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
 		base._worldPacket.WriteUInt8(this.LifetimeHighestRank);

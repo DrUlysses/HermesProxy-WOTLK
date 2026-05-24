@@ -14,7 +14,7 @@ internal class GroupNewLeader : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt8(this.PartyIndex);
 		base._worldPacket.WriteBits(this.Name.GetByteCount(), 9);

@@ -30,7 +30,7 @@ internal class ArenaTeamRosterResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.TeamId);
 		base._worldPacket.WriteUInt32(this.TeamSize);

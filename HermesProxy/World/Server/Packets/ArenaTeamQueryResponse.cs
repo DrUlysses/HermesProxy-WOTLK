@@ -13,7 +13,7 @@ internal class ArenaTeamQueryResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.TeamId);
 		base._worldPacket.WriteBit(this.Emblem != null);

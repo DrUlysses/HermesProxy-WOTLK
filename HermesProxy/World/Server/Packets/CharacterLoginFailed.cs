@@ -12,7 +12,7 @@ public class CharacterLoginFailed : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8((byte)this.Code);
 	}

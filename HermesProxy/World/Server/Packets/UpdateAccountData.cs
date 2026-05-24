@@ -24,7 +24,7 @@ public class UpdateAccountData : ServerPacket
 		this.CompressedData = data.CompressedData;
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Player);
 		base._worldPacket.WriteInt64(this.Time);

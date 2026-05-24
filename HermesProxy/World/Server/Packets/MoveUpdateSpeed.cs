@@ -17,7 +17,7 @@ public class MoveUpdateSpeed : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.MoveInfo.WriteMovementInfoModern(base._worldPacket, this.MoverGUID);
 		base._worldPacket.WriteFloat(this.Speed);

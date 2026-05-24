@@ -29,7 +29,7 @@ public class UpdateTalentData : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.UnspentTalentPoints);
 		base._worldPacket.WriteUInt8(this.ActiveGroup);

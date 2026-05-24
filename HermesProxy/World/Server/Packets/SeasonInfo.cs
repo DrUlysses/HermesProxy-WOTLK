@@ -23,7 +23,7 @@ public class SeasonInfo : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.MythicPlusSeasonID);
 		if (ModernVersion.ExpansionVersion >= 3)

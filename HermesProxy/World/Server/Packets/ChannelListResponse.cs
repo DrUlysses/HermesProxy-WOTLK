@@ -29,7 +29,7 @@ public class ChannelListResponse : ServerPacket
 		this.Members = new List<ChannelPlayer>();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.Display);
 		base._worldPacket.WriteBits(this.ChannelName.GetByteCount(), 7);

@@ -110,7 +110,7 @@ public class ChatPkt : ServerPacket
 		return true;
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8((byte)this.SlashCmd);
 		base._worldPacket.WriteUInt32(this._Language);

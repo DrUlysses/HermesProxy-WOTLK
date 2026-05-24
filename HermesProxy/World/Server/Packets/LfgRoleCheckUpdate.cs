@@ -26,7 +26,7 @@ public class LfgRoleCheckUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8(this.PartyIndex);
 		base._worldPacket.WriteUInt8(this.RoleCheckStatus);

@@ -275,7 +275,7 @@ public class EnumCharactersResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.Success);
 		base._worldPacket.WriteBit(this.IsDeletedCharacters);

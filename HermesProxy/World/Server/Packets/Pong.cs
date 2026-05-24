@@ -12,7 +12,7 @@ internal class Pong : ServerPacket
 		this.Serial = serial;
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.Serial);
 	}

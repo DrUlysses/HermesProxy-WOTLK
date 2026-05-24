@@ -15,7 +15,7 @@ internal class SendRaidTargetUpdateAll : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt8(this.PartyIndex);
 		base._worldPacket.WriteInt32(this.TargetIcons.Count);

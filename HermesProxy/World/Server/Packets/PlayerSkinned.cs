@@ -12,7 +12,7 @@ internal class PlayerSkinned : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.FreeRepop);
 		base._worldPacket.FlushBits();

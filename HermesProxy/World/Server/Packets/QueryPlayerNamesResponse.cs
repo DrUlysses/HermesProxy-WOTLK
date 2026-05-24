@@ -21,7 +21,7 @@ public class QueryPlayerNamesResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32((uint)this.Players.Count);
 		foreach (NameCacheLookupResult result in this.Players)

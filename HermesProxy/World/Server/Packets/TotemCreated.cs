@@ -21,7 +21,7 @@ internal class TotemCreated : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8(this.Slot);
 		base._worldPacket.WritePackedGuid128(this.Totem);

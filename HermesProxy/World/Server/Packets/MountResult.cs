@@ -12,7 +12,7 @@ public class MountResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Result);
 	}

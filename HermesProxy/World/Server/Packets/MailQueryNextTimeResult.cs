@@ -27,7 +27,7 @@ public class MailQueryNextTimeResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteFloat(this.NextMailTime);
 		base._worldPacket.WriteInt32(this.Mails.Count);

@@ -15,7 +15,7 @@ internal class MasterLootCandidateList : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.LootObj);
 		base._worldPacket.WriteInt32(this.Players.Count);

@@ -12,7 +12,7 @@ public class MoveSplineSetFlag : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.MoverGUID);
 	}

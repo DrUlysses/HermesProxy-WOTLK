@@ -121,7 +121,7 @@ internal class AuthResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32((uint)this.Result);
 		base._worldPacket.WriteBit(this.SuccessInfo != null);

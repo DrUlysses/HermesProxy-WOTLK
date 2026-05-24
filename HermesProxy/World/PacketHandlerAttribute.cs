@@ -11,19 +11,19 @@ public sealed class PacketHandlerAttribute : Attribute
 
 	public PacketHandlerAttribute(Opcode opcode)
 	{
-		this.Opcode = opcode;
+		Opcode = opcode;
 	}
 
 	public PacketHandlerAttribute(uint opcode)
 	{
-		this.Opcode = (Opcode)opcode;
+		Opcode = (Opcode)opcode;
 	}
 
 	public PacketHandlerAttribute(Opcode opcode, ClientVersionBuild addedInVersion)
 	{
 		if (LegacyVersion.AddedInVersion(addedInVersion))
 		{
-			this.Opcode = opcode;
+			Opcode = opcode;
 		}
 	}
 
@@ -31,7 +31,7 @@ public sealed class PacketHandlerAttribute : Attribute
 	{
 		if (LegacyVersion.InVersion(addedInVersion, removedInVersion))
 		{
-			this.Opcode = opcode;
+			Opcode = opcode;
 		}
 	}
 }

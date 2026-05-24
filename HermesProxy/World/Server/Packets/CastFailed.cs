@@ -22,7 +22,7 @@ internal class CastFailed : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.CastID);
 		base._worldPacket.WriteUInt32(this.SpellID);

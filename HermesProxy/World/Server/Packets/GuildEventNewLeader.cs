@@ -24,7 +24,7 @@ public class GuildEventNewLeader : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.SelfPromoted);
 		base._worldPacket.WriteBits(this.OldLeaderName.GetByteCount(), 6);

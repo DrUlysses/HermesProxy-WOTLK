@@ -13,7 +13,7 @@ public class PetGuids : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Guids.Count);
 		foreach (WowGuid128 guid in this.Guids)

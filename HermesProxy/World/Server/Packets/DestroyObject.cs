@@ -15,7 +15,7 @@ public class DestroyObject : ServerPacket
         this.IsOutOfRange = isOutOfRange;
     }
 
-    public override void Write()
+    protected override void Write()
     {
         if (ModernVersion.ExpansionVersion >= 3)
         {

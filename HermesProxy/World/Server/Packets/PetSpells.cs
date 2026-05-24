@@ -33,7 +33,7 @@ public class PetSpells : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.PetGUID);
 		base._worldPacket.WriteUInt16(this.CreatureFamily);

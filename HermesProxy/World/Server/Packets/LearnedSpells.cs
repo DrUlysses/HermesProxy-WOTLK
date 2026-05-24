@@ -24,7 +24,7 @@ public class LearnedSpells : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.ClientLearnedSpellData.Count);
 		base._worldPacket.WriteUInt32(this.SpecializationID);

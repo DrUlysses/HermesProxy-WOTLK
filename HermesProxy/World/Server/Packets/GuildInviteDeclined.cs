@@ -16,7 +16,7 @@ public class GuildInviteDeclined : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.InviterName.GetByteCount(), 6);
 		base._worldPacket.WriteBit(this.AutoDecline);

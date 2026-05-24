@@ -12,7 +12,7 @@ public class QuestForceRemoved : ServerPacket
 		this.QuestID = questId;
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32((int)this.QuestID);
 	}

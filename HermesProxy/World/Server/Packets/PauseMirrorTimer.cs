@@ -13,7 +13,7 @@ public class PauseMirrorTimer : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32((int)this.Timer);
 		base._worldPacket.WriteBit(this.Paused);

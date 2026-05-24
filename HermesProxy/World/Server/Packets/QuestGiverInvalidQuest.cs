@@ -18,7 +18,7 @@ internal class QuestGiverInvalidQuest : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32((uint)this.Reason);
 		base._worldPacket.WriteInt32(this.ContributionRewardID);

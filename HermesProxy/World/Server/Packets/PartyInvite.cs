@@ -39,7 +39,7 @@ internal class PartyInvite : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.CanAccept);
 		base._worldPacket.WriteBit(this.MightCRZYou);

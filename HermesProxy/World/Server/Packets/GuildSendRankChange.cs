@@ -17,7 +17,7 @@ public class GuildSendRankChange : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Officer);
 		base._worldPacket.WritePackedGuid128(this.Other);

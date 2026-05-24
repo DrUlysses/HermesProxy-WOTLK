@@ -19,7 +19,7 @@ public class AuraUpdate : ServerPacket
 		this.UpdateAll = all;
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.UpdateAll);
 		base._worldPacket.WriteBits(this.Auras.Count, 9);

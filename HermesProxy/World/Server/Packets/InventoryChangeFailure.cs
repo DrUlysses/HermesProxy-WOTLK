@@ -25,7 +25,7 @@ public class InventoryChangeFailure : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32((int)this.BagResult);
 		base._worldPacket.WritePackedGuid128(this.Item[0]);

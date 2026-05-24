@@ -14,7 +14,7 @@ public class GetAccountCharacterListResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.Token);
 		base._worldPacket.WriteUInt32((uint)this.CharacterList.Count);

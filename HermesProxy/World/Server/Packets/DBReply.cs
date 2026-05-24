@@ -20,7 +20,7 @@ public class DBReply : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32((uint)this.TableHash);
 		base._worldPacket.WriteUInt32(this.RecordID);

@@ -26,7 +26,7 @@ internal class SummonRequest : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.SummonerGUID);
 		base._worldPacket.WriteUInt32(this.SummonerVirtualRealmAddress);

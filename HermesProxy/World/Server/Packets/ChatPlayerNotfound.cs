@@ -12,7 +12,7 @@ internal class ChatPlayerNotfound : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.Name.GetByteCount(), 9);
 		base._worldPacket.WriteString(this.Name);

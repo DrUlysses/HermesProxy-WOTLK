@@ -13,7 +13,7 @@ internal class InstanceResetFailed : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.MapID);
 		base._worldPacket.WriteBits(this.ResetFailedReason, 2);

@@ -50,7 +50,7 @@ internal class EnterEncryptedMode : ServerPacket
 		this.Enabled = enabled;
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		if (ModernVersion.ExpansionVersion >= 3)
 		{

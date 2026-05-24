@@ -19,7 +19,7 @@ internal class RaidInstanceMessage : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8((byte)this.Type);
 		base._worldPacket.WriteUInt32(this.MapID);

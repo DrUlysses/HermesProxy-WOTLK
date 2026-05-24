@@ -17,7 +17,7 @@ public class SendKnownSpells : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.InitialLogin);
 		base._worldPacket.WriteInt32(this.KnownSpells.Count);

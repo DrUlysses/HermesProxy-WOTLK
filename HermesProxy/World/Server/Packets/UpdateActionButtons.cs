@@ -15,7 +15,7 @@ public class UpdateActionButtons : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		for (int i = 0; i < 180; i++)
 		{

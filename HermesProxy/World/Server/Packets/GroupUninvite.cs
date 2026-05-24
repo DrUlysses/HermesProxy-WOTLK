@@ -9,7 +9,7 @@ internal class GroupUninvite : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 	}
 }

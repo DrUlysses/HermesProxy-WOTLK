@@ -24,7 +24,7 @@ public class LfgPlayerReward : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.QueuedSlot);
 		base._worldPacket.WriteUInt32(this.ActualSlot);

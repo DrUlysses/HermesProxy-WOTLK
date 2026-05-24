@@ -13,7 +13,7 @@ public class SendUnlearnSpells : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Spells.Count);
 		foreach (uint spell in this.Spells)

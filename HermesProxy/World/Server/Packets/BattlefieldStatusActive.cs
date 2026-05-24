@@ -21,7 +21,7 @@ public class BattlefieldStatusActive : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Hdr.Write(base._worldPacket);
 		base._worldPacket.WriteUInt32(this.Mapid);

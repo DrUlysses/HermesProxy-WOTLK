@@ -15,7 +15,7 @@ public class UnlearnedSpells : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Spells.Count);
 		foreach (uint spellId in this.Spells)

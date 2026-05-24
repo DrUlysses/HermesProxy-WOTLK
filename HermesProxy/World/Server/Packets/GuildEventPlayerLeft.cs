@@ -24,7 +24,7 @@ public class GuildEventPlayerLeft : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.Removed);
 		base._worldPacket.WriteBits(this.LeaverName.GetByteCount(), 6);

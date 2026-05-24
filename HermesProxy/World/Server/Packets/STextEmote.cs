@@ -20,7 +20,7 @@ public class STextEmote : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.SourceGUID);
 		base._worldPacket.WritePackedGuid128(this.SourceAccountGUID);

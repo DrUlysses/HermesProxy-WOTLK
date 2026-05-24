@@ -13,7 +13,7 @@ public class SendSpellCharges : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Entries.Count);
 		this.Entries.ForEach(delegate(SpellChargeEntry p)

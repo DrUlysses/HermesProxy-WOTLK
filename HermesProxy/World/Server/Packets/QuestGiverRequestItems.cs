@@ -39,7 +39,7 @@ public class QuestGiverRequestItems : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.QuestGiverGUID);
 		if (ModernVersion.ExpansionVersion >= 3)

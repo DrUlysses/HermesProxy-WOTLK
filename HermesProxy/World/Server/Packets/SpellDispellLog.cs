@@ -23,7 +23,7 @@ internal class SpellDispellLog : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.IsSteal);
 		base._worldPacket.WriteBit(this.IsBreak);

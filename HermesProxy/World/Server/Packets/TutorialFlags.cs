@@ -11,7 +11,7 @@ public class TutorialFlags : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		for (byte i = 0; i < 8; i++)
 		{

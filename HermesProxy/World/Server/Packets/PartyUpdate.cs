@@ -34,7 +34,7 @@ public class PartyUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt16((ushort)this.PartyFlags);
 		base._worldPacket.WriteUInt8(this.PartyIndex);

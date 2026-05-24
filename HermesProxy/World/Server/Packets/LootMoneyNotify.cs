@@ -15,7 +15,7 @@ internal class LootMoneyNotify : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt64(this.Money);
 		base._worldPacket.WriteUInt64(this.MoneyMod);

@@ -18,7 +18,7 @@ internal class ArenaTeamEvent : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8((byte)this.Event);
 		base._worldPacket.WriteBits(this.Param1.GetByteCount(), 9);

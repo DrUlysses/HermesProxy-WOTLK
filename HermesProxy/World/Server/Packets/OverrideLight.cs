@@ -13,7 +13,7 @@ public class OverrideLight : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.AreaLightID);
 		base._worldPacket.WriteInt32(this.OverrideLightID);

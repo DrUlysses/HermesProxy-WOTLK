@@ -38,7 +38,7 @@ public class GuildInvite : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.InviterName.GetByteCount(), 6);
 		base._worldPacket.WriteBits(this.GuildName.GetByteCount(), 7);

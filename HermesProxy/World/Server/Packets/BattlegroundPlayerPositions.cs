@@ -13,7 +13,7 @@ internal class BattlegroundPlayerPositions : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.FlagCarriers.Count);
 		foreach (BattlegroundPlayerPosition flagCarrier in this.FlagCarriers)

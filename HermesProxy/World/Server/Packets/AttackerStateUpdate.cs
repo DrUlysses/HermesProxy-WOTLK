@@ -44,7 +44,7 @@ internal class AttackerStateUpdate : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		WorldPacket attackRoundInfo = new WorldPacket();
 		attackRoundInfo.WriteUInt32((uint)this.HitInfo);

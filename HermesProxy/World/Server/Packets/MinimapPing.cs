@@ -14,7 +14,7 @@ internal class MinimapPing : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.SenderGUID);
 		base._worldPacket.WriteVector2(this.Position);

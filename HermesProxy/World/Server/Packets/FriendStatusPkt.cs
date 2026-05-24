@@ -30,7 +30,7 @@ public class FriendStatusPkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8((byte)this.FriendResult);
 		base._worldPacket.WritePackedGuid128(this.Guid);

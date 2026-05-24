@@ -62,7 +62,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			this.Code = code;
 		}
 
-		public override void Write()
+		protected override void Write()
 		{
 			base._worldPacket.WriteUInt8((byte)this.Code);
 		}
@@ -2787,6 +2787,20 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 	}
 
+	[PacketHandler(Opcode.CMSG_GET_ITEM_PURCHASE_DATA)]
+	private void HandleGetItemPurchaseData(EmptyClientPacket packet)
+	{
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_GET_ITEM_PURCHASE_DATA);
+		this.SendPacketToServer(legacyPacket);
+	}
+
+	[PacketHandler(Opcode.CMSG_ITEM_PURCHASE_REFUND)]
+	private void HandleItemPurchaseRefund(EmptyClientPacket packet)
+	{
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_ITEM_PURCHASE_REFUND);
+		this.SendPacketToServer(legacyPacket);
+	}
+
 	[PacketHandler(Opcode.CMSG_REQUEST_RATED_PVP_INFO)]
 	private void HandleRequestRatedPvpInfo(RequestRatedPvpInfoPkt packet)
 	{
@@ -2866,11 +2880,15 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_DF_GET_JOIN_STATUS)]
 	private void HandleDfGetJoinStatus(DfGetJoinStatusPkt packet)
 	{
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_DF_GET_JOIN_STATUS);
+		this.SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_CALENDAR_GET_NUM_PENDING)]
 	private void HandleCalendarGetNumPending(CalendarGetNumPendingPkt packet)
 	{
+		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_CALENDAR_GET_NUM_PENDING);
+		this.SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_GUILD_SET_ACHIEVEMENT_TRACKING)]
@@ -3531,7 +3549,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_CREATURE);
 		packet.WriteUInt32(queryCreature.CreatureID);
-		packet.WriteGuid(new WowGuid64(HighGuidTypeLegacy.Creature, queryCreature.CreatureID, 1u));
+		packet.WriteGuid(queryCreature.Guid.To64());
 		this.SendPacketToServer(packet);
 	}
 

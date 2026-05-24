@@ -13,7 +13,7 @@ public class ExplorationExperience : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.AreaID);
 		base._worldPacket.WriteUInt32(this.Experience);

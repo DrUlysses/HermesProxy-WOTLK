@@ -17,7 +17,7 @@ public class GuildBankLogQueryResults : ServerPacket
 		this.Entry = new List<GuildBankLogEntry>();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Tab);
 		base._worldPacket.WriteInt32(this.Entry.Count);

@@ -14,7 +14,7 @@ internal class SpellGo : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Cast.Write(base._worldPacket);
 		base._worldPacket.WriteBit(this.LogData != null);

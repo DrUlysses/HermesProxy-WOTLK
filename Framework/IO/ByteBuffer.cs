@@ -26,90 +26,88 @@ namespace Framework.IO
     {
         public ByteBuffer()
         {
-            writeStream = new BinaryWriter(new MemoryStream());
+            _writeStream = new BinaryWriter(new MemoryStream());
         }
 
         public ByteBuffer(byte[] data)
         {
-            readStream = new BinaryReader(new MemoryStream(data));
+            _readStream = new BinaryReader(new MemoryStream(data));
         }
 
         public void Dispose()
         {
-            if (writeStream != null)
-                writeStream.Dispose();
+            _writeStream?.Dispose();
 
-            if (readStream != null)
-                readStream.Dispose();
+            _readStream?.Dispose();
         }
 
         #region Read Methods
         public sbyte ReadInt8()
         {
             ResetBitPos();
-            return readStream.ReadSByte();
+            return _readStream.ReadSByte();
         }
 
         public short ReadInt16()
         {
             ResetBitPos();
-            return readStream.ReadInt16();
+            return _readStream.ReadInt16();
         }
 
         public int ReadInt32()
         {
             ResetBitPos();
-            return readStream.ReadInt32();
+            return _readStream.ReadInt32();
         }
 
         public long ReadInt64()
         {
             ResetBitPos();
-            return readStream.ReadInt64();
+            return _readStream.ReadInt64();
         }
 
         public byte ReadUInt8()
         {
             ResetBitPos();
-            return readStream.ReadByte();
+            return _readStream.ReadByte();
         }
 
         public byte PeekByte()
         {
-            long pos = readStream.BaseStream.Position;
-            byte val = readStream.ReadByte();
-            readStream.BaseStream.Position = pos;
+            long pos = _readStream.BaseStream.Position;
+            byte val = _readStream.ReadByte();
+            _readStream.BaseStream.Position = pos;
             return val;
         }
 
         public ushort ReadUInt16()
         {
             ResetBitPos();
-            return readStream.ReadUInt16();
+            return _readStream.ReadUInt16();
         }
 
         public uint ReadUInt32()
         {
             ResetBitPos();
-            return readStream.ReadUInt32();
+            return _readStream.ReadUInt32();
         }
 
         public ulong ReadUInt64()
         {
             ResetBitPos();
-            return readStream.ReadUInt64();
+            return _readStream.ReadUInt64();
         }
 
         public float ReadFloat()
         {
             ResetBitPos();
-            return readStream.ReadSingle();
+            return _readStream.ReadSingle();
         }
 
         public double ReadDouble()
         {
             ResetBitPos();
-            return readStream.ReadDouble();
+            return _readStream.ReadDouble();
         }
 
         public T ReadByteEnum<T>() where T: Enum
@@ -120,14 +118,18 @@ namespace Framework.IO
         public string ReadCString()
         {
             ResetBitPos();
+            MemoryStream stream = (MemoryStream)_readStream.BaseStream;
             StringBuilder tmpString = new StringBuilder();
-            char tmpChar = readStream.ReadChar();
-            char tmpEndChar = Convert.ToChar(Encoding.UTF8.GetString(new byte[] { 0 }));
 
-            while (tmpChar != tmpEndChar)
+            while (stream.Position < stream.Length)
             {
-                tmpString.Append(tmpChar);
-                tmpChar = readStream.ReadChar();
+                byte next = _readStream.ReadByte();
+                if (next == 0)
+                {
+                    break;
+                }
+
+                tmpString.Append((char)next);
             }
 
             return tmpString.ToString();
@@ -145,19 +147,19 @@ namespace Framework.IO
         public bool ReadBool()
         {
             ResetBitPos();
-            return readStream.ReadBoolean();
+            return _readStream.ReadBoolean();
         }
 
         public byte[] ReadBytes(uint count)
         {
             ResetBitPos();
-            return readStream.ReadBytes((int)count);
+            return _readStream.ReadBytes((int)count);
         }
 
         public void Skip(int count)
         {
             ResetBitPos();
-            readStream.BaseStream.Position += count;
+            _readStream.BaseStream.Position += count;
         }
 
         public bool CanRead()
@@ -220,12 +222,12 @@ namespace Framework.IO
         {
             if (_bitPosition == 8)
             {
-                BitValue = ReadUInt8();
+                _bitValue = ReadUInt8();
                 _bitPosition = 0;
             }
 
-            int returnValue = BitValue;
-            BitValue = (byte)(2 * returnValue); // BitValue <<= 1;
+            int returnValue = _bitValue;
+            _bitValue = (byte)(2 * returnValue); // BitValue <<= 1;
             ++_bitPosition;
 
             return (returnValue >> 7) != 0;
@@ -235,12 +237,12 @@ namespace Framework.IO
         {
             if (_bitPosition == 8)
             {
-                BitValue = ReadUInt8();
+                _bitValue = ReadUInt8();
                 _bitPosition = 0;
             }
 
-            int returnValue = BitValue;
-            BitValue = (byte)(2 * returnValue);
+            int returnValue = _bitValue;
+            _bitValue = (byte)(2 * returnValue);
             ++_bitPosition;
 
             return Convert.ToBoolean(returnValue >> 7);
@@ -262,67 +264,67 @@ namespace Framework.IO
         public void WriteInt8(sbyte data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteInt16(short data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteInt32(int data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteInt64(long data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteBool(bool data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteUInt8(byte data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteUInt16(ushort data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteUInt32(uint data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteUInt64(ulong data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteFloat(float data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         public void WriteDouble(double data)
         {
             FlushBits();
-            writeStream.Write(data);
+            _writeStream.Write(data);
         }
 
         /// <summary>
@@ -353,13 +355,13 @@ namespace Framework.IO
         public void WriteBytes(byte[] data)
         {
             FlushBits();
-            writeStream.Write(data, 0, data.Length);
+            _writeStream.Write(data, 0, data.Length);
         }
 
         public void WriteBytes(byte[] data, uint count)
         {
             FlushBits();
-            writeStream.Write(data, 0, (int)count);
+            _writeStream.Write(data, 0, (int)count);
         }
 
         public void WriteBytes(ByteBuffer buffer)
@@ -402,14 +404,14 @@ namespace Framework.IO
             --_bitPosition;
 
             if (bit)
-                BitValue |= (byte)(1 << _bitPosition);
+                _bitValue |= (byte)(1 << _bitPosition);
 
             if (_bitPosition == 0)
             {
-                writeStream.Write(BitValue);
+                _writeStream.Write(_bitValue);
 
                 _bitPosition = 8;
-                BitValue = 0;
+                _bitValue = 0;
             }
             return bit;
         }
@@ -452,8 +454,8 @@ namespace Framework.IO
             if (_bitPosition == 8)
                 return;
 
-            writeStream.Write(BitValue);
-            BitValue = 0;
+            _writeStream.Write(_bitValue);
+            _bitValue = 0;
             _bitPosition = 8;
         }
 
@@ -463,13 +465,13 @@ namespace Framework.IO
                 return;
 
             _bitPosition = 8;
-            BitValue = 0;
+            _bitValue = 0;
         }
 
         public void ResetReadPos()
         {
-            readStream.BaseStream.Position = 0;
-            readStream.BaseStream.Seek(0, SeekOrigin.Begin);
+            _readStream.BaseStream.Position = 0;
+            _readStream.BaseStream.Seek(0, SeekOrigin.Begin);
             ResetBitPos();
         }
 
@@ -502,23 +504,20 @@ namespace Framework.IO
 
         public Stream GetCurrentStream()
         {
-            if (writeStream != null)
-                return writeStream.BaseStream;
-            else
-                return readStream.BaseStream;
+            return _writeStream != null ? _writeStream.BaseStream : _readStream.BaseStream;
         }
 
         public void Clear()
         {
             _bitPosition = 8;
-            BitValue = 0;
-            writeStream = new BinaryWriter(new MemoryStream());
+            _bitValue = 0;
+            _writeStream = new BinaryWriter(new MemoryStream());
         }
 
-        byte _bitPosition = 8;
-        byte BitValue;
-        BinaryWriter writeStream;
-        BinaryReader readStream;
+        private byte _bitPosition = 8;
+        private byte _bitValue;
+        private BinaryWriter _writeStream;
+        private readonly BinaryReader _readStream;
 
         // Hex Printer from WPP
         // https://github.com/TrinityCore/WowPacketParser/blob/7edfda7e4daf9a5b9069083806a9a3c261dea8a7/WowPacketParser/Misc/Utilities.cs#L48
@@ -526,7 +525,6 @@ namespace Framework.IO
         {
             const bool shortVersion = false;
             const int offset = 0;
-            const bool noOffsetFirstLine = false;
 
             var data = GetData();
             
@@ -534,24 +532,20 @@ namespace Framework.IO
 
             var prefix = new string(' ', offset);
 
-            var hexDump = new StringBuilder(noOffsetFirstLine ? "" : prefix);
+            var hexDump = new StringBuilder(prefix);
 
-            if (!shortVersion)
-            {
-                var header = "|-------------------------------------------------|---------------------------------|" + n +
-                             "| 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F | 0 1 2 3 4 5 6 7 8 9 A B C D E F |" + n +
-                             "|-------------------------------------------------|---------------------------------|" + n;
+            var header = "|-------------------------------------------------|---------------------------------|" + n +
+                         "| 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F | 0 1 2 3 4 5 6 7 8 9 A B C D E F |" + n +
+                         "|-------------------------------------------------|---------------------------------|" + n;
 
-                hexDump.Append(header);
-            }
+            hexDump.Append(header);
 
             for (var i = 0; i < data.Length; i += 16)
             {
                 var text = new StringBuilder();
                 var hex = new StringBuilder(i == 0 ? "" : prefix);
 
-                if (!shortVersion)
-                    hex.Append("| ");
+                hex.Append("| ");
 
                 for (var j = 0; j < 16; j++)
                 {
@@ -560,16 +554,14 @@ namespace Framework.IO
                         var val = data[j + i];
                         hex.Append(data[j + i].ToString("X2"));
 
-                        if (!shortVersion)
-                            hex.Append(" ");
+                        hex.Append(' ');
 
-                        if (val >= 32 && val <= 127)
+                        if (val is >= 32 and <= 127)
                             text.Append((char)val);
                         else
-                            text.Append(".");
+                            text.Append('.');
 
-                        if (!shortVersion)
-                            text.Append(" ");
+                        text.Append(' ');
                     }
                     else
                     {
@@ -580,14 +572,12 @@ namespace Framework.IO
 
                 hex.Append(shortVersion ? "|" : "| ");
                 hex.Append(text);
-                if (!shortVersion)
-                    hex.Append("|");
+                hex.Append('|');
                 hex.Append(n);
                 hexDump.Append(hex);
             }
 
-            if (!shortVersion)
-                hexDump.Append("|-------------------------------------------------|---------------------------------|");
+            hexDump.Append("|-------------------------------------------------|---------------------------------|");
 
             Console.WriteLine(hexDump);
         }

@@ -13,7 +13,7 @@ internal class LootAllPassed : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.LootObj);
 		this.Item.Write(base._worldPacket);

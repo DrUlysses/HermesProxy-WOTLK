@@ -23,7 +23,7 @@ public class GuildRoster : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.NumAccounts);
 		base._worldPacket.WritePackedTime(this.CreateDate);

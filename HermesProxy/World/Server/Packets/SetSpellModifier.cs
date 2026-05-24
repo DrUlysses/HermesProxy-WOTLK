@@ -13,7 +13,7 @@ public class SetSpellModifier : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Modifiers.Count);
 		foreach (SpellModifierInfo spellMod in this.Modifiers)

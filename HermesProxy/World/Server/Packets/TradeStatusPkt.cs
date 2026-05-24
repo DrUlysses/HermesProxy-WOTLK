@@ -32,7 +32,7 @@ public class TradeStatusPkt : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.PartnerIsSameBnetAccount);
 		base._worldPacket.WriteBits(this.Status, 5);

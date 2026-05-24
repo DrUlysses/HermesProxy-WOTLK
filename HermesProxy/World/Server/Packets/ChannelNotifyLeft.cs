@@ -16,7 +16,7 @@ public class ChannelNotifyLeft : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.Channel.GetByteCount(), 7);
 		base._worldPacket.WriteBit(this.Suspended);

@@ -18,7 +18,7 @@ public class QueryCreatureResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.CreatureID);
 		base._worldPacket.WriteBit(this.Allow);

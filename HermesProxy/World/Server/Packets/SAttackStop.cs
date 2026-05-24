@@ -16,7 +16,7 @@ public class SAttackStop : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Attacker ?? WowGuid128.Empty);
 		base._worldPacket.WritePackedGuid128(this.Victim ?? WowGuid128.Empty);

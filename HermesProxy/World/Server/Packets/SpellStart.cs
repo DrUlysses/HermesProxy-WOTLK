@@ -13,7 +13,7 @@ public class SpellStart : ServerPacket
 		this.Cast = new SpellCastData();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Cast.Write(base._worldPacket);
 	}

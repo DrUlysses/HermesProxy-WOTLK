@@ -21,7 +21,7 @@ public class StartMirrorTimer : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32((int)this.Timer);
 		base._worldPacket.WriteInt32(this.Value);

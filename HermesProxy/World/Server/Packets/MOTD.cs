@@ -13,7 +13,7 @@ public class MOTD : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.Text.Count, 4);
 		base._worldPacket.FlushBits();

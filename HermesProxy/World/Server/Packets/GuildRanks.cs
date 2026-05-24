@@ -12,7 +12,7 @@ public class GuildRanks : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Ranks.Count);
 		this.Ranks.ForEach(delegate(GuildRankData p)

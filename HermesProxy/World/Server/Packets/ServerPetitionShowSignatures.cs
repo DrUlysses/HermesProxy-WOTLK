@@ -28,7 +28,7 @@ public class ServerPetitionShowSignatures : ServerPacket
 		this.Signatures = new List<PetitionSignature>();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Item);
 		base._worldPacket.WritePackedGuid128(this.Owner);

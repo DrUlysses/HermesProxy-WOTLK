@@ -57,7 +57,7 @@ internal class PartyMemberFullState : ServerPacket
 		this.Phases.PhaseShiftFlags = 8u;
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.ForEnemy);
 		base._worldPacket.FlushBits();

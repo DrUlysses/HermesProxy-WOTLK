@@ -18,7 +18,7 @@ public class QueryNPCTextResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.TextID);
 		base._worldPacket.WriteBit(this.Allow);

@@ -9,7 +9,7 @@ public class SocialContractRequestResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBool(data: false);
 	}

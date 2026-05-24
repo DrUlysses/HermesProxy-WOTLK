@@ -5781,40 +5781,171 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_LFG_UPDATE_PLAYER)]
 	private void HandleLfgUpdatePlayer(WorldPacket packet)
 	{
+		static bool HasRemaining(WorldPacket p, long bytes)
+		{
+			return p.GetData().Length - p.GetCurrentStream().Position >= bytes;
+		}
+
 		DfUpdateStatus status = new DfUpdateStatus();
 		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
 		status.Ticket.Id = 1;
 		status.Ticket.Type = RideType.Lfg;
 		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		if (!HasRemaining(packet, 1))
+		{
+			this.SendPacketToClient(status);
+			return;
+		}
 		byte updateType = packet.ReadUInt8();
 		status.SubType = updateType;
+		if (!HasRemaining(packet, 1))
+		{
+			this.SendPacketToClient(status);
+			return;
+		}
 		bool hasExtraInfo = packet.ReadUInt8() != 0;
 		if (hasExtraInfo)
 		{
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
 			status.Queued = packet.ReadUInt8() != 0;
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
 			packet.ReadUInt8(); // unk
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
 			packet.ReadUInt8(); // unk
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
 			byte dungeonCount = packet.ReadUInt8();
 			for (int i = 0; i < dungeonCount; i++)
 			{
+				if (!HasRemaining(packet, 4))
+				{
+					break;
+				}
 				status.Slots.Add(packet.ReadUInt32());
 			}
 			status.Joined = true;
 			status.LfgJoined = true;
 			status.NotifyUI = true;
-			packet.ReadCString(); // comment - not used in modern
+			if (packet.CanRead())
+			{
+				packet.ReadCString(); // comment - not used in modern
+			}
 		}
 		this.SendPacketToClient(status);
+	}
+
+	[PacketHandler(Opcode.SMSG_LFG_UPDATE_PARTY)]
+	private void HandleLfgUpdateParty(WorldPacket packet)
+	{
+		static bool HasRemaining(WorldPacket p, long bytes)
+		{
+			return p.GetData().Length - p.GetCurrentStream().Position >= bytes;
+		}
+
+		DfUpdateStatus status = new DfUpdateStatus();
+		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		status.Ticket.Id = 1;
+		status.Ticket.Type = RideType.Lfg;
+		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		if (!HasRemaining(packet, 1))
+		{
+			this.SendPacketToClient(status);
+			return;
+		}
+		status.SubType = packet.ReadUInt8();
+		status.IsParty = true;
+		if (!HasRemaining(packet, 1))
+		{
+			this.SendPacketToClient(status);
+			return;
+		}
+		bool hasExtraInfo = packet.ReadUInt8() != 0;
+		if (hasExtraInfo)
+		{
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
+			status.Queued = packet.ReadUInt8() != 0;
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
+			packet.ReadUInt8(); // unk
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
+			packet.ReadUInt8(); // unk
+			if (!HasRemaining(packet, 1))
+			{
+				this.SendPacketToClient(status);
+				return;
+			}
+			byte dungeonCount = packet.ReadUInt8();
+			for (int i = 0; i < dungeonCount; i++)
+			{
+				if (!HasRemaining(packet, 4))
+				{
+					break;
+				}
+				status.Slots.Add(packet.ReadUInt32());
+			}
+			status.Joined = true;
+			status.LfgJoined = true;
+			status.NotifyUI = true;
+			if (packet.CanRead())
+			{
+				packet.ReadCString(); // comment - not used in modern
+			}
+		}
+		this.SendPacketToClient(status);
+	}
+
+	[PacketHandler(Opcode.SMSG_CALENDAR_SEND_NUM_PENDING)]
+	private void HandleCalendarSendNumPending(WorldPacket packet)
+	{
+		CalendarSendNumPendingPkt pending = new CalendarSendNumPendingPkt();
+		pending.NumPending = packet.CanRead() ? packet.ReadUInt32() : 0u;
+		this.SendPacketToClient(pending);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_QUEUE_STATUS)]
 	private void HandleLfgQueueStatus(WorldPacket packet)
 	{
+		static bool HasRemaining(WorldPacket p, long bytes)
+		{
+			return p.GetData().Length - p.GetCurrentStream().Position >= bytes;
+		}
+
 		DfQueueStatus status = new DfQueueStatus();
 		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
 		status.Ticket.Id = 1;
 		status.Ticket.Type = RideType.Lfg;
 		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		if (!HasRemaining(packet, 27))
+		{
+			this.SendPacketToClient(status);
+			return;
+		}
 		status.Slot = packet.ReadUInt32();
 		status.AvgWaitTime = (uint)packet.ReadInt32();
 		status.AvgWaitTimeMe = (uint)packet.ReadInt32();
@@ -5831,11 +5962,21 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_LFG_PROPOSAL_UPDATE)]
 	private void HandleLfgProposalUpdate(WorldPacket packet)
 	{
+		static bool HasRemaining(WorldPacket p, long bytes)
+		{
+			return p.GetData().Length - p.GetCurrentStream().Position >= bytes;
+		}
+
 		DfProposalUpdate proposal = new DfProposalUpdate();
 		proposal.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
 		proposal.Ticket.Id = 1;
 		proposal.Ticket.Type = RideType.Lfg;
 		proposal.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		if (!HasRemaining(packet, 15))
+		{
+			this.SendPacketToClient(proposal);
+			return;
+		}
 		uint dungeonEntry = packet.ReadUInt32();
 		proposal.Slot = dungeonEntry;
 		proposal.State = (sbyte)packet.ReadUInt8();
@@ -5846,6 +5987,10 @@ public class WorldClient
 		byte playerCount = packet.ReadUInt8();
 		for (int i = 0; i < playerCount; i++)
 		{
+			if (!HasRemaining(packet, 9))
+			{
+				break;
+			}
 			DfProposalPlayer player = new DfProposalPlayer();
 			player.Roles = (byte)packet.ReadUInt32();
 			player.Me = packet.ReadUInt8() != 0;
@@ -9704,8 +9849,12 @@ public class WorldClient
 				}
 				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
 				{
-					// No stripping — packet splitting + ThreadStatic fix prevent corruption.
-					// Let ALL data through including ObjectData DynamicFlags.
+					// 3.4.3 client is unstable when legacy player Values updates carry
+					// Object/Player/ActivePlayer sections (loot/inventory/quest state churn).
+					// Keep only Unit/Aura/Power data for self updates.
+					updateData2.ObjectData = null;
+					updateData2.PlayerData = null;
+					updateData2.ActivePlayerData = null;
 				}
 				// DestroyObject + CreateObject2 on revive: ghost→alive transition
 				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid && this.GetSession().GameState.NeedPlayerRecreate)
@@ -9768,6 +9917,30 @@ public class WorldClient
 					break;
 				}
 				normalValuesUpdate:
+				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
+				{
+					// 3.4.3 client can disconnect/crash on player Values packets containing
+					// Object/Player/ActivePlayer blocks or Unit blocks 0+1 fields.
+					// Keep only Unit power fields (block 4), which are known-safe.
+					updateData2.ObjectData = null;
+					updateData2.PlayerData = null;
+					updateData2.ActivePlayerData = null;
+
+					if (updateData2.UnitData != null)
+					{
+						UnitData sanitizedUnitData = new UnitData();
+						if (updateData2.UnitData.Power != null)
+						{
+							sanitizedUnitData.Power = (int?[])updateData2.UnitData.Power.Clone();
+						}
+						if (updateData2.UnitData.MaxPower != null)
+						{
+							sanitizedUnitData.MaxPower = (int?[])updateData2.UnitData.MaxPower.Clone();
+						}
+						updateData2.UnitData = sanitizedUnitData;
+					}
+				}
+
 				// Check if the update has any actual data to send.
 				// Empty Values updates (changedMask=0) crash the 3.4.3 client.
 				bool hasAnythingToSend = false;
@@ -13464,6 +13637,11 @@ public class WorldClient
 				catch (System.OutOfMemoryException ex)
 				{
 					Log.Print(LogType.Error, $"OOM handling {universalOpcode}: {ex.Message}");
+				}
+				catch (System.Exception ex)
+				{
+					Log.Print(LogType.Error, $"Exception handling {universalOpcode}: {ex.Message}");
+					Log.Print(LogType.Error, ex.StackTrace ?? string.Empty);
 				}
 				break;
 			}

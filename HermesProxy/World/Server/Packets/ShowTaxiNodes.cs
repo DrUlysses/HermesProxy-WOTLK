@@ -16,7 +16,7 @@ public class ShowTaxiNodes : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.WindowInfo != null);
 		base._worldPacket.FlushBits();

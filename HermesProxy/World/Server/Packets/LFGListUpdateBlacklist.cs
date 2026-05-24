@@ -13,7 +13,7 @@ public class LFGListUpdateBlacklist : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Blacklist.Count);
 		foreach (LFGListBlacklistEntry item in this.Blacklist)

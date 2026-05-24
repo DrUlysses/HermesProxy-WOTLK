@@ -34,7 +34,7 @@ internal class SpellHealLog : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.TargetGUID);
 		base._worldPacket.WritePackedGuid128(this.CasterGUID);

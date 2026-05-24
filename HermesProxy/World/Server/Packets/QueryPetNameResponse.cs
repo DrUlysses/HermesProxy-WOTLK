@@ -23,7 +23,7 @@ internal class QueryPetNameResponse : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.UnitGUID);
 		base._worldPacket.WriteBit(this.Allow);

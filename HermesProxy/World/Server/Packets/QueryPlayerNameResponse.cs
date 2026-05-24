@@ -16,7 +16,7 @@ public class QueryPlayerNameResponse : ServerPacket
 		this.Data = new PlayerGuidLookupData();
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt8((sbyte)this.Result);
 		base._worldPacket.WritePackedGuid128(this.Player);

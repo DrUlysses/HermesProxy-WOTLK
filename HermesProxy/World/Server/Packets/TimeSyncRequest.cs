@@ -12,7 +12,7 @@ public class TimeSyncRequest : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.SequenceIndex);
 	}

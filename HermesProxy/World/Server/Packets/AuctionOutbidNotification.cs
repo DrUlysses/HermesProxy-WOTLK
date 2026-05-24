@@ -15,7 +15,7 @@ internal class AuctionOutbidNotification : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Info.Write(base._worldPacket);
 		base._worldPacket.WriteUInt64(this.BidAmount);

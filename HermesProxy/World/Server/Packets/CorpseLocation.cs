@@ -22,7 +22,7 @@ public class CorpseLocation : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBit(this.Valid);
 		base._worldPacket.FlushBits();

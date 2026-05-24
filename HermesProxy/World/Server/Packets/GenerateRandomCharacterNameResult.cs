@@ -13,7 +13,7 @@ public class GenerateRandomCharacterNameResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBool(this.Success);
 		base._worldPacket.WriteBits(this.Name.Length, 6);

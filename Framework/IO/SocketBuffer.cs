@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Framework.IO
 {
     public class SocketBuffer
     {
-        byte[] _storage;
-        int _wpos;
+        private byte[] _storage;
+        private int _wpos;
 
         public SocketBuffer(int initialSize = 0)
         {

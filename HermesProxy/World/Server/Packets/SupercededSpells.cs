@@ -17,7 +17,7 @@ public class SupercededSpells : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.SpellID.Count);
 		base._worldPacket.WriteInt32(this.Superceded.Count);

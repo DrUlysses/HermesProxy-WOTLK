@@ -22,7 +22,7 @@ public class WorldServerInfo : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.DifficultyID);
 		if (ModernVersion.ExpansionVersion >= 3)

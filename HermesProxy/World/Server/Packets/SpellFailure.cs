@@ -20,7 +20,7 @@ public class SpellFailure : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.CasterUnit);
 		base._worldPacket.WritePackedGuid128(this.CastID);

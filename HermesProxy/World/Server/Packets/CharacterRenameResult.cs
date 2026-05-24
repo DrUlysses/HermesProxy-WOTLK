@@ -16,7 +16,7 @@ public class CharacterRenameResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8(this.Result);
 		base._worldPacket.WriteBit(this.Guid != null);

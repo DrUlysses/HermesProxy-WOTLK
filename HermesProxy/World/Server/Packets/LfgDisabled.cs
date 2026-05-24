@@ -9,7 +9,7 @@ public class LfgDisabled : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 	}
 }

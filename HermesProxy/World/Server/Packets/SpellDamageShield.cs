@@ -28,7 +28,7 @@ internal class SpellDamageShield : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.VictimGUID);
 		base._worldPacket.WritePackedGuid128(this.CasterGUID);

@@ -14,7 +14,7 @@ public class InitialSetup : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt8(this.ServerExpansionLevel);
 		base._worldPacket.WriteUInt8(this.ServerExpansionTier);

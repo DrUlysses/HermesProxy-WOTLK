@@ -36,7 +36,7 @@ public class QuestGiverOfferRewardMessage : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.QuestData.Write(base._worldPacket);
 		base._worldPacket.WriteInt32(this.QuestPackageID);

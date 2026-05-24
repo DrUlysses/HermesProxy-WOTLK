@@ -12,7 +12,7 @@ public class PrintNotification : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBits(this.NotifyText.GetByteCount(), 12);
 		base._worldPacket.WriteString(this.NotifyText);

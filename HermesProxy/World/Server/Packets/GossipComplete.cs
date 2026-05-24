@@ -11,7 +11,7 @@ public class GossipComplete : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 2, 2, 5, 3))
 		{

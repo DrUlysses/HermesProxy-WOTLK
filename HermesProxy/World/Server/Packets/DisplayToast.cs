@@ -30,7 +30,7 @@ public class DisplayToast : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt64(this.Quantity);
 		base._worldPacket.WriteUInt8(this.DisplayToastMethod);

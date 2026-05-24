@@ -16,7 +16,7 @@ public class GuildCommandResult : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32((uint)this.Result);
 		base._worldPacket.WriteUInt32((uint)this.Command);

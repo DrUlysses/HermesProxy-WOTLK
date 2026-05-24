@@ -13,7 +13,7 @@ internal class SpellPrepare : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.ClientCastID);
 		base._worldPacket.WritePackedGuid128(this.ServerCastID);

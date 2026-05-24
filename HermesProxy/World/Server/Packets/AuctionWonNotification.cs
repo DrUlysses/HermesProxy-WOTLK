@@ -11,7 +11,7 @@ internal class AuctionWonNotification : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		this.Info.Write(base._worldPacket);
 	}

@@ -13,7 +13,7 @@ public class HotFixMessage : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32(this.Hotfixes.Count);
 		uint totalDataSize = 0u;

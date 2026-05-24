@@ -13,7 +13,7 @@ public class PhaseShiftChange : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Client);
 		base._worldPacket.WriteUInt32(this.PhaseShiftFlags);

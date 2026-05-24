@@ -19,7 +19,7 @@ public class RandomRoll : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Roller);
 		base._worldPacket.WritePackedGuid128(this.RollerWowAccount);

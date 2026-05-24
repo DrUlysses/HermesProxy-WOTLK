@@ -20,7 +20,7 @@ public class NewWorld : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteUInt32(this.MapID);
 		base._worldPacket.WriteVector3(this.Position);

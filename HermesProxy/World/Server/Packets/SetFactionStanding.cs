@@ -19,7 +19,7 @@ internal class SetFactionStanding : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteFloat(this.ReferAFriendBonus);
 		base._worldPacket.WriteFloat(this.BonusFromAchievementSystem);

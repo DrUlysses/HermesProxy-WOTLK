@@ -25,7 +25,7 @@ internal class GossipPOI : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteInt32((int)this.Id);
 		base._worldPacket.WriteInt32((int)this.Flags);

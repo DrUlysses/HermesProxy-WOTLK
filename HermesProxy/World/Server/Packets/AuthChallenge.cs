@@ -15,7 +15,7 @@ internal class AuthChallenge : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WriteBytes(this.DosChallenge);
 		base._worldPacket.WriteBytes(this.Challenge);

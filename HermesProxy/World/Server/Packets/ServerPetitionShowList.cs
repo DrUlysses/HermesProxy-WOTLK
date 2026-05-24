@@ -14,7 +14,7 @@ public class ServerPetitionShowList : ServerPacket
 	{
 	}
 
-	public override void Write()
+	protected override void Write()
 	{
 		base._worldPacket.WritePackedGuid128(this.Unit);
 		base._worldPacket.WriteInt32(this.Petitions.Count);
