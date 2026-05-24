@@ -134,9 +134,6 @@ public class BnetRestApiSession : SSLSocket
 		LogonResult logonResult = loginResult;
 		LogonResult logonResult2 = loginResult;
 		LogonResult logonResult3 = loginResult;
-		if (1 == 0)
-		{
-		}
 		(string, string, string) tuple = response switch
 		{
 			AuthResult.FAIL_UNKNOWN_ACCOUNT => ("LOGIN", "UNABLE_TO_DECODE", "Invalid username or password."), 
@@ -147,15 +144,12 @@ public class BnetRestApiSession : SSLSocket
 			AuthResult.FAIL_INTERNAL_ERROR => ("LOGON", "UNABLE_TO_DECODE", "There was an internal error. Please try again later."), 
 			_ => ("LOGON", "UNABLE_TO_DECODE", $"Error: {response}"), 
 		};
-		if (1 == 0)
-		{
-		}
 		(logonResult.AuthenticationState, logonResult2.ErrorCode, logonResult3.ErrorMessage) = tuple;
 		await SendResponse(HttpCode.BadRequest, loginResult);
 	}
 
 	private async Task SendEmptyResponse(HttpCode code)
 	{
-		await SendResponse(code, (object)new { });
+		await SendResponse<object>(code, new { });
 	}
 }

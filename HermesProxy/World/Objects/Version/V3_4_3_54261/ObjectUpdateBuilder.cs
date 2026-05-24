@@ -150,9 +150,6 @@ public class ObjectUpdateBuilder
 
 	private static byte ConvertTypeId(ObjectTypeBCC type)
 	{
-		if (1 == 0)
-		{
-		}
 		byte result = type switch
 		{
 			ObjectTypeBCC.Object => 0, 
@@ -168,9 +165,6 @@ public class ObjectUpdateBuilder
 			ObjectTypeBCC.SceneObject => 12, 
 			_ => 0, 
 		};
-		if (1 == 0)
-		{
-		}
 		return result;
 	}
 

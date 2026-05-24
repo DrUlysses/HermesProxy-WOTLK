@@ -109,7 +109,7 @@ public class ObjectUpdateBuilder
 		m_gameState.ObjectCacheMutex.WaitOne();
 		if (m_updateData.CreateData == null && m_gameState.ObjectCacheModern.TryGetValue(updateData.Guid, out m_fields) && m_fields != null)
 		{
-			m_fields.m_updateMask.Clear();
+			m_fields.UpdateMask.Clear();
 		}
 		else
 		{
