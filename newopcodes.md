@@ -11,435 +11,435 @@ Total: 895 opcodes
 
 ## CMSG (Client -> Server)
 
-| Opcode | Value (Dec) | Value (Hex) | Handled | Legacy Match | In Universal | Handler Location |
-|--------|-------------|-------------|---------|--------------|--------------|------------------|
-| CMSG_ACCEPT_GUILD_INVITE | 13822 | 0x35FE | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1494 |
-| CMSG_ACCEPT_TRADE | 12634 | 0x315A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4385 |
-| CMSG_ACTIVATE_TAXI | 13483 | 0x34AB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4234 |
-| CMSG_ADDON_LIST | 13784 | 0x35D8 | NO | NO | YES |  |
-| CMSG_ADD_FRIEND | 14040 | 0x36D8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3697 |
-| CMSG_ADD_IGNORE | 14044 | 0x36DC | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3709 |
-| CMSG_ALTER_APPEARANCE | 13557 | 0x34F5 | NO | YES | YES |  |
-| CMSG_AREA_SPIRIT_HEALER_QUERY | 13488 | 0x34B0 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3057 |
-| CMSG_AREA_SPIRIT_HEALER_QUEUE | 13489 | 0x34B1 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3058 |
-| CMSG_AREA_TRIGGER | 12758 | 0x31D6 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2406 |
-| CMSG_ARENA_TEAM_ACCEPT | 14009 | 0x36B9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:247 |
-| CMSG_ARENA_TEAM_DECLINE | 14010 | 0x36BA | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:248 |
-| CMSG_ARENA_TEAM_DISBAND | 14013 | 0x36BD | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:238 |
-| CMSG_ARENA_TEAM_INVITE | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_ARENA_TEAM_LEADER | 14014 | 0x36BE | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:229 |
-| CMSG_ARENA_TEAM_LEAVE | 14011 | 0x36BB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:239 |
-| CMSG_ARENA_TEAM_QUERY | 0 | 0x0000 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:186 |
-| CMSG_ARENA_TEAM_REMOVE | 14012 | 0x36BC | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:228 |
-| CMSG_ARENA_TEAM_ROSTER | 14008 | 0x36B8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:168 |
-| CMSG_ATTACK_STOP | 12886 | 0x3256 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1106 |
-| CMSG_ATTACK_SWING | 12885 | 0x3255 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1098 |
-| CMSG_AUCTION_HELLO_REQUEST | 13514 | 0x34CA | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:255 |
-| CMSG_AUCTION_LIST_BIDDED_ITEMS | 13520 | 0x34D0 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:263 |
-| CMSG_AUCTION_LIST_ITEMS | 13517 | 0x34CD | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:286 |
-| CMSG_AUCTION_LIST_OWNED_ITEMS | 13519 | 0x34CF | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:277 |
-| CMSG_AUCTION_PLACE_BID | 13521 | 0x34D1 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:433 |
-| CMSG_AUCTION_REMOVE_ITEM | 13516 | 0x34CC | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:424 |
-| CMSG_AUCTION_SELL_ITEM | 13515 | 0x34CB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:362 |
-| CMSG_AUTH_CONTINUED_SESSION | 14182 | 0x3766 | NO | YES | YES |  |
-| CMSG_AUTH_SESSION | 14181 | 0x3765 | NO | YES | YES |  |
-| CMSG_AUTOBANK_ITEM | 14743 | 0x3997 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2058 |
-| CMSG_AUTOSTORE_BANK_ITEM | 14742 | 0x3996 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2057 |
-| CMSG_AUTOSTORE_LOOT_ITEM | 12817 | 0x3211 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2182 |
-| CMSG_AUTO_EQUIP_ITEM | 14744 | 0x3998 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2056 |
-| CMSG_AUTO_EQUIP_ITEM_SLOT | 14749 | 0x399D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2069 |
-| CMSG_AUTO_STORE_BAG_ITEM | 14745 | 0x3999 | NO | YES | YES |  |
-| CMSG_BANKER_ACTIVATE | 13491 | 0x34B3 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3050 |
-| CMSG_BATTLEFIELD_LEAVE | 12661 | 0x3175 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:505 |
-| CMSG_BATTLEFIELD_LIST | 12673 | 0x3181 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:495 |
-| CMSG_BATTLEFIELD_PORT | 13605 | 0x3525 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:461 |
-| CMSG_BATTLEMASTER_HELLO | 12977 | 0x32B1 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3056 |
-| CMSG_BATTLEMASTER_JOIN | 13600 | 0x3520 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:443 |
-| CMSG_BATTLEMASTER_JOIN_ARENA | 13601 | 0x3521 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:206 |
-| CMSG_BATTLEMASTER_JOIN_SKIRMISH | 13602 | 0x3522 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:217 |
-| CMSG_BATTLENET_REQUEST | 14077 | 0x36FD | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3668 |
-| CMSG_BATTLE_PAY_GET_PRODUCT_LIST | 14020 | 0x36C4 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2670 |
-| CMSG_BATTLE_PAY_GET_PURCHASE_LIST | 14021 | 0x36C5 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2675 |
-| CMSG_BATTLE_PET_REQUEST_JOURNAL | 13861 | 0x3625 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2786 |
-| CMSG_BEGIN_TRADE | 12631 | 0x3157 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4393 |
-| CMSG_BINDER_ACTIVATE | 13490 | 0x34B2 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3051 |
-| CMSG_BUG | 13959 | 0x3687 | NO | YES | YES |  |
-| CMSG_BUSY_TRADE | 12632 | 0x3158 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4394 |
-| CMSG_BUY_BACK_ITEM | 13476 | 0x34A4 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2090 |
-| CMSG_BUY_BANK_SLOT | 13492 | 0x34B4 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3083 |
-| CMSG_BUY_ITEM | 13475 | 0x34A3 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1953 |
-| CMSG_BUY_STABLE_SLOT | 12651 | 0x316B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3185 |
-| CMSG_CALENDAR_GET_NUM_PENDING | 13948 | 0x367C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2761 |
-| CMSG_CANCEL_AURA | 12719 | 0x31AF | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4097 |
-| CMSG_CANCEL_AUTO_REPEAT_SPELL | 13543 | 0x34E7 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4086 |
-| CMSG_CANCEL_CAST | 12959 | 0x329F | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4058 |
-| CMSG_CANCEL_CHANNELLING | 12906 | 0x326A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4074 |
-| CMSG_CANCEL_GROWTH_AURA | 12911 | 0x326F | NO | YES | YES |  |
-| CMSG_CANCEL_MOUNT_AURA | 12927 | 0x327F | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4105 |
-| CMSG_CANCEL_QUEUED_SPELL | 12674 | 0x3182 | NO | NO | YES |  |
-| CMSG_CANCEL_TEMP_ENCHANTMENT | 13554 | 0x34F2 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2147 |
-| CMSG_CANCEL_TRADE | 12636 | 0x315C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4395 |
-| CMSG_CAN_DUEL | 13924 | 0x3664 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1121 |
-| CMSG_CAST_SPELL | 12956 | 0x329C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3862 |
-| CMSG_CHANGE_REALM_TICKET | 14081 | 0x3701 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3648 |
-| CMSG_CHARACTER_RENAME_REQUEST | 14025 | 0x36C9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:764 |
-| CMSG_CHAR_DELETE | 13981 | 0x369D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:580 |
-| CMSG_CHAT_ADDON_MESSAGE | 14318 | 0x37EE | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:981 |
-| CMSG_CHAT_CHANNEL_ANNOUNCEMENTS | 14307 | 0x37E3 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:793 |
-| CMSG_CHAT_CHANNEL_BAN | 14305 | 0x37E1 | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_DECLINE_INVITE | 14310 | 0x37E6 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:828 |
-| CMSG_CHAT_CHANNEL_DISPLAY_LIST | 14294 | 0x37D6 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:810 |
-| CMSG_CHAT_CHANNEL_INVITE | 14303 | 0x37DF | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_KICK | 14304 | 0x37E0 | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_LIST | 14293 | 0x37D5 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:801 |
-| CMSG_CHAT_CHANNEL_MODERATOR | 14299 | 0x37DB | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_OWNER | 14297 | 0x37D9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:792 |
-| CMSG_CHAT_CHANNEL_PASSWORD | 14295 | 0x37D7 | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_SET_OWNER | 14296 | 0x37D8 | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_SILENCE_ALL | 14308 | 0x37E4 | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_UNBAN | 14306 | 0x37E2 | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_UNMODERATOR | 14300 | 0x37DC | NO | YES | YES |  |
-| CMSG_CHAT_CHANNEL_UNSILENCE_ALL | 14309 | 0x37E5 | NO | YES | YES |  |
-| CMSG_CHAT_IGNORED | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_CHAT_JOIN_CHANNEL | 14280 | 0x37C8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:773 |
-| CMSG_CHAT_LEAVE_CHANNEL | 14281 | 0x37C9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:782 |
-| CMSG_CHAT_MESSAGE_AFK | 14291 | 0x37D3 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:839 |
-| CMSG_CHAT_MESSAGE_CHANNEL | 14287 | 0x37CF | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:873 |
-| CMSG_CHAT_MESSAGE_DND | 14292 | 0x37D4 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:856 |
-| CMSG_CHAT_MESSAGE_EMOTE | 14312 | 0x37E8 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:907 |
-| CMSG_CHAT_MESSAGE_GUILD | 14289 | 0x37D1 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:924 |
-| CMSG_CHAT_MESSAGE_INSTANCE_CHAT | 14316 | 0x37EC | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:931 |
-| CMSG_CHAT_MESSAGE_OFFICER | 14290 | 0x37D2 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:925 |
-| CMSG_CHAT_MESSAGE_PARTY | 14314 | 0x37EA | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:926 |
-| CMSG_CHAT_MESSAGE_RAID | 14315 | 0x37EB | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:927 |
-| CMSG_CHAT_MESSAGE_RAID_WARNING | 14317 | 0x37ED | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:928 |
-| CMSG_CHAT_MESSAGE_SAY | 14311 | 0x37E7 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:929 |
-| CMSG_CHAT_MESSAGE_WHISPER | 14288 | 0x37D0 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:890 |
-| CMSG_CHAT_MESSAGE_YELL | 14313 | 0x37E9 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:930 |
-| CMSG_CHAT_REGISTER_ADDON_PREFIXES | 14285 | 0x37CD | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1026 |
-| CMSG_CHAT_UNREGISTER_ALL_ADDON_PREFIXES | 14286 | 0x37CE | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1035 |
-| CMSG_CLEAR_TRADE_ITEM | 12638 | 0x315E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4404 |
-| CMSG_CLOSE_INTERACTION | 13459 | 0x3493 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2806 |
-| CMSG_COMPLETE_CINEMATIC | 13637 | 0x3545 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2462 |
-| CMSG_CONFIRM_RESPEC_WIPE | 12813 | 0x320D | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3104 |
-| CMSG_CONVERT_RAID | 13905 | 0x3651 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1250 |
-| CMSG_CREATE_CHARACTER | 13893 | 0x3645 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:562 |
-| CMSG_DB_QUERY_BULK | 13797 | 0x35E5 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1831 |
-| CMSG_DECLINE_GUILD_INVITES | 13597 | 0x351D | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1528 |
-| CMSG_DECLINE_PETITION | 13620 | 0x3534 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3325 |
-| CMSG_DEL_FRIEND | 14041 | 0x36D9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3717 |
-| CMSG_DEL_IGNORE | 14045 | 0x36DD | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3718 |
-| CMSG_DESTROY_ITEM | 12947 | 0x3293 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2044 |
-| CMSG_DF_GET_JOIN_STATUS | 13846 | 0x3616 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2756 |
-| CMSG_DF_GET_SYSTEM_INFO | 13845 | 0x3615 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2690 |
-| CMSG_DF_JOIN | 13835 | 0x360B | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2705 |
-| CMSG_DF_LEAVE | 13844 | 0x3614 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2749 |
-| CMSG_DF_PROPOSAL_RESPONSE | 13833 | 0x3609 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2724; HermesProxy/World/Server/WorldSocket.cs:2740 |
-| CMSG_DF_SET_ROLES | 13847 | 0x3617 | NO | NO | YES |  |
-| CMSG_DISCARDED_TIME_SYNC_ACKS | 14913 | 0x3A41 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2826 |
-| CMSG_DO_READY_CHECK | 13877 | 0x3635 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1257 |
-| CMSG_DUEL_RESPONSE | 13538 | 0x34E2 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1130 |
-| CMSG_ENABLE_NAGLE | 14187 | 0x376B | NO | NO | YES |  |
-| CMSG_ENABLE_TAXI_NODE | 13481 | 0x34A9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4226 |
-| CMSG_ENTER_ENCRYPTED_MODE_ACK | 14183 | 0x3767 | NO | NO | YES |  |
-| CMSG_ENUM_CHARACTERS | 13801 | 0x35E9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:523 |
-| CMSG_FAR_SIGHT | 13544 | 0x34E8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2469 |
-| CMSG_GAME_OBJ_REPORT_USE | 13551 | 0x34EF | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1157 |
-| CMSG_GAME_OBJ_USE | 13550 | 0x34EE | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1147 |
-| CMSG_GENERATE_RANDOM_CHARACTER_NAME | 13800 | 0x35E8 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:554 |
-| CMSG_GET_ACCOUNT_CHARACTER_LIST | 14015 | 0x36BF | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:530 |
-| CMSG_GET_UNDELETE_CHARACTER_COOLDOWN_STATUS | 14055 | 0x36E7 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2680 |
-| CMSG_GM_TICKET_CREATE | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_GM_TICKET_DELETE_TICKET | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_GM_TICKET_GET_CASE_STATUS | 13967 | 0x368F | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2791 |
-| CMSG_GM_TICKET_GET_TICKET | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_GM_TICKET_UPDATE_TEXT | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_GOSSIP_SELECT_OPTION | 13460 | 0x3494 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3066 |
-| CMSG_GROUP_DECLINE | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_GROUP_REMOVE_LEADER | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_GROUP_SWAP_SUB_GROUP | 0 | 0x0000 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1332 |
-| CMSG_GUILD_ADD_RANK | 12388 | 0x3064 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1464 |
-| CMSG_GUILD_AUTO_DECLINE_INVITATION | 12385 | 0x3061 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1540 |
-| CMSG_GUILD_BANK_ACTIVATE | 13493 | 0x34B5 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1547 |
-| CMSG_GUILD_BANK_BUY_TAB | 13507 | 0x34C3 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1611 |
-| CMSG_GUILD_BANK_DEPOSIT_MONEY | 13509 | 0x34C5 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1566 |
-| CMSG_GUILD_BANK_LOG_QUERY | 12418 | 0x3082 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1594 |
-| CMSG_GUILD_BANK_QUERY_TAB | 13506 | 0x34C2 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1556 |
-| CMSG_GUILD_BANK_REMAINING_WITHDRAW_MONEY_QUERY | 12419 | 0x3083 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1359 |
-| CMSG_GUILD_BANK_SET_TAB_TEXT | 12422 | 0x3086 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1602 |
-| CMSG_GUILD_BANK_SWAP_ITEMS | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_GUILD_BANK_TEXT_QUERY | 12423 | 0x3087 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1575 |
-| CMSG_GUILD_BANK_UPDATE_TAB | 13508 | 0x34C4 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1583 |
-| CMSG_GUILD_BANK_WITHDRAW_MONEY | 13510 | 0x34C6 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1620 |
-| CMSG_GUILD_DECLINE_INVITATION | 12384 | 0x3060 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1501 |
-| CMSG_GUILD_DELETE | 12392 | 0x3068 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1508 |
-| CMSG_GUILD_DELETE_RANK | 12389 | 0x3065 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1472 |
-| CMSG_GUILD_DEMOTE_MEMBER | 12382 | 0x305E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1411 |
-| CMSG_GUILD_EVENT_LOG_QUERY | 12421 | 0x3085 | NO | NO | YES |  |
-| CMSG_GUILD_GET_ROSTER | 12403 | 0x3073 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1369 |
-| CMSG_GUILD_INVITE_BY_NAME | 13832 | 0x3608 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1427 |
-| CMSG_GUILD_LEAVE | 12386 | 0x3062 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1487 |
-| CMSG_GUILD_OFFICER_LIST | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_GUILD_OFFICER_REMOVE_MEMBER | 12387 | 0x3063 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1419 |
-| CMSG_GUILD_PROMOTE_MEMBER | 12381 | 0x305D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1403 |
-| CMSG_GUILD_SET_ACHIEVEMENT_TRACKING | 12399 | 0x306F | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2766 |
-| CMSG_GUILD_SET_GUILD_MASTER | 14032 | 0x36D0 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1479 |
-| CMSG_GUILD_SET_MEMBER_NOTE | 12402 | 0x3072 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1394 |
-| CMSG_GUILD_SET_RANK_PERMISSIONS | 12391 | 0x3067 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1445 |
-| CMSG_GUILD_UPDATE_INFO_TEXT | 12405 | 0x3075 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1386 |
-| CMSG_GUILD_UPDATE_MOTD_TEXT | 12404 | 0x3074 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1378 |
-| CMSG_HEARTH_AND_RESURRECT | 13574 | 0x3506 | NO | YES | YES |  |
-| CMSG_HOTFIX_REQUEST | 13798 | 0x35E6 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1924 |
-| CMSG_IGNORE_TRADE | 12633 | 0x3159 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4397 |
-| CMSG_INITIATE_TRADE | 12630 | 0x3156 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4360 |
-| CMSG_INSPECT | 13609 | 0x3529 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:730 |
-| CMSG_INSPECT_PVP | 13987 | 0x36A3 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:746 |
-| CMSG_INSTANCE_LOCK_RESPONSE | 13579 | 0x350B | NO | YES | YES |  |
-| CMSG_ITEM_QUERY_SINGLE | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_ITEM_TEXT_QUERY | 12997 | 0x32C5 | NO | YES | YES |  |
-| CMSG_KEEP_ALIVE | 13953 | 0x3681 | NO | YES | YES |  |
-| CMSG_LEARN_TALENT | 13650 | 0x3552 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4132 |
-| CMSG_LEARN_TALENT_GROUP | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_LEAVE_GROUP | 13900 | 0x364C | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1197 |
-| CMSG_LFG_LIST_GET_STATUS | 13837 | 0x360D | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2781 |
-| CMSG_LIST_INVENTORY | 13473 | 0x34A1 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3052 |
-| CMSG_LOADING_SCREEN_NOTIFY | 13817 | 0x35F9 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:588 |
-| CMSG_LOGOUT_CANCEL | 13528 | 0x34D8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:653 |
-| CMSG_LOGOUT_REQUEST | 13526 | 0x34D6 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:646 |
-| CMSG_LOG_DISCONNECT | 14185 | 0x3769 | NO | NO | YES |  |
-| CMSG_LOOT_CURRENCY | 0 | 0x0000 | NO | NO | YES |  |
-| CMSG_LOOT_ITEM | 12817 | 0x3211 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2181 |
-| CMSG_LOOT_MASTER_GIVE | 0 | 0x0000 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2244 |
-| CMSG_LOOT_MONEY | 12816 | 0x3210 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2202 |
-| CMSG_LOOT_RELEASE | 12819 | 0x3213 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2173 |
-| CMSG_LOOT_ROLL | 12820 | 0x3214 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2234 |
-| CMSG_LOOT_UNIT | 12815 | 0x320F | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2193 |
-| CMSG_MAIL_CREATE_TEXT_ITEM | 13627 | 0x353B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2272 |
-| CMSG_MAIL_DELETE | 12837 | 0x3225 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2285 |
-| CMSG_MAIL_GET_LIST | 13622 | 0x3536 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2264 |
-| CMSG_MAIL_MARK_AS_READ | 13626 | 0x353A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2298 |
-| CMSG_MAIL_RETURN_TO_SENDER | 13912 | 0x3658 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2307 |
-| CMSG_MAIL_TAKE_ITEM | 13624 | 0x3538 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2320 |
-| CMSG_MAIL_TAKE_MONEY | 13623 | 0x3537 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2333 |
-| CMSG_MESSAGECHAT | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_MINIMAP_PING | 13902 | 0x364E | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1298 |
-| CMSG_MOUNT_SPECIAL_ANIM | 12928 | 0x3280 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2478 |
-| CMSG_MOVE_CHANGE_TRANSPORT | 14895 | 0x3A2F | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2836 |
-| CMSG_MOVE_DISMISS_VEHICLE | 14899 | 0x3A33 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2837 |
-| CMSG_MOVE_DOUBLE_JUMP | 14827 | 0x39EB | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2866 |
-| CMSG_MOVE_FALL_LAND | 14843 | 0x39FB | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2838 |
-| CMSG_MOVE_FALL_RESET | 14873 | 0x3A19 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2839 |
-| CMSG_MOVE_FEATHER_FALL_ACK | 14876 | 0x3A1C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2959 |
-| CMSG_MOVE_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK | 14894 | 0x3A2E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2910 |
-| CMSG_MOVE_FORCE_FLIGHT_SPEED_CHANGE_ACK | 14893 | 0x3A2D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2911 |
-| CMSG_MOVE_FORCE_PITCH_RATE_CHANGE_ACK | 14898 | 0x3A32 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2912 |
-| CMSG_MOVE_FORCE_ROOT_ACK | 14862 | 0x3A0E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2980 |
-| CMSG_MOVE_FORCE_RUN_BACK_SPEED_CHANGE_ACK | 14860 | 0x3A0C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2913 |
-| CMSG_MOVE_FORCE_RUN_SPEED_CHANGE_ACK | 14859 | 0x3A0B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2914 |
-| CMSG_MOVE_FORCE_SWIM_BACK_SPEED_CHANGE_ACK | 14882 | 0x3A22 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2915 |
-| CMSG_MOVE_FORCE_SWIM_SPEED_CHANGE_ACK | 14861 | 0x3A0D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2916 |
-| CMSG_MOVE_FORCE_TURN_RATE_CHANGE_ACK | 14883 | 0x3A23 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2917 |
-| CMSG_MOVE_FORCE_UNROOT_ACK | 14863 | 0x3A0F | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2981 |
-| CMSG_MOVE_FORCE_WALK_SPEED_CHANGE_ACK | 14881 | 0x3A21 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2918 |
-| CMSG_MOVE_GRAVITY_DISABLE_ACK | 14901 | 0x3A35 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2983 |
-| CMSG_MOVE_GRAVITY_ENABLE_ACK | 14902 | 0x3A36 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2984 |
-| CMSG_MOVE_HEARTBEAT | 14864 | 0x3A10 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2840 |
-| CMSG_MOVE_HOVER_ACK | 14867 | 0x3A13 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2960 |
-| CMSG_MOVE_INIT_ACTIVE_MOVER_COMPLETE | 14918 | 0x3A46 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3009 |
-| CMSG_MOVE_JUMP | 14826 | 0x39EA | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2841 |
-| CMSG_MOVE_KNOCK_BACK_ACK | 14866 | 0x3A12 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2982 |
-| CMSG_MOVE_REMOVE_MOVEMENT_FORCES | 14871 | 0x3A17 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2842 |
-| CMSG_MOVE_SET_CAN_FLY_ACK | 14887 | 0x3A27 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2961 |
-| CMSG_MOVE_SET_FACING | 14857 | 0x3A09 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2843 |
-| CMSG_MOVE_SET_FACING_HEARTBEAT | 14943 | 0x3A5F | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2844 |
-| CMSG_MOVE_SET_FLIGHT_SPEED_CHEAT | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_MOVE_SET_FLY | 14888 | 0x3A28 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2845 |
-| CMSG_MOVE_SET_PITCH | 14858 | 0x3A0A | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2846 |
-| CMSG_MOVE_SET_RUN_MODE | 14834 | 0x39F2 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2847 |
-| CMSG_MOVE_SET_WALK_MODE | 14835 | 0x39F3 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2848 |
-| CMSG_MOVE_SPLINE_DONE | 14872 | 0x3A18 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3017 |
-| CMSG_MOVE_START_ASCEND | 14889 | 0x3A29 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2849 |
-| CMSG_MOVE_START_BACKWARD | 14821 | 0x39E5 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2850 |
-| CMSG_MOVE_START_DESCEND | 14896 | 0x3A30 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2851 |
-| CMSG_MOVE_START_FORWARD | 14820 | 0x39E4 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2852 |
-| CMSG_MOVE_START_PITCH_DOWN | 14832 | 0x39F0 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2853 |
-| CMSG_MOVE_START_PITCH_UP | 14831 | 0x39EF | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2854 |
-| CMSG_MOVE_START_STRAFE_LEFT | 14823 | 0x39E7 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2858 |
-| CMSG_MOVE_START_STRAFE_RIGHT | 14824 | 0x39E8 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2859 |
-| CMSG_MOVE_START_SWIM | 14844 | 0x39FC | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2855 |
-| CMSG_MOVE_START_TURN_LEFT | 14828 | 0x39EC | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2856 |
-| CMSG_MOVE_START_TURN_RIGHT | 14829 | 0x39ED | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2857 |
-| CMSG_MOVE_STOP | 14822 | 0x39E6 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2860 |
-| CMSG_MOVE_STOP_ASCEND | 14890 | 0x3A2A | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2861 |
-| CMSG_MOVE_STOP_BACKWARD | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_MOVE_STOP_PITCH | 14833 | 0x39F1 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2862 |
-| CMSG_MOVE_STOP_STRAFE | 14825 | 0x39E9 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2863 |
-| CMSG_MOVE_STOP_SWIM | 14845 | 0x39FD | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2864 |
-| CMSG_MOVE_STOP_TURN | 14830 | 0x39EE | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2865 |
-| CMSG_MOVE_TELEPORT_ACK | 14842 | 0x39FA | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2885 |
-| CMSG_MOVE_TIME_SKIPPED | 14875 | 0x3A1B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3034 |
-| CMSG_MOVE_WATER_WALK_ACK | 14877 | 0x3A1D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2962 |
-| CMSG_NEXT_CINEMATIC_CAMERA | 13636 | 0x3544 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2461 |
-| CMSG_OBJECT_UPDATE_FAILED | 12675 | 0x3183 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2627 |
-| CMSG_OFFER_PETITION | 13053 | 0x32FD | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3312 |
-| CMSG_OPENING_CINEMATIC | 13635 | 0x3543 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2460 |
-| CMSG_OPEN_ITEM | 12998 | 0x32C6 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2128 |
-| CMSG_OPT_OUT_OF_LOOT | 13558 | 0x34F6 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2219 |
-| CMSG_OVERRIDE_SCREEN_FLASH | 13598 | 0x351E | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2660 |
-| CMSG_PARTY_INVITE | 13828 | 0x3604 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1166 |
-| CMSG_PARTY_INVITE_RESPONSE | 13830 | 0x3606 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1178 |
-| CMSG_PARTY_UNINVITE | 13898 | 0x364A | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1205 |
-| CMSG_PETITION_BUY | 13512 | 0x34C8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3243 |
-| CMSG_PETITION_RENAME_GUILD | 14033 | 0x36D1 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3303 |
-| CMSG_PETITION_SHOW_SIGNATURES | 13513 | 0x34C9 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3286 |
-| CMSG_PET_ABANDON | 13453 | 0x348D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3193 |
-| CMSG_PET_ACTION | 13451 | 0x348B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3129 |
-| CMSG_PET_CANCEL_AURA | 13454 | 0x348E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3227 |
-| CMSG_PET_CAST_SPELL | 12955 | 0x329B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3945 |
-| CMSG_PET_RENAME | 13958 | 0x3686 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3157 |
-| CMSG_PET_SET_ACTION | 13450 | 0x348A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3147 |
-| CMSG_PET_STOP_ATTACK | 13452 | 0x348C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3139 |
-| CMSG_PING | 14184 | 0x3768 | NO | YES | YES |  |
-| CMSG_PLAYER_AI_CHEAT | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_PLAYER_DIFFICULTY_CHANGE | 0 | 0x0000 | NO | NO | YES |  |
-| CMSG_PLAYER_LOGIN | 13803 | 0x35EB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:616 |
-| CMSG_PUSH_QUEST_TO_PARTY | 13471 | 0x349F | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3596 |
-| CMSG_PUSH_SPELL_TO_ACTION_BAR | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_PVP_LOG_DATA | 12671 | 0x317F | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:488 |
-| CMSG_QUERY_CORPSE_LOCATION_FROM_CLIENT | 13922 | 0x3662 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2437 |
-| CMSG_QUERY_COUNTDOWN_TIMER | 12714 | 0x31AA | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2771 |
-| CMSG_QUERY_CREATURE | 12912 | 0x3270 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3373 |
-| CMSG_QUERY_GAME_OBJECT | 12913 | 0x3271 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3382 |
-| CMSG_QUERY_GUILD_INFO | 13963 | 0x368B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1341 |
-| CMSG_QUERY_NEXT_MAIL_TIME | 13625 | 0x3539 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2257 |
-| CMSG_QUERY_NPC_TEXT | 12914 | 0x3272 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3411 |
-| CMSG_QUERY_PAGE_TEXT | 12916 | 0x3274 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3402 |
-| CMSG_QUERY_PETITION | 12919 | 0x3277 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3294 |
-| CMSG_QUERY_PET_NAME | 12917 | 0x3275 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3420 |
-| CMSG_QUERY_PLAYER_NAMES | 14194 | 0x3772 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:605 |
-| CMSG_QUERY_QUESTS_COMPLETED | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_QUERY_QUEST_INFO | 12915 | 0x3273 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3365 |
-| CMSG_QUERY_TIME | 13525 | 0x34D5 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3358 |
-| CMSG_QUEST_CONFIRM_ACCEPT | 13470 | 0x349E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3588 |
-| CMSG_QUEST_GIVER_ACCEPT_QUEST | 13464 | 0x3498 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3466 |
-| CMSG_QUEST_GIVER_CHOOSE_REWARD | 13466 | 0x349A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3544 |
-| CMSG_QUEST_GIVER_CLOSE_QUEST | 13641 | 0x3549 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2831 |
-| CMSG_QUEST_GIVER_COMPLETE_QUEST | 13465 | 0x3499 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3579 |
-| CMSG_QUEST_GIVER_HELLO | 13462 | 0x3496 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3527 |
-| CMSG_QUEST_GIVER_QUERY_QUEST | 13463 | 0x3497 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3453 |
-| CMSG_QUEST_GIVER_REQUEST_REWARD | 13467 | 0x349B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3535 |
-| CMSG_QUEST_GIVER_STATUS_MULTIPLE_QUERY | 13469 | 0x349D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3495 |
-| CMSG_QUEST_GIVER_STATUS_QUERY | 13468 | 0x349C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3487 |
-| CMSG_QUEST_LOG_REMOVE_QUEST | 13614 | 0x352E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3479 |
-| CMSG_QUEST_POI_QUERY | 14002 | 0x36B2 | NO | YES | YES |  |
-| CMSG_QUEST_PUSH_RESULT | 13472 | 0x34A0 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3604 |
-| CMSG_QUEUED_MESSAGES_END | 14188 | 0x376C | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2665 |
-| CMSG_RAID_READY_CHECK | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_RAID_READY_CHECK_CONFIRM | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_RAID_READY_CHECK_FINISHED | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_RANDOM_ROLL | 13911 | 0x3657 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1306 |
-| CMSG_READY_CHECK_RESPONSE | 13878 | 0x3636 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1264 |
-| CMSG_READ_ITEM | 12999 | 0x32C7 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2079 |
-| CMSG_REAL_GROUP_UPDATE | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_RECLAIM_CORPSE | 13531 | 0x34DB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2444 |
-| CMSG_REMOVE_GLYPH | 13056 | 0x3300 | NO | YES | YES |  |
-| CMSG_REPAIR_ITEM | 13548 | 0x34EC | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2100 |
-| CMSG_REPOP_REQUEST | 13606 | 0x3526 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2426 |
-| CMSG_REPORT_CLIENT_VARIABLES | 14087 | 0x3707 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2811 |
-| CMSG_REPORT_ENABLED_ADDONS | 14086 | 0x3706 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2816 |
-| CMSG_REPORT_KEYBINDING_EXECUTION_COUNTS | 14088 | 0x3708 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2821 |
-| CMSG_REQUEST_ACCOUNT_DATA | 13972 | 0x3694 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1075 |
-| CMSG_REQUEST_BATTLEFIELD_STATUS | 13789 | 0x35DD | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:481 |
-| CMSG_REQUEST_CEMETERY_LIST | 12665 | 0x3179 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2801 |
-| CMSG_REQUEST_CONQUEST_FORMULA_CONSTANTS | 12980 | 0x32B4 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2615 |
-| CMSG_REQUEST_FORCED_REACTIONS | 12805 | 0x3205 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2776 |
-| CMSG_REQUEST_LFG_LIST_BLACKLIST | 12964 | 0x32A4 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2512 |
-| CMSG_REQUEST_PARTY_MEMBER_STATS | 13910 | 0x3656 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1315 |
-| CMSG_REQUEST_PET_INFO | 13456 | 0x3490 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3236 |
-| CMSG_REQUEST_PLAYED_TIME | 12922 | 0x327A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:660 |
-| CMSG_REQUEST_PVP_REWARDS | 12694 | 0x3196 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2650 |
-| CMSG_REQUEST_RAID_INFO | 14034 | 0x36D2 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1946 |
-| CMSG_REQUEST_RATED_PVP_INFO | 13796 | 0x35E4 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2655 |
-| CMSG_REQUEST_STABLED_PETS | 13457 | 0x3491 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3177 |
-| CMSG_REQUEST_VEHICLE_EXIT | 12855 | 0x3237 | NO | YES | YES |  |
-| CMSG_REQUEST_VEHICLE_NEXT_SEAT | 12857 | 0x3239 | NO | YES | YES |  |
-| CMSG_REQUEST_VEHICLE_PREV_SEAT | 12856 | 0x3238 | NO | YES | YES |  |
-| CMSG_REQUEST_VEHICLE_SWITCH_SEAT | 12858 | 0x323A | NO | YES | YES |  |
-| CMSG_RESET_FACTION_CHEAT | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_RESET_INSTANCES | 13930 | 0x366A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1939 |
-| CMSG_RESURRECT_RESPONSE | 13957 | 0x3685 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4141 |
-| CMSG_SAVE_CUF_PROFILES | 12686 | 0x318E | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1092 |
-| CMSG_SAVE_GUILD_EMBLEM | 12968 | 0x32A8 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1515 |
-| CMSG_SELF_RES | 13617 | 0x3531 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4150 |
-| CMSG_SELL_ITEM | 13474 | 0x34A2 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1973 |
-| CMSG_SEND_CONTACT_LIST | 14039 | 0x36D7 | NO | NO | **NO** |  |
-| CMSG_SEND_MAIL | 13819 | 0x35FB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2375 |
-| CMSG_SEND_TEXT_EMOTE | 13448 | 0x3488 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1016 |
-| CMSG_SERVER_TIME_OFFSET_REQUEST | 13980 | 0x369C | NO | NO | YES |  |
-| CMSG_SET_ACTIONBAR_TOGGLES | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_SET_ACTION_BAR_TOGGLES | 13618 | 0x3532 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:705 |
-| CMSG_SET_ACTION_BUTTON | 13661 | 0x355D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:695 |
-| CMSG_SET_ACTIVE_MOVER | 14908 | 0x3A3C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3001 |
-| CMSG_SET_AMMO | 13662 | 0x355E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2139 |
-| CMSG_SET_ASSISTANT_LEADER | 13906 | 0x3652 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1217 |
-| CMSG_SET_CONTACT_NOTES | 14042 | 0x36DA | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3726 |
-| CMSG_SET_DIFFICULTY_ID | 12834 | 0x3222 | NO | NO | YES |  |
-| CMSG_SET_DUNGEON_DIFFICULTY | 13956 | 0x3684 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2633 |
-| CMSG_SET_EVERYONE_IS_ASSISTANT | 13850 | 0x361A | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1226 |
-| CMSG_SET_FACTION_ATWAR | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_SET_FACTION_AT_WAR | 13534 | 0x34DE | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3613 |
-| CMSG_SET_FACTION_INACTIVE | 13536 | 0x34E0 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3631 |
-| CMSG_SET_FACTION_NOT_AT_WAR | 13535 | 0x34DF | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:3622 |
-| CMSG_SET_LOOT_METHOD | 13899 | 0x364B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2209 |
-| CMSG_SET_PARTY_LEADER | 13901 | 0x364D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1242 |
-| CMSG_SET_PVP | 12972 | 0x32AC | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:687 |
-| CMSG_SET_SELECTION | 13608 | 0x3528 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2418 |
-| CMSG_SET_SHEATHED | 13449 | 0x3489 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1113 |
-| CMSG_SET_TITLE | 12926 | 0x327E | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:672 |
-| CMSG_SET_TRADE_GOLD | 12639 | 0x315F | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4368 |
-| CMSG_SET_TRADE_ITEM | 12637 | 0x315D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4421 |
-| CMSG_SET_WATCHED_FACTION | 13537 | 0x34E1 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3640 |
-| CMSG_SIGN_PETITION | 13619 | 0x3533 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3333 |
-| CMSG_SOCIAL_CONTRACT_REQUEST | 14156 | 0x374C | NO | NO | YES |  |
-| CMSG_SOCKETSPELLS | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_SOCKET_GEMS | 13547 | 0x34EB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2113 |
-| CMSG_SORT_BAGS | 0 | 0x0000 | NO | NO | YES |  |
-| CMSG_SPELL_CLICK | 13461 | 0x3495 | NO | YES | YES |  |
-| CMSG_SPIRIT_HEALER_ACTIVATE | 13487 | 0x34AF | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3053 |
-| CMSG_SPLIT_ITEM | 14748 | 0x399C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1993 |
-| CMSG_STABLE_PET | 12648 | 0x3168 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3201 |
-| CMSG_STABLE_REVIVE_PET | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_STABLE_SWAP_PET | 12650 | 0x316A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3218 |
-| CMSG_STAND_STATE_CHANGE | 12684 | 0x318C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2452 |
-| CMSG_SUMMON_RESPONSE | 13932 | 0x366C | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1286 |
-| CMSG_SWAP_INV_ITEM | 14747 | 0x399B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2016 |
-| CMSG_SWAP_ITEM | 14746 | 0x399A | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2029 |
-| CMSG_TABARD_VENDOR_ACTIVATE | 12969 | 0x32A9 | NO | NO | YES |  |
-| CMSG_TALK_TO_GOSSIP | 13458 | 0x3492 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3054 |
-| CMSG_TAXI_NODE_STATUS_QUERY | 13480 | 0x34A8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4217 |
-| CMSG_TAXI_QUERY_AVAILABLE_NODES | 13482 | 0x34AA | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4218 |
-| CMSG_TIME_SYNC_RESPONSE | 14909 | 0x3A3D | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2394 |
-| CMSG_TOGGLE_PVP | 12971 | 0x32AB | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:680 |
-| CMSG_TOTEM_DESTROYED | 13560 | 0x34F8 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4157 |
-| CMSG_TRAINER_BUY_SPELL | 13486 | 0x34AE | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3091 |
-| CMSG_TRAINER_LIST | 13485 | 0x34AD | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3055 |
-| CMSG_TURN_IN_PETITION | 13621 | 0x3535 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3342 |
-| CMSG_TUTORIAL_FLAG | 14052 | 0x36E4 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2485; HermesProxy/World/Server/WorldSocket.cs:2796 |
-| CMSG_UNACCEPT_TRADE | 12635 | 0x315B | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4396 |
-| CMSG_UNLEARN_SKILL | 13541 | 0x34E5 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:713 |
-| CMSG_UNSTABLE_PET | 12649 | 0x3169 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3209 |
-| CMSG_UPDATE_ACCOUNT_DATA | 13973 | 0x3695 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:1069 |
-| CMSG_UPDATE_MISSILE_TRAJECTORY | 14915 | 0x3A43 | NO | YES | YES |  |
-| CMSG_UPDATE_RAID_TARGET | 13907 | 0x3653 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:1277 |
-| CMSG_UPDATE_VAS_PURCHASE_STATES | 14075 | 0x36FB | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2685 |
-| CMSG_USE_ITEM | 12952 | 0x3298 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:4001 |
-| CMSG_VIOLENCE_LEVEL | 12679 | 0x3187 | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2645 |
-| CMSG_WARDEN_DATA | 0 | 0x0000 | NO | YES | YES |  |
-| CMSG_WHO | 13955 | 0x3683 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:3429 |
-| CMSG_WHOIS | 0 | 0x0000 | NO | NO | **NO** |  |
-| CMSG_WORLD_PORT_RESPONSE | 13818 | 0x35FA | YES | NO | YES | HermesProxy/World/Server/WorldSocket.cs:2902 |
-| CMSG_WRAP_ITEM | 14740 | 0x3994 | YES | YES | YES | HermesProxy/World/Server/WorldSocket.cs:2158 |
-| CMSG_ZONEUPDATE | 0 | 0x0000 | NO | YES | YES |  |
+| Opcode                                         | Value (Dec) | Value (Hex) | Handled | Legacy Match | In Universal | Handler Location                                                                           |
+|------------------------------------------------|-------------|-------------|---------|--------------|--------------|--------------------------------------------------------------------------------------------|
+| CMSG_ACCEPT_GUILD_INVITE                       | 13822       | 0x35FE      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1494                                               |
+| CMSG_ACCEPT_TRADE                              | 12634       | 0x315A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4385                                               |
+| CMSG_ACTIVATE_TAXI                             | 13483       | 0x34AB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4234                                               |
+| CMSG_ADDON_LIST                                | 13784       | 0x35D8      | NO      | NO           | YES          |                                                                                            |
+| CMSG_ADD_FRIEND                                | 14040       | 0x36D8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3697                                               |
+| CMSG_ADD_IGNORE                                | 14044       | 0x36DC      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3709                                               |
+| CMSG_ALTER_APPEARANCE                          | 13557       | 0x34F5      | NO      | YES          | YES          |                                                                                            |
+| CMSG_AREA_SPIRIT_HEALER_QUERY                  | 13488       | 0x34B0      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3057                                               |
+| CMSG_AREA_SPIRIT_HEALER_QUEUE                  | 13489       | 0x34B1      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3058                                               |
+| CMSG_AREA_TRIGGER                              | 12758       | 0x31D6      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2406                                               |
+| CMSG_ARENA_TEAM_ACCEPT                         | 14009       | 0x36B9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:247                                                |
+| CMSG_ARENA_TEAM_DECLINE                        | 14010       | 0x36BA      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:248                                                |
+| CMSG_ARENA_TEAM_DISBAND                        | 14013       | 0x36BD      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:238                                                |
+| CMSG_ARENA_TEAM_INVITE                         | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_ARENA_TEAM_LEADER                         | 14014       | 0x36BE      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:229                                                |
+| CMSG_ARENA_TEAM_LEAVE                          | 14011       | 0x36BB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:239                                                |
+| CMSG_ARENA_TEAM_QUERY                          | 0           | 0x0000      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:186                                                |
+| CMSG_ARENA_TEAM_REMOVE                         | 14012       | 0x36BC      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:228                                                |
+| CMSG_ARENA_TEAM_ROSTER                         | 14008       | 0x36B8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:168                                                |
+| CMSG_ATTACK_STOP                               | 12886       | 0x3256      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1106                                               |
+| CMSG_ATTACK_SWING                              | 12885       | 0x3255      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1098                                               |
+| CMSG_AUCTION_HELLO_REQUEST                     | 13514       | 0x34CA      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:255                                                |
+| CMSG_AUCTION_LIST_BIDDED_ITEMS                 | 13520       | 0x34D0      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:263                                                |
+| CMSG_AUCTION_LIST_ITEMS                        | 13517       | 0x34CD      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:286                                                |
+| CMSG_AUCTION_LIST_OWNED_ITEMS                  | 13519       | 0x34CF      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:277                                                |
+| CMSG_AUCTION_PLACE_BID                         | 13521       | 0x34D1      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:433                                                |
+| CMSG_AUCTION_REMOVE_ITEM                       | 13516       | 0x34CC      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:424                                                |
+| CMSG_AUCTION_SELL_ITEM                         | 13515       | 0x34CB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:362                                                |
+| CMSG_AUTH_CONTINUED_SESSION                    | 14182       | 0x3766      | NO      | YES          | YES          |                                                                                            |
+| CMSG_AUTH_SESSION                              | 14181       | 0x3765      | NO      | YES          | YES          |                                                                                            |
+| CMSG_AUTOBANK_ITEM                             | 14743       | 0x3997      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2058                                               |
+| CMSG_AUTOSTORE_BANK_ITEM                       | 14742       | 0x3996      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2057                                               |
+| CMSG_AUTOSTORE_LOOT_ITEM                       | 12817       | 0x3211      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2182                                               |
+| CMSG_AUTO_EQUIP_ITEM                           | 14744       | 0x3998      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2056                                               |
+| CMSG_AUTO_EQUIP_ITEM_SLOT                      | 14749       | 0x399D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2069                                               |
+| CMSG_AUTO_STORE_BAG_ITEM                       | 14745       | 0x3999      | NO      | YES          | YES          |                                                                                            |
+| CMSG_BANKER_ACTIVATE                           | 13491       | 0x34B3      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3050                                               |
+| CMSG_BATTLEFIELD_LEAVE                         | 12661       | 0x3175      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:505                                                |
+| CMSG_BATTLEFIELD_LIST                          | 12673       | 0x3181      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:495                                                |
+| CMSG_BATTLEFIELD_PORT                          | 13605       | 0x3525      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:461                                                |
+| CMSG_BATTLEMASTER_HELLO                        | 12977       | 0x32B1      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3056                                               |
+| CMSG_BATTLEMASTER_JOIN                         | 13600       | 0x3520      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:443                                                |
+| CMSG_BATTLEMASTER_JOIN_ARENA                   | 13601       | 0x3521      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:206                                                |
+| CMSG_BATTLEMASTER_JOIN_SKIRMISH                | 13602       | 0x3522      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:217                                                |
+| CMSG_BATTLENET_REQUEST                         | 14077       | 0x36FD      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3668                                               |
+| CMSG_BATTLE_PAY_GET_PRODUCT_LIST               | 14020       | 0x36C4      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2670                                               |
+| CMSG_BATTLE_PAY_GET_PURCHASE_LIST              | 14021       | 0x36C5      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2675                                               |
+| CMSG_BATTLE_PET_REQUEST_JOURNAL                | 13861       | 0x3625      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2786                                               |
+| CMSG_BEGIN_TRADE                               | 12631       | 0x3157      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4393                                               |
+| CMSG_BINDER_ACTIVATE                           | 13490       | 0x34B2      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3051                                               |
+| CMSG_BUG                                       | 13959       | 0x3687      | NO      | YES          | YES          |                                                                                            |
+| CMSG_BUSY_TRADE                                | 12632       | 0x3158      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4394                                               |
+| CMSG_BUY_BACK_ITEM                             | 13476       | 0x34A4      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2090                                               |
+| CMSG_BUY_BANK_SLOT                             | 13492       | 0x34B4      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3083                                               |
+| CMSG_BUY_ITEM                                  | 13475       | 0x34A3      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1953                                               |
+| CMSG_BUY_STABLE_SLOT                           | 12651       | 0x316B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3185                                               |
+| CMSG_CALENDAR_GET_NUM_PENDING                  | 13948       | 0x367C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2761                                               |
+| CMSG_CANCEL_AURA                               | 12719       | 0x31AF      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4097                                               |
+| CMSG_CANCEL_AUTO_REPEAT_SPELL                  | 13543       | 0x34E7      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4086                                               |
+| CMSG_CANCEL_CAST                               | 12959       | 0x329F      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4058                                               |
+| CMSG_CANCEL_CHANNELLING                        | 12906       | 0x326A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4074                                               |
+| CMSG_CANCEL_GROWTH_AURA                        | 12911       | 0x326F      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CANCEL_MOUNT_AURA                         | 12927       | 0x327F      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4105                                               |
+| CMSG_CANCEL_QUEUED_SPELL                       | 12674       | 0x3182      | NO      | NO           | YES          |                                                                                            |
+| CMSG_CANCEL_TEMP_ENCHANTMENT                   | 13554       | 0x34F2      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2147                                               |
+| CMSG_CANCEL_TRADE                              | 12636       | 0x315C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4395                                               |
+| CMSG_CAN_DUEL                                  | 13924       | 0x3664      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1121                                               |
+| CMSG_CAST_SPELL                                | 12956       | 0x329C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3862                                               |
+| CMSG_CHANGE_REALM_TICKET                       | 14081       | 0x3701      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3648                                               |
+| CMSG_CHARACTER_RENAME_REQUEST                  | 14025       | 0x36C9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:764                                                |
+| CMSG_CHAR_DELETE                               | 13981       | 0x369D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:580                                                |
+| CMSG_CHAT_ADDON_MESSAGE                        | 14318       | 0x37EE      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:981                                                |
+| CMSG_CHAT_CHANNEL_ANNOUNCEMENTS                | 14307       | 0x37E3      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:793                                                |
+| CMSG_CHAT_CHANNEL_BAN                          | 14305       | 0x37E1      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_DECLINE_INVITE               | 14310       | 0x37E6      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:828                                                |
+| CMSG_CHAT_CHANNEL_DISPLAY_LIST                 | 14294       | 0x37D6      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:810                                                |
+| CMSG_CHAT_CHANNEL_INVITE                       | 14303       | 0x37DF      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_KICK                         | 14304       | 0x37E0      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_LIST                         | 14293       | 0x37D5      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:801                                                |
+| CMSG_CHAT_CHANNEL_MODERATOR                    | 14299       | 0x37DB      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_OWNER                        | 14297       | 0x37D9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:792                                                |
+| CMSG_CHAT_CHANNEL_PASSWORD                     | 14295       | 0x37D7      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_SET_OWNER                    | 14296       | 0x37D8      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_SILENCE_ALL                  | 14308       | 0x37E4      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_UNBAN                        | 14306       | 0x37E2      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_UNMODERATOR                  | 14300       | 0x37DC      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_CHANNEL_UNSILENCE_ALL                | 14309       | 0x37E5      | NO      | YES          | YES          |                                                                                            |
+| CMSG_CHAT_IGNORED                              | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_CHAT_JOIN_CHANNEL                         | 14280       | 0x37C8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:773                                                |
+| CMSG_CHAT_LEAVE_CHANNEL                        | 14281       | 0x37C9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:782                                                |
+| CMSG_CHAT_MESSAGE_AFK                          | 14291       | 0x37D3      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:839                                                |
+| CMSG_CHAT_MESSAGE_CHANNEL                      | 14287       | 0x37CF      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:873                                                |
+| CMSG_CHAT_MESSAGE_DND                          | 14292       | 0x37D4      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:856                                                |
+| CMSG_CHAT_MESSAGE_EMOTE                        | 14312       | 0x37E8      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:907                                                |
+| CMSG_CHAT_MESSAGE_GUILD                        | 14289       | 0x37D1      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:924                                                |
+| CMSG_CHAT_MESSAGE_INSTANCE_CHAT                | 14316       | 0x37EC      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:931                                                |
+| CMSG_CHAT_MESSAGE_OFFICER                      | 14290       | 0x37D2      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:925                                                |
+| CMSG_CHAT_MESSAGE_PARTY                        | 14314       | 0x37EA      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:926                                                |
+| CMSG_CHAT_MESSAGE_RAID                         | 14315       | 0x37EB      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:927                                                |
+| CMSG_CHAT_MESSAGE_RAID_WARNING                 | 14317       | 0x37ED      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:928                                                |
+| CMSG_CHAT_MESSAGE_SAY                          | 14311       | 0x37E7      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:929                                                |
+| CMSG_CHAT_MESSAGE_WHISPER                      | 14288       | 0x37D0      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:890                                                |
+| CMSG_CHAT_MESSAGE_YELL                         | 14313       | 0x37E9      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:930                                                |
+| CMSG_CHAT_REGISTER_ADDON_PREFIXES              | 14285       | 0x37CD      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1026                                               |
+| CMSG_CHAT_UNREGISTER_ALL_ADDON_PREFIXES        | 14286       | 0x37CE      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1035                                               |
+| CMSG_CLEAR_TRADE_ITEM                          | 12638       | 0x315E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4404                                               |
+| CMSG_CLOSE_INTERACTION                         | 13459       | 0x3493      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2806                                               |
+| CMSG_COMPLETE_CINEMATIC                        | 13637       | 0x3545      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2462                                               |
+| CMSG_CONFIRM_RESPEC_WIPE                       | 12813       | 0x320D      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3104                                               |
+| CMSG_CONVERT_RAID                              | 13905       | 0x3651      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1250                                               |
+| CMSG_CREATE_CHARACTER                          | 13893       | 0x3645      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:562                                                |
+| CMSG_DB_QUERY_BULK                             | 13797       | 0x35E5      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1831                                               |
+| CMSG_DECLINE_GUILD_INVITES                     | 13597       | 0x351D      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1528                                               |
+| CMSG_DECLINE_PETITION                          | 13620       | 0x3534      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3325                                               |
+| CMSG_DEL_FRIEND                                | 14041       | 0x36D9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3717                                               |
+| CMSG_DEL_IGNORE                                | 14045       | 0x36DD      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3718                                               |
+| CMSG_DESTROY_ITEM                              | 12947       | 0x3293      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2044                                               |
+| CMSG_DF_GET_JOIN_STATUS                        | 13846       | 0x3616      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2756                                               |
+| CMSG_DF_GET_SYSTEM_INFO                        | 13845       | 0x3615      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2690                                               |
+| CMSG_DF_JOIN                                   | 13835       | 0x360B      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2705                                               |
+| CMSG_DF_LEAVE                                  | 13844       | 0x3614      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2749                                               |
+| CMSG_DF_PROPOSAL_RESPONSE                      | 13833       | 0x3609      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2724; HermesProxy/World/Server/WorldSocket.cs:2740 |
+| CMSG_DF_SET_ROLES                              | 13847       | 0x3617      | NO      | NO           | YES          |                                                                                            |
+| CMSG_DISCARDED_TIME_SYNC_ACKS                  | 14913       | 0x3A41      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2826                                               |
+| CMSG_DO_READY_CHECK                            | 13877       | 0x3635      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1257                                               |
+| CMSG_DUEL_RESPONSE                             | 13538       | 0x34E2      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1130                                               |
+| CMSG_ENABLE_NAGLE                              | 14187       | 0x376B      | NO      | NO           | YES          |                                                                                            |
+| CMSG_ENABLE_TAXI_NODE                          | 13481       | 0x34A9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4226                                               |
+| CMSG_ENTER_ENCRYPTED_MODE_ACK                  | 14183       | 0x3767      | NO      | NO           | YES          |                                                                                            |
+| CMSG_ENUM_CHARACTERS                           | 13801       | 0x35E9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:523                                                |
+| CMSG_FAR_SIGHT                                 | 13544       | 0x34E8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2469                                               |
+| CMSG_GAME_OBJ_REPORT_USE                       | 13551       | 0x34EF      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1157                                               |
+| CMSG_GAME_OBJ_USE                              | 13550       | 0x34EE      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1147                                               |
+| CMSG_GENERATE_RANDOM_CHARACTER_NAME            | 13800       | 0x35E8      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:554                                                |
+| CMSG_GET_ACCOUNT_CHARACTER_LIST                | 14015       | 0x36BF      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:530                                                |
+| CMSG_GET_UNDELETE_CHARACTER_COOLDOWN_STATUS    | 14055       | 0x36E7      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2680                                               |
+| CMSG_GM_TICKET_CREATE                          | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_GM_TICKET_DELETE_TICKET                   | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_GM_TICKET_GET_CASE_STATUS                 | 13967       | 0x368F      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2791                                               |
+| CMSG_GM_TICKET_GET_TICKET                      | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_GM_TICKET_UPDATE_TEXT                     | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_GOSSIP_SELECT_OPTION                      | 13460       | 0x3494      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3066                                               |
+| CMSG_GROUP_DECLINE                             | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_GROUP_REMOVE_LEADER                       | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_GROUP_SWAP_SUB_GROUP                      | 0           | 0x0000      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1332                                               |
+| CMSG_GUILD_ADD_RANK                            | 12388       | 0x3064      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1464                                               |
+| CMSG_GUILD_AUTO_DECLINE_INVITATION             | 12385       | 0x3061      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1540                                               |
+| CMSG_GUILD_BANK_ACTIVATE                       | 13493       | 0x34B5      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1547                                               |
+| CMSG_GUILD_BANK_BUY_TAB                        | 13507       | 0x34C3      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1611                                               |
+| CMSG_GUILD_BANK_DEPOSIT_MONEY                  | 13509       | 0x34C5      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1566                                               |
+| CMSG_GUILD_BANK_LOG_QUERY                      | 12418       | 0x3082      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1594                                               |
+| CMSG_GUILD_BANK_QUERY_TAB                      | 13506       | 0x34C2      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1556                                               |
+| CMSG_GUILD_BANK_REMAINING_WITHDRAW_MONEY_QUERY | 12419       | 0x3083      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1359                                               |
+| CMSG_GUILD_BANK_SET_TAB_TEXT                   | 12422       | 0x3086      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1602                                               |
+| CMSG_GUILD_BANK_SWAP_ITEMS                     | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_GUILD_BANK_TEXT_QUERY                     | 12423       | 0x3087      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1575                                               |
+| CMSG_GUILD_BANK_UPDATE_TAB                     | 13508       | 0x34C4      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1583                                               |
+| CMSG_GUILD_BANK_WITHDRAW_MONEY                 | 13510       | 0x34C6      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1620                                               |
+| CMSG_GUILD_DECLINE_INVITATION                  | 12384       | 0x3060      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1501                                               |
+| CMSG_GUILD_DELETE                              | 12392       | 0x3068      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1508                                               |
+| CMSG_GUILD_DELETE_RANK                         | 12389       | 0x3065      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1472                                               |
+| CMSG_GUILD_DEMOTE_MEMBER                       | 12382       | 0x305E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1411                                               |
+| CMSG_GUILD_EVENT_LOG_QUERY                     | 12421       | 0x3085      | NO      | NO           | YES          |                                                                                            |
+| CMSG_GUILD_GET_ROSTER                          | 12403       | 0x3073      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1369                                               |
+| CMSG_GUILD_INVITE_BY_NAME                      | 13832       | 0x3608      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1427                                               |
+| CMSG_GUILD_LEAVE                               | 12386       | 0x3062      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1487                                               |
+| CMSG_GUILD_OFFICER_LIST                        | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_GUILD_OFFICER_REMOVE_MEMBER               | 12387       | 0x3063      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1419                                               |
+| CMSG_GUILD_PROMOTE_MEMBER                      | 12381       | 0x305D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1403                                               |
+| CMSG_GUILD_SET_ACHIEVEMENT_TRACKING            | 12399       | 0x306F      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2766                                               |
+| CMSG_GUILD_SET_GUILD_MASTER                    | 14032       | 0x36D0      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1479                                               |
+| CMSG_GUILD_SET_MEMBER_NOTE                     | 12402       | 0x3072      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1394                                               |
+| CMSG_GUILD_SET_RANK_PERMISSIONS                | 12391       | 0x3067      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1445                                               |
+| CMSG_GUILD_UPDATE_INFO_TEXT                    | 12405       | 0x3075      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1386                                               |
+| CMSG_GUILD_UPDATE_MOTD_TEXT                    | 12404       | 0x3074      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1378                                               |
+| CMSG_HEARTH_AND_RESURRECT                      | 13574       | 0x3506      | NO      | YES          | YES          |                                                                                            |
+| CMSG_HOTFIX_REQUEST                            | 13798       | 0x35E6      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1924                                               |
+| CMSG_IGNORE_TRADE                              | 12633       | 0x3159      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4397                                               |
+| CMSG_INITIATE_TRADE                            | 12630       | 0x3156      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4360                                               |
+| CMSG_INSPECT                                   | 13609       | 0x3529      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:730                                                |
+| CMSG_INSPECT_PVP                               | 13987       | 0x36A3      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:746                                                |
+| CMSG_INSTANCE_LOCK_RESPONSE                    | 13579       | 0x350B      | NO      | YES          | YES          |                                                                                            |
+| CMSG_ITEM_QUERY_SINGLE                         | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_ITEM_TEXT_QUERY                           | 12997       | 0x32C5      | NO      | YES          | YES          |                                                                                            |
+| CMSG_KEEP_ALIVE                                | 13953       | 0x3681      | NO      | YES          | YES          |                                                                                            |
+| CMSG_LEARN_TALENT                              | 13650       | 0x3552      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4132                                               |
+| CMSG_LEARN_TALENT_GROUP                        | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_LEAVE_GROUP                               | 13900       | 0x364C      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1197                                               |
+| CMSG_LFG_LIST_GET_STATUS                       | 13837       | 0x360D      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2781                                               |
+| CMSG_LIST_INVENTORY                            | 13473       | 0x34A1      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3052                                               |
+| CMSG_LOADING_SCREEN_NOTIFY                     | 13817       | 0x35F9      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:588                                                |
+| CMSG_LOGOUT_CANCEL                             | 13528       | 0x34D8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:653                                                |
+| CMSG_LOGOUT_REQUEST                            | 13526       | 0x34D6      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:646                                                |
+| CMSG_LOG_DISCONNECT                            | 14185       | 0x3769      | NO      | NO           | YES          |                                                                                            |
+| CMSG_LOOT_CURRENCY                             | 0           | 0x0000      | NO      | NO           | YES          |                                                                                            |
+| CMSG_LOOT_ITEM                                 | 12817       | 0x3211      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2181                                               |
+| CMSG_LOOT_MASTER_GIVE                          | 0           | 0x0000      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2244                                               |
+| CMSG_LOOT_MONEY                                | 12816       | 0x3210      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2202                                               |
+| CMSG_LOOT_RELEASE                              | 12819       | 0x3213      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2173                                               |
+| CMSG_LOOT_ROLL                                 | 12820       | 0x3214      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2234                                               |
+| CMSG_LOOT_UNIT                                 | 12815       | 0x320F      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2193                                               |
+| CMSG_MAIL_CREATE_TEXT_ITEM                     | 13627       | 0x353B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2272                                               |
+| CMSG_MAIL_DELETE                               | 12837       | 0x3225      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2285                                               |
+| CMSG_MAIL_GET_LIST                             | 13622       | 0x3536      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2264                                               |
+| CMSG_MAIL_MARK_AS_READ                         | 13626       | 0x353A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2298                                               |
+| CMSG_MAIL_RETURN_TO_SENDER                     | 13912       | 0x3658      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2307                                               |
+| CMSG_MAIL_TAKE_ITEM                            | 13624       | 0x3538      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2320                                               |
+| CMSG_MAIL_TAKE_MONEY                           | 13623       | 0x3537      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2333                                               |
+| CMSG_MESSAGECHAT                               | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_MINIMAP_PING                              | 13902       | 0x364E      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1298                                               |
+| CMSG_MOUNT_SPECIAL_ANIM                        | 12928       | 0x3280      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2478                                               |
+| CMSG_MOVE_CHANGE_TRANSPORT                     | 14895       | 0x3A2F      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2836                                               |
+| CMSG_MOVE_DISMISS_VEHICLE                      | 14899       | 0x3A33      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2837                                               |
+| CMSG_MOVE_DOUBLE_JUMP                          | 14827       | 0x39EB      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2866                                               |
+| CMSG_MOVE_FALL_LAND                            | 14843       | 0x39FB      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2838                                               |
+| CMSG_MOVE_FALL_RESET                           | 14873       | 0x3A19      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2839                                               |
+| CMSG_MOVE_FEATHER_FALL_ACK                     | 14876       | 0x3A1C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2959                                               |
+| CMSG_MOVE_FORCE_FLIGHT_BACK_SPEED_CHANGE_ACK   | 14894       | 0x3A2E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2910                                               |
+| CMSG_MOVE_FORCE_FLIGHT_SPEED_CHANGE_ACK        | 14893       | 0x3A2D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2911                                               |
+| CMSG_MOVE_FORCE_PITCH_RATE_CHANGE_ACK          | 14898       | 0x3A32      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2912                                               |
+| CMSG_MOVE_FORCE_ROOT_ACK                       | 14862       | 0x3A0E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2980                                               |
+| CMSG_MOVE_FORCE_RUN_BACK_SPEED_CHANGE_ACK      | 14860       | 0x3A0C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2913                                               |
+| CMSG_MOVE_FORCE_RUN_SPEED_CHANGE_ACK           | 14859       | 0x3A0B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2914                                               |
+| CMSG_MOVE_FORCE_SWIM_BACK_SPEED_CHANGE_ACK     | 14882       | 0x3A22      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2915                                               |
+| CMSG_MOVE_FORCE_SWIM_SPEED_CHANGE_ACK          | 14861       | 0x3A0D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2916                                               |
+| CMSG_MOVE_FORCE_TURN_RATE_CHANGE_ACK           | 14883       | 0x3A23      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2917                                               |
+| CMSG_MOVE_FORCE_UNROOT_ACK                     | 14863       | 0x3A0F      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2981                                               |
+| CMSG_MOVE_FORCE_WALK_SPEED_CHANGE_ACK          | 14881       | 0x3A21      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2918                                               |
+| CMSG_MOVE_GRAVITY_DISABLE_ACK                  | 14901       | 0x3A35      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2983                                               |
+| CMSG_MOVE_GRAVITY_ENABLE_ACK                   | 14902       | 0x3A36      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2984                                               |
+| CMSG_MOVE_HEARTBEAT                            | 14864       | 0x3A10      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2840                                               |
+| CMSG_MOVE_HOVER_ACK                            | 14867       | 0x3A13      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2960                                               |
+| CMSG_MOVE_INIT_ACTIVE_MOVER_COMPLETE           | 14918       | 0x3A46      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3009                                               |
+| CMSG_MOVE_JUMP                                 | 14826       | 0x39EA      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2841                                               |
+| CMSG_MOVE_KNOCK_BACK_ACK                       | 14866       | 0x3A12      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2982                                               |
+| CMSG_MOVE_REMOVE_MOVEMENT_FORCES               | 14871       | 0x3A17      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2842                                               |
+| CMSG_MOVE_SET_CAN_FLY_ACK                      | 14887       | 0x3A27      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2961                                               |
+| CMSG_MOVE_SET_FACING                           | 14857       | 0x3A09      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2843                                               |
+| CMSG_MOVE_SET_FACING_HEARTBEAT                 | 14943       | 0x3A5F      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2844                                               |
+| CMSG_MOVE_SET_FLIGHT_SPEED_CHEAT               | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_MOVE_SET_FLY                              | 14888       | 0x3A28      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2845                                               |
+| CMSG_MOVE_SET_PITCH                            | 14858       | 0x3A0A      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2846                                               |
+| CMSG_MOVE_SET_RUN_MODE                         | 14834       | 0x39F2      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2847                                               |
+| CMSG_MOVE_SET_WALK_MODE                        | 14835       | 0x39F3      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2848                                               |
+| CMSG_MOVE_SPLINE_DONE                          | 14872       | 0x3A18      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3017                                               |
+| CMSG_MOVE_START_ASCEND                         | 14889       | 0x3A29      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2849                                               |
+| CMSG_MOVE_START_BACKWARD                       | 14821       | 0x39E5      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2850                                               |
+| CMSG_MOVE_START_DESCEND                        | 14896       | 0x3A30      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2851                                               |
+| CMSG_MOVE_START_FORWARD                        | 14820       | 0x39E4      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2852                                               |
+| CMSG_MOVE_START_PITCH_DOWN                     | 14832       | 0x39F0      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2853                                               |
+| CMSG_MOVE_START_PITCH_UP                       | 14831       | 0x39EF      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2854                                               |
+| CMSG_MOVE_START_STRAFE_LEFT                    | 14823       | 0x39E7      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2858                                               |
+| CMSG_MOVE_START_STRAFE_RIGHT                   | 14824       | 0x39E8      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2859                                               |
+| CMSG_MOVE_START_SWIM                           | 14844       | 0x39FC      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2855                                               |
+| CMSG_MOVE_START_TURN_LEFT                      | 14828       | 0x39EC      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2856                                               |
+| CMSG_MOVE_START_TURN_RIGHT                     | 14829       | 0x39ED      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2857                                               |
+| CMSG_MOVE_STOP                                 | 14822       | 0x39E6      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2860                                               |
+| CMSG_MOVE_STOP_ASCEND                          | 14890       | 0x3A2A      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2861                                               |
+| CMSG_MOVE_STOP_BACKWARD                        | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_MOVE_STOP_PITCH                           | 14833       | 0x39F1      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2862                                               |
+| CMSG_MOVE_STOP_STRAFE                          | 14825       | 0x39E9      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2863                                               |
+| CMSG_MOVE_STOP_SWIM                            | 14845       | 0x39FD      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2864                                               |
+| CMSG_MOVE_STOP_TURN                            | 14830       | 0x39EE      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2865                                               |
+| CMSG_MOVE_TELEPORT_ACK                         | 14842       | 0x39FA      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2885                                               |
+| CMSG_MOVE_TIME_SKIPPED                         | 14875       | 0x3A1B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3034                                               |
+| CMSG_MOVE_WATER_WALK_ACK                       | 14877       | 0x3A1D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2962                                               |
+| CMSG_NEXT_CINEMATIC_CAMERA                     | 13636       | 0x3544      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2461                                               |
+| CMSG_OBJECT_UPDATE_FAILED                      | 12675       | 0x3183      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2627                                               |
+| CMSG_OFFER_PETITION                            | 13053       | 0x32FD      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3312                                               |
+| CMSG_OPENING_CINEMATIC                         | 13635       | 0x3543      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2460                                               |
+| CMSG_OPEN_ITEM                                 | 12998       | 0x32C6      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2128                                               |
+| CMSG_OPT_OUT_OF_LOOT                           | 13558       | 0x34F6      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2219                                               |
+| CMSG_OVERRIDE_SCREEN_FLASH                     | 13598       | 0x351E      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2660                                               |
+| CMSG_PARTY_INVITE                              | 13828       | 0x3604      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1166                                               |
+| CMSG_PARTY_INVITE_RESPONSE                     | 13830       | 0x3606      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1178                                               |
+| CMSG_PARTY_UNINVITE                            | 13898       | 0x364A      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1205                                               |
+| CMSG_PETITION_BUY                              | 13512       | 0x34C8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3243                                               |
+| CMSG_PETITION_RENAME_GUILD                     | 14033       | 0x36D1      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3303                                               |
+| CMSG_PETITION_SHOW_SIGNATURES                  | 13513       | 0x34C9      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3286                                               |
+| CMSG_PET_ABANDON                               | 13453       | 0x348D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3193                                               |
+| CMSG_PET_ACTION                                | 13451       | 0x348B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3129                                               |
+| CMSG_PET_CANCEL_AURA                           | 13454       | 0x348E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3227                                               |
+| CMSG_PET_CAST_SPELL                            | 12955       | 0x329B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3945                                               |
+| CMSG_PET_RENAME                                | 13958       | 0x3686      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3157                                               |
+| CMSG_PET_SET_ACTION                            | 13450       | 0x348A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3147                                               |
+| CMSG_PET_STOP_ATTACK                           | 13452       | 0x348C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3139                                               |
+| CMSG_PING                                      | 14184       | 0x3768      | NO      | YES          | YES          |                                                                                            |
+| CMSG_PLAYER_AI_CHEAT                           | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_PLAYER_DIFFICULTY_CHANGE                  | 0           | 0x0000      | NO      | NO           | YES          |                                                                                            |
+| CMSG_PLAYER_LOGIN                              | 13803       | 0x35EB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:616                                                |
+| CMSG_PUSH_QUEST_TO_PARTY                       | 13471       | 0x349F      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3596                                               |
+| CMSG_PUSH_SPELL_TO_ACTION_BAR                  | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_PVP_LOG_DATA                              | 12671       | 0x317F      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:488                                                |
+| CMSG_QUERY_CORPSE_LOCATION_FROM_CLIENT         | 13922       | 0x3662      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2437                                               |
+| CMSG_QUERY_COUNTDOWN_TIMER                     | 12714       | 0x31AA      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2771                                               |
+| CMSG_QUERY_CREATURE                            | 12912       | 0x3270      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3373                                               |
+| CMSG_QUERY_GAME_OBJECT                         | 12913       | 0x3271      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3382                                               |
+| CMSG_QUERY_GUILD_INFO                          | 13963       | 0x368B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1341                                               |
+| CMSG_QUERY_NEXT_MAIL_TIME                      | 13625       | 0x3539      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2257                                               |
+| CMSG_QUERY_NPC_TEXT                            | 12914       | 0x3272      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3411                                               |
+| CMSG_QUERY_PAGE_TEXT                           | 12916       | 0x3274      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3402                                               |
+| CMSG_QUERY_PETITION                            | 12919       | 0x3277      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3294                                               |
+| CMSG_QUERY_PET_NAME                            | 12917       | 0x3275      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3420                                               |
+| CMSG_QUERY_PLAYER_NAMES                        | 14194       | 0x3772      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:605                                                |
+| CMSG_QUERY_QUESTS_COMPLETED                    | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_QUERY_QUEST_INFO                          | 12915       | 0x3273      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3365                                               |
+| CMSG_QUERY_TIME                                | 13525       | 0x34D5      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3358                                               |
+| CMSG_QUEST_CONFIRM_ACCEPT                      | 13470       | 0x349E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3588                                               |
+| CMSG_QUEST_GIVER_ACCEPT_QUEST                  | 13464       | 0x3498      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3466                                               |
+| CMSG_QUEST_GIVER_CHOOSE_REWARD                 | 13466       | 0x349A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3544                                               |
+| CMSG_QUEST_GIVER_CLOSE_QUEST                   | 13641       | 0x3549      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2831                                               |
+| CMSG_QUEST_GIVER_COMPLETE_QUEST                | 13465       | 0x3499      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3579                                               |
+| CMSG_QUEST_GIVER_HELLO                         | 13462       | 0x3496      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3527                                               |
+| CMSG_QUEST_GIVER_QUERY_QUEST                   | 13463       | 0x3497      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3453                                               |
+| CMSG_QUEST_GIVER_REQUEST_REWARD                | 13467       | 0x349B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3535                                               |
+| CMSG_QUEST_GIVER_STATUS_MULTIPLE_QUERY         | 13469       | 0x349D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3495                                               |
+| CMSG_QUEST_GIVER_STATUS_QUERY                  | 13468       | 0x349C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3487                                               |
+| CMSG_QUEST_LOG_REMOVE_QUEST                    | 13614       | 0x352E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3479                                               |
+| CMSG_QUEST_POI_QUERY                           | 14002       | 0x36B2      | NO      | YES          | YES          |                                                                                            |
+| CMSG_QUEST_PUSH_RESULT                         | 13472       | 0x34A0      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3604                                               |
+| CMSG_QUEUED_MESSAGES_END                       | 14188       | 0x376C      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2665                                               |
+| CMSG_RAID_READY_CHECK                          | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_RAID_READY_CHECK_CONFIRM                  | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_RAID_READY_CHECK_FINISHED                 | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_RANDOM_ROLL                               | 13911       | 0x3657      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1306                                               |
+| CMSG_READY_CHECK_RESPONSE                      | 13878       | 0x3636      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1264                                               |
+| CMSG_READ_ITEM                                 | 12999       | 0x32C7      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2079                                               |
+| CMSG_REAL_GROUP_UPDATE                         | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_RECLAIM_CORPSE                            | 13531       | 0x34DB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2444                                               |
+| CMSG_REMOVE_GLYPH                              | 13056       | 0x3300      | NO      | YES          | YES          |                                                                                            |
+| CMSG_REPAIR_ITEM                               | 13548       | 0x34EC      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2100                                               |
+| CMSG_REPOP_REQUEST                             | 13606       | 0x3526      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2426                                               |
+| CMSG_REPORT_CLIENT_VARIABLES                   | 14087       | 0x3707      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2811                                               |
+| CMSG_REPORT_ENABLED_ADDONS                     | 14086       | 0x3706      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2816                                               |
+| CMSG_REPORT_KEYBINDING_EXECUTION_COUNTS        | 14088       | 0x3708      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2821                                               |
+| CMSG_REQUEST_ACCOUNT_DATA                      | 13972       | 0x3694      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1075                                               |
+| CMSG_REQUEST_BATTLEFIELD_STATUS                | 13789       | 0x35DD      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:481                                                |
+| CMSG_REQUEST_CEMETERY_LIST                     | 12665       | 0x3179      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2801                                               |
+| CMSG_REQUEST_CONQUEST_FORMULA_CONSTANTS        | 12980       | 0x32B4      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2615                                               |
+| CMSG_REQUEST_FORCED_REACTIONS                  | 12805       | 0x3205      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2776                                               |
+| CMSG_REQUEST_LFG_LIST_BLACKLIST                | 12964       | 0x32A4      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2512                                               |
+| CMSG_REQUEST_PARTY_MEMBER_STATS                | 13910       | 0x3656      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1315                                               |
+| CMSG_REQUEST_PET_INFO                          | 13456       | 0x3490      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3236                                               |
+| CMSG_REQUEST_PLAYED_TIME                       | 12922       | 0x327A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:660                                                |
+| CMSG_REQUEST_PVP_REWARDS                       | 12694       | 0x3196      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2650                                               |
+| CMSG_REQUEST_RAID_INFO                         | 14034       | 0x36D2      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1946                                               |
+| CMSG_REQUEST_RATED_PVP_INFO                    | 13796       | 0x35E4      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2655                                               |
+| CMSG_REQUEST_STABLED_PETS                      | 13457       | 0x3491      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3177                                               |
+| CMSG_REQUEST_VEHICLE_EXIT                      | 12855       | 0x3237      | NO      | YES          | YES          |                                                                                            |
+| CMSG_REQUEST_VEHICLE_NEXT_SEAT                 | 12857       | 0x3239      | NO      | YES          | YES          |                                                                                            |
+| CMSG_REQUEST_VEHICLE_PREV_SEAT                 | 12856       | 0x3238      | NO      | YES          | YES          |                                                                                            |
+| CMSG_REQUEST_VEHICLE_SWITCH_SEAT               | 12858       | 0x323A      | NO      | YES          | YES          |                                                                                            |
+| CMSG_RESET_FACTION_CHEAT                       | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_RESET_INSTANCES                           | 13930       | 0x366A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1939                                               |
+| CMSG_RESURRECT_RESPONSE                        | 13957       | 0x3685      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4141                                               |
+| CMSG_SAVE_CUF_PROFILES                         | 12686       | 0x318E      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1092                                               |
+| CMSG_SAVE_GUILD_EMBLEM                         | 12968       | 0x32A8      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1515                                               |
+| CMSG_SELF_RES                                  | 13617       | 0x3531      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4150                                               |
+| CMSG_SELL_ITEM                                 | 13474       | 0x34A2      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1973                                               |
+| CMSG_SEND_CONTACT_LIST                         | 14039       | 0x36D7      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_SEND_MAIL                                 | 13819       | 0x35FB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2375                                               |
+| CMSG_SEND_TEXT_EMOTE                           | 13448       | 0x3488      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1016                                               |
+| CMSG_SERVER_TIME_OFFSET_REQUEST                | 13980       | 0x369C      | NO      | NO           | YES          |                                                                                            |
+| CMSG_SET_ACTIONBAR_TOGGLES                     | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_SET_ACTION_BAR_TOGGLES                    | 13618       | 0x3532      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:705                                                |
+| CMSG_SET_ACTION_BUTTON                         | 13661       | 0x355D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:695                                                |
+| CMSG_SET_ACTIVE_MOVER                          | 14908       | 0x3A3C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3001                                               |
+| CMSG_SET_AMMO                                  | 13662       | 0x355E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2139                                               |
+| CMSG_SET_ASSISTANT_LEADER                      | 13906       | 0x3652      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1217                                               |
+| CMSG_SET_CONTACT_NOTES                         | 14042       | 0x36DA      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3726                                               |
+| CMSG_SET_DIFFICULTY_ID                         | 12834       | 0x3222      | NO      | NO           | YES          |                                                                                            |
+| CMSG_SET_DUNGEON_DIFFICULTY                    | 13956       | 0x3684      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2633                                               |
+| CMSG_SET_EVERYONE_IS_ASSISTANT                 | 13850       | 0x361A      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1226                                               |
+| CMSG_SET_FACTION_ATWAR                         | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_SET_FACTION_AT_WAR                        | 13534       | 0x34DE      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3613                                               |
+| CMSG_SET_FACTION_INACTIVE                      | 13536       | 0x34E0      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3631                                               |
+| CMSG_SET_FACTION_NOT_AT_WAR                    | 13535       | 0x34DF      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:3622                                               |
+| CMSG_SET_LOOT_METHOD                           | 13899       | 0x364B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2209                                               |
+| CMSG_SET_PARTY_LEADER                          | 13901       | 0x364D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1242                                               |
+| CMSG_SET_PVP                                   | 12972       | 0x32AC      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:687                                                |
+| CMSG_SET_SELECTION                             | 13608       | 0x3528      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2418                                               |
+| CMSG_SET_SHEATHED                              | 13449       | 0x3489      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1113                                               |
+| CMSG_SET_TITLE                                 | 12926       | 0x327E      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:672                                                |
+| CMSG_SET_TRADE_GOLD                            | 12639       | 0x315F      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4368                                               |
+| CMSG_SET_TRADE_ITEM                            | 12637       | 0x315D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4421                                               |
+| CMSG_SET_WATCHED_FACTION                       | 13537       | 0x34E1      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3640                                               |
+| CMSG_SIGN_PETITION                             | 13619       | 0x3533      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3333                                               |
+| CMSG_SOCIAL_CONTRACT_REQUEST                   | 14156       | 0x374C      | NO      | NO           | YES          |                                                                                            |
+| CMSG_SOCKETSPELLS                              | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_SOCKET_GEMS                               | 13547       | 0x34EB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2113                                               |
+| CMSG_SORT_BAGS                                 | 0           | 0x0000      | NO      | NO           | YES          |                                                                                            |
+| CMSG_SPELL_CLICK                               | 13461       | 0x3495      | NO      | YES          | YES          |                                                                                            |
+| CMSG_SPIRIT_HEALER_ACTIVATE                    | 13487       | 0x34AF      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3053                                               |
+| CMSG_SPLIT_ITEM                                | 14748       | 0x399C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1993                                               |
+| CMSG_STABLE_PET                                | 12648       | 0x3168      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3201                                               |
+| CMSG_STABLE_REVIVE_PET                         | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_STABLE_SWAP_PET                           | 12650       | 0x316A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3218                                               |
+| CMSG_STAND_STATE_CHANGE                        | 12684       | 0x318C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2452                                               |
+| CMSG_SUMMON_RESPONSE                           | 13932       | 0x366C      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1286                                               |
+| CMSG_SWAP_INV_ITEM                             | 14747       | 0x399B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2016                                               |
+| CMSG_SWAP_ITEM                                 | 14746       | 0x399A      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2029                                               |
+| CMSG_TABARD_VENDOR_ACTIVATE                    | 12969       | 0x32A9      | NO      | NO           | YES          |                                                                                            |
+| CMSG_TALK_TO_GOSSIP                            | 13458       | 0x3492      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3054                                               |
+| CMSG_TAXI_NODE_STATUS_QUERY                    | 13480       | 0x34A8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4217                                               |
+| CMSG_TAXI_QUERY_AVAILABLE_NODES                | 13482       | 0x34AA      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4218                                               |
+| CMSG_TIME_SYNC_RESPONSE                        | 14909       | 0x3A3D      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2394                                               |
+| CMSG_TOGGLE_PVP                                | 12971       | 0x32AB      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:680                                                |
+| CMSG_TOTEM_DESTROYED                           | 13560       | 0x34F8      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4157                                               |
+| CMSG_TRAINER_BUY_SPELL                         | 13486       | 0x34AE      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3091                                               |
+| CMSG_TRAINER_LIST                              | 13485       | 0x34AD      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3055                                               |
+| CMSG_TURN_IN_PETITION                          | 13621       | 0x3535      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3342                                               |
+| CMSG_TUTORIAL_FLAG                             | 14052       | 0x36E4      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2485; HermesProxy/World/Server/WorldSocket.cs:2796 |
+| CMSG_UNACCEPT_TRADE                            | 12635       | 0x315B      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4396                                               |
+| CMSG_UNLEARN_SKILL                             | 13541       | 0x34E5      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:713                                                |
+| CMSG_UNSTABLE_PET                              | 12649       | 0x3169      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3209                                               |
+| CMSG_UPDATE_ACCOUNT_DATA                       | 13973       | 0x3695      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:1069                                               |
+| CMSG_UPDATE_MISSILE_TRAJECTORY                 | 14915       | 0x3A43      | NO      | YES          | YES          |                                                                                            |
+| CMSG_UPDATE_RAID_TARGET                        | 13907       | 0x3653      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:1277                                               |
+| CMSG_UPDATE_VAS_PURCHASE_STATES                | 14075       | 0x36FB      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2685                                               |
+| CMSG_USE_ITEM                                  | 12952       | 0x3298      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:4001                                               |
+| CMSG_VIOLENCE_LEVEL                            | 12679       | 0x3187      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2645                                               |
+| CMSG_WARDEN_DATA                               | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
+| CMSG_WHO                                       | 13955       | 0x3683      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:3429                                               |
+| CMSG_WHOIS                                     | 0           | 0x0000      | NO      | NO           | **NO**       |                                                                                            |
+| CMSG_WORLD_PORT_RESPONSE                       | 13818       | 0x35FA      | YES     | NO           | YES          | HermesProxy/World/Server/WorldSocket.cs:2902                                               |
+| CMSG_WRAP_ITEM                                 | 14740       | 0x3994      | YES     | YES          | YES          | HermesProxy/World/Server/WorldSocket.cs:2158                                               |
+| CMSG_ZONEUPDATE                                | 0           | 0x0000      | NO      | YES          | YES          |                                                                                            |
 
 ## SMSG (Server -> Client)
 
