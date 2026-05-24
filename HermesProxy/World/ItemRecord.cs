@@ -34,11 +34,11 @@ public class ItemRecord
 
 	public byte AmmoType;
 
-	public byte[] DamageType = new byte[5];
+	public readonly byte[] DamageType = new byte[5];
 
-	public short[] Resistances = new short[7];
+	public readonly short[] Resistances = new short[7];
 
-	public ushort[] MinDamage = new ushort[5];
+	public readonly ushort[] MinDamage = new ushort[5];
 
-	public ushort[] MaxDamage = new ushort[5];
+	public readonly ushort[] MaxDamage = new ushort[5];
 }

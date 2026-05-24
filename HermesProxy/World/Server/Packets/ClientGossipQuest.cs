@@ -12,7 +12,7 @@ public class ClientGossipQuest
 
 	public int QuestLevel;
 
-	public int QuestMaxLevel = 255;
+	public readonly int QuestMaxLevel = 255;
 
 	public bool Repeatable;
 

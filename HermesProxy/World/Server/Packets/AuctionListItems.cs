@@ -16,7 +16,7 @@ internal class AuctionListItems : ClientPacket
 
 	public byte MaxPetLevel;
 
-	public List<byte> KnownPets = new List<byte>();
+	public readonly List<byte> KnownPets = new();
 
 	public string Name;
 
@@ -24,9 +24,9 @@ internal class AuctionListItems : ClientPacket
 
 	public bool ExactMatch;
 
-	public List<ClassFilter> ClassFilters = new List<ClassFilter>();
+	public readonly List<ClassFilter> ClassFilters = new();
 
-	public List<AuctionSort> Sorts = new List<AuctionSort>();
+	public readonly List<AuctionSort> Sorts = new();
 
 	public AuctionListItems(WorldPacket packet)
 		: base(packet)

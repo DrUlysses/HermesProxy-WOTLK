@@ -9,6 +9,6 @@ namespace Framework.Web
     public class RealmListTicketClientInformation
     {
         [DataMember(Name = "info")]
-        public RealmListTicketInformation Info { get; set; } = new RealmListTicketInformation();
+        public RealmListTicketInformation Info { get; set; } = new();
     }
 }

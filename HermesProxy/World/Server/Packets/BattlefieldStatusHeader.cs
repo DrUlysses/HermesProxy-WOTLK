@@ -4,9 +4,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public class BattlefieldStatusHeader
 {
-	public RideTicket Ticket = new RideTicket();
+	public readonly RideTicket Ticket = new();
 
-	public List<uint> BattlefieldListIDs = new List<uint>();
+	public readonly List<uint> BattlefieldListIDs = new();
 
 	public byte Unk254;
 

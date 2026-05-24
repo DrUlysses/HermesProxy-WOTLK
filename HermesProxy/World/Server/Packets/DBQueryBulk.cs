@@ -7,7 +7,7 @@ internal class DBQueryBulk : ClientPacket
 {
 	public DB2Hash TableHash;
 
-	public List<uint> Queries = new List<uint>();
+	public readonly List<uint> Queries = new();
 
 	public DBQueryBulk(WorldPacket packet)
 		: base(packet)

@@ -8,7 +8,7 @@ public class VendorInventory : ServerPacket
 {
 	public byte Reason = 0;
 
-	public List<VendorItem> Items = new List<VendorItem>();
+	public readonly List<VendorItem> Items = new();
 
 	public WowGuid128 VendorGUID;
 

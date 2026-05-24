@@ -48,7 +48,7 @@ public class UnitData
 
 	public int?[] MaxPower = new int?[7];
 
-	public float?[] ModPowerRegen = new float?[7];
+	public readonly float?[] ModPowerRegen = new float?[7];
 
 	public int? Level;
 
@@ -70,7 +70,7 @@ public class UnitData
 
 	public int? FactionTemplate;
 
-	public VisibleItem[] VirtualItems = new VisibleItem[3];
+	public readonly VisibleItem[] VirtualItems = new VisibleItem[3];
 
 	public uint? Flags;
 
@@ -80,7 +80,7 @@ public class UnitData
 
 	public uint? AuraState;
 
-	public uint?[] AttackRoundBaseTime = new uint?[2];
+	public readonly uint?[] AttackRoundBaseTime = new uint?[2];
 
 	public uint? RangedAttackRoundBaseTime;
 
@@ -136,7 +136,7 @@ public class UnitData
 
 	public int? CreatedBySpell;
 
-	public uint?[] NpcFlags = new uint?[2];
+	public readonly uint?[] NpcFlags = new uint?[2];
 
 	public int? EmoteState;
 
@@ -144,11 +144,11 @@ public class UnitData
 
 	public ushort? TrainingPointsTotal;
 
-	public int?[] Stats = new int?[5];
+	public readonly int?[] Stats = new int?[5];
 
-	public int?[] StatPosBuff = new int?[5];
+	public readonly int?[] StatPosBuff = new int?[5];
 
-	public int?[] StatNegBuff = new int?[5];
+	public readonly int?[] StatNegBuff = new int?[5];
 
 	public int? BaseMana;
 
@@ -186,9 +186,9 @@ public class UnitData
 
 	public float? MaxRangedDamage;
 
-	public int?[] PowerCostModifier = new int?[7];
+	public readonly int?[] PowerCostModifier = new int?[7];
 
-	public float?[] PowerCostMultiplier = new float?[7];
+	public readonly float?[] PowerCostMultiplier = new float?[7];
 
 	public float? MaxHealthModifier;
 

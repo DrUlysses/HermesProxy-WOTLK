@@ -8,7 +8,7 @@ internal class SendRaidTargetUpdateAll : ServerPacket
 {
 	public sbyte PartyIndex;
 
-	public List<Tuple<sbyte, WowGuid128>> TargetIcons = new List<Tuple<sbyte, WowGuid128>>();
+	public readonly List<Tuple<sbyte, WowGuid128>> TargetIcons = new();
 
 	public SendRaidTargetUpdateAll()
 		: base(Opcode.SMSG_SEND_RAID_TARGET_UPDATE_ALL)

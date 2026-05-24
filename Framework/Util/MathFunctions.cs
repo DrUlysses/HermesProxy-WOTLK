@@ -30,7 +30,7 @@ public static class MathFunctions
 
     public static float wrap(float t, float lo, float hi)
     {
-        if ((t >= lo) && (t < hi))
+        if (t >= lo && t < hi)
         {
             return t;
         }
@@ -59,7 +59,7 @@ public static class MathFunctions
     /// </returns>
     public static float Clamp(float value, float calmpedValue, float tolerance)
     {
-        return (tolerance > Math.Abs(value - calmpedValue)) ? calmpedValue : value;
+        return tolerance > Math.Abs(value - calmpedValue) ? calmpedValue : value;
     }
     /// <summary>
     /// Clamp a <paramref name="value"/> to <paramref name="calmpedValue"/> using the default tolerance value.
@@ -73,7 +73,7 @@ public static class MathFunctions
     /// <remarks><see cref="MathFunctions.Epsilon"/> is used for tolerance.</remarks>
     public static float Clamp(float value, float calmpedValue)
     {
-        return (Epsilon > Math.Abs(value - calmpedValue)) ? calmpedValue : value;
+        return Epsilon > Math.Abs(value - calmpedValue) ? calmpedValue : value;
     }
     #endregion
 
@@ -99,7 +99,7 @@ public static class MathFunctions
     #region Fuzzy
     public static bool fuzzyEq(float a, float b)
     {
-        return (a == b) || (Math.Abs(a - b) <= eps(a, b));
+        return a == b || Math.Abs(a - b) <= eps(a, b);
     }
     public static bool fuzzyGt(float a, float b)
     {
@@ -192,7 +192,7 @@ public static class MathFunctions
     {
         if (val == -100.0f)     // prevent set var to zero
             val = -99.99f;
-        value *= (apply ? (100.0f + val) / 100.0f : 100.0f / (100.0f + val));
+        value *= apply ? (100.0f + val) / 100.0f : 100.0f / (100.0f + val);
     }
 
     public static ulong MakePair64(uint l, uint h)

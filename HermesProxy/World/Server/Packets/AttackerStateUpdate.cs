@@ -19,7 +19,7 @@ internal class AttackerStateUpdate : ServerPacket
 
 	public int OverDamage = -1;
 
-	public List<SubDamage> SubDmg = new List<SubDamage>();
+	public readonly List<SubDamage> SubDmg = new();
 
 	public byte VictimState;
 
@@ -33,9 +33,9 @@ internal class AttackerStateUpdate : ServerPacket
 
 	public UnkAttackerState UnkState;
 
-	public float Unk = 0f;
+	public readonly float Unk = 0f;
 
-	public ContentTuningParams ContentTuning = new ContentTuningParams();
+	public readonly ContentTuningParams ContentTuning = new();
 
 	public SpellCastLogData LogData;
 

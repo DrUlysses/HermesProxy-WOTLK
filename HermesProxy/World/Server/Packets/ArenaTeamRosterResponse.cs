@@ -23,7 +23,7 @@ internal class ArenaTeamRosterResponse : ServerPacket
 
 	public bool UnkBit;
 
-	public List<ArenaTeamMember> Members = new List<ArenaTeamMember>();
+	public readonly List<ArenaTeamMember> Members = new();
 
 	public ArenaTeamRosterResponse()
 		: base(Opcode.SMSG_ARENA_TEAM_ROSTER)

@@ -4,11 +4,11 @@ namespace HermesProxy.World.Server.Packets;
 
 public class WhoRequestPkt : ClientPacket
 {
-	public WhoRequest Request = new WhoRequest();
+	public readonly WhoRequest Request = new();
 
 	public uint RequestID;
 
-	public List<int> Areas = new List<int>();
+	public readonly List<int> Areas = new();
 
 	public WhoRequestPkt(WorldPacket packet)
 		: base(packet)

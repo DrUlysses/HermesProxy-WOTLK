@@ -38,9 +38,9 @@ public class PlayerData
 
 	public int? GuildTimeStamp;
 
-	public QuestLog[] QuestLog = new QuestLog[25];
+	public readonly QuestLog[] QuestLog = new QuestLog[25];
 
-	public VisibleItem[] VisibleItems = new VisibleItem[19];
+	public readonly VisibleItem[] VisibleItems = new VisibleItem[19];
 
 	public int? ChosenTitle;
 
@@ -56,7 +56,7 @@ public class PlayerData
 
 	public int? HonorLevel;
 
-	public ChrCustomizationChoice[] Customizations = new ChrCustomizationChoice[36];
+	public readonly ChrCustomizationChoice[] Customizations = new ChrCustomizationChoice[36];
 
 	public float?[] AvgItemLevel { get; } = new float?[6];
 }

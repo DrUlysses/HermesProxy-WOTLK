@@ -10,7 +10,7 @@ internal class AuthSession : ClientPacket
 
 	public uint RealmID;
 
-	public Array<byte> LocalChallenge = new Array<byte>(16);
+	public readonly Array<byte> LocalChallenge = new(16);
 
 	public byte[] Digest = new byte[24];
 

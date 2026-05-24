@@ -16,15 +16,15 @@ public class LootResponse : ServerPacket
 
 	public LootMethod LootMethod;
 
-	public byte Threshold = 2;
+	public readonly byte Threshold = 2;
 
 	public uint Coins;
 
-	public List<LootItemData> Items = new List<LootItemData>();
+	public readonly List<LootItemData> Items = new();
 
-	public List<LootCurrency> Currencies = new List<LootCurrency>();
+	public readonly List<LootCurrency> Currencies = new();
 
-	public bool Acquired = true;
+	public readonly bool Acquired = true;
 
 	public bool AELooting;
 

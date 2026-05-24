@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ChannelNotifyJoined : ServerPacket
 {
-	public string ChannelWelcomeMsg = "";
+	public readonly string ChannelWelcomeMsg = "";
 
 	public int ChatChannelID;
 

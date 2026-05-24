@@ -10,7 +10,7 @@ internal class BattlenetResponse : ServerPacket
 
 	public MethodCall Method;
 
-	public ByteBuffer Data = new ByteBuffer();
+	public ByteBuffer Data = new();
 
 	public BattlenetResponse()
 		: base(Opcode.SMSG_BATTLENET_RESPONSE)

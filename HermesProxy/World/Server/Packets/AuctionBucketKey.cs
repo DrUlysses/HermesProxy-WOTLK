@@ -2,9 +2,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public class AuctionBucketKey
 {
-	public uint ItemID;
+	public readonly uint ItemID;
 
-	public ushort ItemLevel;
+	public readonly ushort ItemLevel;
 
 	public ushort? BattlePetSpeciesID = 0;
 

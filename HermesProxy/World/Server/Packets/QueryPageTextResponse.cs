@@ -34,7 +34,7 @@ public class QueryPageTextResponse : ServerPacket
 
 	public bool Allow;
 
-	public List<PageTextInfo> Pages = new List<PageTextInfo>();
+	public List<PageTextInfo> Pages = new();
 
 	public QueryPageTextResponse()
 		: base(Opcode.SMSG_QUERY_PAGE_TEXT_RESPONSE)

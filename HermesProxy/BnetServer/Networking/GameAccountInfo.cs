@@ -5,17 +5,17 @@ namespace BNetServer.Networking;
 
 public class GameAccountInfo
 {
-	public uint Id;
+	public readonly uint Id;
 
-	public string Name;
+	public readonly string Name;
 
-	public string DisplayName;
+	public readonly string DisplayName;
 
-	public uint UnbanDate;
+	public readonly uint UnbanDate;
 
-	public bool IsBanned;
+	public readonly bool IsBanned;
 
-	public bool IsPermanenetlyBanned;
+	public readonly bool IsPermanenetlyBanned;
 
 	public WowGuid128 WoWAccountGuid => WowGuid128.Create(HighGuidType703.WowAccount, Id);
 

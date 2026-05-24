@@ -8,7 +8,7 @@ public class RuneData
 
 	public byte Count;
 
-	public List<byte> Cooldowns = new List<byte>();
+	public readonly List<byte> Cooldowns = new();
 
 	public void Write(WorldPacket data)
 	{

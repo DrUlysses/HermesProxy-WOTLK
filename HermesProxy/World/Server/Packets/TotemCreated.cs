@@ -12,7 +12,7 @@ internal class TotemCreated : ServerPacket
 
 	public uint SpellId;
 
-	public float TimeMod = 1f;
+	public readonly float TimeMod = 1f;
 
 	public bool CannotDismiss = false;
 

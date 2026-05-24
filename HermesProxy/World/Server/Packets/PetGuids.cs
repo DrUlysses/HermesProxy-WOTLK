@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class PetGuids : ServerPacket
 {
-	public List<WowGuid128> Guids = new List<WowGuid128>();
+	public readonly List<WowGuid128> Guids = new();
 
 	public PetGuids()
 		: base(Opcode.SMSG_PET_GUIDS, ConnectionType.Instance)

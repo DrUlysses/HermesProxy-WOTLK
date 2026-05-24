@@ -6,7 +6,7 @@ public class PetSpellHistory
 
 	public uint RecoveryTime;
 
-	public float ChargeModRate = 1f;
+	public readonly float ChargeModRate = 1f;
 
 	public sbyte ConsumedCharges;
 }

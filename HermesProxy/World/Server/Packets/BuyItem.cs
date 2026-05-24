@@ -6,7 +6,7 @@ public class BuyItem : ClientPacket
 {
 	public WowGuid128 VendorGUID;
 
-	public ItemInstance Item;
+	public readonly ItemInstance Item;
 
 	public uint Muid;
 

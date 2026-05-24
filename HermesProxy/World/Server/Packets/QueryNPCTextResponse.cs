@@ -9,9 +9,9 @@ public class QueryNPCTextResponse : ServerPacket
 
 	public bool Allow;
 
-	public float[] Probabilities = new float[8];
+	public readonly float[] Probabilities = new float[8];
 
-	public uint[] BroadcastTextID = new uint[8];
+	public readonly uint[] BroadcastTextID = new uint[8];
 
 	public QueryNPCTextResponse()
 		: base(Opcode.SMSG_QUERY_NPC_TEXT_RESPONSE, ConnectionType.Instance)

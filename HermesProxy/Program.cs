@@ -15,7 +15,7 @@ public class Program
 {
 	public static class CommandLineArgumentsTemplate
 	{
-		public static readonly Option<string?> ConfigFileLocation = new Option<string>("--config", delegate(ArgumentResult result)
+		public static readonly Option<string?> ConfigFileLocation = new("--config", delegate(ArgumentResult result)
 		{
 			if (result.Tokens.Count == 0)
 			{
@@ -30,7 +30,7 @@ public class Program
 			return value;
 		}, isDefault: true, "The config file that will be used");
 
-		public static readonly Option<string?> WorkingDirectory = new Option<string>("--workDir", delegate(ArgumentResult result)
+		public static readonly Option<string?> WorkingDirectory = new("--workDir", delegate(ArgumentResult result)
 		{
 			if (result.Tokens.Count == 0)
 			{
@@ -45,9 +45,9 @@ public class Program
 			return value;
 		}, isDefault: true, "The working directory that will be used");
 
-		public static readonly Option<bool> DisableVersionCheck = new Option<bool>("--no-version-check", "Disables the initial version update check");
+		public static readonly Option<bool> DisableVersionCheck = new("--no-version-check", "Disables the initial version update check");
 
-		public static readonly Option<string[]> OverwrittenConfigValues = new Option<string[]>("--set", "Overwrites a specific config value. Example: --set ServerAddress=logon.example.com");
+		public static readonly Option<string[]> OverwrittenConfigValues = new("--set", "Overwrites a specific config value. Example: --set ServerAddress=logon.example.com");
 	}
 
 	public static int Main(string[] args)

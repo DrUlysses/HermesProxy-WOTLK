@@ -14,7 +14,7 @@ internal class EnchantmentLog : ServerPacket
 
 	public int Enchantment;
 
-	public int EnchantSlot = 1;
+	public readonly int EnchantSlot = 1;
 
 	public EnchantmentLog()
 		: base(Opcode.SMSG_ENCHANTMENT_LOG)

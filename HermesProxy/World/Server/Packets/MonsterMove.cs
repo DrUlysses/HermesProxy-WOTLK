@@ -8,13 +8,13 @@ namespace HermesProxy.World.Server.Packets;
 
 public class MonsterMove : ServerPacket
 {
-	public WowGuid128 MoverGUID;
+	public readonly WowGuid128 MoverGUID;
 
-	public ServerSideMovement MoveSpline;
+	public readonly ServerSideMovement MoveSpline;
 
-	public List<Vector3> Points = new List<Vector3>();
+	public readonly List<Vector3> Points = new();
 
-	public List<Vector3> PackedDeltas = new List<Vector3>();
+	public readonly List<Vector3> PackedDeltas = new();
 
 	public MonsterMove(WowGuid128 guid, ServerSideMovement moveSpline)
 		: base(Opcode.SMSG_ON_MONSTER_MOVE, ConnectionType.Instance)
@@ -67,13 +67,13 @@ public class MonsterMove : ServerPacket
 		_worldPacket.WriteUInt32(MoveSpline.SplineId);
 		_worldPacket.WriteVector3(Vector3.Zero);
 		_worldPacket.WriteBit(bit: false);
-		_worldPacket.WriteBits((Points.Count == 0) ? 2 : 0, 3);
+		_worldPacket.WriteBits(Points.Count == 0 ? 2 : 0, 3);
 		_worldPacket.WriteUInt32((uint)MoveSpline.SplineFlags);
 		_worldPacket.WriteInt32(0);
 		_worldPacket.WriteUInt32(MoveSpline.SplineTimeFull);
 		_worldPacket.WriteUInt32(0u);
 		_worldPacket.WriteUInt8(MoveSpline.SplineMode);
-		_worldPacket.WritePackedGuid128((MoveSpline.TransportGuid != null) ? MoveSpline.TransportGuid : WowGuid128.Empty);
+		_worldPacket.WritePackedGuid128(MoveSpline.TransportGuid != null ? MoveSpline.TransportGuid : WowGuid128.Empty);
 		_worldPacket.WriteInt8(MoveSpline.TransportSeat);
 		_worldPacket.WriteBits((byte)MoveSpline.SplineType, 2);
 		_worldPacket.WriteBits(Points.Count, 16);

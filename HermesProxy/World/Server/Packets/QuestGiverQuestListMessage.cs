@@ -12,7 +12,7 @@ public class QuestGiverQuestListMessage : ServerPacket
 
 	public uint GreetEmoteType;
 
-	public List<ClientGossipQuest> QuestOptions = new List<ClientGossipQuest>();
+	public readonly List<ClientGossipQuest> QuestOptions = new();
 
 	public string Greeting = "";
 

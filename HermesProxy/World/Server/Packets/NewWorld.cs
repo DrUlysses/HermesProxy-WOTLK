@@ -9,7 +9,7 @@ public class NewWorld : ServerPacket
 
 	public uint Reason;
 
-	public Vector3 Position = default(Vector3);
+	public Vector3 Position = default;
 
 	public float Orientation;
 

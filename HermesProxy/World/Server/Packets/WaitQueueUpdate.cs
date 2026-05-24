@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class WaitQueueUpdate : ServerPacket
 {
-	public AuthWaitInfo WaitInfo = new AuthWaitInfo();
+	public readonly AuthWaitInfo WaitInfo = new();
 
 	public WaitQueueUpdate()
 		: base(Opcode.SMSG_WAIT_QUEUE_UPDATE)

@@ -95,11 +95,11 @@ namespace Framework.GameMath
         /// <summary>
         /// 4-dimentional single-precision floating point zero matrix.
         /// </summary>
-        public static readonly Matrix2 Zero = new Matrix2(0, 0, 0, 0);
+        public static readonly Matrix2 Zero = new(0, 0, 0, 0);
         /// <summary>
         /// 4-dimentional single-precision floating point identity matrix.
         /// </summary>
-        public static readonly Matrix2 Identity = new Matrix2(1, 0, 0, 1);
+        public static readonly Matrix2 Identity = new(1, 0, 0, 1);
         #endregion
 
         #region Public Properties
@@ -386,8 +386,8 @@ namespace Framework.GameMath
         public static Vector2 Transform(Matrix2 matrix, Vector2 vector)
         {
             return new Vector2(
-                (matrix.M11 * vector.X) + (matrix.M12 * vector.Y),
-                (matrix.M21 * vector.X) + (matrix.M22 * vector.Y));
+                matrix.M11 * vector.X + matrix.M12 * vector.Y,
+                matrix.M21 * vector.X + matrix.M22 * vector.Y);
         }
         /// <summary>
         /// Transforms a given vector by a matrix and put the result in a vector.
@@ -397,8 +397,8 @@ namespace Framework.GameMath
         /// <param name="result">A <see cref="Vector2"/> instance to hold the result.</param>
         public static void Transform(Matrix2 matrix, Vector2 vector, ref Vector2 result)
         {
-            result.X = (matrix.M11 * vector.X) + (matrix.M12 * vector.Y);
-            result.Y = (matrix.M21 * vector.X) + (matrix.M22 * vector.Y);
+            result.X = matrix.M11 * vector.X + matrix.M12 * vector.Y;
+            result.Y = matrix.M21 * vector.X + matrix.M22 * vector.Y;
         }
         /// <summary>
         /// Transposes a matrix.
@@ -436,8 +436,8 @@ namespace Framework.GameMath
             {
                 var m = (Matrix2)obj;
                 return
-                    (_m11 == m.M11) && (_m12 == m.M12) &&
-                    (_m21 == m.M21) && (_m22 == m.M22);
+                    _m11 == m.M11 && _m12 == m.M12 &&
+                    _m21 == m.M21 && _m22 == m.M22;
             }
             return false;
         }
@@ -458,7 +458,7 @@ namespace Framework.GameMath
         /// <returns>The determinant value of the matrix.</returns>
         public float GetDeterminant()
         {
-            return (_m11 * _m22) - (_m12 * _m21);
+            return _m11 * _m22 - _m12 * _m21;
         }
         /// <summary>
         /// Transposes this matrix.

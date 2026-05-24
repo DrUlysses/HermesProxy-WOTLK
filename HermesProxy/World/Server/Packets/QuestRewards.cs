@@ -20,7 +20,7 @@ public class QuestRewards
 
 	public uint FactionFlags;
 
-	public int[] SpellCompletionDisplayID = new int[3];
+	public readonly int[] SpellCompletionDisplayID = new int[3];
 
 	public uint SpellCompletionID;
 
@@ -30,23 +30,23 @@ public class QuestRewards
 
 	public uint TreasurePickerID;
 
-	public QuestChoiceItem[] ChoiceItems = new QuestChoiceItem[6];
+	public readonly QuestChoiceItem[] ChoiceItems = new QuestChoiceItem[6];
 
-	public uint[] ItemID = new uint[4];
+	public readonly uint[] ItemID = new uint[4];
 
-	public uint[] ItemQty = new uint[4];
+	public readonly uint[] ItemQty = new uint[4];
 
-	public uint[] FactionID = new uint[5];
+	public readonly uint[] FactionID = new uint[5];
 
-	public int[] FactionValue = new int[5];
+	public readonly int[] FactionValue = new int[5];
 
-	public int[] FactionOverride = new int[5];
+	public readonly int[] FactionOverride = new int[5];
 
-	public int[] FactionCapIn = new int[5];
+	public readonly int[] FactionCapIn = new int[5];
 
-	public uint[] CurrencyID = new uint[4];
+	public readonly uint[] CurrencyID = new uint[4];
 
-	public uint[] CurrencyQty = new uint[4];
+	public readonly uint[] CurrencyQty = new uint[4];
 
 	public bool IsBoostSpell;
 

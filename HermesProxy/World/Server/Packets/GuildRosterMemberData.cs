@@ -15,9 +15,9 @@ public class GuildRosterMemberData
 
 	public int AreaID;
 
-	public int PersonalAchievementPoints = -1;
+	public readonly int PersonalAchievementPoints = -1;
 
-	public int GuildReputation = -1;
+	public readonly int GuildReputation = -1;
 
 	public int GuildRepToCap;
 
@@ -43,7 +43,7 @@ public class GuildRosterMemberData
 
 	public bool SorEligible;
 
-	public GuildRosterProfessionData[] Profession = new GuildRosterProfessionData[2];
+	public readonly GuildRosterProfessionData[] Profession = new GuildRosterProfessionData[2];
 
 	public void Write(WorldPacket data)
 	{

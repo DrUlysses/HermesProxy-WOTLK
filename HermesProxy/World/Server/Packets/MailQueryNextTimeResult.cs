@@ -20,7 +20,7 @@ public class MailQueryNextTimeResult : ServerPacket
 
 	public float NextMailTime;
 
-	public List<MailNextTimeEntry> Mails = new List<MailNextTimeEntry>();
+	public List<MailNextTimeEntry> Mails = new();
 
 	public MailQueryNextTimeResult()
 		: base(Opcode.SMSG_MAIL_QUERY_NEXT_TIME_RESULT)

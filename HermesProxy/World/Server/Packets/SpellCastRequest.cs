@@ -13,7 +13,7 @@ public class SpellCastRequest
 
 	public uint SendCastFlags;
 
-	public SpellTargetData Target = new SpellTargetData();
+	public readonly SpellTargetData Target = new();
 
 	public MissileTrajectoryRequest MissileTrajectory;
 
@@ -21,15 +21,15 @@ public class SpellCastRequest
 
 	public MovementInfo MoveUpdate;
 
-	public List<SpellWeight> Weight = new List<SpellWeight>();
+	public readonly List<SpellWeight> Weight = new();
 
-	public Array<SpellOptionalReagent> OptionalReagents = new Array<SpellOptionalReagent>(3);
+	public readonly Array<SpellOptionalReagent> OptionalReagents = new(3);
 
-	public Array<SpellExtraCurrencyCost> OptionalCurrencies = new Array<SpellExtraCurrencyCost>(5);
+	public readonly Array<SpellExtraCurrencyCost> OptionalCurrencies = new(5);
 
 	public WowGuid128 CraftingNPC;
 
-	public uint[] Misc = new uint[2];
+	public readonly uint[] Misc = new uint[2];
 
 	public void Read(WorldPacket data)
 	{

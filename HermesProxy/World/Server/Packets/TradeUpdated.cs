@@ -22,7 +22,7 @@ public class TradeUpdated : ServerPacket
 
 		public uint Durability;
 
-		public List<ItemGemData> Gems = new List<ItemGemData>();
+		public readonly List<ItemGemData> Gems = new();
 
 		public void Write(WorldPacket data)
 		{
@@ -46,7 +46,7 @@ public class TradeUpdated : ServerPacket
 	{
 		public byte Slot;
 
-		public ItemInstance Item = new ItemInstance();
+		public readonly ItemInstance Item = new();
 
 		public int StackCount;
 
@@ -77,7 +77,7 @@ public class TradeUpdated : ServerPacket
 
 	public uint ClientStateIndex;
 
-	public List<TradeItem> Items = new List<TradeItem>();
+	public List<TradeItem> Items = new();
 
 	public int CurrencyType;
 

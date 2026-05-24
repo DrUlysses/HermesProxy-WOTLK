@@ -68,11 +68,11 @@ namespace Framework.GameMath
         public Quaternion(long packed)
         {
             _x = (packed >> 42) * (1.0f / 2097152.0f);
-            _y = (((packed << 22) >> 32) >> 11) * (1.0f / 1048576.0f);
+            _y = ((packed << 22) >> 32 >> 11) * (1.0f / 1048576.0f);
             _z = (packed << 43 >> 43) * (1.0f / 1048576.0f);
 
             _w = _x * _x + _y * _y + _z * _z;
-            if (Math.Abs(_w - 1.0f) >= (1 / 1048576.0f))
+            if (Math.Abs(_w - 1.0f) >= 1 / 1048576.0f)
                 _w = (float)Math.Sqrt(1.0f - _w);
             else
                 _w = 0.0f;
@@ -96,8 +96,8 @@ namespace Framework.GameMath
             // Find the index of the largest diagonal component
             // These ? operations hopefully compile to conditional
             // move instructions instead of branches.
-            var i = (rot[1, 1] > rot[0, 0]) ? 2 : 1;
-            i = (rot[2, 2] > rot[i, i]) ? 2 : i;
+            var i = rot[1, 1] > rot[0, 0] ? 2 : 1;
+            i = rot[2, 2] > rot[i, i] ? 2 : i;
 
             // Find the indices of the other elements
             var j = plus1mod3[i];
@@ -116,9 +116,9 @@ namespace Framework.GameMath
             // fixes any poorly normalized input.  Multiply all elements by 2*c in the above, giving:
 
             // nc2 = -c^2
-            var nc2 = ((rot[j, j] + rot[k, k]) - rot[i, i]) - 1.0;
+            var nc2 = rot[j, j] + rot[k, k] - rot[i, i] - 1.0;
             this[i] = (float)nc2;
-            W = (rot[j, k] - rot[k, j]);
+            W = rot[j, k] - rot[k, j];
             this[j] = -(rot[i, j] + rot[j, i]);
             this[k] = -(rot[i, k] + rot[k, i]);
 
@@ -147,27 +147,27 @@ namespace Framework.GameMath
         /// <summary>
         /// Double-precision floating point zero quaternion.
         /// </summary>
-        public static readonly Quaternion Zero = new Quaternion(0, 0, 0, 0);
+        public static readonly Quaternion Zero = new(0, 0, 0, 0);
         /// <summary>
         /// Double-precision floating point identity quaternion.
         /// </summary>
-        public static readonly Quaternion Identity = new Quaternion(0, 0, 0, 1);
+        public static readonly Quaternion Identity = new(0, 0, 0, 1);
         /// <summary>
         /// Double-precision floating point X-Axis quaternion.
         /// </summary>
-        public static readonly Quaternion XAxis = new Quaternion(1, 0, 0, 0);
+        public static readonly Quaternion XAxis = new(1, 0, 0, 0);
         /// <summary>
         /// Double-precision floating point Y-Axis quaternion.
         /// </summary>
-        public static readonly Quaternion YAxis = new Quaternion(0, 1, 0, 0);
+        public static readonly Quaternion YAxis = new(0, 1, 0, 0);
         /// <summary>
         /// Double-precision floating point Z-Axis quaternion.
         /// </summary>
-        public static readonly Quaternion ZAxis = new Quaternion(0, 0, 1, 0);
+        public static readonly Quaternion ZAxis = new(0, 0, 1, 0);
         /// <summary>
         /// Double-precision floating point W-Axis quaternion.
         /// </summary>
-        public static readonly Quaternion WAxis = new Quaternion(0, 0, 0, 1);
+        public static readonly Quaternion WAxis = new(0, 0, 0, 1);
         #endregion
 
         #region Public Properties
@@ -227,7 +227,7 @@ namespace Framework.GameMath
         {
             get
             {
-                return (_w * _w + _x * _x + _y * _y + _z * _z);
+                return _w * _w + _x * _x + _y * _y + _z * _z;
             }
         }
         /// <summary>
@@ -498,7 +498,7 @@ namespace Framework.GameMath
 
         float dot(Quaternion other)
         {
-            return (X * other.X) + (Y * other.Y) + (Z * other.Z) + (W * other.W);
+            return X * other.X + Y * other.Y + Z * other.Z + W * other.W;
         }
 
         float rsq(float x)
@@ -612,7 +612,7 @@ namespace Framework.GameMath
             long x = (int)(_x * PACK_X) * w_sign & PACK_X_MASK;
             long y = (int)(_y * PACK_YZ) * w_sign & PACK_YZ_MASK;
             long z = (int)(_z * PACK_YZ) * w_sign & PACK_YZ_MASK;
-            return (z | (y << 21) | (x << 42));
+            return z | (y << 21) | (x << 42);
         }
         #endregion
 
@@ -702,7 +702,7 @@ namespace Framework.GameMath
             if (obj is Quaternion)
             {
                 var quaternion = (Quaternion)obj;
-                return (_w == quaternion.W) && (_x == quaternion.X) && (_y == quaternion.Y) && (_z == quaternion.Z);
+                return _w == quaternion.W && _x == quaternion.X && _y == quaternion.Y && _z == quaternion.Z;
             }
             return false;
         }
@@ -808,7 +808,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="Quaternion"/> instance to hold the result.</returns>
         public static Quaternion operator /(float scalar, Quaternion quaternion)
         {
-            return Multiply(quaternion, (1.0f / scalar));
+            return Multiply(quaternion, 1.0f / scalar);
         }
         #endregion
 

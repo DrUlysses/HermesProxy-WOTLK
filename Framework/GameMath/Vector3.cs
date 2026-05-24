@@ -99,23 +99,23 @@ namespace Framework.GameMath
         /// <summary>
         /// 4-Dimentional single-precision floating point zero vector.
         /// </summary>
-        public static readonly Vector3 Zero = new Vector3(0.0f, 0.0f, 0.0f);
+        public static readonly Vector3 Zero = new(0.0f, 0.0f, 0.0f);
 
-        public static readonly Vector3 One = new Vector3(1.0f, 1.0f, 1.0f);
+        public static readonly Vector3 One = new(1.0f, 1.0f, 1.0f);
 
-        public static readonly Vector3 Inf = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+        public static readonly Vector3 Inf = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
         /// <summary>
         /// 4-Dimentional single-precision floating point X-Axis vector.
         /// </summary>
-        public static readonly Vector3 XAxis = new Vector3(1.0f, 0.0f, 0.0f);
+        public static readonly Vector3 XAxis = new(1.0f, 0.0f, 0.0f);
         /// <summary>
         /// 4-Dimentional single-precision floating point Y-Axis vector.
         /// </summary>
-        public static readonly Vector3 YAxis = new Vector3(0.0f, 1.0f, 0.0f);
+        public static readonly Vector3 YAxis = new(0.0f, 1.0f, 0.0f);
         /// <summary>
         /// 4-Dimentional single-precision floating point Y-Axis vector.
         /// </summary>
-        public static readonly Vector3 ZAxis = new Vector3(0.0f, 0.0f, 1.0f);
+        public static readonly Vector3 ZAxis = new(0.0f, 0.0f, 1.0f);
         #endregion
 
         #region Public properties
@@ -449,7 +449,7 @@ namespace Framework.GameMath
         /// <returns>The dot product value.</returns>
         public static float DotProduct(Vector3 left, Vector3 right)
         {
-            return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z);
+            return left.X * right.X + left.Y * right.Y + left.Z * right.Z;
         }
         /// <summary>
         /// Calculates the cross product of two vectors.
@@ -505,11 +505,9 @@ namespace Framework.GameMath
         public static bool ApproxEqual(Vector3 left, Vector3 right, float tolerance)
         {
             return
-                (
-                (Math.Abs(left.X - right.X) <= tolerance) &&
-                (Math.Abs(left.Y - right.Y) <= tolerance) &&
-                (Math.Abs(left.Z - right.Z) <= tolerance)
-                );
+                Math.Abs(left.X - right.X) <= tolerance &&
+                Math.Abs(left.Y - right.Y) <= tolerance &&
+                Math.Abs(left.Z - right.Z) <= tolerance;
         }
         #endregion
 
@@ -543,7 +541,7 @@ namespace Framework.GameMath
         /// <returns>Returns the squared length of the vector. (X*X + Y*Y)</returns>
         public float GetLengthSquared()
         {
-            return (X * X + Y * Y + Z * Z);
+            return X * X + Y * Y + Z * Z;
         }
         /// <summary>
         /// Clamps vector values to zero using a given tolerance value.
@@ -593,7 +591,7 @@ namespace Framework.GameMath
             if (obj is Vector3)
             {
                 var v = (Vector3)obj;
-                return (X == v.X) && (Y == v.Y) && (Z == v.Z);
+                return X == v.X && Y == v.Y && Z == v.Z;
             }
             return false;
         }
@@ -637,10 +635,9 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the left-hand vector's components are greater than the right-hand vector's component; otherwise, <see langword="false"/>.</returns>
         public static bool operator >(Vector3 left, Vector3 right)
         {
-            return (
-                (left.X > right.X) &&
-                (left.Y > right.Y) &&
-                (left.Z > right.Z));
+            return left.X > right.X &&
+                   left.Y > right.Y &&
+                   left.Z > right.Z;
         }
         /// <summary>
         /// Tests if a vector's components are smaller than another vector's components.
@@ -650,10 +647,9 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the left-hand vector's components are smaller than the right-hand vector's component; otherwise, <see langword="false"/>.</returns>
         public static bool operator <(Vector3 left, Vector3 right)
         {
-            return (
-                (left.X < right.X) &&
-                (left.Y < right.Y) &&
-                (left.Z < right.Z));
+            return left.X < right.X &&
+                   left.Y < right.Y &&
+                   left.Z < right.Z;
         }
         /// <summary>
         /// Tests if a vector's components are greater or equal than another vector's components.
@@ -663,10 +659,9 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the left-hand vector's components are greater or equal than the right-hand vector's component; otherwise, <see langword="false"/>.</returns>
         public static bool operator >=(Vector3 left, Vector3 right)
         {
-            return (
-                (left.X >= right.X) &&
-                (left.Y >= right.Y) &&
-                (left.Z >= right.Z));
+            return left.X >= right.X &&
+                   left.Y >= right.Y &&
+                   left.Z >= right.Z;
         }
         /// <summary>
         /// Tests if a vector's components are smaller or equal than another vector's components.
@@ -676,10 +671,9 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the left-hand vector's components are smaller or equal than the right-hand vector's component; otherwise, <see langword="false"/>.</returns>
         public static bool operator <=(Vector3 left, Vector3 right)
         {
-            return (
-                (left.X <= right.X) &&
-                (left.Y <= right.Y) &&
-                (left.Z <= right.Z));
+            return left.X <= right.X &&
+                   left.Y <= right.Y &&
+                   left.Z <= right.Z;
         }
         #endregion
 
@@ -988,7 +982,7 @@ namespace Framework.GameMath
 
         public Vector3 lerp(Vector3 v, float alpha)
         {
-            return (this) + (v - this) * alpha;
+            return this + (v - this) * alpha;
         }
 
         /// <summary>
@@ -1059,7 +1053,7 @@ namespace Framework.GameMath
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            if ((destinationType == typeof(string)) && (value is Vector3))
+            if (destinationType == typeof(string) && value is Vector3)
             {
                 var v = (Vector3)value;
                 return v.ToString();

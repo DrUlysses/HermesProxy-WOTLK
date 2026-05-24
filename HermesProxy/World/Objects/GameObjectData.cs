@@ -32,7 +32,7 @@ public class GameObjectData
 
 	public uint? StateAnimKitID;
 
-	public uint?[] StateWorldEffectIDs = new uint?[4];
+	public readonly uint?[] StateWorldEffectIDs = new uint?[4];
 
 	public uint? CustomParam;
 

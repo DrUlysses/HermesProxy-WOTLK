@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SpellCooldownPkt : ServerPacket
 {
-	public List<SpellCooldownStruct> SpellCooldowns = new List<SpellCooldownStruct>();
+	public readonly List<SpellCooldownStruct> SpellCooldowns = new();
 
 	public WowGuid128 Caster;
 

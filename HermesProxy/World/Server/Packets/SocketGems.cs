@@ -4,7 +4,7 @@ internal class SocketGems : ClientPacket
 {
 	public WowGuid128 ItemGuid;
 
-	public WowGuid128[] Gems = new WowGuid128[3];
+	public readonly WowGuid128[] Gems = new WowGuid128[3];
 
 	public SocketGems(WorldPacket packet)
 		: base(packet)

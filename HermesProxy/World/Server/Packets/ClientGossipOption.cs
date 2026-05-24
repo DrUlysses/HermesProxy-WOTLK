@@ -20,7 +20,7 @@ public class ClientGossipOption
 
 	public string Confirm;
 
-	public TreasureLootList Treasure = new TreasureLootList();
+	public readonly TreasureLootList Treasure = new();
 
 	public int? SpellID;
 }

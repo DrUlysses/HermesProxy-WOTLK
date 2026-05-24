@@ -16,7 +16,7 @@ internal class SpellDispellLog : ServerPacket
 
 	public uint DispelledBySpellID;
 
-	public List<SpellDispellData> DispellData = new List<SpellDispellData>();
+	public readonly List<SpellDispellData> DispellData = new();
 
 	public SpellDispellLog()
 		: base(Opcode.SMSG_SPELL_DISPELL_LOG, ConnectionType.Instance)

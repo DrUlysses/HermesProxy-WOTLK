@@ -7,7 +7,7 @@ public class ServerPetitionShowList : ServerPacket
 {
 	public WowGuid128 Unit;
 
-	public List<PetitionEntry> Petitions = new List<PetitionEntry>();
+	public readonly List<PetitionEntry> Petitions = new();
 
 	public ServerPetitionShowList()
 		: base(Opcode.SMSG_PETITION_SHOW_LIST)

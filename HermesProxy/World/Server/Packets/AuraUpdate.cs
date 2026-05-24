@@ -6,11 +6,11 @@ namespace HermesProxy.World.Server.Packets;
 
 public class AuraUpdate : ServerPacket
 {
-	public bool UpdateAll;
+	public readonly bool UpdateAll;
 
-	public List<AuraInfo> Auras = new List<AuraInfo>();
+	public readonly List<AuraInfo> Auras = new();
 
-	public WowGuid128 UnitGUID;
+	public readonly WowGuid128 UnitGUID;
 
 	public AuraUpdate(WowGuid128 guid, bool all)
 		: base(Opcode.SMSG_AURA_UPDATE, ConnectionType.Instance)

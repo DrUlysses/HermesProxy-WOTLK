@@ -6,7 +6,7 @@ public class PhaseShiftChange : ServerPacket
 {
 	public WowGuid128 Client;
 
-	public uint PhaseShiftFlags = 8u;
+	public readonly uint PhaseShiftFlags = 8u;
 
 	public PhaseShiftChange()
 		: base(Opcode.SMSG_PHASE_SHIFT_CHANGE)

@@ -11,7 +11,7 @@ internal class PetStableList : ServerPacket
 
 	public byte NumStableSlots;
 
-	public List<PetStableInfo> Pets = new List<PetStableInfo>();
+	public readonly List<PetStableInfo> Pets = new();
 
 	public PetStableList()
 		: base(Opcode.SMSG_PET_STABLE_LIST, ConnectionType.Instance)

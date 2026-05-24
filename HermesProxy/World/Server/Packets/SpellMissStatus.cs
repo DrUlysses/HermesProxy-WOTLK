@@ -4,9 +4,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public struct SpellMissStatus
 {
-	public SpellMissInfo Reason;
+	public readonly SpellMissInfo Reason;
 
-	public SpellMissInfo ReflectStatus;
+	public readonly SpellMissInfo ReflectStatus;
 
 	public SpellMissStatus(SpellMissInfo reason, SpellMissInfo reflectStatus)
 	{

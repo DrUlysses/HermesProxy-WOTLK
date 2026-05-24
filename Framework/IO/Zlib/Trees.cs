@@ -77,88 +77,88 @@ namespace Framework.IO
 		#region Tables
 		private static readonly ct_data[] static_ltree=new ct_data[L_CODES+2]
 		{
-			new ct_data( 12, 8), new ct_data(140, 8), new ct_data( 76, 8), new ct_data(204, 8),
-			new ct_data( 44, 8), new ct_data(172, 8), new ct_data(108, 8), new ct_data(236, 8), 
-			new ct_data( 28, 8), new ct_data(156, 8), new ct_data( 92, 8), new ct_data(220, 8),
-			new ct_data( 60, 8), new ct_data(188, 8), new ct_data(124, 8), new ct_data(252, 8),
-			new ct_data(  2, 8), new ct_data(130, 8), new ct_data( 66, 8), new ct_data(194, 8),
-			new ct_data( 34, 8), new ct_data(162, 8), new ct_data( 98, 8), new ct_data(226, 8),
-			new ct_data( 18, 8), new ct_data(146, 8), new ct_data( 82, 8), new ct_data(210, 8),
-			new ct_data( 50, 8), new ct_data(178, 8), new ct_data(114, 8), new ct_data(242, 8),
-			new ct_data( 10, 8), new ct_data(138, 8), new ct_data( 74, 8), new ct_data(202, 8),
-			new ct_data( 42, 8), new ct_data(170, 8), new ct_data(106, 8), new ct_data(234, 8),
-			new ct_data( 26, 8), new ct_data(154, 8), new ct_data( 90, 8), new ct_data(218, 8),
-			new ct_data( 58, 8), new ct_data(186, 8), new ct_data(122, 8), new ct_data(250, 8),
-			new ct_data(  6, 8), new ct_data(134, 8), new ct_data( 70, 8), new ct_data(198, 8),
-			new ct_data( 38, 8), new ct_data(166, 8), new ct_data(102, 8), new ct_data(230, 8),
-			new ct_data( 22, 8), new ct_data(150, 8), new ct_data( 86, 8), new ct_data(214, 8),
-			new ct_data( 54, 8), new ct_data(182, 8), new ct_data(118, 8), new ct_data(246, 8),
-			new ct_data( 14, 8), new ct_data(142, 8), new ct_data( 78, 8), new ct_data(206, 8),
-			new ct_data( 46, 8), new ct_data(174, 8), new ct_data(110, 8), new ct_data(238, 8),
-			new ct_data( 30, 8), new ct_data(158, 8), new ct_data( 94, 8), new ct_data(222, 8),
-			new ct_data( 62, 8), new ct_data(190, 8), new ct_data(126, 8), new ct_data(254, 8),
-			new ct_data(  1, 8), new ct_data(129, 8), new ct_data( 65, 8), new ct_data(193, 8),
-			new ct_data( 33, 8), new ct_data(161, 8), new ct_data( 97, 8), new ct_data(225, 8),
-			new ct_data( 17, 8), new ct_data(145, 8), new ct_data( 81, 8), new ct_data(209, 8),
-			new ct_data( 49, 8), new ct_data(177, 8), new ct_data(113, 8), new ct_data(241, 8),
-			new ct_data(  9, 8), new ct_data(137, 8), new ct_data( 73, 8), new ct_data(201, 8),
-			new ct_data( 41, 8), new ct_data(169, 8), new ct_data(105, 8), new ct_data(233, 8),
-			new ct_data( 25, 8), new ct_data(153, 8), new ct_data( 89, 8), new ct_data(217, 8),
-			new ct_data( 57, 8), new ct_data(185, 8), new ct_data(121, 8), new ct_data(249, 8),
-			new ct_data(  5, 8), new ct_data(133, 8), new ct_data( 69, 8), new ct_data(197, 8),
-			new ct_data( 37, 8), new ct_data(165, 8), new ct_data(101, 8), new ct_data(229, 8),
-			new ct_data( 21, 8), new ct_data(149, 8), new ct_data( 85, 8), new ct_data(213, 8),
-			new ct_data( 53, 8), new ct_data(181, 8), new ct_data(117, 8), new ct_data(245, 8),
-			new ct_data( 13, 8), new ct_data(141, 8), new ct_data( 77, 8), new ct_data(205, 8),
-			new ct_data( 45, 8), new ct_data(173, 8), new ct_data(109, 8), new ct_data(237, 8),
-			new ct_data( 29, 8), new ct_data(157, 8), new ct_data( 93, 8), new ct_data(221, 8),
-			new ct_data( 61, 8), new ct_data(189, 8), new ct_data(125, 8), new ct_data(253, 8),
-			new ct_data( 19, 9), new ct_data(275, 9), new ct_data(147, 9), new ct_data(403, 9),
-			new ct_data( 83, 9), new ct_data(339, 9), new ct_data(211, 9), new ct_data(467, 9),
-			new ct_data( 51, 9), new ct_data(307, 9), new ct_data(179, 9), new ct_data(435, 9),
-			new ct_data(115, 9), new ct_data(371, 9), new ct_data(243, 9), new ct_data(499, 9),
-			new ct_data( 11, 9), new ct_data(267, 9), new ct_data(139, 9), new ct_data(395, 9),
-			new ct_data( 75, 9), new ct_data(331, 9), new ct_data(203, 9), new ct_data(459, 9),
-			new ct_data( 43, 9), new ct_data(299, 9), new ct_data(171, 9), new ct_data(427, 9),
-			new ct_data(107, 9), new ct_data(363, 9), new ct_data(235, 9), new ct_data(491, 9),
-			new ct_data( 27, 9), new ct_data(283, 9), new ct_data(155, 9), new ct_data(411, 9),
-			new ct_data( 91, 9), new ct_data(347, 9), new ct_data(219, 9), new ct_data(475, 9),
-			new ct_data( 59, 9), new ct_data(315, 9), new ct_data(187, 9), new ct_data(443, 9),
-			new ct_data(123, 9), new ct_data(379, 9), new ct_data(251, 9), new ct_data(507, 9),
-			new ct_data(  7, 9), new ct_data(263, 9), new ct_data(135, 9), new ct_data(391, 9),
-			new ct_data( 71, 9), new ct_data(327, 9), new ct_data(199, 9), new ct_data(455, 9),
-			new ct_data( 39, 9), new ct_data(295, 9), new ct_data(167, 9), new ct_data(423, 9),
-			new ct_data(103, 9), new ct_data(359, 9), new ct_data(231, 9), new ct_data(487, 9),
-			new ct_data( 23, 9), new ct_data(279, 9), new ct_data(151, 9), new ct_data(407, 9),
-			new ct_data( 87, 9), new ct_data(343, 9), new ct_data(215, 9), new ct_data(471, 9),
-			new ct_data( 55, 9), new ct_data(311, 9), new ct_data(183, 9), new ct_data(439, 9),
-			new ct_data(119, 9), new ct_data(375, 9), new ct_data(247, 9), new ct_data(503, 9),
-			new ct_data( 15, 9), new ct_data(271, 9), new ct_data(143, 9), new ct_data(399, 9),
-			new ct_data( 79, 9), new ct_data(335, 9), new ct_data(207, 9), new ct_data(463, 9),
-			new ct_data( 47, 9), new ct_data(303, 9), new ct_data(175, 9), new ct_data(431, 9),
-			new ct_data(111, 9), new ct_data(367, 9), new ct_data(239, 9), new ct_data(495, 9),
-			new ct_data( 31, 9), new ct_data(287, 9), new ct_data(159, 9), new ct_data(415, 9),
-			new ct_data( 95, 9), new ct_data(351, 9), new ct_data(223, 9), new ct_data(479, 9),
-			new ct_data( 63, 9), new ct_data(319, 9), new ct_data(191, 9), new ct_data(447, 9),
-			new ct_data(127, 9), new ct_data(383, 9), new ct_data(255, 9), new ct_data(511, 9),
-			new ct_data(  0, 7), new ct_data( 64, 7), new ct_data( 32, 7), new ct_data( 96, 7),
-			new ct_data( 16, 7), new ct_data( 80, 7), new ct_data( 48, 7), new ct_data(112, 7),
-			new ct_data(  8, 7), new ct_data( 72, 7), new ct_data( 40, 7), new ct_data(104, 7),
-			new ct_data( 24, 7), new ct_data( 88, 7), new ct_data( 56, 7), new ct_data(120, 7),
-			new ct_data(  4, 7), new ct_data( 68, 7), new ct_data( 36, 7), new ct_data(100, 7),
-			new ct_data( 20, 7), new ct_data( 84, 7), new ct_data( 52, 7), new ct_data(116, 7),
-			new ct_data(  3, 8), new ct_data(131, 8), new ct_data( 67, 8), new ct_data(195, 8),
-			new ct_data( 35, 8), new ct_data(163, 8), new ct_data( 99, 8), new ct_data(227, 8)
+			new( 12, 8), new(140, 8), new( 76, 8), new(204, 8),
+			new( 44, 8), new(172, 8), new(108, 8), new(236, 8), 
+			new( 28, 8), new(156, 8), new( 92, 8), new(220, 8),
+			new( 60, 8), new(188, 8), new(124, 8), new(252, 8),
+			new(  2, 8), new(130, 8), new( 66, 8), new(194, 8),
+			new( 34, 8), new(162, 8), new( 98, 8), new(226, 8),
+			new( 18, 8), new(146, 8), new( 82, 8), new(210, 8),
+			new( 50, 8), new(178, 8), new(114, 8), new(242, 8),
+			new( 10, 8), new(138, 8), new( 74, 8), new(202, 8),
+			new( 42, 8), new(170, 8), new(106, 8), new(234, 8),
+			new( 26, 8), new(154, 8), new( 90, 8), new(218, 8),
+			new( 58, 8), new(186, 8), new(122, 8), new(250, 8),
+			new(  6, 8), new(134, 8), new( 70, 8), new(198, 8),
+			new( 38, 8), new(166, 8), new(102, 8), new(230, 8),
+			new( 22, 8), new(150, 8), new( 86, 8), new(214, 8),
+			new( 54, 8), new(182, 8), new(118, 8), new(246, 8),
+			new( 14, 8), new(142, 8), new( 78, 8), new(206, 8),
+			new( 46, 8), new(174, 8), new(110, 8), new(238, 8),
+			new( 30, 8), new(158, 8), new( 94, 8), new(222, 8),
+			new( 62, 8), new(190, 8), new(126, 8), new(254, 8),
+			new(  1, 8), new(129, 8), new( 65, 8), new(193, 8),
+			new( 33, 8), new(161, 8), new( 97, 8), new(225, 8),
+			new( 17, 8), new(145, 8), new( 81, 8), new(209, 8),
+			new( 49, 8), new(177, 8), new(113, 8), new(241, 8),
+			new(  9, 8), new(137, 8), new( 73, 8), new(201, 8),
+			new( 41, 8), new(169, 8), new(105, 8), new(233, 8),
+			new( 25, 8), new(153, 8), new( 89, 8), new(217, 8),
+			new( 57, 8), new(185, 8), new(121, 8), new(249, 8),
+			new(  5, 8), new(133, 8), new( 69, 8), new(197, 8),
+			new( 37, 8), new(165, 8), new(101, 8), new(229, 8),
+			new( 21, 8), new(149, 8), new( 85, 8), new(213, 8),
+			new( 53, 8), new(181, 8), new(117, 8), new(245, 8),
+			new( 13, 8), new(141, 8), new( 77, 8), new(205, 8),
+			new( 45, 8), new(173, 8), new(109, 8), new(237, 8),
+			new( 29, 8), new(157, 8), new( 93, 8), new(221, 8),
+			new( 61, 8), new(189, 8), new(125, 8), new(253, 8),
+			new( 19, 9), new(275, 9), new(147, 9), new(403, 9),
+			new( 83, 9), new(339, 9), new(211, 9), new(467, 9),
+			new( 51, 9), new(307, 9), new(179, 9), new(435, 9),
+			new(115, 9), new(371, 9), new(243, 9), new(499, 9),
+			new( 11, 9), new(267, 9), new(139, 9), new(395, 9),
+			new( 75, 9), new(331, 9), new(203, 9), new(459, 9),
+			new( 43, 9), new(299, 9), new(171, 9), new(427, 9),
+			new(107, 9), new(363, 9), new(235, 9), new(491, 9),
+			new( 27, 9), new(283, 9), new(155, 9), new(411, 9),
+			new( 91, 9), new(347, 9), new(219, 9), new(475, 9),
+			new( 59, 9), new(315, 9), new(187, 9), new(443, 9),
+			new(123, 9), new(379, 9), new(251, 9), new(507, 9),
+			new(  7, 9), new(263, 9), new(135, 9), new(391, 9),
+			new( 71, 9), new(327, 9), new(199, 9), new(455, 9),
+			new( 39, 9), new(295, 9), new(167, 9), new(423, 9),
+			new(103, 9), new(359, 9), new(231, 9), new(487, 9),
+			new( 23, 9), new(279, 9), new(151, 9), new(407, 9),
+			new( 87, 9), new(343, 9), new(215, 9), new(471, 9),
+			new( 55, 9), new(311, 9), new(183, 9), new(439, 9),
+			new(119, 9), new(375, 9), new(247, 9), new(503, 9),
+			new( 15, 9), new(271, 9), new(143, 9), new(399, 9),
+			new( 79, 9), new(335, 9), new(207, 9), new(463, 9),
+			new( 47, 9), new(303, 9), new(175, 9), new(431, 9),
+			new(111, 9), new(367, 9), new(239, 9), new(495, 9),
+			new( 31, 9), new(287, 9), new(159, 9), new(415, 9),
+			new( 95, 9), new(351, 9), new(223, 9), new(479, 9),
+			new( 63, 9), new(319, 9), new(191, 9), new(447, 9),
+			new(127, 9), new(383, 9), new(255, 9), new(511, 9),
+			new(  0, 7), new( 64, 7), new( 32, 7), new( 96, 7),
+			new( 16, 7), new( 80, 7), new( 48, 7), new(112, 7),
+			new(  8, 7), new( 72, 7), new( 40, 7), new(104, 7),
+			new( 24, 7), new( 88, 7), new( 56, 7), new(120, 7),
+			new(  4, 7), new( 68, 7), new( 36, 7), new(100, 7),
+			new( 20, 7), new( 84, 7), new( 52, 7), new(116, 7),
+			new(  3, 8), new(131, 8), new( 67, 8), new(195, 8),
+			new( 35, 8), new(163, 8), new( 99, 8), new(227, 8)
 		};
 
 		private static readonly ct_data[] static_dtree=new ct_data[D_CODES]
 		{
-			new ct_data( 0, 5), new ct_data(16, 5), new ct_data( 8, 5), new ct_data(24, 5), new ct_data( 4, 5),
-			new ct_data(20, 5), new ct_data(12, 5), new ct_data(28, 5), new ct_data( 2, 5), new ct_data(18, 5),
-			new ct_data(10, 5), new ct_data(26, 5), new ct_data( 6, 5), new ct_data(22, 5), new ct_data(14, 5),
-			new ct_data(30, 5), new ct_data( 1, 5), new ct_data(17, 5), new ct_data( 9, 5), new ct_data(25, 5),
-			new ct_data( 5, 5), new ct_data(21, 5), new ct_data(13, 5), new ct_data(29, 5), new ct_data( 3, 5),
-			new ct_data(19, 5), new ct_data(11, 5), new ct_data(27, 5), new ct_data( 7, 5), new ct_data(23, 5)
+			new( 0, 5), new(16, 5), new( 8, 5), new(24, 5), new( 4, 5),
+			new(20, 5), new(12, 5), new(28, 5), new( 2, 5), new(18, 5),
+			new(10, 5), new(26, 5), new( 6, 5), new(22, 5), new(14, 5),
+			new(30, 5), new( 1, 5), new(17, 5), new( 9, 5), new(25, 5),
+			new( 5, 5), new(21, 5), new(13, 5), new(29, 5), new( 3, 5),
+			new(19, 5), new(11, 5), new(27, 5), new( 7, 5), new(23, 5)
 		};
 
 		private static readonly byte[] _dist_code=new byte[DIST_CODE_LEN]
@@ -240,9 +240,9 @@ namespace Framework.IO
 			}
 		}
 
-		private static readonly static_tree_desc static_l_desc=new static_tree_desc(static_ltree, extra_lbits, LITERALS+1, L_CODES, MAX_BITS);
-		private static readonly static_tree_desc static_d_desc=new static_tree_desc(static_dtree, extra_dbits, 0, D_CODES, MAX_BITS);
-		private static readonly static_tree_desc static_bl_desc=new static_tree_desc(null, extra_blbits, 0, BL_CODES, MAX_BL_BITS);
+		private static readonly static_tree_desc static_l_desc=new(static_ltree, extra_lbits, LITERALS+1, L_CODES, MAX_BITS);
+		private static readonly static_tree_desc static_d_desc=new(static_dtree, extra_dbits, 0, D_CODES, MAX_BITS);
+		private static readonly static_tree_desc static_bl_desc=new(null, extra_blbits, 0, BL_CODES, MAX_BL_BITS);
 
 		// ===========================================================================
 		// Local (static) routines in this file.
@@ -561,7 +561,7 @@ namespace Framework.IO
 			{
 				if(tree[n].Freq!=0)
 				{
-					s.heap[++(s.heap_len)]=max_code=n;
+					s.heap[++s.heap_len]=max_code=n;
 					s.depth[n]=0;
 				}
 				else tree[n].Len=0;
@@ -573,7 +573,7 @@ namespace Framework.IO
 			// two codes of non zero frequency.
 			while(s.heap_len<2)
 			{
-				node=s.heap[++(s.heap_len)]=(max_code<2?++max_code:0);
+				node=s.heap[++s.heap_len]=max_code<2?++max_code:0;
 				tree[node].Freq=1;
 				s.depth[node]=0;
 				s.opt_len--; if(stree!=null) s.static_len-=stree[node].Len;
@@ -597,8 +597,8 @@ namespace Framework.IO
 
 				m=s.heap[SMALLEST]; // m = node of next least frequency
 
-				s.heap[--(s.heap_max)]=n; // keep the nodes sorted by frequency
-				s.heap[--(s.heap_max)]=m;
+				s.heap[--s.heap_max]=n; // keep the nodes sorted by frequency
+				s.heap[--s.heap_max]=m;
 
 				// Create a new node father of n and m
 				tree[node].Freq=(ushort)(tree[n].Freq+tree[m].Freq);
@@ -611,7 +611,7 @@ namespace Framework.IO
 
 			} while(s.heap_len>=2);
 
-			s.heap[--(s.heap_max)]=s.heap[SMALLEST];
+			s.heap[--s.heap_max]=s.heap[SMALLEST];
 
 			// At this point, the fields freq and dad are set. We can now
 			// generate the bit lengths.
@@ -912,10 +912,10 @@ namespace Framework.IO
 				//		"_tr_tally: bad match");
 
 				s.dyn_ltree[_length_code[lc]+LITERALS+1].Freq++;
-				s.dyn_dtree[(dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)])].Freq++;
+				s.dyn_dtree[dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)]].Freq++;
 			}
 
-			return (s.last_lit==s.lit_bufsize-1);
+			return s.last_lit==s.lit_bufsize-1;
 			// We avoid equality with lit_bufsize because of wraparound at 64K
 			// on 16 bit machines and because stored blocks are restricted to
 			// 64K-1 bytes.
@@ -957,7 +957,7 @@ namespace Framework.IO
 							send_bits(s, lc, extra);		// send the extra length bits
 						}
 						dist--; // dist is now the match distance - 1
-						code=(dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)]);
+						code=dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)];
 						//Assert (code < D_CODES, "bad d_code");
 
 						send_code(s, (int)code, dtree);		// send the distance code
@@ -1050,12 +1050,12 @@ namespace Framework.IO
 			if(header!=0)
 			{
 				//was put_short(s, (unsigned short)len);
-				s.pending_buf[s.pending++]=(byte)(((ushort)len)&0xff);
-				s.pending_buf[s.pending++]=(byte)(((ushort)len)>>8);
+				s.pending_buf[s.pending++]=(byte)((ushort)len&0xff);
+				s.pending_buf[s.pending++]=(byte)((ushort)len>>8);
 
 				//was put_short(s, (unsigned short)~len);
-				s.pending_buf[s.pending++]=(byte)(((ushort)~len)&0xff);
-				s.pending_buf[s.pending++]=(byte)(((ushort)~len)>>8);
+				s.pending_buf[s.pending++]=(byte)((ushort)~len&0xff);
+				s.pending_buf[s.pending++]=(byte)((ushort)~len>>8);
 			}
 
 			while(len--!=0)

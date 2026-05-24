@@ -34,7 +34,7 @@ public class GlobalSessionData
 
 	public RealmId RealmId;
 
-	public RealmManager RealmManager = new RealmManager();
+	public readonly RealmManager RealmManager = new();
 
 	public AccountMetaDataManager AccountMetaDataMgr;
 
@@ -50,9 +50,9 @@ public class GlobalSessionData
 
 	public SniffFile ModernSniff;
 
-	public Dictionary<string, WowGuid128> GuildsByName = new Dictionary<string, WowGuid128>();
+	public readonly Dictionary<string, WowGuid128> GuildsByName = new();
 
-	public Dictionary<uint, List<string>> GuildRanks = new Dictionary<uint, List<string>>();
+	public readonly Dictionary<uint, List<string>> GuildRanks = new();
 
 	public Realm? Realm => RealmManager.GetRealm(RealmId);
 

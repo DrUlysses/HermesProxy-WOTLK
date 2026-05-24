@@ -19,7 +19,7 @@ public class PartyMemberPhaseStates
 
 	public uint PhaseShiftFlags;
 
-	public List<PartyMemberPhase> Phases = new List<PartyMemberPhase>();
+	public List<PartyMemberPhase> Phases = new();
 
 	public WowGuid128 PersonalGUID = WowGuid128.Empty;
 

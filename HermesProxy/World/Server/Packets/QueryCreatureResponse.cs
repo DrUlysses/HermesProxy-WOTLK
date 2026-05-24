@@ -27,9 +27,9 @@ public class QueryCreatureResponse : ServerPacket
 		{
 			return;
 		}
-		_worldPacket.WriteBits((!Stats.Title.IsEmpty()) ? (Stats.Title.GetByteCount() + 1) : 0, 11);
-		_worldPacket.WriteBits((!Stats.TitleAlt.IsEmpty()) ? (Stats.TitleAlt.GetByteCount() + 1) : 0, 11);
-		_worldPacket.WriteBits((!Stats.CursorName.IsEmpty()) ? (Stats.CursorName.GetByteCount() + 1) : 0, 6);
+		_worldPacket.WriteBits(!Stats.Title.IsEmpty() ? Stats.Title.GetByteCount() + 1 : 0, 11);
+		_worldPacket.WriteBits(!Stats.TitleAlt.IsEmpty() ? Stats.TitleAlt.GetByteCount() + 1 : 0, 11);
+		_worldPacket.WriteBits(!Stats.CursorName.IsEmpty() ? Stats.CursorName.GetByteCount() + 1 : 0, 6);
 		_worldPacket.WriteBit(Stats.Civilian);
 		_worldPacket.WriteBit(Stats.Leader);
 		for (var i = 0; i < 4; i++)

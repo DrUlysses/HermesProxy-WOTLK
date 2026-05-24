@@ -4,7 +4,7 @@ public class QuestChoiceItem
 {
 	public byte LootItemType;
 
-	public ItemInstance Item = new ItemInstance();
+	public readonly ItemInstance Item = new();
 
 	public uint Quantity;
 

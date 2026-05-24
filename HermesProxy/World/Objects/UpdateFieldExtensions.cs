@@ -45,7 +45,7 @@ public static class UpdateFieldExtensions
 				return (TK)(object)(double)uf.FloatValue;
 			}
 		}
-		return default(TK);
+		return default;
 	}
 
 	public static IEnumerable<TK> GetValue<T, TK>(this Dictionary<int, List<UpdateField>> dict, T updateField)
@@ -122,8 +122,8 @@ public static class UpdateFieldExtensions
 		}
 		catch (OverflowException)
 		{
-			return default(TK);
+			return default;
 		}
-		return default(TK);
+		return default;
 	}
 }

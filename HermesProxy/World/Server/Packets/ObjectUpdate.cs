@@ -7,19 +7,19 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ObjectUpdate
 {
-	public UpdateTypeModern Type;
+	public readonly UpdateTypeModern Type;
 
-	public WowGuid128 Guid;
+	public readonly WowGuid128 Guid;
 
-	public GlobalSessionData GlobalSession;
+	public readonly GlobalSessionData GlobalSession;
 
-	public CreateObjectData CreateData;
+	public readonly CreateObjectData CreateData;
 
 	public ObjectData ObjectData;
 
-	public ItemData ItemData;
+	public readonly ItemData ItemData;
 
-	public ContainerData ContainerData;
+	public readonly ContainerData ContainerData;
 
 	public UnitData UnitData;
 
@@ -27,11 +27,11 @@ public class ObjectUpdate
 
 	public ActivePlayerData ActivePlayerData;
 
-	public GameObjectData GameObjectData;
+	public readonly GameObjectData GameObjectData;
 
-	public DynamicObjectData DynamicObjectData;
+	public readonly DynamicObjectData DynamicObjectData;
 
-	public CorpseData CorpseData;
+	public readonly CorpseData CorpseData;
 
 	public ObjectUpdate(WowGuid128 guid, UpdateTypeModern type, GlobalSessionData globalSession)
 	{

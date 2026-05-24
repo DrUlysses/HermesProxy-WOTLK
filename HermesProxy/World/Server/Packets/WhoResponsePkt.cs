@@ -7,7 +7,7 @@ public class WhoResponsePkt : ServerPacket
 {
 	public uint RequestID;
 
-	public List<WhoEntry> Players = new List<WhoEntry>();
+	public readonly List<WhoEntry> Players = new();
 
 	public WhoResponsePkt()
 		: base(Opcode.SMSG_WHO)

@@ -6,7 +6,7 @@ namespace HermesProxy.World;
 
 public abstract class ClientPacket : IDisposable
 {
-	protected WorldPacket _worldPacket;
+	protected readonly WorldPacket _worldPacket;
 
 	protected ClientPacket(WorldPacket worldPacket)
 	{

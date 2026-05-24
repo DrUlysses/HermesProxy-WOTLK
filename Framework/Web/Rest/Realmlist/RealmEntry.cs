@@ -22,7 +22,7 @@ namespace Framework.Web
         public int CfgCategoriesID { get; set; }
 
         [DataMember(Name = "version")]
-        public ClientVersion Version { get; set; } = new ClientVersion();
+        public ClientVersion Version { get; set; } = new();
 
         [DataMember(Name = "cfgRealmsID")]
         public int CfgRealmsID { get; set; }

@@ -6,7 +6,7 @@ internal class BattlemasterJoin : ClientPacket
 
 	public byte Roles;
 
-	public int[] BlacklistMap = new int[2];
+	public readonly int[] BlacklistMap = new int[2];
 
 	public WowGuid128 BattlemasterGuid;
 

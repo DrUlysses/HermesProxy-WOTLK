@@ -12,9 +12,9 @@ public class GuildSetRankPermissions : ClientPacket
 
 	public uint OldFlags;
 
-	public uint[] TabFlags = new uint[6];
+	public readonly uint[] TabFlags = new uint[6];
 
-	public uint[] TabWithdrawItemLimit = new uint[6];
+	public readonly uint[] TabWithdrawItemLimit = new uint[6];
 
 	public string RankName;
 

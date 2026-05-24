@@ -29,7 +29,7 @@ public class PlayerGuidLookupData
 
 	public byte Unused915;
 
-	public DeclinedName DeclinedNames = new DeclinedName();
+	public readonly DeclinedName DeclinedNames = new();
 
 	public void Write(WorldPacket data)
 	{

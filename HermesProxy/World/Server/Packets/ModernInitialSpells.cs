@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ModernInitialSpells : ServerPacket
 {
-    public List<uint> Spells = new List<uint>();
+    public readonly List<uint> Spells = new();
     public ModernInitialSpells() : base(Opcode.SMSG_SEND_KNOWN_SPELLS) { }
 
     protected override void Write()

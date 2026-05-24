@@ -10,11 +10,11 @@ internal class StartLootRoll : ServerPacket
 
 	public uint RollTime;
 
-	public LootMethod Method = LootMethod.GroupLoot;
+	public readonly LootMethod Method = LootMethod.GroupLoot;
 
 	public RollMask ValidRolls;
 
-	public LootItemData Item = new LootItemData();
+	public readonly LootItemData Item = new();
 
 	public StartLootRoll()
 		: base(Opcode.SMSG_LOOT_START_ROLL)

@@ -7,15 +7,15 @@ public class InitializeFactions : ServerPacket
 {
 	private const ushort MaxFactionCount = 1000;
 
-	public int[] FactionStandings = new int[1000];
+	public readonly int[] FactionStandings = new int[1000];
 
-	public bool[] FactionHasBonus = new bool[1000];
+	public readonly bool[] FactionHasBonus = new bool[1000];
 
-	public ReputationFlags[] FactionFlags = new ReputationFlags[1000];
+	public readonly ReputationFlags[] FactionFlags = new ReputationFlags[1000];
 
 	public static ushort GetFactionCount()
 	{
-		return (ushort)((ModernVersion.ExpansionVersion >= 3) ? 1000u : 400u);
+		return (ushort)(ModernVersion.ExpansionVersion >= 3 ? 1000u : 400u);
 	}
 
 	public InitializeFactions()

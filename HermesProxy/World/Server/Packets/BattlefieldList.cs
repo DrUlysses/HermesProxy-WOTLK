@@ -7,7 +7,7 @@ internal class BattlefieldList : ServerPacket
 {
 	public WowGuid128 BattlemasterGuid;
 
-	public int Verification = 121761856;
+	public readonly int Verification = 121761856;
 
 	public uint BattlemasterListID;
 
@@ -15,7 +15,7 @@ internal class BattlefieldList : ServerPacket
 
 	public byte MaxLevel = 70;
 
-	public List<int> BattlefieldInstances = new List<int>();
+	public readonly List<int> BattlefieldInstances = new();
 
 	public bool PvpAnywhere;
 

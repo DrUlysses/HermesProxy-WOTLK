@@ -16,7 +16,7 @@ public class LootItemData
 
 	public bool CanTradeToTapList;
 
-	public ItemInstance Loot = new ItemInstance();
+	public readonly ItemInstance Loot = new();
 
 	public void Write(WorldPacket data)
 	{

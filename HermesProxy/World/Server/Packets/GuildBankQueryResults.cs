@@ -6,9 +6,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public class GuildBankQueryResults : ServerPacket
 {
-	public List<GuildBankItemInfo> ItemInfo;
+	public readonly List<GuildBankItemInfo> ItemInfo;
 
-	public List<GuildBankTabInfo> TabInfo;
+	public readonly List<GuildBankTabInfo> TabInfo;
 
 	public int WithdrawalsRemaining;
 

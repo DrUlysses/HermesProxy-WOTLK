@@ -38,7 +38,7 @@ public class QueryGuildInfoResponse : ServerPacket
 
 		public uint BackgroundColor;
 
-		public List<RankInfo> Ranks = new List<RankInfo>();
+		public List<RankInfo> Ranks = new();
 
 		public string GuildName = "";
 	}
@@ -47,7 +47,7 @@ public class QueryGuildInfoResponse : ServerPacket
 
 	public WowGuid128 PlayerGuid;
 
-	public GuildInfo Info = new GuildInfo();
+	public GuildInfo Info = new();
 
 	public bool HasGuildInfo;
 

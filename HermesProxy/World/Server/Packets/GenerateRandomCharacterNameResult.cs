@@ -6,7 +6,7 @@ public class GenerateRandomCharacterNameResult : ServerPacket
 {
 	public bool Success;
 
-	public string Name = "";
+	public readonly string Name = "";
 
 	public GenerateRandomCharacterNameResult()
 		: base(Opcode.SMSG_GENERATE_RANDOM_CHARACTER_NAME_RESULT)

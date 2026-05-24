@@ -165,7 +165,7 @@ public class RealmManager
     public uint GetMinorMajorBugfixVersionForBuild(uint build)
     {
         var buildInfo = _builds.FirstOrDefault(p => p.Build < build);
-        return buildInfo != null ? (buildInfo.MajorVersion * 10000 + buildInfo.MinorVersion * 100 + buildInfo.BugfixVersion) : 0;
+        return buildInfo != null ? buildInfo.MajorVersion * 10000 + buildInfo.MinorVersion * 100 + buildInfo.BugfixVersion : 0;
     }
 
     public void WriteSubRegions(GetAllValuesForAttributeResponse response)
@@ -244,7 +244,7 @@ public class RealmManager
                 {
                     WowRealmAddress = (int)realm.Value.Id.GetAddress(),
                     CfgTimezonesID = 1,
-                    PopulationState = (realm.Value.Flags.HasAnyFlag(RealmFlags.Offline) ? 0 : Math.Max((int)realm.Value.PopulationLevel, 1)),
+                    PopulationState = realm.Value.Flags.HasAnyFlag(RealmFlags.Offline) ? 0 : Math.Max((int)realm.Value.PopulationLevel, 1),
                     CfgCategoriesID = realm.Value.Timezone
                 }
             };
@@ -325,9 +325,9 @@ public class RealmManager
     public ICollection<Realm> GetRealms() { return _realms.Values; }
     List<string> GetSubRegions() { return _subRegions; }
 
-    List<RealmBuildInfo> _builds = new List<RealmBuildInfo>();
-    ConcurrentDictionary<RealmId, Realm> _realms = new ConcurrentDictionary<RealmId, Realm>();
-    List<string> _subRegions = new List<string>();
+    List<RealmBuildInfo> _builds = new();
+    ConcurrentDictionary<RealmId, Realm> _realms = new();
+    List<string> _subRegions = new();
 }
 
 public class RealmBuildInfo

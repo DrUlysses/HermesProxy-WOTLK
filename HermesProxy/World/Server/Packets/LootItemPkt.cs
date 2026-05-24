@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class LootItemPkt : ClientPacket
 {
-	public List<LootRequest> Loot = new List<LootRequest>();
+	public readonly List<LootRequest> Loot = new();
 
 	public LootItemPkt(WorldPacket packet)
 		: base(packet)

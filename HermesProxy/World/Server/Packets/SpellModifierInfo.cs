@@ -6,7 +6,7 @@ public class SpellModifierInfo
 {
 	public byte ModIndex;
 
-	public List<SpellModifierData> ModifierData = new List<SpellModifierData>();
+	public readonly List<SpellModifierData> ModifierData = new();
 
 	public void Write(WorldPacket data)
 	{

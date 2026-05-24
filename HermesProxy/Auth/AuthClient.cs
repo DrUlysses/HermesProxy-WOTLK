@@ -239,7 +239,7 @@ public class AuthClient
 	{
 		var buffer = new ByteBuffer();
 		buffer.WriteUInt8((byte)(reconnect ? 2 : 0));
-		buffer.WriteUInt8((byte)((LegacyVersion.ExpansionVersion > 1) ? 8u : 3u));
+		buffer.WriteUInt8((byte)(LegacyVersion.ExpansionVersion > 1 ? 8u : 3u));
 		buffer.WriteUInt16((ushort)(_username.Length + 30));
 		buffer.WriteBytes(Encoding.ASCII.GetBytes("WoW"));
 		buffer.WriteUInt8(0);
@@ -457,7 +457,7 @@ public class AuthClient
 		packet.ReadUInt16();
 		packet.ReadUInt32();
 		ushort realmsCount = 0;
-		realmsCount = ((Settings.ServerBuild >= ClientVersionBuild.V2_0_3_6299) ? packet.ReadUInt16() : packet.ReadUInt8());
+		realmsCount = Settings.ServerBuild >= ClientVersionBuild.V2_0_3_6299 ? packet.ReadUInt16() : packet.ReadUInt8();
 		Log.Print(LogType.Network, $"Received {realmsCount} realms.", "AuthClient.cs");
 		var realmList = new List<RealmInfo>();
 		for (ushort i = 0; i < realmsCount; i++)

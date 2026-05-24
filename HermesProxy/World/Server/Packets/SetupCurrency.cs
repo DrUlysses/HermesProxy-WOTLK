@@ -25,7 +25,7 @@ public class SetupCurrency : ServerPacket
 		public byte Flags;
 	}
 
-	public List<Record> Data = new List<Record>();
+	public List<Record> Data = new();
 
 	public SetupCurrency()
 		: base(Opcode.SMSG_SETUP_CURRENCY, ConnectionType.Instance)

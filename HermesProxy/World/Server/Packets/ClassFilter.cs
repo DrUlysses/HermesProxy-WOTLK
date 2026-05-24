@@ -6,5 +6,5 @@ public class ClassFilter
 {
 	public int ItemClass;
 
-	public List<SubClassFilter> SubClassFilters = new List<SubClassFilter>();
+	public readonly List<SubClassFilter> SubClassFilters = new();
 }

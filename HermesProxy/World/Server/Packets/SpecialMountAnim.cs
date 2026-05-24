@@ -8,7 +8,7 @@ internal class SpecialMountAnim : ServerPacket
 {
 	public WowGuid128 UnitGUID;
 
-	public List<int> SpellVisualKitIDs = new List<int>();
+	public readonly List<int> SpellVisualKitIDs = new();
 
 	public int SequenceVariation;
 

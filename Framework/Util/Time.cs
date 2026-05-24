@@ -79,7 +79,7 @@ public static class Time
     public static uint GetMSTimeDiff(uint oldMSTime, uint newMSTime)
     {
         if (oldMSTime > newMSTime)
-            return (0xFFFFFFFF - oldMSTime) + newMSTime;
+            return 0xFFFFFFFF - oldMSTime + newMSTime;
         return newMSTime - oldMSTime;
     }
 
@@ -87,7 +87,7 @@ public static class Time
     {
         var newMSTime = GetMSTime();
         if (oldMSTime > newMSTime)
-            return (0xFFFFFFFF - oldMSTime) + newMSTime;
+            return 0xFFFFFFFF - oldMSTime + newMSTime;
         return newMSTime - oldMSTime;
     }
 
@@ -103,15 +103,15 @@ public static class Time
 
     public static long GetNextResetUnixTime(int hours)
     {
-        return DateTimeToUnixTime((DateTime.Now.Date + new TimeSpan(hours, 0, 0)));
+        return DateTimeToUnixTime(DateTime.Now.Date + new TimeSpan(hours, 0, 0));
     }
     public static long GetNextResetUnixTime(int days, int hours)
     {
-        return DateTimeToUnixTime((DateTime.Now.Date + new TimeSpan(days, hours, 0, 0)));
+        return DateTimeToUnixTime(DateTime.Now.Date + new TimeSpan(days, hours, 0, 0));
     }
     public static long GetNextResetUnixTime(int months, int days, int hours)
     {
-        return DateTimeToUnixTime((DateTime.Now.Date + new TimeSpan(months + days, hours, 0)));
+        return DateTimeToUnixTime(DateTime.Now.Date + new TimeSpan(months + days, hours, 0));
     }
 
     public static string secsToTimeString(ulong timeInSecs, bool shortText = false, bool hoursOnly = false)
@@ -181,8 +181,8 @@ public static class Time
     public static string GetTimeString(long time)
     {
         var days = time / Day;
-        var hours = (time % Day) / Hour;
-        var minute = (time % Hour) / Minute;
+        var hours = time % Day / Hour;
+        var minute = time % Hour / Minute;
 
         return $"Days: {days} Hours: {hours} Minutes: {minute}";
     }

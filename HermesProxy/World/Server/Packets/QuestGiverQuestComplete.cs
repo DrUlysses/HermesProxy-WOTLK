@@ -22,7 +22,7 @@ public class QuestGiverQuestComplete : ServerPacket
 
 	public bool HideChatMessage;
 
-	public ItemInstance ItemReward = new ItemInstance();
+	public readonly ItemInstance ItemReward = new();
 
 	public QuestGiverQuestComplete()
 		: base(Opcode.SMSG_QUEST_GIVER_QUEST_COMPLETE)

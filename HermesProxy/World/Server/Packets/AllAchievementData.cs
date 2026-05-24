@@ -24,8 +24,8 @@ public struct EarnedAchievement
 
 public class AllAchievementData : ServerPacket
 {
-	public List<EarnedAchievement> Earned = new List<EarnedAchievement>();
-	public List<CriteriaProgressPkt> Progress = new List<CriteriaProgressPkt>();
+	public readonly List<EarnedAchievement> Earned = new();
+	public readonly List<CriteriaProgressPkt> Progress = new();
 
 	public AllAchievementData()
 		: base(Opcode.SMSG_ALL_ACHIEVEMENT_DATA, ConnectionType.Instance)

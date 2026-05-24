@@ -19,7 +19,7 @@ public class CreatureTemplate
 
 	public uint PetSpellDataId;
 
-	public CreatureDisplayStats Display = new CreatureDisplayStats();
+	public readonly CreatureDisplayStats Display = new();
 
 	public float HpMulti;
 
@@ -29,7 +29,7 @@ public class CreatureTemplate
 
 	public bool Leader;
 
-	public List<uint> QuestItems = new List<uint>();
+	public readonly List<uint> QuestItems = new();
 
 	public uint MovementInfoID;
 
@@ -47,11 +47,11 @@ public class CreatureTemplate
 
 	public int WidgetSetUnitConditionID;
 
-	public uint[] Flags = new uint[2];
+	public readonly uint[] Flags = new uint[2];
 
-	public uint[] ProxyCreatureID = new uint[2];
+	public readonly uint[] ProxyCreatureID = new uint[2];
 
-	public StringArray Name = new StringArray(4);
+	public readonly StringArray Name = new(4);
 
-	public StringArray NameAlt = new StringArray(4);
+	public readonly StringArray NameAlt = new(4);
 }

@@ -7,47 +7,47 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ChatPkt : ServerPacket
 {
-	public ChatMessageTypeModern SlashCmd = ChatMessageTypeModern.System;
+	public readonly ChatMessageTypeModern SlashCmd = ChatMessageTypeModern.System;
 
-	public uint _Language;
+	public readonly uint _Language;
 
-	public WowGuid128 SenderGUID;
+	public readonly WowGuid128 SenderGUID;
 
-	public WowGuid128 SenderGuildGUID;
+	public readonly WowGuid128 SenderGuildGUID;
 
-	public WowGuid128 SenderAccountGUID;
+	public readonly WowGuid128 SenderAccountGUID;
 
-	public WowGuid128 TargetGUID;
+	public readonly WowGuid128 TargetGUID;
 
 	public WowGuid128 ChannelGUID;
 
-	public uint SenderVirtualAddress;
+	public readonly uint SenderVirtualAddress;
 
-	public uint TargetVirtualAddress;
+	public readonly uint TargetVirtualAddress;
 
 	public int SpellID;
 
-	public string SenderName = "";
+	public readonly string SenderName = "";
 
-	public string TargetName = "";
+	public readonly string TargetName = "";
 
-	public string Prefix = "";
+	public readonly string Prefix = "";
 
-	public string Channel = "";
+	public readonly string Channel = "";
 
-	public string ChatText = "";
+	public readonly string ChatText = "";
 
-	public uint AchievementID;
+	public readonly uint AchievementID;
 
-	public ChatFlags _ChatFlags = ChatFlags.None;
+	public readonly ChatFlags _ChatFlags = ChatFlags.None;
 
-	public float DisplayTime = 0f;
+	public readonly float DisplayTime = 0f;
 
 	public uint? Unused_801;
 
-	public bool HideChatLog = false;
+	public readonly bool HideChatLog = false;
 
-	public bool FakeSenderName = false;
+	public readonly bool FakeSenderName = false;
 
 	public ChatPkt(GlobalSessionData globalSession, ChatMessageTypeModern chatType, string message, uint language = 0u, WowGuid128 sender = null, string senderName = "", WowGuid128 receiver = null, string receiverName = "", string channelName = "", ChatFlags chatFlags = ChatFlags.None, string addonPrefix = "", uint achievementId = 0u)
 		: base(Opcode.SMSG_CHAT)
@@ -59,7 +59,7 @@ public class ChatPkt : ServerPacket
 		Channel = channelName;
 		AchievementID = achievementId;
 		Prefix = addonPrefix;
-		SenderGUID = ((sender != null) ? sender : WowGuid128.Empty);
+		SenderGUID = sender != null ? sender : WowGuid128.Empty;
 		if (string.IsNullOrEmpty(senderName) && sender != null)
 		{
 			SenderName = globalSession.GameState.GetPlayerName(sender);
@@ -68,9 +68,9 @@ public class ChatPkt : ServerPacket
 		{
 			SenderName = senderName;
 		}
-		SenderAccountGUID = ((sender != null) ? globalSession.GetGameAccountGuidForPlayer(sender) : WowGuid128.Empty);
+		SenderAccountGUID = sender != null ? globalSession.GetGameAccountGuidForPlayer(sender) : WowGuid128.Empty;
 		SenderGuildGUID = WowGuid128.Empty;
-		TargetGUID = ((receiver != null) ? receiver : WowGuid128.Empty);
+		TargetGUID = receiver != null ? receiver : WowGuid128.Empty;
 		if (string.IsNullOrEmpty(receiverName) && receiver != null)
 		{
 			TargetName = globalSession.GameState.GetPlayerName(receiver);

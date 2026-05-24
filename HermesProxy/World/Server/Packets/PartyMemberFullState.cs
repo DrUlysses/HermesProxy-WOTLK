@@ -31,9 +31,9 @@ internal class PartyMemberFullState : ServerPacket
 
 	public int VehicleSeat;
 
-	public PartyMemberPhaseStates Phases = new PartyMemberPhaseStates();
+	public readonly PartyMemberPhaseStates Phases = new();
 
-	public List<PartyMemberAuraStates> Auras = new List<PartyMemberAuraStates>();
+	public List<PartyMemberAuraStates> Auras = new();
 
 	public PartyMemberPetStats Pet;
 
@@ -45,7 +45,7 @@ internal class PartyMemberFullState : ServerPacket
 
 	public int WmoDoodadPlacementID;
 
-	public sbyte[] PartyType = new sbyte[2];
+	public readonly sbyte[] PartyType = new sbyte[2];
 
 	public CTROptions ChromieTime;
 

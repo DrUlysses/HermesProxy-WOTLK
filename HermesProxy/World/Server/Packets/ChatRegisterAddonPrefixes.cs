@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class ChatRegisterAddonPrefixes : ClientPacket
 {
-	public List<string> Prefixes = new List<string>();
+	public readonly List<string> Prefixes = new();
 
 	public ChatRegisterAddonPrefixes(WorldPacket packet)
 		: base(packet)

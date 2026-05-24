@@ -2,9 +2,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public struct PowerUpdatePower
 {
-	public int Power;
+	public readonly int Power;
 
-	public byte PowerType;
+	public readonly byte PowerType;
 
 	public PowerUpdatePower(int power, byte powerType)
 	{

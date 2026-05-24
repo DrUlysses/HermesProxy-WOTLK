@@ -8,7 +8,7 @@ public class UseItem : ClientPacket
 
 	public WowGuid128 CastItem;
 
-	public SpellCastRequest Cast;
+	public readonly SpellCastRequest Cast;
 
 	public UseItem(WorldPacket packet)
 		: base(packet)

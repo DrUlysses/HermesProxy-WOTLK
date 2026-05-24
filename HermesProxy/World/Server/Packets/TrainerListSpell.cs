@@ -12,7 +12,7 @@ public class TrainerListSpell
 
 	public uint ReqSkillRank;
 
-	public uint[] ReqAbility = new uint[3];
+	public readonly uint[] ReqAbility = new uint[3];
 
 	public TrainerSpellStateModern Usable;
 

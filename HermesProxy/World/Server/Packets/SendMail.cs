@@ -25,7 +25,7 @@ public class SendMail : ClientPacket
 
 	public string Body;
 
-	public List<MailAttachment> Attachments = new List<MailAttachment>();
+	public List<MailAttachment> Attachments = new();
 
 	public SendMail(WorldPacket packet)
 		: base(packet)

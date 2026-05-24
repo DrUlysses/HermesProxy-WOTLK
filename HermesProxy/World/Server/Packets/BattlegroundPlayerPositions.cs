@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class BattlegroundPlayerPositions : ServerPacket
 {
-	public List<BattlegroundPlayerPosition> FlagCarriers = new List<BattlegroundPlayerPosition>();
+	public readonly List<BattlegroundPlayerPosition> FlagCarriers = new();
 
 	public BattlegroundPlayerPositions()
 		: base(Opcode.SMSG_BATTLEGROUND_PLAYER_POSITIONS, ConnectionType.Instance)

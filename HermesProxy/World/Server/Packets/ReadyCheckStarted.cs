@@ -10,7 +10,7 @@ internal class ReadyCheckStarted : ServerPacket
 
 	public WowGuid128 InitiatorGUID;
 
-	public ulong Duration = 35000uL;
+	public readonly ulong Duration = 35000uL;
 
 	public ReadyCheckStarted()
 		: base(Opcode.SMSG_READY_CHECK_STARTED)

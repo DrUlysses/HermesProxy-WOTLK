@@ -4,15 +4,15 @@ namespace HermesProxy.World.Server.Packets;
 
 public class UpdateAccountData : ServerPacket
 {
-	public WowGuid128 Player;
+	public readonly WowGuid128 Player;
 
-	public long Time;
+	public readonly long Time;
 
-	public uint Size;
+	public readonly uint Size;
 
-	public uint DataType;
+	public readonly uint DataType;
 
-	public byte[] CompressedData;
+	public readonly byte[] CompressedData;
 
 	public UpdateAccountData(AccountData data)
 		: base(Opcode.SMSG_UPDATE_ACCOUNT_DATA)

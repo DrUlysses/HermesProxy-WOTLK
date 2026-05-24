@@ -12,7 +12,7 @@ internal class LootRollBroadcast : ServerPacket
 
 	public RollType RollType;
 
-	public LootItemData Item = new LootItemData();
+	public readonly LootItemData Item = new();
 
 	public bool Autopassed = false;
 

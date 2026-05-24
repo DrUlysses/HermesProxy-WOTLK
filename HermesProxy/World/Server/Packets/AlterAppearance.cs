@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class AlterAppearance : ClientPacket
 {
-	public Array<ChrCustomizationChoice> Customizations = new Array<ChrCustomizationChoice>(50);
+	public readonly Array<ChrCustomizationChoice> Customizations = new(50);
 	public byte NewSex;
 	public int CustomizedRace;
 	public int CustomizedChrModelID;

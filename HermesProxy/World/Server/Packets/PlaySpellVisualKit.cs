@@ -12,7 +12,7 @@ internal class PlaySpellVisualKit : ServerPacket
 
 	public uint Duration;
 
-	public bool MountedVisual = false;
+	public readonly bool MountedVisual = false;
 
 	public PlaySpellVisualKit()
 		: base(Opcode.SMSG_PLAY_SPELL_VISUAL_KIT)

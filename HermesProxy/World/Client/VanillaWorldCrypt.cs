@@ -23,7 +23,7 @@ public class VanillaWorldCrypt : LegacyWorldCrypt
 	public void Initialize(byte[] sessionKey)
 	{
 		SetKey(sessionKey);
-		m_send_i = (m_send_j = (m_recv_i = (m_recv_j = 0)));
+		m_send_i = m_send_j = m_recv_i = m_recv_j = 0;
 		m_isInitialized = true;
 	}
 
@@ -54,7 +54,7 @@ public class VanillaWorldCrypt : LegacyWorldCrypt
 				m_send_i %= (byte)m_key.Count();
 				var x = (byte)((data[t] ^ m_key[m_send_i]) + m_send_j);
 				m_send_i++;
-				data[t] = (m_send_j = x);
+				data[t] = m_send_j = x;
 				t++;
 			}
 		}

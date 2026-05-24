@@ -126,7 +126,7 @@ public abstract class WowGuid
 		return WowGuid64.Empty;
 	}
 
-	public static bool operator ==(WowGuid first, WowGuid other)
+	public static bool operator ==(WowGuid? first, WowGuid other)
 	{
 		if ((object)first == other)
 		{

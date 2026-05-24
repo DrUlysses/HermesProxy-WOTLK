@@ -22,6 +22,6 @@ namespace Framework.Web
         public string Platform { get; set; }
 
         [DataMember(Name = "inputs")]
-        public List<FormInputValue> Inputs { get; set; } = new List<FormInputValue>();
+        public List<FormInputValue> Inputs { get; set; } = new();
     }
 }

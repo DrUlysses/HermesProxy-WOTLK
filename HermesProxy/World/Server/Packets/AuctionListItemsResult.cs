@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class AuctionListItemsResult : ServerPacket
 {
-	public List<AuctionItem> Items = new List<AuctionItem>();
+	public readonly List<AuctionItem> Items = new();
 
 	public int TotalItemsCount;
 

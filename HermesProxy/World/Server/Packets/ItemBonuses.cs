@@ -7,7 +7,7 @@ public class ItemBonuses
 {
 	public ItemContext Context;
 
-	public List<uint> BonusListIDs = new List<uint>();
+	public List<uint> BonusListIDs = new();
 
 	public void Write(WorldPacket data)
 	{

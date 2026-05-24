@@ -8,7 +8,7 @@ internal class MasterLootCandidateList : ServerPacket
 {
 	public WowGuid128 LootObj;
 
-	public List<WowGuid128> Players = new List<WowGuid128>();
+	public readonly List<WowGuid128> Players = new();
 
 	public MasterLootCandidateList()
 		: base(Opcode.SMSG_LOOT_MASTER_LIST, ConnectionType.Instance)

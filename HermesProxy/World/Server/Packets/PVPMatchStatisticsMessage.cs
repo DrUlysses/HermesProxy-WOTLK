@@ -9,9 +9,9 @@ public class PVPMatchStatisticsMessage : ServerPacket
 {
 	public class ArenaTeamsInfo
 	{
-		public WowGuid128[] Guids = new WowGuid128[2];
+		public readonly WowGuid128[] Guids = new WowGuid128[2];
 
-		public string[] Names = new string[2];
+		public readonly string[] Names = new string[2];
 
 		public void Write(WorldPacket data)
 		{
@@ -31,11 +31,11 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 	public class RatingData
 	{
-		public uint[] Prematch = new uint[2];
+		public readonly uint[] Prematch = new uint[2];
 
-		public uint[] Postmatch = new uint[2];
+		public readonly uint[] Postmatch = new uint[2];
 
-		public uint[] PrematchMMR = new uint[2];
+		public readonly uint[] PrematchMMR = new uint[2];
 
 		public void Write(WorldPacket data)
 		{
@@ -81,7 +81,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public bool Faction;
 
-		public bool IsInWorld = true;
+		public readonly bool IsInWorld = true;
 
 		public HonorData Honor;
 
@@ -97,7 +97,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public int? MmrChange;
 
-		public List<uint> Stats = new List<uint>();
+		public readonly List<uint> Stats = new();
 
 		public int PrimaryTalentTree;
 
@@ -109,7 +109,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public int CreatureID;
 
-		public int HonorLevel = 1;
+		public readonly int HonorLevel = 1;
 
 		public int Rank;
 
@@ -168,7 +168,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 	public byte? Winner;
 
-	public List<PVPMatchPlayerStatistics> Statistics = new List<PVPMatchPlayerStatistics>();
+	public List<PVPMatchPlayerStatistics> Statistics = new();
 
 	public sbyte[] PlayerCount = new sbyte[2];
 

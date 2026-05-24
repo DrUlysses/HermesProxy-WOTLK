@@ -31,7 +31,7 @@ public class TbcWorldCrypt : LegacyWorldCrypt
 		var recvHash = new HmacHash(recvSeed);
 		recvHash.Finish(sessionKey, sessionKey.Count());
 		m_key = recvHash.Digest.ToArray();
-		m_send_i = (m_send_j = (m_recv_i = (m_recv_j = 0)));
+		m_send_i = m_send_j = m_recv_i = m_recv_j = 0;
 		m_isInitialized = true;
 	}
 
@@ -62,7 +62,7 @@ public class TbcWorldCrypt : LegacyWorldCrypt
 				m_send_i %= (byte)m_key.Count();
 				var x = (byte)((data[t] ^ m_key[m_send_i]) + m_send_j);
 				m_send_i++;
-				data[t] = (m_send_j = x);
+				data[t] = m_send_j = x;
 				t++;
 			}
 		}

@@ -9,7 +9,7 @@ namespace Framework.Web
     public class RealmListUpdate
     {
         [DataMember(Name = "update")]
-        public RealmEntry Update { get; set; } = new RealmEntry();
+        public RealmEntry Update { get; set; } = new();
 
         [DataMember(Name = "deleting")]
         public bool Deleting { get; set; }

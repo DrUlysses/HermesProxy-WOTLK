@@ -6,17 +6,17 @@ namespace BNetServer.Networking;
 
 public class AccountInfo
 {
-	public uint Id;
+	public readonly uint Id;
 
-	public string Login;
+	public readonly string Login;
 
-	public uint LoginTicketExpiry;
+	public readonly uint LoginTicketExpiry;
 
-	public bool IsBanned;
+	public readonly bool IsBanned;
 
-	public bool IsPermanenetlyBanned;
+	public readonly bool IsPermanenetlyBanned;
 
-	public Dictionary<uint, GameAccountInfo> GameAccounts;
+	public readonly Dictionary<uint, GameAccountInfo> GameAccounts;
 
 	public WowGuid128 BnetAccountGuid => WowGuid128.Create(HighGuidType703.BNetAccount, Id);
 

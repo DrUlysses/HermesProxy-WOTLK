@@ -7,9 +7,9 @@ public class InspectPvP : ServerPacket
 {
 	public WowGuid128 PlayerGUID;
 
-	public List<PvPBracketInspectData> Brackets = new List<PvPBracketInspectData>();
+	public readonly List<PvPBracketInspectData> Brackets = new();
 
-	public List<ArenaTeamInspectData> ArenaTeams = new List<ArenaTeamInspectData>();
+	public readonly List<ArenaTeamInspectData> ArenaTeams = new();
 
 	public InspectPvP()
 		: base(Opcode.SMSG_INSPECT_PVP)

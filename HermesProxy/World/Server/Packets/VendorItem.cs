@@ -4,9 +4,9 @@ public class VendorItem
 {
 	public int Slot;
 
-	public int Type = 1;
+	public readonly int Type = 1;
 
-	public ItemInstance Item = new ItemInstance();
+	public readonly ItemInstance Item = new();
 
 	public int Quantity = -1;
 

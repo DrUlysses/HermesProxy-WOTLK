@@ -8,7 +8,7 @@ public class PlayerModelDisplayInfo
 {
 	public WowGuid128 GUID;
 
-	public List<InspectItemData> Items = new List<InspectItemData>();
+	public readonly List<InspectItemData> Items = new();
 
 	public string Name;
 
@@ -20,7 +20,7 @@ public class PlayerModelDisplayInfo
 
 	public Class ClassId;
 
-	public List<ChrCustomizationChoice> Customizations = new List<ChrCustomizationChoice>();
+	public readonly List<ChrCustomizationChoice> Customizations = new();
 
 	public void Write(WorldPacket data)
 	{

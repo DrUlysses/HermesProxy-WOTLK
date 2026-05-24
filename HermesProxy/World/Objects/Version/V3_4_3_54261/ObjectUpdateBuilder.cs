@@ -9,15 +9,15 @@ namespace HermesProxy.World.Objects.Version.V3_4_3_54261;
 
 public class ObjectUpdateBuilder
 {
-	protected ObjectUpdate m_updateData;
+	protected readonly ObjectUpdate m_updateData;
 
-	protected ObjectTypeBCC m_objectType;
+	protected readonly ObjectTypeBCC m_objectType;
 
-	protected ObjectTypeMask m_objectTypeMask;
+	protected readonly ObjectTypeMask m_objectTypeMask;
 
 	protected CreateObjectBits m_createBits;
 
-	protected GameSessionData m_gameState;
+	protected readonly GameSessionData m_gameState;
 
 	private ObjectTypeBCC m_realObjectType;
 
@@ -499,7 +499,7 @@ public class ObjectUpdateBuilder
 
 		// Build changesMask (1536 bits = 48 blocks of 32)
 		var blocks = new uint[48];
-		void SetBit(int bit) { blocks[bit / 32] |= (1u << (bit % 32)); }
+		void SetBit(int bit) { blocks[bit / 32] |= 1u << (bit % 32); }
 		bool IsBitSet(int bit) { return (blocks[bit / 32] & (1u << (bit % 32))) != 0; }
 
 		// Pre-compute KnownTitles (uint?[12] → ulong[6])
@@ -515,8 +515,8 @@ public class ObjectUpdateBuilder
 				knownTitlesCount = 6;
 				for (var i = 0; i < 6; i++)
 				{
-					var lo = (i * 2 < a.KnownTitles.Length && a.KnownTitles[i * 2].HasValue) ? a.KnownTitles[i * 2].Value : 0;
-					var hi = (i * 2 + 1 < a.KnownTitles.Length && a.KnownTitles[i * 2 + 1].HasValue) ? a.KnownTitles[i * 2 + 1].Value : 0;
+					var lo = i * 2 < a.KnownTitles.Length && a.KnownTitles[i * 2].HasValue ? a.KnownTitles[i * 2].Value : 0;
+					var hi = i * 2 + 1 < a.KnownTitles.Length && a.KnownTitles[i * 2 + 1].HasValue ? a.KnownTitles[i * 2 + 1].Value : 0;
 					knownTitles64[i] = lo | ((ulong)hi << 32);
 				}
 				SetBit(0); SetBit(3); // dynamic field KnownTitles
@@ -764,17 +764,17 @@ public class ObjectUpdateBuilder
 		// ============================================================
 		uint blocksMask0 = 0;
 		for (var b = 0; b < 32; b++)
-			if (blocks[b] != 0) blocksMask0 |= (1u << b);
+			if (blocks[b] != 0) blocksMask0 |= 1u << b;
 		uint blocksMask1 = 0;
 		for (var b = 32; b < 48; b++)
-			if (blocks[b] != 0) blocksMask1 |= (1u << (b - 32));
+			if (blocks[b] != 0) blocksMask1 |= 1u << (b - 32);
 
 		data.WriteUInt32(blocksMask0);
 		data.WriteBits(blocksMask1, 16);
 
 		for (var b = 0; b < 48; b++)
 		{
-			var blockSet = (b < 32) ? ((blocksMask0 & (1u << b)) != 0) : ((blocksMask1 & (1u << (b - 32))) != 0);
+			var blockSet = b < 32 ? (blocksMask0 & (1u << b)) != 0 : (blocksMask1 & (1u << (b - 32))) != 0;
 			if (blockSet)
 				data.WriteBits(blocks[b], 32);
 		}
@@ -1080,7 +1080,7 @@ public class ObjectUpdateBuilder
 			{
 				if (IsBitSet(608 + i))
 				{
-					var pi = (a.PvpInfo != null && i < a.PvpInfo.Length) ? a.PvpInfo[i] : null;
+					var pi = a.PvpInfo != null && i < a.PvpInfo.Length ? a.PvpInfo[i] : null;
 					// Build 19-bit changesMask for this PvpInfo entry
 					uint pvpMask = 0;
 					if (pi != null)
@@ -1090,18 +1090,18 @@ public class ObjectUpdateBuilder
 						// 8: Rating, 9: WeeklyBestRating, 10: SeasonBestRating
 						// 11: PvpTierID, 12: WeeklyBestWinPvpTierID, 13: Field_28, 14: Field_2C
 						// 15-18: Round stats (not in HermesProxy PVPInfo)
-						if (pi.Disqualified) pvpMask |= (1u << 1);
-						if (pi.WeeklyPlayed != 0) pvpMask |= (1u << 4);
-						if (pi.WeeklyWon != 0) pvpMask |= (1u << 5);
-						if (pi.SeasonPlayed != 0) pvpMask |= (1u << 6);
-						if (pi.SeasonWon != 0) pvpMask |= (1u << 7);
-						if (pi.Rating != 0) pvpMask |= (1u << 8);
-						if (pi.WeeklyBestRating != 0) pvpMask |= (1u << 9);
-						if (pi.SeasonBestRating != 0) pvpMask |= (1u << 10);
-						if (pi.PvpTierID != 0) pvpMask |= (1u << 11);
-						if (pi.WeeklyBestWinPvpTierID != 0) pvpMask |= (1u << 12);
-						if (pi.Field_28 != 0) pvpMask |= (1u << 13);
-						if (pi.Field_2C != 0) pvpMask |= (1u << 14);
+						if (pi.Disqualified) pvpMask |= 1u << 1;
+						if (pi.WeeklyPlayed != 0) pvpMask |= 1u << 4;
+						if (pi.WeeklyWon != 0) pvpMask |= 1u << 5;
+						if (pi.SeasonPlayed != 0) pvpMask |= 1u << 6;
+						if (pi.SeasonWon != 0) pvpMask |= 1u << 7;
+						if (pi.Rating != 0) pvpMask |= 1u << 8;
+						if (pi.WeeklyBestRating != 0) pvpMask |= 1u << 9;
+						if (pi.SeasonBestRating != 0) pvpMask |= 1u << 10;
+						if (pi.PvpTierID != 0) pvpMask |= 1u << 11;
+						if (pi.WeeklyBestWinPvpTierID != 0) pvpMask |= 1u << 12;
+						if (pi.Field_28 != 0) pvpMask |= 1u << 13;
+						if (pi.Field_2C != 0) pvpMask |= 1u << 14;
 					}
 					if (pvpMask != 0) pvpMask |= 1; // group bit
 
@@ -1232,7 +1232,7 @@ public class ObjectUpdateBuilder
 
 		// Build 1793-bit changesMask (57 blocks of 32)
 		var skillBlocks = new uint[57];
-		void SB(int bit) { skillBlocks[bit / 32] |= (1u << (bit % 32)); }
+		void SB(int bit) { skillBlocks[bit / 32] |= 1u << (bit % 32); }
 
 		var anyChanged = false;
 		for (var i = 0; i < 256; i++)
@@ -1252,12 +1252,12 @@ public class ObjectUpdateBuilder
 		// Compute blocksMask0 (which of blocks 0-31 have non-zero masks)
 		uint blocksMask0 = 0;
 		for (var b = 0; b < 32 && b < 57; b++)
-			if (skillBlocks[b] != 0) blocksMask0 |= (1u << b);
+			if (skillBlocks[b] != 0) blocksMask0 |= 1u << b;
 
 		// Compute blocksMask1 (which of blocks 32-56 have non-zero masks) — 25 bits
 		uint blocksMask1 = 0;
 		for (var b = 32; b < 57; b++)
-			if (skillBlocks[b] != 0) blocksMask1 |= (1u << (b - 32));
+			if (skillBlocks[b] != 0) blocksMask1 |= 1u << (b - 32);
 
 		// Write masks
 		data.WriteUInt32(blocksMask0);
@@ -1266,7 +1266,7 @@ public class ObjectUpdateBuilder
 		// Write each set block's 32-bit mask
 		for (var b = 0; b < 57; b++)
 		{
-			var blockSet = (b < 32) ? ((blocksMask0 & (1u << b)) != 0) : ((blocksMask1 & (1u << (b - 32))) != 0);
+			var blockSet = b < 32 ? (blocksMask0 & (1u << b)) != 0 : (blocksMask1 & (1u << (b - 32))) != 0;
 			if (blockSet)
 				data.WriteBits(skillBlocks[b], 32);
 		}
@@ -1569,7 +1569,7 @@ public class ObjectUpdateBuilder
 		//  23: group bit for SpellCharges[5] (bits 24-28)
 		//  29: group bit for Enchantment[13] (bits 30-42)
 		var blocks = new uint[2];
-		void SetBit(int bit) { blocks[bit / 32] |= (1u << (bit % 32)); }
+		void SetBit(int bit) { blocks[bit / 32] |= 1u << (bit % 32); }
 
 		if (item.Owner != null) { SetBit(0); SetBit(3); }
 		if (item.ContainedIn != null) { SetBit(0); SetBit(4); }
@@ -1659,7 +1659,7 @@ public class ObjectUpdateBuilder
 		var container = m_updateData.ContainerData;
 		for (var i = 0; i < 36; i++)
 		{
-			data.WritePackedGuid128(((container != null) ? container.Slots[i] : null) ?? WowGuid128.Empty);
+			data.WritePackedGuid128((container != null ? container.Slots[i] : null) ?? WowGuid128.Empty);
 		}
 		data.WriteUInt32((container?.NumSlots).GetValueOrDefault());
 	}
@@ -1678,7 +1678,7 @@ public class ObjectUpdateBuilder
 		for (var i = 0; i < 2; i++)
 		{
 			var npcFlags = unit.NpcFlags;
-			data.WriteUInt32(((npcFlags != null) ? npcFlags[i] : null).GetValueOrDefault());
+			data.WriteUInt32((npcFlags != null ? npcFlags[i] : null).GetValueOrDefault());
 		}
 		data.WriteUInt32(0u);
 		data.WriteUInt32(0u);
@@ -1717,8 +1717,8 @@ public class ObjectUpdateBuilder
 		}
 		for (var k = 0; k < 10; k++)
 		{
-			data.WriteInt32((k < 7) ? unit.Power[k].GetValueOrDefault() : 0);
-			data.WriteInt32((k < 7) ? unit.MaxPower[k].GetValueOrDefault() : 0);
+			data.WriteInt32(k < 7 ? unit.Power[k].GetValueOrDefault() : 0);
+			data.WriteInt32(k < 7 ? unit.MaxPower[k].GetValueOrDefault() : 0);
 			data.WriteFloat(0f);
 		}
 		data.WriteInt32(unit.Level.GetValueOrDefault());
@@ -1734,7 +1734,7 @@ public class ObjectUpdateBuilder
 		for (var l = 0; l < 3; l++)
 		{
 			var virtualItems = unit.VirtualItems;
-			var vItemId = (((virtualItems != null) ? virtualItems[l] : null) != null) ? unit.VirtualItems[l].ItemID : 0;
+			var vItemId = (virtualItems != null ? virtualItems[l] : null) != null ? unit.VirtualItems[l].ItemID : 0;
 			// For players, VirtualItems may not be set by the server (players use PLAYER_VISIBLE_ITEM).
 			// Populate from PlayerData.VisibleItems: slot 0=mainhand(15), 1=offhand(16), 2=ranged(17)
 			if (vItemId == 0 && IsOwner && m_updateData.PlayerData?.VisibleItems != null)
@@ -1760,7 +1760,7 @@ public class ObjectUpdateBuilder
 		for (var m = 0; m < 2; m++)
 		{
 			var attackRoundBaseTime = unit.AttackRoundBaseTime;
-			data.WriteUInt32(((attackRoundBaseTime != null) ? attackRoundBaseTime[m] : null).GetValueOrDefault());
+			data.WriteUInt32((attackRoundBaseTime != null ? attackRoundBaseTime[m] : null).GetValueOrDefault());
 		}
 		if (IsOwner)
 		{
@@ -1811,11 +1811,11 @@ public class ObjectUpdateBuilder
 			for (var n = 0; n < 5; n++)
 			{
 				var stats = unit.Stats;
-				data.WriteInt32(((stats != null) ? stats[n] : null).GetValueOrDefault());
+				data.WriteInt32((stats != null ? stats[n] : null).GetValueOrDefault());
 				var statPosBuff = unit.StatPosBuff;
-				data.WriteInt32(((statPosBuff != null) ? statPosBuff[n] : null).GetValueOrDefault());
+				data.WriteInt32((statPosBuff != null ? statPosBuff[n] : null).GetValueOrDefault());
 				var statNegBuff = unit.StatNegBuff;
-				data.WriteInt32(((statNegBuff != null) ? statNegBuff[n] : null).GetValueOrDefault());
+				data.WriteInt32((statNegBuff != null ? statNegBuff[n] : null).GetValueOrDefault());
 			}
 		}
 		if (IsOwner)
@@ -1823,7 +1823,7 @@ public class ObjectUpdateBuilder
 			for (var num = 0; num < 7; num++)
 			{
 				var resistances = unit.Resistances;
-				data.WriteInt32(((resistances != null) ? resistances[num] : null).GetValueOrDefault());
+				data.WriteInt32((resistances != null ? resistances[num] : null).GetValueOrDefault());
 			}
 		}
 		if (IsOwner)
@@ -1831,17 +1831,17 @@ public class ObjectUpdateBuilder
 			for (var num2 = 0; num2 < 7; num2++)
 			{
 				var powerCostModifier = unit.PowerCostModifier;
-				data.WriteInt32(((powerCostModifier != null) ? powerCostModifier[num2] : null).GetValueOrDefault());
+				data.WriteInt32((powerCostModifier != null ? powerCostModifier[num2] : null).GetValueOrDefault());
 				var powerCostMultiplier = unit.PowerCostMultiplier;
-				data.WriteFloat(((powerCostMultiplier != null) ? powerCostMultiplier[num2] : null).GetValueOrDefault());
+				data.WriteFloat((powerCostMultiplier != null ? powerCostMultiplier[num2] : null).GetValueOrDefault());
 			}
 		}
 		for (var num3 = 0; num3 < 7; num3++)
 		{
 			var resistanceBuffModsPositive = unit.ResistanceBuffModsPositive;
-			data.WriteInt32(((resistanceBuffModsPositive != null) ? resistanceBuffModsPositive[num3] : null).GetValueOrDefault());
+			data.WriteInt32((resistanceBuffModsPositive != null ? resistanceBuffModsPositive[num3] : null).GetValueOrDefault());
 			var resistanceBuffModsNegative = unit.ResistanceBuffModsNegative;
-			data.WriteInt32(((resistanceBuffModsNegative != null) ? resistanceBuffModsNegative[num3] : null).GetValueOrDefault());
+			data.WriteInt32((resistanceBuffModsNegative != null ? resistanceBuffModsNegative[num3] : null).GetValueOrDefault());
 		}
 		data.WriteInt32(unit.BaseMana.GetValueOrDefault());
 		if (IsOwner)
@@ -2558,7 +2558,7 @@ public class ObjectUpdateBuilder
 			var questCount = 0;
 			for (var q = 0; q < 25; q++)
 			{
-				var quest = (player.QuestLog != null && q < player.QuestLog.Length) ? player.QuestLog[q] : null;
+				var quest = player.QuestLog != null && q < player.QuestLog.Length ? player.QuestLog[q] : null;
 				if (quest != null && quest.QuestID.HasValue && quest.QuestID.Value != 0)
 					questCount++;
 				data.WriteInt64(quest?.EndTime ?? 0);
@@ -2574,7 +2574,7 @@ public class ObjectUpdateBuilder
 				var questSlots = "";
 				for (var qi = 0; qi < 25; qi++)
 				{
-					var qe = (player.QuestLog != null && qi < player.QuestLog.Length) ? player.QuestLog[qi] : null;
+					var qe = player.QuestLog != null && qi < player.QuestLog.Length ? player.QuestLog[qi] : null;
 					if (qe != null && qe.QuestID.HasValue && qe.QuestID.Value != 0)
 						questSlots += $" slot{qi}=QID:{qe.QuestID.Value}";
 				}
@@ -2671,7 +2671,7 @@ public class ObjectUpdateBuilder
 		var p = m_updateData.PlayerData ?? new PlayerData();
 
 		var blocks = new uint[4];
-		void SetBit(int bit) { blocks[bit / 32] |= (1u << (bit % 32)); }
+		void SetBit(int bit) { blocks[bit / 32] |= 1u << (bit % 32); }
 		bool IsBitSet(int bit) { return (blocks[bit / 32] & (1u << (bit % 32))) != 0; }
 
 		// Block 0: scalar fields (bits 4-31)
@@ -2836,13 +2836,13 @@ public class ObjectUpdateBuilder
 		var skill = active.Skill;
 		for (var j = 0; j < 256; j++)
 		{
-			data.WriteUInt16(((skill != null) ? skill.SkillLineID[j] : null).GetValueOrDefault());
-			data.WriteUInt16(((skill != null) ? skill.SkillStep[j] : null).GetValueOrDefault());
-			data.WriteUInt16(((skill != null) ? skill.SkillRank[j] : null).GetValueOrDefault());
-			data.WriteUInt16(((skill != null) ? skill.SkillStartingRank[j] : null).GetValueOrDefault());
-			data.WriteUInt16(((skill != null) ? skill.SkillMaxRank[j] : null).GetValueOrDefault());
-			data.WriteUInt16((ushort)((skill != null) ? skill.SkillTempBonus[j] : null).GetValueOrDefault());
-			data.WriteUInt16(((skill != null) ? skill.SkillPermBonus[j] : null).GetValueOrDefault());
+			data.WriteUInt16((skill != null ? skill.SkillLineID[j] : null).GetValueOrDefault());
+			data.WriteUInt16((skill != null ? skill.SkillStep[j] : null).GetValueOrDefault());
+			data.WriteUInt16((skill != null ? skill.SkillRank[j] : null).GetValueOrDefault());
+			data.WriteUInt16((skill != null ? skill.SkillStartingRank[j] : null).GetValueOrDefault());
+			data.WriteUInt16((skill != null ? skill.SkillMaxRank[j] : null).GetValueOrDefault());
+			data.WriteUInt16((ushort)(skill != null ? skill.SkillTempBonus[j] : null).GetValueOrDefault());
+			data.WriteUInt16((skill != null ? skill.SkillPermBonus[j] : null).GetValueOrDefault());
 		}
 		data.WriteInt32(active.CharacterPoints.GetValueOrDefault()); // CharacterPoints (unspent talent points)
 		data.WriteInt32(active.MaxTalentTiers.GetValueOrDefault());  // MaxTalentTiers (total talent points)
@@ -2924,11 +2924,11 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(0u);
 		data.WriteUInt32(0u);
 		data.WriteUInt32(0u);
-		data.WriteInt32(active.WatchedFactionIndex ?? (-1));
+		data.WriteInt32(active.WatchedFactionIndex ?? -1);
 		for (var num2 = 0; num2 < 32; num2++)
 		{
 			var combatRatings = active.CombatRatings;
-			data.WriteInt32(((combatRatings != null) ? combatRatings[num2] : null).GetValueOrDefault());
+			data.WriteInt32((combatRatings != null ? combatRatings[num2] : null).GetValueOrDefault());
 		}
 		data.WriteInt32(active.MaxLevel ?? LegacyVersion.GetMaxLevel());
 		data.WriteInt32(0);
@@ -2941,7 +2941,7 @@ public class ObjectUpdateBuilder
 		for (var num4 = 0; num4 < 2; num4++)
 		{
 			var professionSkillLine = active.ProfessionSkillLine;
-			data.WriteInt32(((professionSkillLine != null) ? professionSkillLine[num4] : null).GetValueOrDefault());
+			data.WriteInt32((professionSkillLine != null ? professionSkillLine[num4] : null).GetValueOrDefault());
 		}
 		data.WriteFloat(0f);
 		data.WriteFloat(0f);
@@ -2969,8 +2969,8 @@ public class ObjectUpdateBuilder
 		data.WriteInt32(active.Honor.GetValueOrDefault());
 		data.WriteInt32(active.HonorNextLevel ?? 5500);
 		data.WriteInt32(0);
-		data.WriteInt32(((int?)active.PvPTierMaxFromWins) ?? (-1));
-		data.WriteInt32(((int?)active.PvPLastWeeksTierMaxFromWins) ?? (-1));
+		data.WriteInt32((int?)active.PvPTierMaxFromWins ?? -1);
+		data.WriteInt32((int?)active.PvPLastWeeksTierMaxFromWins ?? -1);
 		data.WriteUInt8(0);
 		data.WriteInt32(0);
 		data.WriteUInt32(0u);
@@ -3119,7 +3119,7 @@ public class ObjectUpdateBuilder
 		var go = m_updateData.GameObjectData ?? new GameObjectData();
 
 		uint mask = 0;
-		void SetBit(int bit) { mask |= (1u << bit); }
+		void SetBit(int bit) { mask |= 1u << bit; }
 		bool IsBitSet(int bit) { return (mask & (1u << bit)) != 0; }
 
 		// Set bits for changed fields
@@ -3145,7 +3145,7 @@ public class ObjectUpdateBuilder
 		if (go.CustomParam.HasValue) { SetBit(0); SetBit(19); }
 
 		// 1 block, 20 bits — write blocksMask (1 bit) then block mask
-		var blocksMask = (mask != 0) ? (byte)1 : (byte)0;
+		var blocksMask = mask != 0 ? (byte)1 : (byte)0;
 		data.WriteBits(blocksMask, 1);
 		if (blocksMask != 0)
 			data.WriteBits(mask, 20);
@@ -3204,7 +3204,7 @@ public class ObjectUpdateBuilder
 		for (var i = 0; i < 19; i++)
 		{
 			var items = corpse.Items;
-			data.WriteUInt32(((items != null) ? items[i] : null).GetValueOrDefault());
+			data.WriteUInt32((items != null ? items[i] : null).GetValueOrDefault());
 		}
 		data.WriteUInt8(corpse.RaceId.GetValueOrDefault());
 		data.WriteUInt8(corpse.SexId.GetValueOrDefault());
@@ -3218,19 +3218,19 @@ public class ObjectUpdateBuilder
 	public void SetCreateObjectBits()
 	{
 		m_createBits.Clear();
-		m_createBits.PlayHoverAnim = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_updateData.CreateData.MoveInfo.Hover;
-		m_createBits.MovementUpdate = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
+		m_createBits.PlayHoverAnim = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_updateData.CreateData.MoveInfo.Hover;
+		m_createBits.MovementUpdate = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
 		// Never set MovementTransport for 3.4.3: old-style transports (elevators/boats) are
 		// filtered out entirely, and sending passengers with a transport reference causes a
 		// client crash because the referenced transport object was never sent.
 		m_createBits.MovementTransport = false;
-		m_createBits.Stationary = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && !m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
-		m_createBits.ServerTime = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && (m_updateData.Guid.GetHighType() == HighGuidType.Transport || m_updateData.Guid.GetHighType() == HighGuidType.MOTransport);
+		m_createBits.Stationary = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && !m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
+		m_createBits.ServerTime = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && (m_updateData.Guid.GetHighType() == HighGuidType.Transport || m_updateData.Guid.GetHighType() == HighGuidType.MOTransport);
 		m_createBits.CombatVictim = m_updateData.CreateData != null && m_updateData.CreateData.AutoAttackVictim != null;
-		m_createBits.Vehicle = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_updateData.CreateData.MoveInfo.VehicleId != 0;
-		m_createBits.Rotation = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_objectType == ObjectTypeBCC.GameObject;
+		m_createBits.Vehicle = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_updateData.CreateData.MoveInfo.VehicleId != 0;
+		m_createBits.Rotation = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_objectType == ObjectTypeBCC.GameObject;
 		m_createBits.GameObject = m_objectType == ObjectTypeBCC.GameObject;
-		m_createBits.ThisIsYou = (m_createBits.ActivePlayer = m_objectType == ObjectTypeBCC.ActivePlayer);
+		m_createBits.ThisIsYou = m_createBits.ActivePlayer = m_objectType == ObjectTypeBCC.ActivePlayer;
 	}
 
 	public void BuildMovementUpdate(WorldPacket data)
@@ -3357,7 +3357,7 @@ public class ObjectUpdateBuilder
 			data.FlushBits();
 			for (var j = 0; j < 180; j++)
 			{
-				data.WriteInt32((j < m_gameState.ActionButtons.Count) ? m_gameState.ActionButtons[j] : 0);
+				data.WriteInt32(j < m_gameState.ActionButtons.Count ? m_gameState.ActionButtons[j] : 0);
 			}
 		}
 	}

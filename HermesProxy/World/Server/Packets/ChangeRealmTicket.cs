@@ -6,7 +6,7 @@ internal class ChangeRealmTicket : ClientPacket
 {
 	public uint Token;
 
-	public Array<byte> Secret = new Array<byte>(32);
+	public readonly Array<byte> Secret = new(32);
 
 	public ChangeRealmTicket(WorldPacket packet)
 		: base(packet)

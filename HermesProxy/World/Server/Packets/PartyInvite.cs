@@ -18,7 +18,7 @@ internal class PartyInvite : ServerPacket
 
 	public bool QuestSessionActive;
 
-	public ushort Unk1 = 4904;
+	public readonly ushort Unk1 = 4904;
 
 	public VirtualRealmInfo InviterRealm;
 
@@ -32,7 +32,7 @@ internal class PartyInvite : ServerPacket
 
 	public int LfgCompletedMask;
 
-	public List<int> LfgSlots = new List<int>();
+	public readonly List<int> LfgSlots = new();
 
 	public PartyInvite()
 		: base(Opcode.SMSG_PARTY_INVITE)

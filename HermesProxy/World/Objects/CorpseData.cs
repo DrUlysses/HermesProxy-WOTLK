@@ -24,7 +24,7 @@ public class CorpseData
 
 	public int? FactionTemplate;
 
-	public ChrCustomizationChoice[] Customizations = new ChrCustomizationChoice[36];
+	public readonly ChrCustomizationChoice[] Customizations = new ChrCustomizationChoice[36];
 
 	public uint?[] Items { get; } = new uint?[19];
 }

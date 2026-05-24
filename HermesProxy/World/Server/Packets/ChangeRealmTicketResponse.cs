@@ -9,7 +9,7 @@ internal class ChangeRealmTicketResponse : ServerPacket
 
 	public bool Allow = true;
 
-	public ByteBuffer Ticket = new ByteBuffer();
+	public ByteBuffer Ticket = new();
 
 	public ChangeRealmTicketResponse()
 		: base(Opcode.SMSG_CHANGE_REALM_TICKET_RESPONSE)

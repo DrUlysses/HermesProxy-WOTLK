@@ -25,7 +25,7 @@ public class InitWorldStates : ServerPacket
 
 	public uint MapID;
 
-	private List<WorldStateInfo> Worldstates = new List<WorldStateInfo>();
+	private List<WorldStateInfo> Worldstates = new();
 
 	public InitWorldStates()
 		: base(Opcode.SMSG_INIT_WORLD_STATES, ConnectionType.Instance)

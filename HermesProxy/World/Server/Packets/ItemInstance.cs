@@ -10,7 +10,7 @@ public class ItemInstance
 
 	public ItemBonuses ItemBonus;
 
-	public ItemModList Modifications = new ItemModList();
+	public readonly ItemModList Modifications = new();
 
 	public void Write(WorldPacket data)
 	{

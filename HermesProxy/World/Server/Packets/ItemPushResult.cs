@@ -18,7 +18,7 @@ internal class ItemPushResult : ServerPacket
 
 	public int SlotInBag;
 
-	public ItemInstance Item = new ItemInstance();
+	public ItemInstance Item = new();
 
 	public int QuestLogItemID;
 

@@ -4,13 +4,13 @@ namespace HermesProxy.World.Server.Packets;
 
 public class BattlefieldStatusFailed : ServerPacket
 {
-	public RideTicket Ticket = new RideTicket();
+	public RideTicket Ticket = new();
 
 	public byte Unk;
 
 	public ulong BattlefieldListId;
 
-	public WowGuid128 ClientID = WowGuid128.Empty;
+	public readonly WowGuid128 ClientID = WowGuid128.Empty;
 
 	public int Reason;
 

@@ -128,7 +128,7 @@ namespace Framework.GameMath
         /// <returns></returns>
         public Vector3 GetPointOnRay(float t)
         {
-            return (Origin + Direction * t);
+            return Origin + Direction * t;
         }
 
         #endregion
@@ -153,7 +153,7 @@ namespace Framework.GameMath
             if (obj is Ray)
             {
                 var r = (Ray)obj;
-                return ((_origin == r.Origin) && (_direction == r.Direction));
+                return _origin == r.Origin && _direction == r.Direction;
             }
             return false;
         }
@@ -266,7 +266,7 @@ namespace Framework.GameMath
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            if ((destinationType == typeof(string)) && (value is Ray))
+            if (destinationType == typeof(string) && value is Ray)
             {
                 var r = (Ray)value;
                 return r.ToString();

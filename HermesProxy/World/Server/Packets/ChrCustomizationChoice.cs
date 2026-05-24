@@ -4,9 +4,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ChrCustomizationChoice : IComparable<ChrCustomizationChoice>
 {
-	public uint ChrCustomizationOptionID;
+	public readonly uint ChrCustomizationOptionID;
 
-	public uint ChrCustomizationChoiceID;
+	public readonly uint ChrCustomizationChoiceID;
 
 	public ChrCustomizationChoice(uint optionId, uint chocieId)
 	{

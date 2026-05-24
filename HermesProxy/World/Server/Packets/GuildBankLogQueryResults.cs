@@ -7,7 +7,7 @@ public class GuildBankLogQueryResults : ServerPacket
 {
 	public int Tab;
 
-	public List<GuildBankLogEntry> Entry;
+	public readonly List<GuildBankLogEntry> Entry;
 
 	public ulong? WeeklyBonusMoney;
 

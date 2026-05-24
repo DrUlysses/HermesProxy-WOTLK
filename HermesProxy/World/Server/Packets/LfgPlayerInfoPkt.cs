@@ -123,7 +123,7 @@ public struct LfgPlayerDungeonInfo
 
 public class LfgPlayerInfoPkt : ServerPacket
 {
-	public List<LfgPlayerDungeonInfo> Dungeons = new List<LfgPlayerDungeonInfo>();
+	public readonly List<LfgPlayerDungeonInfo> Dungeons = new();
 	public LfgBlackList BlackList;
 
 	public LfgPlayerInfoPkt()

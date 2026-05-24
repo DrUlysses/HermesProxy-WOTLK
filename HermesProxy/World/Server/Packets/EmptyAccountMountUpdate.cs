@@ -21,7 +21,7 @@ public class EmptyAccountMountUpdate : ServerPacket
 
 public class AccountMountUpdate : ServerPacket
 {
-	public List<uint> MountSpellIDs = new List<uint>();
+	public readonly List<uint> MountSpellIDs = new();
 
 	public AccountMountUpdate()
 		: base(Opcode.SMSG_ACCOUNT_MOUNT_UPDATE, ConnectionType.Instance)

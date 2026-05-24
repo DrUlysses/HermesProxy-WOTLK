@@ -109,11 +109,11 @@ namespace Framework.GameMath
         /// <summary>
         /// 4-dimentional single-precision floating point zero matrix.
         /// </summary>
-        public static readonly Matrix4 Zero = new Matrix4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        public static readonly Matrix4 Zero = new(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         /// <summary>
         /// 4-dimentional single-precision floating point identity matrix.
         /// </summary>
-        public static readonly Matrix4 Identity = new Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        public static readonly Matrix4 Identity = new(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
         #endregion
 
         #region Public Properties
@@ -634,10 +634,10 @@ namespace Framework.GameMath
         public static Vector4 Transform(Matrix4 matrix, Vector4 vector)
         {
             return new Vector4(
-                (matrix.M11 * vector.X) + (matrix.M12 * vector.Y) + (matrix.M13 * vector.Z) + (matrix.M14 * vector.W),
-                (matrix.M21 * vector.X) + (matrix.M22 * vector.Y) + (matrix.M23 * vector.Z) + (matrix.M24 * vector.W),
-                (matrix.M31 * vector.X) + (matrix.M32 * vector.Y) + (matrix.M33 * vector.Z) + (matrix.M34 * vector.W),
-                (matrix.M41 * vector.X) + (matrix.M42 * vector.Y) + (matrix.M43 * vector.Z) + (matrix.M44 * vector.W));
+                matrix.M11 * vector.X + matrix.M12 * vector.Y + matrix.M13 * vector.Z + matrix.M14 * vector.W,
+                matrix.M21 * vector.X + matrix.M22 * vector.Y + matrix.M23 * vector.Z + matrix.M24 * vector.W,
+                matrix.M31 * vector.X + matrix.M32 * vector.Y + matrix.M33 * vector.Z + matrix.M34 * vector.W,
+                matrix.M41 * vector.X + matrix.M42 * vector.Y + matrix.M43 * vector.Z + matrix.M44 * vector.W);
         }
         /// <summary>
         /// Transforms a given vector by a matrix and put the result in a vector.
@@ -647,10 +647,10 @@ namespace Framework.GameMath
         /// <param name="result">A <see cref="Vector4"/> instance to hold the result.</param>
         public static void Transform(Matrix4 matrix, Vector4 vector, ref Vector4 result)
         {
-            result.X = (matrix.M11 * vector.X) + (matrix.M12 * vector.Y) + (matrix.M13 * vector.Z) + (matrix.M14 * vector.W);
-            result.Y = (matrix.M21 * vector.X) + (matrix.M22 * vector.Y) + (matrix.M23 * vector.Z) + (matrix.M24 * vector.W);
-            result.Z = (matrix.M31 * vector.X) + (matrix.M32 * vector.Y) + (matrix.M33 * vector.Z) + (matrix.M34 * vector.W);
-            result.W = (matrix.M41 * vector.X) + (matrix.M42 * vector.Y) + (matrix.M43 * vector.Z) + (matrix.M44 * vector.W);
+            result.X = matrix.M11 * vector.X + matrix.M12 * vector.Y + matrix.M13 * vector.Z + matrix.M14 * vector.W;
+            result.Y = matrix.M21 * vector.X + matrix.M22 * vector.Y + matrix.M23 * vector.Z + matrix.M24 * vector.W;
+            result.Z = matrix.M31 * vector.X + matrix.M32 * vector.Y + matrix.M33 * vector.Z + matrix.M34 * vector.W;
+            result.W = matrix.M41 * vector.X + matrix.M42 * vector.Y + matrix.M43 * vector.Z + matrix.M44 * vector.W;
         }
         /// <summary>
         /// Transposes a matrix.
@@ -690,10 +690,10 @@ namespace Framework.GameMath
             {
                 var m = (Matrix4)obj;
                 return
-                    (_m11 == m.M11) && (_m12 == m.M12) && (_m13 == m.M13) && (_m14 == m.M14) &&
-                    (_m21 == m.M21) && (_m22 == m.M22) && (_m23 == m.M23) && (_m24 == m.M24) &&
-                    (_m31 == m.M31) && (_m32 == m.M32) && (_m33 == m.M33) && (_m34 == m.M34) &&
-                    (_m41 == m.M41) && (_m42 == m.M42) && (_m43 == m.M43) && (_m44 == m.M44);
+                    _m11 == m.M11 && _m12 == m.M12 && _m13 == m.M13 && _m14 == m.M14 &&
+                    _m21 == m.M21 && _m22 == m.M22 && _m23 == m.M23 && _m24 == m.M24 &&
+                    _m31 == m.M31 && _m32 == m.M32 && _m33 == m.M33 && _m34 == m.M34 &&
+                    _m41 == m.M41 && _m42 == m.M42 && _m43 == m.M43 && _m44 == m.M44;
             }
             return false;
         }
@@ -886,11 +886,11 @@ namespace Framework.GameMath
         {
             get
             {
-                return this[(row) * 4 + (column)];
+                return this[row * 4 + column];
             }
             set
             {
-                this[(row) * 4 + (column)] = value;
+                this[row * 4 + column] = value;
             }
         }
         #endregion

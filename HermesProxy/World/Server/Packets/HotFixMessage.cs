@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class HotFixMessage : ServerPacket
 {
-	public List<HotfixRecord> Hotfixes = new List<HotfixRecord>();
+	public readonly List<HotfixRecord> Hotfixes = new();
 
 	public HotFixMessage()
 		: base(Opcode.SMSG_HOTFIX_MESSAGE)

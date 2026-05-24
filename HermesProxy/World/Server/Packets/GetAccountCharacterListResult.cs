@@ -7,7 +7,7 @@ public class GetAccountCharacterListResult : ServerPacket
 {
 	public uint Token = 0u;
 
-	public List<AccountCharacterListEntry> CharacterList = new List<AccountCharacterListEntry>();
+	public readonly List<AccountCharacterListEntry> CharacterList = new();
 
 	public GetAccountCharacterListResult()
 		: base(Opcode.SMSG_GET_ACCOUNT_CHARACTER_LIST_RESULT)

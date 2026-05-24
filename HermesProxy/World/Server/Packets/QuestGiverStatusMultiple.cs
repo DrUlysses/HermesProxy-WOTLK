@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class QuestGiverStatusMultiple : ServerPacket
 {
-	public List<QuestGiverInfo> QuestGivers = new List<QuestGiverInfo>();
+	public readonly List<QuestGiverInfo> QuestGivers = new();
 
 	public QuestGiverStatusMultiple()
 		: base(Opcode.SMSG_QUEST_GIVER_STATUS_MULTIPLE, ConnectionType.Instance)

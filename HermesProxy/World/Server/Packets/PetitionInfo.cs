@@ -39,7 +39,7 @@ public class PetitionInfo
 
 	public uint Muid = 0u;
 
-	public StringArray Choicetext = new StringArray(10);
+	public readonly StringArray Choicetext = new(10);
 
 	public void Write(WorldPacket data)
 	{

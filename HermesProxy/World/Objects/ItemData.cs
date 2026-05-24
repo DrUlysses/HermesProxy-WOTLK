@@ -14,11 +14,11 @@ public class ItemData
 
 	public uint? Duration;
 
-	public int?[] SpellCharges = new int?[5];
+	public readonly int?[] SpellCharges = new int?[5];
 
 	public uint? Flags;
 
-	public ItemEnchantment[] Enchantment = new ItemEnchantment[13];
+	public readonly ItemEnchantment[] Enchantment = new ItemEnchantment[13];
 
 	public uint? PropertySeed;
 

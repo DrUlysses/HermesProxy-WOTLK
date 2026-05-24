@@ -45,7 +45,7 @@ public class BnetServices
 			{
 				ResponseType = parameters[1].ParameterType;
 			}
-			MethodCaller = info.CreateDelegate((ResponseType != null) ? Expression.GetDelegateType(typeof(BnetServices), RequestType, ResponseType, info.ReturnType) : Expression.GetDelegateType(typeof(BnetServices), RequestType, info.ReturnType));
+			MethodCaller = info.CreateDelegate(ResponseType != null ? Expression.GetDelegateType(typeof(BnetServices), RequestType, ResponseType, info.ReturnType) : Expression.GetDelegateType(typeof(BnetServices), RequestType, info.ReturnType));
 		}
 	}
 
@@ -177,7 +177,7 @@ public class BnetServices
 
 	private static uint _serverInvokedRequestToken;
 
-	private Dictionary<uint, Action<CodedInputStream>> _callbackHandlers = new Dictionary<uint, Action<CodedInputStream>>();
+	private Dictionary<uint, Action<CodedInputStream>> _callbackHandlers = new();
 
 	private GlobalSessionData _globalSession;
 
@@ -254,7 +254,7 @@ public class BnetServices
 
 	public ServiceRequirement CurrentMatchingRequirement()
 	{
-		return (_globalSession != null) ? ServiceRequirement.LoggedIn : ServiceRequirement.Unauthorized;
+		return _globalSession != null ? ServiceRequirement.LoggedIn : ServiceRequirement.Unauthorized;
 	}
 
 	[Service(ServiceRequirement.LoggedIn, OriginalHash.AccountService, 30u)]

@@ -22,13 +22,13 @@ public class QuestGiverRequestItems : ServerPacket
 
 	public int MoneyToGet;
 
-	public List<QuestObjectiveCollect> Collect = new List<QuestObjectiveCollect>();
+	public readonly List<QuestObjectiveCollect> Collect = new();
 
-	public List<QuestCurrency> Currency = new List<QuestCurrency>();
+	public readonly List<QuestCurrency> Currency = new();
 
 	public uint StatusFlags;
 
-	public uint[] QuestFlags = new uint[3];
+	public readonly uint[] QuestFlags = new uint[3];
 
 	public string QuestTitle = "";
 
@@ -53,7 +53,7 @@ public class QuestGiverRequestItems : ServerPacket
 		_worldPacket.WriteUInt32(QuestFlags[1]);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			_worldPacket.WriteUInt32((QuestFlags.Length > 2) ? QuestFlags[2] : 0u);
+			_worldPacket.WriteUInt32(QuestFlags.Length > 2 ? QuestFlags[2] : 0u);
 		}
 		_worldPacket.WriteInt32((int)SuggestPartyMembers);
 		_worldPacket.WriteInt32(MoneyToGet);

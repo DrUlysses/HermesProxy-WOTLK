@@ -20,19 +20,19 @@ public class ObjectUpdateBuilder
 {
 	protected bool m_alreadyWritten;
 
-	protected ObjectUpdate m_updateData;
+	protected readonly ObjectUpdate m_updateData;
 
-	protected UpdateFieldsArray m_fields;
+	protected readonly UpdateFieldsArray m_fields;
 
-	protected DynamicUpdateFieldsArray m_dynamicFields;
+	protected readonly DynamicUpdateFieldsArray m_dynamicFields;
 
-	protected ObjectTypeBCC m_objectType;
+	protected readonly ObjectTypeBCC m_objectType;
 
-	protected ObjectTypeMask m_objectTypeMask;
+	protected readonly ObjectTypeMask m_objectTypeMask;
 
 	protected CreateObjectBits m_createBits;
 
-	protected GameSessionData m_gameState;
+	protected readonly GameSessionData m_gameState;
 
 	public ObjectUpdateBuilder(ObjectUpdate updateData, GameSessionData gameState)
 	{
@@ -138,15 +138,15 @@ public class ObjectUpdateBuilder
 	public void SetCreateObjectBits()
 	{
 		m_createBits.Clear();
-		m_createBits.PlayHoverAnim = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_updateData.CreateData.MoveInfo.Hover;
-		m_createBits.MovementUpdate = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
-		m_createBits.MovementTransport = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_updateData.CreateData.MoveInfo.TransportGuid != null && m_objectType == ObjectTypeBCC.GameObject;
-		m_createBits.Stationary = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && !m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
-		m_createBits.ServerTime = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_updateData.Guid.GetHighType() == HighGuidType.Transport;
+		m_createBits.PlayHoverAnim = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_updateData.CreateData.MoveInfo.Hover;
+		m_createBits.MovementUpdate = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
+		m_createBits.MovementTransport = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_updateData.CreateData.MoveInfo.TransportGuid != null && m_objectType == ObjectTypeBCC.GameObject;
+		m_createBits.Stationary = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && !m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit);
+		m_createBits.ServerTime = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_updateData.Guid.GetHighType() == HighGuidType.Transport;
 		m_createBits.CombatVictim = m_updateData.CreateData != null && m_updateData.CreateData.AutoAttackVictim != null;
-		m_createBits.Vehicle = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_updateData.CreateData.MoveInfo.VehicleId != 0;
-		m_createBits.Rotation = ((m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null)) && m_objectType == ObjectTypeBCC.GameObject;
-		m_createBits.ThisIsYou = (m_createBits.ActivePlayer = m_objectType == ObjectTypeBCC.ActivePlayer);
+		m_createBits.Vehicle = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_updateData.CreateData.MoveInfo.VehicleId != 0;
+		m_createBits.Rotation = (m_updateData.CreateData != null) & (m_updateData.CreateData.MoveInfo != null) && m_objectType == ObjectTypeBCC.GameObject;
+		m_createBits.ThisIsYou = m_createBits.ActivePlayer = m_objectType == ObjectTypeBCC.ActivePlayer;
 	}
 
 	public void BuildValuesUpdate(WorldPacket packet)
@@ -1783,7 +1783,7 @@ public class ObjectUpdateBuilder
 			{
 				if (activeData.InsertItemsLeftToRight.HasValue)
 				{
-					m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_BYTES_5, (byte)((activeData.InsertItemsLeftToRight == true) ? 1u : 0u));
+					m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_BYTES_5, (byte)(activeData.InsertItemsLeftToRight == true ? 1u : 0u));
 				}
 				if (activeData.PvPRankProgress.HasValue)
 				{

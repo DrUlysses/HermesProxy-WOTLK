@@ -8,9 +8,9 @@ public class LevelUpInfo : ServerPacket
 
 	public int HealthDelta = 0;
 
-	public int[] PowerDelta = new int[10];
+	public readonly int[] PowerDelta = new int[10];
 
-	public int[] StatDelta = new int[5];
+	public readonly int[] StatDelta = new int[5];
 
 	public int NumNewTalents;
 
@@ -25,10 +25,10 @@ public class LevelUpInfo : ServerPacket
 	{
 		_worldPacket.WriteInt32(Level);
 		_worldPacket.WriteInt32(HealthDelta);
-		var powerCount = ((ModernVersion.ExpansionVersion >= 3) ? 10 : ModernVersion.GetPowerCountForClientVersion());
+		var powerCount = ModernVersion.ExpansionVersion >= 3 ? 10 : ModernVersion.GetPowerCountForClientVersion();
 		for (var i = 0; i < powerCount; i++)
 		{
-			_worldPacket.WriteInt32((i < PowerDelta.Length) ? PowerDelta[i] : 0);
+			_worldPacket.WriteInt32(i < PowerDelta.Length ? PowerDelta[i] : 0);
 		}
 		var statDelta = StatDelta;
 		foreach (var stat in statDelta)

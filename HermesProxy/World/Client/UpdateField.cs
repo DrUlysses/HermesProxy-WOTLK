@@ -17,29 +17,25 @@ public struct UpdateField : IEquatable<UpdateField>
 
 	public UpdateField(uint val)
 	{
-		this = default(UpdateField);
+		this = default;
 		UInt32Value = val;
 	}
 
 	public UpdateField(int val)
 	{
-		this = default(UpdateField);
+		this = default;
 		Int32Value = val;
 	}
 
 	public UpdateField(float val)
 	{
-		this = default(UpdateField);
+		this = default;
 		FloatValue = val;
 	}
 
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 	{
-		if (obj is UpdateField)
-		{
-			return Equals((UpdateField)obj);
-		}
-		return false;
+		return obj is UpdateField field && Equals(field);
 	}
 
 	public bool Equals(UpdateField other)
@@ -48,11 +44,7 @@ public struct UpdateField : IEquatable<UpdateField>
 		{
 			return true;
 		}
-		if (Math.Abs(FloatValue - other.FloatValue) < float.Epsilon)
-		{
-			return true;
-		}
-		return false;
+		return Math.Abs(FloatValue - other.FloatValue) < float.Epsilon;
 	}
 
 	public static bool operator ==(UpdateField first, UpdateField other)

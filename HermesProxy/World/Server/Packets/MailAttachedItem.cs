@@ -8,7 +8,7 @@ public class MailAttachedItem
 
 	public int AttachID;
 
-	public ItemInstance Item = new ItemInstance();
+	public readonly ItemInstance Item = new();
 
 	public uint Count;
 
@@ -20,9 +20,9 @@ public class MailAttachedItem
 
 	public bool Unlocked;
 
-	public List<ItemEnchantData> Enchants = new List<ItemEnchantData>();
+	public readonly List<ItemEnchantData> Enchants = new();
 
-	public List<ItemGemData> Gems = new List<ItemGemData>();
+	public readonly List<ItemGemData> Gems = new();
 
 	public void Write(WorldPacket data)
 	{

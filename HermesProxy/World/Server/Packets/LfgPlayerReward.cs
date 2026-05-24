@@ -17,7 +17,7 @@ public class LfgPlayerReward : ServerPacket
 	public uint ActualSlot;
 	public int RewardMoney;
 	public int AddedXP;
-	public List<LfgPlayerRewardItem> Rewards = new List<LfgPlayerRewardItem>();
+	public readonly List<LfgPlayerRewardItem> Rewards = new();
 
 	public LfgPlayerReward()
 		: base(Opcode.SMSG_LFG_PLAYER_REWARD)

@@ -17,11 +17,11 @@ internal class AuthResponse : ServerPacket
 
 	public class ClassAvailability
 	{
-		public byte ClassID;
+		public readonly byte ClassID;
 
-		public byte ActiveExpansionLevel;
+		public readonly byte ActiveExpansionLevel;
 
-		public byte AccountExpansionLevel;
+		public readonly byte AccountExpansionLevel;
 
 		public ClassAvailability(byte classId, byte activeExpLevel, byte accountExpLevel)
 		{
@@ -35,14 +35,14 @@ internal class AuthResponse : ServerPacket
 	{
 		public byte RaceID;
 
-		public List<ClassAvailability> Classes = new List<ClassAvailability>();
+		public readonly List<ClassAvailability> Classes = new();
 	}
 
 	public struct CharacterTemplateClass
 	{
-		public FactionMasks FactionGroup;
+		public readonly FactionMasks FactionGroup;
 
-		public byte ClassID;
+		public readonly byte ClassID;
 
 		public CharacterTemplateClass(FactionMasks factionGroup, byte classID)
 		{
@@ -93,9 +93,9 @@ internal class AuthResponse : ServerPacket
 
 		public GameTime GameTimeInfo;
 
-		public List<VirtualRealmInfo> VirtualRealms = new List<VirtualRealmInfo>();
+		public List<VirtualRealmInfo> VirtualRealms = new();
 
-		public List<CharacterTemplate> Templates = new List<CharacterTemplate>();
+		public List<CharacterTemplate> Templates = new();
 
 		public List<RaceClassAvailability> AvailableClasses;
 

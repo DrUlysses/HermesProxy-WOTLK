@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ContactList : ServerPacket
 {
-	public List<ContactInfo> Contacts;
+	public readonly List<ContactInfo> Contacts;
 
 	public SocialFlag Flags;
 

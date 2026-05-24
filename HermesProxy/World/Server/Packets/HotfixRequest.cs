@@ -8,7 +8,7 @@ internal class HotfixRequest : ClientPacket
 
 	public uint DataBuild;
 
-	public List<uint> Hotfixes = new List<uint>();
+	public readonly List<uint> Hotfixes = new();
 
 	public HotfixRequest(WorldPacket packet)
 		: base(packet)

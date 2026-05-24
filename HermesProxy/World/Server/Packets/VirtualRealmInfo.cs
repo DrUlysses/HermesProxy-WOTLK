@@ -2,7 +2,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal struct VirtualRealmInfo
 {
-	public uint RealmAddress;
+	public readonly uint RealmAddress;
 
 	public VirtualRealmNameInfo RealmNameInfo;
 

@@ -31,9 +31,9 @@ public class AuraDataInfo
 
 	private float? TimeMod;
 
-	public List<float> Points = new List<float>();
+	public List<float> Points = new();
 
-	public List<float> EstimatedPoints = new List<float>();
+	public readonly List<float> EstimatedPoints = new();
 
 	public void Write(WorldPacket data)
 	{

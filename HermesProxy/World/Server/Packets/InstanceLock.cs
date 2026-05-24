@@ -12,7 +12,7 @@ public class InstanceLock
 
 	public int TimeRemaining;
 
-	public uint CompletedMask = 1u;
+	public readonly uint CompletedMask = 1u;
 
 	public bool Locked = true;
 

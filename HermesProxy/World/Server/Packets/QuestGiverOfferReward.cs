@@ -14,11 +14,11 @@ public class QuestGiverOfferReward
 
 	public uint SuggestedPartyMembers = 0u;
 
-	public QuestRewards Rewards = new QuestRewards();
+	public readonly QuestRewards Rewards = new();
 
-	public List<QuestDescEmote> Emotes = new List<QuestDescEmote>();
+	public readonly List<QuestDescEmote> Emotes = new();
 
-	public uint[] QuestFlags = new uint[3];
+	public readonly uint[] QuestFlags = new uint[3];
 
 	public void Write(WorldPacket data)
 	{
@@ -32,7 +32,7 @@ public class QuestGiverOfferReward
 		data.WriteUInt32(QuestFlags[1]);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			data.WriteUInt32((QuestFlags.Length > 2) ? QuestFlags[2] : 0u);
+			data.WriteUInt32(QuestFlags.Length > 2 ? QuestFlags[2] : 0u);
 		}
 		data.WriteUInt32(SuggestedPartyMembers);
 		data.WriteInt32(Emotes.Count);

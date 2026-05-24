@@ -6,7 +6,7 @@ internal class LootMasterGive : ClientPacket
 {
 	public WowGuid128 TargetGUID;
 
-	public List<LootRequest> Loot = new List<LootRequest>();
+	public readonly List<LootRequest> Loot = new();
 
 	public LootMasterGive(WorldPacket packet)
 		: base(packet)

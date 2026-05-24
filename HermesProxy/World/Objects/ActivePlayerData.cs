@@ -4,17 +4,17 @@ namespace HermesProxy.World.Objects;
 
 public class ActivePlayerData
 {
-	public WowGuid128[] InvSlots = new WowGuid128[23];
+	public readonly WowGuid128[] InvSlots = new WowGuid128[23];
 
-	public WowGuid128[] PackSlots = new WowGuid128[24];
+	public readonly WowGuid128[] PackSlots = new WowGuid128[24];
 
-	public WowGuid128[] BankSlots = new WowGuid128[28];
+	public readonly WowGuid128[] BankSlots = new WowGuid128[28];
 
-	public WowGuid128[] BankBagSlots = new WowGuid128[7];
+	public readonly WowGuid128[] BankBagSlots = new WowGuid128[7];
 
-	public WowGuid128[] BuyBackSlots = new WowGuid128[12];
+	public readonly WowGuid128[] BuyBackSlots = new WowGuid128[12];
 
-	public WowGuid128[] KeyringSlots = new WowGuid128[32];
+	public readonly WowGuid128[] KeyringSlots = new WowGuid128[32];
 
 	public WowGuid128 FarsightObject;
 
@@ -22,7 +22,7 @@ public class ActivePlayerData
 
 	public WowGuid128 SummonedBattlePetGUID;
 
-	public uint?[] KnownTitles = new uint?[12];
+	public readonly uint?[] KnownTitles = new uint?[12];
 
 	public ulong? Coinage;
 
@@ -32,7 +32,7 @@ public class ActivePlayerData
 
 	public int? TrialXP;
 
-	public SkillInfo Skill = new SkillInfo();
+	public readonly SkillInfo Skill = new();
 
 	public int? CharacterPoints;
 
@@ -40,7 +40,7 @@ public class ActivePlayerData
 
 	public uint? TrackCreatureMask;
 
-	public uint?[] TrackResourceMask = new uint?[2];
+	public readonly uint?[] TrackResourceMask = new uint?[2];
 
 	public float? MainhandExpertise;
 
@@ -66,7 +66,7 @@ public class ActivePlayerData
 
 	public float? OffhandCritPercentage;
 
-	public float?[] SpellCritPercentage = new float?[7];
+	public readonly float?[] SpellCritPercentage = new float?[7];
 
 	public int? ShieldBlock;
 
@@ -86,15 +86,15 @@ public class ActivePlayerData
 
 	public float? PvpPowerHealing;
 
-	public ulong?[] ExploredZones = new ulong?[240];
+	public readonly ulong?[] ExploredZones = new ulong?[240];
 
-	public RestInfo[] RestInfo = new RestInfo[2];
+	public readonly RestInfo[] RestInfo = new RestInfo[2];
 
-	public int?[] ModDamageDonePos = new int?[7];
+	public readonly int?[] ModDamageDonePos = new int?[7];
 
-	public int?[] ModDamageDoneNeg = new int?[7];
+	public readonly int?[] ModDamageDoneNeg = new int?[7];
 
-	public float?[] ModDamageDonePercent = new float?[7];
+	public readonly float?[] ModDamageDonePercent = new float?[7];
 
 	public int? ModHealingDonePos;
 
@@ -104,9 +104,9 @@ public class ActivePlayerData
 
 	public float? ModPeriodicHealingDonePercent;
 
-	public float?[] WeaponDmgMultipliers = new float?[3];
+	public readonly float?[] WeaponDmgMultipliers = new float?[3];
 
-	public float?[] WeaponAtkSpeedMultipliers = new float?[3];
+	public readonly float?[] WeaponAtkSpeedMultipliers = new float?[3];
 
 	public float? ModSpellPowerPercent;
 
@@ -134,9 +134,9 @@ public class ActivePlayerData
 
 	public uint? PvpMedals;
 
-	public uint?[] BuybackPrice = new uint?[12];
+	public readonly uint?[] BuybackPrice = new uint?[12];
 
-	public uint?[] BuybackTimestamp = new uint?[12];
+	public readonly uint?[] BuybackTimestamp = new uint?[12];
 
 	public ushort? TodayHonorableKills;
 

@@ -10,7 +10,7 @@ internal class SetFactionStanding : ServerPacket
 
 	public float BonusFromAchievementSystem;
 
-	public List<FactionStandingData> Factions = new List<FactionStandingData>();
+	public readonly List<FactionStandingData> Factions = new();
 
 	public bool ShowVisual;
 

@@ -13,7 +13,7 @@ public class TrainerList : ServerPacket
 
 	public uint TrainerID = 1u;
 
-	public List<TrainerListSpell> Spells = new List<TrainerListSpell>();
+	public readonly List<TrainerListSpell> Spells = new();
 
 	public string Greeting;
 

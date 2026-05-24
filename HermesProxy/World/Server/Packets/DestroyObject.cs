@@ -5,8 +5,8 @@ namespace HermesProxy.World.Server.Packets;
 
 public class DestroyObject : ServerPacket
 {
-    public WowGuid128 Guid;
-    public bool IsOutOfRange;
+    public readonly WowGuid128 Guid;
+    public readonly bool IsOutOfRange;
 
     public DestroyObject(WowGuid128 guid, bool isOutOfRange = false)
         : base(Opcode.SMSG_DESTROY_OBJECT, ConnectionType.Instance)

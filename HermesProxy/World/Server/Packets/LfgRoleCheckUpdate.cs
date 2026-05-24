@@ -15,9 +15,9 @@ public class LfgRoleCheckUpdate : ServerPacket
 {
 	public byte PartyIndex;
 	public byte RoleCheckStatus;
-	public List<uint> JoinSlots = new List<uint>();
+	public readonly List<uint> JoinSlots = new();
 	public int GroupFinderActivityID;
-	public List<LfgRoleCheckMember> Members = new List<LfgRoleCheckMember>();
+	public readonly List<LfgRoleCheckMember> Members = new();
 	public bool IsBeginning;
 	public bool IsRequeue;
 

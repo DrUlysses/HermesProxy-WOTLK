@@ -6,13 +6,13 @@ namespace HermesProxy.World.Server.Packets;
 
 public class GossipMessagePkt : ServerPacket
 {
-	public List<ClientGossipOption> GossipOptions = new List<ClientGossipOption>();
+	public readonly List<ClientGossipOption> GossipOptions = new();
 
 	public int FriendshipFactionID;
 
 	public WowGuid128 GossipGUID;
 
-	public List<ClientGossipQuest> GossipQuests = new List<ClientGossipQuest>();
+	public readonly List<ClientGossipQuest> GossipQuests = new();
 
 	public int TextID;
 

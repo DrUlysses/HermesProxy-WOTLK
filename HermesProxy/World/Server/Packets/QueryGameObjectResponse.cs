@@ -37,7 +37,7 @@ public class QueryGameObjectResponse : ServerPacket
 			statsData.WriteCString(Stats.IconName);
 			statsData.WriteCString(Stats.CastBarCaption);
 			statsData.WriteCString(Stats.UnkString);
-			var dataFieldsCount = (ModernVersion.AddedInClassicVersion(1, 14, 1, 2, 5, 3) ? 35 : 34);
+			var dataFieldsCount = ModernVersion.AddedInClassicVersion(1, 14, 1, 2, 5, 3) ? 35 : 34;
 			for (var j = 0; j < dataFieldsCount; j++)
 			{
 				statsData.WriteInt32(Stats.Data[j]);

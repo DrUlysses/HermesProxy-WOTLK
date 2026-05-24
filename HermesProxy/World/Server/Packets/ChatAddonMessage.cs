@@ -2,7 +2,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ChatAddonMessage : ClientPacket
 {
-	public ChatAddonMessageParams Params = new ChatAddonMessageParams();
+	public readonly ChatAddonMessageParams Params = new();
 
 	public ChatAddonMessage(WorldPacket packet)
 		: base(packet)

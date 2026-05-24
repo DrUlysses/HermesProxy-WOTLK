@@ -33,7 +33,7 @@ public class SupportTicketSubmitComplaint : ClientPacket
 			public string Text;
 		}
 
-		public List<ChatLine> ChatLines = new List<ChatLine>();
+		public List<ChatLine> ChatLines = new();
 
 		public uint? ReportedLineIdx;
 
@@ -79,11 +79,11 @@ public class SupportTicketSubmitComplaint : ClientPacket
 		}
 	}
 
-	public HeaderInfo Header = new HeaderInfo();
+	public HeaderInfo Header = new();
 
 	public WowGuid128 TargetCharacterGuid;
 
-	public ChatLogInfo ChatLog = new ChatLogInfo();
+	public ChatLogInfo ChatLog = new();
 
 	public MailInfo? SelectedMailInfo;
 

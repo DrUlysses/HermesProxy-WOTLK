@@ -2,7 +2,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class BattlefieldPort : ClientPacket
 {
-	public RideTicket Ticket = new RideTicket();
+	public readonly RideTicket Ticket = new();
 
 	public bool AcceptedInvite;
 

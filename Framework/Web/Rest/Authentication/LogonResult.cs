@@ -24,7 +24,7 @@ namespace Framework.Web
         public string SupportErrorCode { get; set; }
 
         [DataMember(Name = "authenticator_form")]
-        public FormInputs AuthenticatorForm { get; set; } = new FormInputs();
+        public FormInputs AuthenticatorForm { get; set; } = new();
     }
 
     public enum AuthenticationState

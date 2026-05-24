@@ -12,7 +12,7 @@ internal class LootRollWon : ServerPacket
 
 	public RollType RollType;
 
-	public LootItemData Item = new LootItemData();
+	public readonly LootItemData Item = new();
 
 	public byte MainSpec;
 

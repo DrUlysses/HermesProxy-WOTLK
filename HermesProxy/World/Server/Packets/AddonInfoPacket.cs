@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class AddonInfoPacket : ServerPacket
 {
-    public uint AddonCount;
+    public readonly uint AddonCount;
     public AddonInfoPacket(uint count = 0)
         : base(Opcode.SMSG_ADDON_INFO, ConnectionType.Realm)
     {

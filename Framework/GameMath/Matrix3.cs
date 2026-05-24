@@ -102,11 +102,11 @@ namespace Framework.GameMath
         /// <summary>
         /// 4-dimentional single-precision floating point zero matrix.
         /// </summary>
-        public static readonly Matrix3 Zero = new Matrix3(0, 0, 0, 0, 0, 0, 0, 0, 0);
+        public static readonly Matrix3 Zero = new(0, 0, 0, 0, 0, 0, 0, 0, 0);
         /// <summary>
         /// 4-dimentional single-precision floating point identity matrix.
         /// </summary>
-        public static readonly Matrix3 Identity = new Matrix3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+        public static readonly Matrix3 Identity = new(1, 0, 0, 0, 1, 0, 0, 0, 1);
         #endregion
 
         #region Public Properties
@@ -494,9 +494,9 @@ namespace Framework.GameMath
         public static Vector3 Transform(Matrix3 matrix, Vector3 vector)
         {
             return new Vector3(
-                (matrix.M11 * vector.X) + (matrix.M12 * vector.Y) + (matrix.M13 * vector.Z),
-                (matrix.M21 * vector.X) + (matrix.M22 * vector.Y) + (matrix.M23 * vector.Z),
-                (matrix.M31 * vector.X) + (matrix.M32 * vector.Y) + (matrix.M33 * vector.Z));
+                matrix.M11 * vector.X + matrix.M12 * vector.Y + matrix.M13 * vector.Z,
+                matrix.M21 * vector.X + matrix.M22 * vector.Y + matrix.M23 * vector.Z,
+                matrix.M31 * vector.X + matrix.M32 * vector.Y + matrix.M33 * vector.Z);
         }
         /// <summary>
         /// Transforms a given vector by a matrix and put the result in a vector.
@@ -506,9 +506,9 @@ namespace Framework.GameMath
         /// <param name="result">A <see cref="Vector3"/> instance to hold the result.</param>
         public static void Transform(Matrix3 matrix, Vector3 vector, ref Vector3 result)
         {
-            result.X = (matrix.M11 * vector.X) + (matrix.M12 * vector.Y) + (matrix.M13 * vector.Z);
-            result.Y = (matrix.M21 * vector.X) + (matrix.M22 * vector.Y) + (matrix.M23 * vector.Z);
-            result.Z = (matrix.M31 * vector.X) + (matrix.M32 * vector.Y) + (matrix.M33 * vector.Z);
+            result.X = matrix.M11 * vector.X + matrix.M12 * vector.Y + matrix.M13 * vector.Z;
+            result.Y = matrix.M21 * vector.X + matrix.M22 * vector.Y + matrix.M23 * vector.Z;
+            result.Z = matrix.M31 * vector.X + matrix.M32 * vector.Y + matrix.M33 * vector.Z;
         }
         /// <summary>
         /// Transposes a matrix.
@@ -538,7 +538,7 @@ namespace Framework.GameMath
             fSin = (float)Math.Sin(fRAngle);
             var kXMat = new Matrix3(1.0f, 0.0f, 0.0f, 0.0f, fCos, -fSin, 0.0f, fSin, fCos);
 
-            return (kZMat * (kYMat * kXMat));
+            return kZMat * (kYMat * kXMat);
         }
 
         public Matrix3 inverse(float fTolerance = (float)1e-06)
@@ -619,9 +619,9 @@ namespace Framework.GameMath
             {
                 var m = (Matrix3)obj;
                 return
-                    (_m11 == m.M11) && (_m12 == m.M12) && (_m13 == m.M13) &&
-                    (_m21 == m.M21) && (_m22 == m.M22) && (_m23 == m.M23) &&
-                    (_m31 == m.M31) && (_m32 == m.M32) && (_m33 == m.M33);
+                    _m11 == m.M11 && _m12 == m.M12 && _m13 == m.M13 &&
+                    _m21 == m.M21 && _m22 == m.M22 && _m23 == m.M23 &&
+                    _m31 == m.M31 && _m32 == m.M32 && _m33 == m.M33;
             }
             return false;
         }
@@ -754,7 +754,7 @@ namespace Framework.GameMath
         }
         public static Vector3 operator *(Vector3 rkPoint, Matrix3 rkMatrix)
         {
-            return (Transpose(rkMatrix) * rkPoint);
+            return Transpose(rkMatrix) * rkPoint;
         }
         #endregion
 

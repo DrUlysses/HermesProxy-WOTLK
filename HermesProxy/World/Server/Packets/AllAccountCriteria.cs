@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class AllAccountCriteria : ServerPacket
 {
-	public List<CriteriaProgressPkt> Progress = new List<CriteriaProgressPkt>();
+	public readonly List<CriteriaProgressPkt> Progress = new();
 
 	public AllAccountCriteria()
 		: base(Opcode.SMSG_ALL_ACCOUNT_CRITERIA, ConnectionType.Instance)

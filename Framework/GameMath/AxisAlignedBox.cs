@@ -162,7 +162,7 @@ namespace Framework.GameMath
             if (obj is AxisAlignedBox)
             {
                 var box = (AxisAlignedBox)obj;
-                return (_lo == box.Lo) && (_hi == box.Hi);
+                return _lo == box.Lo && _hi == box.Hi;
             }
             return false;
         }
@@ -196,7 +196,7 @@ namespace Framework.GameMath
                 return Equals(a, null);
             }
 
-            return (a.Lo == b.Lo) && (a.Hi == b.Hi);
+            return a.Lo == b.Lo && a.Hi == b.Hi;
         }
 
         /// <summary> 
@@ -216,19 +216,19 @@ namespace Framework.GameMath
             {
                 return !Equals(a, null);
             }
-            return !((a.Lo == b.Lo) && (a.Hi == b.Hi));
+            return !(a.Lo == b.Lo && a.Hi == b.Hi);
         }
         #endregion
 
         public bool contains(Vector3 point)
         {
             return
-                (point.X >= _lo.X) &&
-                (point.Y >= _lo.Y) &&
-                (point.Z >= _lo.Z) &&
-                (point.X <= _hi.X) &&
-                (point.Y <= _hi.Y) &&
-                (point.Z <= _hi.Z);
+                point.X >= _lo.X &&
+                point.Y >= _lo.Y &&
+                point.Z >= _lo.Z &&
+                point.X <= _hi.X &&
+                point.Y <= _hi.Y &&
+                point.Z <= _hi.Z;
         }
 
         public void merge(AxisAlignedBox a)

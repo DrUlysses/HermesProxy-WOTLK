@@ -34,7 +34,7 @@ namespace Framework.Web
         public int VersionDataBuild { get; set; }
 
         [DataMember(Name = "version")]
-        public ClientVersion ClientVersion { get; set; } = new ClientVersion();
+        public ClientVersion ClientVersion { get; set; } = new();
 
         [DataMember(Name = "secret")]
         public List<int> Secret { get; set; }

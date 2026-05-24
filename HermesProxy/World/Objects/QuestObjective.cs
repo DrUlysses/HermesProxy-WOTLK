@@ -27,7 +27,7 @@ public class QuestObjective
 
 	public string Description;
 
-	public int[] VisualEffects = Array.Empty<int>();
+	public readonly int[] VisualEffects = Array.Empty<int>();
 
 	public bool IsStoringValue()
 	{

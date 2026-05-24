@@ -28,9 +28,9 @@ public class ItemSparseRecord
 
 	public float RangeMod;
 
-	public float[] StatPercentageOfSocket = new float[10];
+	public readonly float[] StatPercentageOfSocket = new float[10];
 
-	public int[] StatPercentEditor = new int[10];
+	public readonly int[] StatPercentEditor = new int[10];
 
 	public int Stackable;
 
@@ -50,7 +50,7 @@ public class ItemSparseRecord
 
 	public float PriceRandomValue = 1f;
 
-	public uint[] Flags = new uint[4];
+	public readonly uint[] Flags = new uint[4];
 
 	public int OppositeFactionItemId;
 
@@ -78,7 +78,7 @@ public class ItemSparseRecord
 
 	public ushort InstanceBound;
 
-	public ushort[] ZoneBound = new ushort[2];
+	public readonly ushort[] ZoneBound = new ushort[2];
 
 	public ushort ItemSet;
 
@@ -104,15 +104,15 @@ public class ItemSparseRecord
 
 	public ushort RandomProperty;
 
-	public ushort[] MinDamage = new ushort[5];
+	public readonly ushort[] MinDamage = new ushort[5];
 
-	public ushort[] MaxDamage = new ushort[5];
+	public readonly ushort[] MaxDamage = new ushort[5];
 
-	public short[] Resistances = new short[7];
+	public readonly short[] Resistances = new short[7];
 
 	public ushort ScalingStatDistributionId;
 
-	public short[] StatModifierBonusAmount = new short[10];
+	public readonly short[] StatModifierBonusAmount = new short[10];
 
 	public byte ExpansionId = 254;
 
@@ -122,7 +122,7 @@ public class ItemSparseRecord
 
 	public byte SpellWeightCategory;
 
-	public byte[] SocketType = new byte[3];
+	public readonly byte[] SocketType = new byte[3];
 
 	public byte SheatheType;
 
@@ -136,7 +136,7 @@ public class ItemSparseRecord
 
 	public byte DamageType;
 
-	public sbyte[] StatType = new sbyte[10];
+	public readonly sbyte[] StatType = new sbyte[10];
 
 	public byte ContainerSlots;
 

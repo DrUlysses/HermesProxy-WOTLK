@@ -5,9 +5,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public class PowerUpdate : ServerPacket
 {
-	public WowGuid128 Guid;
+	public readonly WowGuid128 Guid;
 
-	public List<PowerUpdatePower> Powers;
+	public readonly List<PowerUpdatePower> Powers;
 
 	public PowerUpdate(WowGuid128 guid)
 		: base(Opcode.SMSG_POWER_UPDATE)

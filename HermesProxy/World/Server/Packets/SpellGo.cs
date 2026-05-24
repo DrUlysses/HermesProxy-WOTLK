@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class SpellGo : ServerPacket
 {
-	public SpellCastData Cast = new SpellCastData();
+	public SpellCastData Cast = new();
 
 	public SpellCastLogData LogData;
 

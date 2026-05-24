@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class GuildRanks : ServerPacket
 {
-	public List<GuildRankData> Ranks = new List<GuildRankData>();
+	public readonly List<GuildRankData> Ranks = new();
 
 	public GuildRanks()
 		: base(Opcode.SMSG_GUILD_RANKS)

@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class BattlefieldStatusNeedConfirmation : ServerPacket
 {
-	public BattlefieldStatusHeader Hdr = new BattlefieldStatusHeader();
+	public BattlefieldStatusHeader Hdr = new();
 
 	public uint Mapid;
 

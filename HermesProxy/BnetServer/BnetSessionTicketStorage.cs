@@ -5,11 +5,11 @@ namespace BNetServer;
 
 public static class BnetSessionTicketStorage
 {
-	public static Dictionary<string, GlobalSessionData> SessionsByName = new Dictionary<string, GlobalSessionData>();
+	public static readonly Dictionary<string, GlobalSessionData> SessionsByName = new();
 
-	public static Dictionary<string, GlobalSessionData> SessionsByTicket = new Dictionary<string, GlobalSessionData>();
+	public static readonly Dictionary<string, GlobalSessionData> SessionsByTicket = new();
 
-	public static Dictionary<ulong, GlobalSessionData> SessionsByKey = new Dictionary<ulong, GlobalSessionData>();
+	public static readonly Dictionary<ulong, GlobalSessionData> SessionsByKey = new();
 
 	public static void AddNewSessionByName(string name, GlobalSessionData session)
 	{

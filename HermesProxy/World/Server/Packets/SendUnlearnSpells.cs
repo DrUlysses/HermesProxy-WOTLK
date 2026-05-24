@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SendUnlearnSpells : ServerPacket
 {
-	public List<uint> Spells = new List<uint>();
+	public readonly List<uint> Spells = new();
 
 	public SendUnlearnSpells()
 		: base(Opcode.SMSG_SEND_UNLEARN_SPELLS, ConnectionType.Instance)

@@ -5,15 +5,15 @@ namespace HermesProxy.World.Server.Packets;
 
 public class InspectResult : ServerPacket
 {
-	public PlayerModelDisplayInfo DisplayInfo = new PlayerModelDisplayInfo();
+	public readonly PlayerModelDisplayInfo DisplayInfo = new();
 
-	public List<ushort> Glyphs = new List<ushort>();
+	public readonly List<ushort> Glyphs = new();
 
-	public List<byte> Talents = new List<byte>();
+	public readonly List<byte> Talents = new();
 
 	public InspectGuildData GuildData;
 
-	public Array<PVPBracketData> Bracket = new Array<PVPBracketData>(6, default(PVPBracketData));
+	public readonly Array<PVPBracketData> Bracket = new(6, default);
 
 	public uint? AzeriteLevel;
 
@@ -21,7 +21,7 @@ public class InspectResult : ServerPacket
 
 	public uint LifetimeHK;
 
-	public uint HonorLevel = 1u;
+	public readonly uint HonorLevel = 1u;
 
 	public ushort TodayHK;
 

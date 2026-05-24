@@ -6,5 +6,5 @@ public class CreatureDisplayStats
 {
 	public float TotalProbability;
 
-	public List<CreatureXDisplay> CreatureDisplay = new List<CreatureXDisplay>();
+	public readonly List<CreatureXDisplay> CreatureDisplay = new();
 }

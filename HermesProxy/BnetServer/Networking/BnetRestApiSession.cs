@@ -115,7 +115,7 @@ public class BnetRestApiSession : SSLSocket
 		globalSession.AuthClient.SendRealmListUpdateRequest();
 		var loginResult = new LogonResult();
 		var ticket = Array.Empty<byte>().GenerateRandomKey(20);
-		var loginTicket = (globalSession.LoginTicket = "HP-" + ticket.ToHexString());
+		var loginTicket = globalSession.LoginTicket = "HP-" + ticket.ToHexString();
 		globalSession.Username = login;
 		globalSession.AccountMetaDataMgr = new AccountMetaDataManager(login);
 		BnetSessionTicketStorage.AddNewSessionByName(login, globalSession);

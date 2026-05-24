@@ -14,9 +14,9 @@ public class GuildRankData
 
 	public string RankName;
 
-	public uint[] TabFlags = new uint[6];
+	public readonly uint[] TabFlags = new uint[6];
 
-	public uint[] TabWithdrawItemLimit = new uint[6];
+	public readonly uint[] TabWithdrawItemLimit = new uint[6];
 
 	public void Write(WorldPacket data)
 	{

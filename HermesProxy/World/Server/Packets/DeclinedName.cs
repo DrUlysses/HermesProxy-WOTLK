@@ -4,5 +4,5 @@ namespace HermesProxy.World.Server.Packets;
 
 public class DeclinedName
 {
-	public StringArray name = new StringArray(5);
+	public readonly StringArray name = new(5);
 }

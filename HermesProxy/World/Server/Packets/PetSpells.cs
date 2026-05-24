@@ -10,7 +10,7 @@ public class PetSpells : ServerPacket
 
 	public ushort CreatureFamily;
 
-	public short Specialization = -1;
+	public readonly short Specialization = -1;
 
 	public uint TimeLimit;
 
@@ -20,13 +20,13 @@ public class PetSpells : ServerPacket
 
 	public byte Flag;
 
-	public uint[] ActionButtons = new uint[10];
+	public readonly uint[] ActionButtons = new uint[10];
 
-	public List<uint> Actions = new List<uint>();
+	public readonly List<uint> Actions = new();
 
-	public List<PetSpellCooldown> Cooldowns = new List<PetSpellCooldown>();
+	public readonly List<PetSpellCooldown> Cooldowns = new();
 
-	public List<PetSpellHistory> SpellHistory = new List<PetSpellHistory>();
+	public readonly List<PetSpellHistory> SpellHistory = new();
 
 	public PetSpells()
 		: base(Opcode.SMSG_PET_SPELLS_MESSAGE, ConnectionType.Instance)

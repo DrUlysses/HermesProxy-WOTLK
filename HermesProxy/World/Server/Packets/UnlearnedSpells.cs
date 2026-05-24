@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class UnlearnedSpells : ServerPacket
 {
-	public List<uint> Spells = new List<uint>();
+	public readonly List<uint> Spells = new();
 
 	public bool SuppressMessaging;
 

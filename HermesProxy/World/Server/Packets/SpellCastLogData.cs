@@ -12,7 +12,7 @@ public class SpellCastLogData
 
 	private uint Armor;
 
-	private List<SpellLogPowerData> PowerData = new List<SpellLogPowerData>();
+	private List<SpellLogPowerData> PowerData = new();
 
 	public void Write(WorldPacket data)
 	{

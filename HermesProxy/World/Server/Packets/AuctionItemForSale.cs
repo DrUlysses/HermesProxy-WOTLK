@@ -2,9 +2,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public struct AuctionItemForSale
 {
-	public WowGuid128 Guid;
+	public readonly WowGuid128 Guid;
 
-	public uint UseCount;
+	public readonly uint UseCount;
 
 	public AuctionItemForSale(WorldPacket data)
 	{

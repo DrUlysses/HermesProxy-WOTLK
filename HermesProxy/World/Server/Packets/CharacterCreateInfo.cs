@@ -11,7 +11,7 @@ public class CharacterCreateInfo
 
 	public Gender Sex = Gender.None;
 
-	public Array<ChrCustomizationChoice> Customizations = new Array<ChrCustomizationChoice>(50);
+	public readonly Array<ChrCustomizationChoice> Customizations = new(50);
 
 	public uint? TemplateSet;
 

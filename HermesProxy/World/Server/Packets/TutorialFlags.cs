@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class TutorialFlags : ServerPacket
 {
-	public uint[] TutorialData = new uint[8];
+	public readonly uint[] TutorialData = new uint[8];
 
 	public TutorialFlags()
 		: base(Opcode.SMSG_TUTORIAL_FLAGS)

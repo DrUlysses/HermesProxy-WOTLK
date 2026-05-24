@@ -3,7 +3,7 @@ namespace HermesProxy.World.Server.Packets;
 public class QuestPOIQuery : ClientPacket
 {
 	public int MissingQuestCount;
-	public int[] MissingQuestPOIs = new int[175];
+	public readonly int[] MissingQuestPOIs = new int[175];
 
 	public QuestPOIQuery(WorldPacket packet)
 		: base(packet)

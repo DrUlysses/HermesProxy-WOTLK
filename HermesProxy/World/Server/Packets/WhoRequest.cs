@@ -20,7 +20,7 @@ public class WhoRequest
 
 	public int ClassFilter = -1;
 
-	public List<string> Words = new List<string>();
+	public readonly List<string> Words = new();
 
 	public bool ShowEnemies;
 

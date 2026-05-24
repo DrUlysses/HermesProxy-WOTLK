@@ -44,7 +44,7 @@ public class AccountDataManager
 
 	public string GetFullFileName(WowGuid128 guid, uint type)
 	{
-		var file = ((!IsGlobalDataType(type)) ? $"data-{type}-{guid.GetLowValue()}-{guid.GetHighValue()}.bin" : $"data-{type}.bin");
+		var file = !IsGlobalDataType(type) ? $"data-{type}-{guid.GetLowValue()}-{guid.GetHighValue()}.bin" : $"data-{type}.bin";
 		var path = GetAccountDataDirectory();
 		return Path.Combine(path, file);
 	}

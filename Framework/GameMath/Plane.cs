@@ -118,15 +118,15 @@ namespace Framework.GameMath
         /// <summary>
         /// Plane on the X axis.
         /// </summary>
-        public static readonly Plane XPlane = new Plane(Vector3.XAxis, Vector3.Zero);
+        public static readonly Plane XPlane = new(Vector3.XAxis, Vector3.Zero);
         /// <summary>
         /// Plane on the Y axis.
         /// </summary>
-        public static readonly Plane YPlane = new Plane(Vector3.YAxis, Vector3.Zero);
+        public static readonly Plane YPlane = new(Vector3.YAxis, Vector3.Zero);
         /// <summary>
         /// Plane on the Z axis.
         /// </summary>
-        public static readonly Plane ZPlane = new Plane(Vector3.ZAxis, Vector3.Zero);
+        public static readonly Plane ZPlane = new(Vector3.ZAxis, Vector3.Zero);
         #endregion
 
         #region Public Properties
@@ -241,7 +241,7 @@ namespace Framework.GameMath
             if (obj is Plane)
             {
                 var p = (Plane)obj;
-                return (_normal == p.Normal) && (_const == p.Constant);
+                return _normal == p.Normal && _const == p.Constant;
             }
             return false;
         }

@@ -4,13 +4,13 @@ namespace HermesProxy.World.Server.Packets;
 
 internal struct VirtualRealmNameInfo
 {
-	public bool IsLocal;
+	public readonly bool IsLocal;
 
-	public bool IsInternalRealm;
+	public readonly bool IsInternalRealm;
 
-	public string RealmNameActual;
+	public readonly string RealmNameActual;
 
-	public string RealmNameNormalized;
+	public readonly string RealmNameNormalized;
 
 	public VirtualRealmNameInfo(bool isHomeRealm, bool isInternalRealm, string realmNameActual, string realmNameNormalized)
 	{

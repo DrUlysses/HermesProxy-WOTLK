@@ -8,7 +8,7 @@ public class TransferAborted : ServerPacket
 
 	public byte Arg;
 
-	public int MapDifficultyXConditionID = -6;
+	public readonly int MapDifficultyXConditionID = -6;
 
 	public TransferAbortReasonModern Reason;
 

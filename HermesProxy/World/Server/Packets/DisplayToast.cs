@@ -7,7 +7,7 @@ public class DisplayToast : ServerPacket
 {
 	public ulong Quantity;
 
-	public byte DisplayToastMethod = 16;
+	public readonly byte DisplayToastMethod = 16;
 
 	public uint QuestID;
 
@@ -17,7 +17,7 @@ public class DisplayToast : ServerPacket
 
 	public bool BonusRoll;
 
-	public ItemInstance ItemReward = new ItemInstance();
+	public readonly ItemInstance ItemReward = new();
 
 	public uint SpecializationID;
 

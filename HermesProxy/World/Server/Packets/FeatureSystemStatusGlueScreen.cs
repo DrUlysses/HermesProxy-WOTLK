@@ -35,13 +35,13 @@ public class FeatureSystemStatusGlueScreen : ServerPacket
 
 	public bool LiveRegionAccountCopyEnabled;
 
-	public bool LiveRegionKeyBindingsCopyEnabled = false;
+	public readonly bool LiveRegionKeyBindingsCopyEnabled = false;
 
-	public bool Unknown901CheckoutRelated = false;
+	public readonly bool Unknown901CheckoutRelated = false;
 
 	public EuropaTicketConfig EuropaTicketSystemStatus;
 
-	public List<int> LiveRegionCharacterCopySourceRegions = new List<int>();
+	public readonly List<int> LiveRegionCharacterCopySourceRegions = new();
 
 	public uint TokenPollTimeSeconds;
 
@@ -61,7 +61,7 @@ public class FeatureSystemStatusGlueScreen : ServerPacket
 
 	public int ActiveSeason;
 
-	public List<GameRuleValuePair> GameRuleValues = new List<GameRuleValuePair>();
+	public readonly List<GameRuleValuePair> GameRuleValues = new();
 
 	public short MaxPlayerNameQueriesPerPacket;
 

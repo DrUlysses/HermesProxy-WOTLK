@@ -12,7 +12,7 @@ public class ItemTemplate
 
 	public int SoundOverrideSubclass;
 
-	public string[] Name = new string[4];
+	public readonly string[] Name = new string[4];
 
 	public uint DisplayID;
 
@@ -68,11 +68,11 @@ public class ItemTemplate
 
 	public uint ScalingStatValue;
 
-	public float[] DamageMins = new float[5];
+	public readonly float[] DamageMins = new float[5];
 
-	public float[] DamageMaxs = new float[5];
+	public readonly float[] DamageMaxs = new float[5];
 
-	public int[] DamageTypes = new int[5];
+	public readonly int[] DamageTypes = new int[5];
 
 	public uint Armor;
 
@@ -94,17 +94,17 @@ public class ItemTemplate
 
 	public float RangedMod;
 
-	public int[] TriggeredSpellIds = new int[5];
+	public readonly int[] TriggeredSpellIds = new int[5];
 
-	public int[] TriggeredSpellTypes = new int[5];
+	public readonly int[] TriggeredSpellTypes = new int[5];
 
-	public int[] TriggeredSpellCharges = new int[5];
+	public readonly int[] TriggeredSpellCharges = new int[5];
 
-	public int[] TriggeredSpellCooldowns = new int[5];
+	public readonly int[] TriggeredSpellCooldowns = new int[5];
 
-	public uint[] TriggeredSpellCategories = new uint[5];
+	public readonly uint[] TriggeredSpellCategories = new uint[5];
 
-	public int[] TriggeredSpellCategoryCooldowns = new int[5];
+	public readonly int[] TriggeredSpellCategoryCooldowns = new int[5];
 
 	public int Bonding;
 
@@ -142,9 +142,9 @@ public class ItemTemplate
 
 	public int TotemCategory;
 
-	public int[] ItemSocketColors = new int[3];
+	public readonly int[] ItemSocketColors = new int[3];
 
-	public uint[] SocketContent = new uint[3];
+	public readonly uint[] SocketContent = new uint[3];
 
 	public int SocketBonus;
 
@@ -197,7 +197,7 @@ public class ItemTemplate
 		MaxCount = packet.ReadInt32();
 		MaxStackSize = packet.ReadInt32();
 		ContainerSlots = packet.ReadUInt32();
-		StatsCount = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? packet.ReadUInt32() : 10u);
+		StatsCount = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? packet.ReadUInt32() : 10u;
 		if (StatsCount > 10)
 		{
 			StatTypes = new int[StatsCount];
@@ -213,7 +213,7 @@ public class ItemTemplate
 			ScalingStatDistribution = packet.ReadInt32();
 			ScalingStatValue = packet.ReadUInt32();
 		}
-		var dmgCount = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? 2 : 5);
+		var dmgCount = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? 2 : 5;
 		for (var k = 0; k < dmgCount; k++)
 		{
 			DamageMins[k] = packet.ReadFloat();

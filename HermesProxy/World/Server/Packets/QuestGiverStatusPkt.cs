@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class QuestGiverStatusPkt : ServerPacket
 {
-	public QuestGiverInfo QuestGiver;
+	public readonly QuestGiverInfo QuestGiver;
 
 	public QuestGiverStatusPkt()
 		: base(Opcode.SMSG_QUEST_GIVER_STATUS, ConnectionType.Instance)

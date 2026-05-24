@@ -6,11 +6,11 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SupercededSpells : ServerPacket
 {
-	public List<uint> SpellID = new List<uint>();
+	public readonly List<uint> SpellID = new();
 
-	public List<uint> Superceded = new List<uint>();
+	public readonly List<uint> Superceded = new();
 
-	public List<int> FavoriteSpellID = new List<int>();
+	public readonly List<int> FavoriteSpellID = new();
 
 	public SupercededSpells()
 		: base(Opcode.SMSG_SUPERCEDED_SPELLS, ConnectionType.Instance)

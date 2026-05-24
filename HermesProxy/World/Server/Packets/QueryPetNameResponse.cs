@@ -12,7 +12,7 @@ internal class QueryPetNameResponse : ServerPacket
 
 	public bool HasDeclined;
 
-	public DeclinedName DeclinedNames = new DeclinedName();
+	public readonly DeclinedName DeclinedNames = new();
 
 	public long Timestamp;
 

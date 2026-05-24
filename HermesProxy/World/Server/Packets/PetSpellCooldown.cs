@@ -8,7 +8,7 @@ public class PetSpellCooldown
 
 	public uint CategoryDuration;
 
-	public float ModRate = 1f;
+	public readonly float ModRate = 1f;
 
 	public ushort Category;
 }

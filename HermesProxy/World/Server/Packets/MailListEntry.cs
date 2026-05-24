@@ -32,7 +32,7 @@ public class MailListEntry
 
 	public uint ItemTextId;
 
-	public List<MailAttachedItem> Attachments = new List<MailAttachedItem>();
+	public readonly List<MailAttachedItem> Attachments = new();
 
 	/// <summary>
 	/// TC343 MailListEntry write format:

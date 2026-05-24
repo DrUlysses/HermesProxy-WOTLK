@@ -4,7 +4,7 @@ namespace HermesProxy.World;
 
 public class WowGuid64 : WowGuid
 {
-	public static WowGuid64 Empty = new WowGuid64(0uL);
+	public static readonly WowGuid64 Empty = new(0uL);
 
 	public WowGuid64(ulong id)
 	{
@@ -14,13 +14,13 @@ public class WowGuid64 : WowGuid
 
 	public WowGuid64(HighGuidTypeLegacy hi, uint counter)
 	{
-		Low = (ulong)((counter != 0) ? (counter | ((long)hi << 48)) : 0);
+		Low = (ulong)(counter != 0 ? counter | ((long)hi << 48) : 0);
 		HighGuid = new HighGuidLegacy(GetHighGuidTypeLegacy());
 	}
 
 	public WowGuid64(HighGuidTypeLegacy hi, uint entry, uint counter)
 	{
-		Low = ((counter != 0) ? (counter | ((ulong)entry << 24) | (ulong)((long)hi << 48)) : 0);
+		Low = counter != 0 ? counter | ((ulong)entry << 24) | (ulong)((long)hi << 48) : 0;
 		HighGuid = new HighGuidLegacy(GetHighGuidTypeLegacy());
 	}
 
@@ -79,7 +79,7 @@ public class WowGuid64 : WowGuid
 
 	public override ulong GetCounter()
 	{
-		return (uint)(HasEntry() ? (Low & 0xFFFFFF) : (Low & 0xFFFFFFFFu));
+		return (uint)(HasEntry() ? Low & 0xFFFFFF : Low & 0xFFFFFFFFu);
 	}
 
 	public override uint GetEntry()

@@ -11,7 +11,7 @@ internal class PlayObjectSound : ServerPacket
 
 	public WowGuid128 TargetObjectGUID;
 
-	public Vector3 Position = default(Vector3);
+	public Vector3 Position = default;
 
 	public int BroadcastTextID;
 

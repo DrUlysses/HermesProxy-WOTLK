@@ -7,7 +7,7 @@ public class MailListResult : ServerPacket
 {
 	public int TotalNumRecords;
 
-	public List<MailListEntry> Mails = new List<MailListEntry>();
+	public readonly List<MailListEntry> Mails = new();
 
 	public MailListResult()
 		: base(Opcode.SMSG_MAIL_LIST_RESULT)

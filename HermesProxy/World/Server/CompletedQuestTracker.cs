@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server;
 
 public class CompletedQuestTracker
 {
-	private Dictionary<int, ulong> _cachedQuestCompleted = new Dictionary<int, ulong>();
+	private Dictionary<int, ulong> _cachedQuestCompleted = new();
 
 	public GlobalSessionData Session { get; }
 
@@ -63,7 +63,7 @@ public class CompletedQuestTracker
 		}
 		else
 		{
-			_cachedQuestCompleted[idx] &= (ulong)(~(1L << bitIdx));
+			_cachedQuestCompleted[idx] &= (ulong)~(1L << bitIdx);
 		}
 		var updateData = new ObjectUpdate(Session.GameState.CurrentPlayerGuid, UpdateTypeModern.Values, Session);
 		updateData.ActivePlayerData.QuestCompleted[idx] = _cachedQuestCompleted[idx];

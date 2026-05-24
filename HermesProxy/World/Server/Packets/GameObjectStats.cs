@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class GameObjectStats
 {
-	public string[] Name = new string[4];
+	public readonly string[] Name = new string[4];
 
 	public string IconName = "";
 
@@ -16,11 +16,11 @@ public class GameObjectStats
 
 	public uint DisplayID;
 
-	public int[] Data = new int[35];
+	public readonly int[] Data = new int[35];
 
 	public float Size = 1f;
 
-	public List<uint> QuestItems = new List<uint>();
+	public readonly List<uint> QuestItems = new();
 
 	public uint ContentTuningId;
 

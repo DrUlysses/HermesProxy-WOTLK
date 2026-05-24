@@ -127,7 +127,7 @@ public class FeatureSystemStatus : ServerPacket
 
 	public int ActiveSeason;
 
-	public List<GameRuleValuePair> GameRuleValues = new List<GameRuleValuePair>();
+	public List<GameRuleValuePair> GameRuleValues = new();
 
 	public short MaxPlayerNameQueriesPerPacket;
 

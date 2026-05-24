@@ -30,7 +30,7 @@ namespace Framework.Networking
     public abstract class SSLSocket : ISocket, IDisposable
     {
         Socket _socket;
-        internal SslStream _stream;
+        internal readonly SslStream _stream;
         IPEndPoint _remoteEndPoint;
         byte[] _receiveBuffer;
 

@@ -8,7 +8,7 @@ public class HighGuid703 : HighGuid
 {
 	protected byte high;
 
-	private static readonly Dictionary<HighGuidType703, HighGuidType> High703ToHighType = new Dictionary<HighGuidType703, HighGuidType>
+	private static readonly Dictionary<HighGuidType703, HighGuidType> High703ToHighType = new()
 	{
 		{
 			HighGuidType703.Null,

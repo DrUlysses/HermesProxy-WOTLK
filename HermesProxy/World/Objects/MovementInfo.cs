@@ -149,7 +149,7 @@ public sealed class MovementInfo
 
 	public void RemoveMovementFlag(MovementFlagModern f)
 	{
-		Flags &= (uint)(~f);
+		Flags &= (uint)~f;
 	}
 
 	public bool HasMovementFlag(MovementFlagModern f)
@@ -228,10 +228,10 @@ public sealed class MovementInfo
 
 	public void WriteMovementInfoLegacy(WorldPacket data)
 	{
-		var flags = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? ((uint)((MovementFlagModern)Flags).CastFlags<MovementFlagWotLK>()) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? ((uint)((MovementFlagModern)Flags).CastFlags<MovementFlagVanilla>()) : ((uint)((MovementFlagModern)Flags).CastFlags<MovementFlagTBC>())));
+		var flags = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? (uint)((MovementFlagModern)Flags).CastFlags<MovementFlagWotLK>() : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? (uint)((MovementFlagModern)Flags).CastFlags<MovementFlagVanilla>() : (uint)((MovementFlagModern)Flags).CastFlags<MovementFlagTBC>();
 		if (TransportGuid != null)
 		{
-			flags = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? (flags | 0x200) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? (flags | 0x2000000) : (flags | 0x200)));
+			flags = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags | 0x200 : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? flags | 0x2000000 : flags | 0x200;
 		}
 		data.WriteUInt32(flags);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
@@ -245,7 +245,7 @@ public sealed class MovementInfo
 		data.WriteUInt32(MoveTime);
 		data.WriteVector3(Position);
 		data.WriteFloat(Orientation);
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.OnTransport) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.OnTransport) : flags.HasAnyFlag(MovementFlagTBC.OnTransport)))
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.OnTransport) : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? flags.HasAnyFlag(MovementFlagVanilla.OnTransport) : flags.HasAnyFlag(MovementFlagTBC.OnTransport))
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 			{
@@ -270,19 +270,19 @@ public sealed class MovementInfo
 				data.WriteUInt32(TransportTime2);
 			}
 		}
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? (flags.HasAnyFlag(MovementFlagWotLK.Swimming | MovementFlagWotLK.Flying) || FlagsExtra.HasAnyFlag(MovementFlagExtra.AlwaysAllowPitching)) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.Swimming) : flags.HasAnyFlag(MovementFlagTBC.Swimming | MovementFlagTBC.Flying2)))
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.Swimming | MovementFlagWotLK.Flying) || FlagsExtra.HasAnyFlag(MovementFlagExtra.AlwaysAllowPitching) : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? flags.HasAnyFlag(MovementFlagVanilla.Swimming) : flags.HasAnyFlag(MovementFlagTBC.Swimming | MovementFlagTBC.Flying2))
 		{
 			data.WriteFloat(SwimPitch);
 		}
 		data.WriteUInt32(FallTime);
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.Falling) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.Falling) : flags.HasAnyFlag(MovementFlagTBC.Falling)))
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.Falling) : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? flags.HasAnyFlag(MovementFlagVanilla.Falling) : flags.HasAnyFlag(MovementFlagTBC.Falling))
 		{
 			data.WriteFloat(JumpVerticalSpeed);
 			data.WriteFloat(JumpSinAngle);
 			data.WriteFloat(JumpCosAngle);
 			data.WriteFloat(JumpHorizontalSpeed);
 		}
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.SplineElevation) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.SplineElevation) : flags.HasAnyFlag(MovementFlagTBC.SplineElevation)))
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.SplineElevation) : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? flags.HasAnyFlag(MovementFlagVanilla.SplineElevation) : flags.HasAnyFlag(MovementFlagTBC.SplineElevation))
 		{
 			data.WriteFloat(SplineElevation);
 		}

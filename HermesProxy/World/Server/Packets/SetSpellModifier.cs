@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SetSpellModifier : ServerPacket
 {
-	public List<SpellModifierInfo> Modifiers = new List<SpellModifierInfo>();
+	public readonly List<SpellModifierInfo> Modifiers = new();
 
 	public SetSpellModifier(Opcode opcode)
 		: base(opcode, ConnectionType.Instance)

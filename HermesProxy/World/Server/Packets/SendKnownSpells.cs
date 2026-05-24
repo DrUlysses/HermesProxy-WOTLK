@@ -8,9 +8,9 @@ public class SendKnownSpells : ServerPacket
 {
 	public bool InitialLogin;
 
-	public List<uint> KnownSpells = new List<uint>();
+	public readonly List<uint> KnownSpells = new();
 
-	public List<uint> FavoriteSpells = new List<uint>();
+	public readonly List<uint> FavoriteSpells = new();
 
 	public SendKnownSpells()
 		: base(Opcode.SMSG_SEND_KNOWN_SPELLS, ConnectionType.Instance)

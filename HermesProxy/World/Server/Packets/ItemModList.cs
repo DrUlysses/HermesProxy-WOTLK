@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ItemModList
 {
-	public Array<ItemMod> Values = new Array<ItemMod>(38);
+	public readonly Array<ItemMod> Values = new(38);
 
 	public void Read(WorldPacket data)
 	{

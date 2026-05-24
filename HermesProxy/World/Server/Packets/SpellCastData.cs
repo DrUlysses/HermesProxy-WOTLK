@@ -10,7 +10,7 @@ public class SpellCastData
 
 	public WowGuid128 CastID = WowGuid128.Empty;
 
-	public WowGuid128 OriginalCastID = WowGuid128.Empty;
+	public readonly WowGuid128 OriginalCastID = WowGuid128.Empty;
 
 	public int SpellID;
 
@@ -22,15 +22,15 @@ public class SpellCastData
 
 	public uint CastTime;
 
-	public List<WowGuid128> HitTargets = new List<WowGuid128>();
+	public readonly List<WowGuid128> HitTargets = new();
 
-	public List<WowGuid128> MissTargets = new List<WowGuid128>();
+	public readonly List<WowGuid128> MissTargets = new();
 
-	public List<SpellMissStatus> MissStatus = new List<SpellMissStatus>();
+	public readonly List<SpellMissStatus> MissStatus = new();
 
-	public SpellTargetData Target = new SpellTargetData();
+	public readonly SpellTargetData Target = new();
 
-	public List<SpellPowerData> RemainingPower = new List<SpellPowerData>();
+	public readonly List<SpellPowerData> RemainingPower = new();
 
 	public RuneData RemainingRunes;
 
@@ -42,11 +42,11 @@ public class SpellCastData
 
 	public byte DestLocSpellCastIndex;
 
-	public List<TargetLocation> TargetPoints = new List<TargetLocation>();
+	public readonly List<TargetLocation> TargetPoints = new();
 
 	public CreatureImmunities Immunities;
 
-	public SpellHealPrediction Predict = new SpellHealPrediction();
+	public readonly SpellHealPrediction Predict = new();
 
 	public void Write(WorldPacket data)
 	{

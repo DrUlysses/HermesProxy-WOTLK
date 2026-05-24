@@ -10,7 +10,7 @@ public class AuctionItem
 
 	public int Charges;
 
-	public List<ItemEnchantData> Enchantments = new List<ItemEnchantData>();
+	public readonly List<ItemEnchantData> Enchantments = new();
 
 	public uint Flags = 196608u;
 
@@ -34,7 +34,7 @@ public class AuctionItem
 
 	public bool CensorBidInfo;
 
-	public WowGuid128 ItemGuid = WowGuid128.Empty;
+	public readonly WowGuid128 ItemGuid = WowGuid128.Empty;
 
 	public WowGuid128 OwnerAccountID;
 
@@ -46,7 +46,7 @@ public class AuctionItem
 
 	public ulong? BidAmount;
 
-	public List<ItemGemData> Gems = new List<ItemGemData>();
+	public readonly List<ItemGemData> Gems = new();
 
 	public AuctionBucketKey AuctionBucketKey;
 

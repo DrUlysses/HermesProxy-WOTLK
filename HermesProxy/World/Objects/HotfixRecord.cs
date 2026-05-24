@@ -15,7 +15,7 @@ public class HotfixRecord
 
 	public HotfixStatus Status;
 
-	public ByteBuffer HotfixContent = new ByteBuffer();
+	public ByteBuffer HotfixContent = new();
 
 	public void WriteAvailable(WorldPacket data)
 	{

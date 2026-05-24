@@ -2,7 +2,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class ChatAddonMessageTargeted : ClientPacket
 {
-	public ChatAddonMessageParams Params = new ChatAddonMessageParams();
+	public readonly ChatAddonMessageParams Params = new();
 
 	public WowGuid128 ChannelGuid;
 

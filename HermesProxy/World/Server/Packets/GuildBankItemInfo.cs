@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class GuildBankItemInfo
 {
-	public ItemInstance Item = new ItemInstance();
+	public readonly ItemInstance Item = new();
 
 	public int Slot;
 
@@ -20,5 +20,5 @@ public class GuildBankItemInfo
 
 	public bool Locked;
 
-	public List<ItemGemData> SocketEnchant = new List<ItemGemData>();
+	public readonly List<ItemGemData> SocketEnchant = new();
 }

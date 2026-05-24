@@ -12,7 +12,7 @@ public class EmoteMessage : ServerPacket
 
 	public int SequenceVariation;
 
-	public List<uint> SpellVisualKitIDs = new List<uint>();
+	public readonly List<uint> SpellVisualKitIDs = new();
 
 	public EmoteMessage()
 		: base(Opcode.SMSG_EMOTE, ConnectionType.Instance)

@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class MOTD : ServerPacket
 {
-	public List<string> Text = new List<string>();
+	public readonly List<string> Text = new();
 
 	public MOTD()
 		: base(Opcode.SMSG_MOTD)

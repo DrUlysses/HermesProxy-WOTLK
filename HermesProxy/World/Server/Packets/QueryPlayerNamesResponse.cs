@@ -14,7 +14,7 @@ public class QueryPlayerNamesResponse : ServerPacket
 		public PlayerGuidLookupData Data;
 	}
 
-	public List<NameCacheLookupResult> Players = new List<NameCacheLookupResult>();
+	public List<NameCacheLookupResult> Players = new();
 
 	public QueryPlayerNamesResponse()
 		: base(Opcode.SMSG_QUERY_PLAYER_NAMES_RESPONSE)

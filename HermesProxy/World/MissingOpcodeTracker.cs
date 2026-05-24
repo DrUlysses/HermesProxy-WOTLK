@@ -7,9 +7,9 @@ namespace HermesProxy.World;
 
 public static class MissingOpcodeTracker
 {
-	private static readonly HashSet<string> _logged = new HashSet<string>();
+	private static readonly HashSet<string> _logged = new();
 
-	private static readonly object _lock = new object();
+	private static readonly object _lock = new();
 
 	private static string _logPath;
 

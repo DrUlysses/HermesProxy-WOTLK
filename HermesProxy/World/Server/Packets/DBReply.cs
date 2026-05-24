@@ -13,7 +13,7 @@ public class DBReply : ServerPacket
 
 	public HotfixStatus Status = HotfixStatus.Invalid;
 
-	public ByteBuffer Data = new ByteBuffer();
+	public ByteBuffer Data = new();
 
 	public DBReply()
 		: base(Opcode.SMSG_DB_REPLY)

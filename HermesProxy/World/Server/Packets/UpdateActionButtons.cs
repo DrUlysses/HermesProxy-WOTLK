@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class UpdateActionButtons : ServerPacket
 {
-	public List<int> ActionButtons = new List<int>();
+	public List<int> ActionButtons = new();
 
 	public byte Reason;
 
@@ -19,7 +19,7 @@ public class UpdateActionButtons : ServerPacket
 	{
 		for (var i = 0; i < 180; i++)
 		{
-			_worldPacket.WriteInt64((i < ActionButtons.Count) ? ActionButtons[i] : 0);
+			_worldPacket.WriteInt64(i < ActionButtons.Count ? ActionButtons[i] : 0);
 		}
 		_worldPacket.WriteUInt8(Reason);
 	}

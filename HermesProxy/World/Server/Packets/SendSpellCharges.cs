@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SendSpellCharges : ServerPacket
 {
-	public List<SpellChargeEntry> Entries = new List<SpellChargeEntry>();
+	public readonly List<SpellChargeEntry> Entries = new();
 
 	public SendSpellCharges()
 		: base(Opcode.SMSG_SEND_SPELL_CHARGES, ConnectionType.Instance)

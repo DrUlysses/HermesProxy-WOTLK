@@ -6,7 +6,7 @@ public class QuestGiverChooseReward : ClientPacket
 
 	public uint QuestID;
 
-	public QuestChoiceItem Choice = new QuestChoiceItem();
+	public readonly QuestChoiceItem Choice = new();
 
 	public QuestGiverChooseReward(WorldPacket packet)
 		: base(packet)

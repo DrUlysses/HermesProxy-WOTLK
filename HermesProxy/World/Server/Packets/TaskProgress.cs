@@ -12,7 +12,7 @@ public class TaskProgress
 
 	public uint Unk;
 
-	public List<ushort> Progress = new List<ushort>();
+	public readonly List<ushort> Progress = new();
 
 	public void Write(WorldPacket data)
 	{

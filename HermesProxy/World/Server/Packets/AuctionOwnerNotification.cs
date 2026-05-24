@@ -6,7 +6,7 @@ public class AuctionOwnerNotification
 
 	public ulong BidAmount;
 
-	public ItemInstance Item = new ItemInstance();
+	public readonly ItemInstance Item = new();
 
 	public void Write(WorldPacket data)
 	{

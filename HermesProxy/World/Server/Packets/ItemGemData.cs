@@ -4,7 +4,7 @@ public class ItemGemData
 {
 	public byte Slot;
 
-	public ItemInstance Item = new ItemInstance();
+	public readonly ItemInstance Item = new();
 
 	public void Write(WorldPacket data)
 	{

@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class QuestForceRemoved : ServerPacket
 {
-	public uint QuestID;
+	public readonly uint QuestID;
 
 	public QuestForceRemoved(uint questId)
 		: base(Opcode.SMSG_QUEST_FORCE_REMOVED)

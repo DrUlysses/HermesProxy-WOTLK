@@ -6,7 +6,7 @@ public class TriggerCinematic : ServerPacket
 {
 	public uint CinematicID;
 
-	public WowGuid128 ConversationGuid = WowGuid128.Empty;
+	public readonly WowGuid128 ConversationGuid = WowGuid128.Empty;
 
 	public TriggerCinematic()
 		: base(Opcode.SMSG_TRIGGER_CINEMATIC)

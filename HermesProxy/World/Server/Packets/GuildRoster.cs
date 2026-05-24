@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class GuildRoster : ServerPacket
 {
-	public List<GuildRosterMemberData> MemberData = new List<GuildRosterMemberData>();
+	public readonly List<GuildRosterMemberData> MemberData = new();
 
 	public string WelcomeText;
 
@@ -16,7 +16,7 @@ public class GuildRoster : ServerPacket
 
 	public uint NumAccounts;
 
-	public int GuildFlags = 2;
+	public readonly int GuildFlags = 2;
 
 	public GuildRoster()
 		: base(Opcode.SMSG_GUILD_ROSTER)

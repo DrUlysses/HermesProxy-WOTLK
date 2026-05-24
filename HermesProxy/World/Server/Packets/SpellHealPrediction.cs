@@ -2,7 +2,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SpellHealPrediction
 {
-	public WowGuid128 BeaconGUID = WowGuid128.Empty;
+	public readonly WowGuid128 BeaconGUID = WowGuid128.Empty;
 
 	public uint Points;
 

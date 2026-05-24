@@ -6,7 +6,7 @@ namespace HermesProxy.World.Objects;
 
 public static class ObjectTypeConverter
 {
-	private static readonly Dictionary<ObjectTypeLegacy, ObjectType> ConvDictLegacy = new Dictionary<ObjectTypeLegacy, ObjectType>
+	private static readonly Dictionary<ObjectTypeLegacy, ObjectType> ConvDictLegacy = new()
 	{
 		{
 			ObjectTypeLegacy.Object,
@@ -54,7 +54,7 @@ public static class ObjectTypeConverter
 		}
 	};
 
-	private static readonly Dictionary<ObjectType801, ObjectType> ConvDict801 = new Dictionary<ObjectType801, ObjectType>
+	private static readonly Dictionary<ObjectType801, ObjectType> ConvDict801 = new()
 	{
 		{
 			ObjectType801.Object,
@@ -114,7 +114,7 @@ public static class ObjectTypeConverter
 		}
 	};
 
-	private static readonly Dictionary<ObjectTypeBCC, ObjectType> ConvDictBCC = new Dictionary<ObjectTypeBCC, ObjectType>
+	private static readonly Dictionary<ObjectTypeBCC, ObjectType> ConvDictBCC = new()
 	{
 		{
 			ObjectTypeBCC.Object,

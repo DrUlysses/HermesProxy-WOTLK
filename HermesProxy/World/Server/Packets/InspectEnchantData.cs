@@ -2,9 +2,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public struct InspectEnchantData
 {
-	public uint Id;
+	public readonly uint Id;
 
-	public byte Index;
+	public readonly byte Index;
 
 	public InspectEnchantData(uint id, byte index)
 	{

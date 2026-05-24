@@ -143,12 +143,12 @@ namespace Framework.IO
 		{ // the derivation of this formula is left as an exercise for the reader
 			var rem=len2%BASE;
 			var sum1=adler1&0xffff;
-			var sum2=(rem*sum1)%BASE;
+			var sum2=rem*sum1%BASE;
 			sum1+=(adler2&0xffff)+BASE-1;
 			sum2+=((adler1>>16)&0xffff)+((adler2>>16)&0xffff)+BASE-rem;
 			if(sum1>=BASE) sum1-=BASE;
 			if(sum1>=BASE) sum1-=BASE;
-			if(sum2>=(BASE<<1)) sum2-=(BASE<<1);
+			if(sum2>=BASE<<1) sum2-=BASE<<1;
 			if(sum2>=BASE) sum2-=BASE;
 			return sum1|(sum2<<16);
 		}

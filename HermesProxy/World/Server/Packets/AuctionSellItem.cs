@@ -14,7 +14,7 @@ internal class AuctionSellItem : ClientPacket
 
 	public AddOnInfo TaintedBy;
 
-	public List<AuctionItemForSale> Items = new List<AuctionItemForSale>();
+	public readonly List<AuctionItemForSale> Items = new();
 
 	public AuctionSellItem(WorldPacket packet)
 		: base(packet)
@@ -31,7 +31,7 @@ internal class AuctionSellItem : ClientPacket
 		{
 			TaintedBy = new AddOnInfo();
 		}
-		var itemCountBits = (ModernVersion.AddedInClassicVersion(1, 14, 3, 2, 5, 4) ? 6 : 5);
+		var itemCountBits = ModernVersion.AddedInClassicVersion(1, 14, 3, 2, 5, 4) ? 6 : 5;
 		var itemCount = _worldPacket.ReadBits<uint>(itemCountBits);
 		if (TaintedBy != null)
 		{

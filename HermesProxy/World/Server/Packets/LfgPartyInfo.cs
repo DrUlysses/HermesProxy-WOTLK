@@ -14,12 +14,12 @@ public class LfgLockInfoData
 public class LfgBlackListEntry
 {
 	public WowGuid128 PlayerGuid;
-	public List<LfgLockInfoData> Locks = new List<LfgLockInfoData>();
+	public readonly List<LfgLockInfoData> Locks = new();
 }
 
 public class LfgPartyInfo : ServerPacket
 {
-	public List<LfgBlackListEntry> Players = new List<LfgBlackListEntry>();
+	public readonly List<LfgBlackListEntry> Players = new();
 
 	public LfgPartyInfo()
 		: base(Opcode.SMSG_LFG_PARTY_INFO)

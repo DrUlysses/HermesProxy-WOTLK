@@ -4,7 +4,7 @@ public class PetCastSpell : ClientPacket
 {
 	public WowGuid128 PetGUID;
 
-	public SpellCastRequest Cast;
+	public readonly SpellCastRequest Cast;
 
 	public PetCastSpell(WorldPacket packet)
 		: base(packet)

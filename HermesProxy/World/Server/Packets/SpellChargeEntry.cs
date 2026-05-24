@@ -6,7 +6,7 @@ public class SpellChargeEntry
 
 	public uint NextRecoveryTime;
 
-	public float ChargeModRate = 1f;
+	public readonly float ChargeModRate = 1f;
 
 	public byte ConsumedCharges;
 

@@ -13,7 +13,7 @@ public class LearnedSpellInfo
 
 public class LearnedSpells : ServerPacket
 {
-	public List<LearnedSpellInfo> ClientLearnedSpellData = new List<LearnedSpellInfo>();
+	public readonly List<LearnedSpellInfo> ClientLearnedSpellData = new();
 
 	public uint SpecializationID;
 

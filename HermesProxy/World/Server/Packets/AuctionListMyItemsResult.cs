@@ -5,9 +5,9 @@ namespace HermesProxy.World.Server.Packets;
 
 public class AuctionListMyItemsResult : ServerPacket
 {
-	public List<AuctionItem> Items = new List<AuctionItem>();
+	public readonly List<AuctionItem> Items = new();
 
-	public List<AuctionItem> SoldItems = new List<AuctionItem>();
+	public readonly List<AuctionItem> SoldItems = new();
 
 	public uint DesiredDelay = 300u;
 

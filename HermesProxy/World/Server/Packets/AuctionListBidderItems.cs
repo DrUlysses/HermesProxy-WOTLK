@@ -8,7 +8,7 @@ internal class AuctionListBidderItems : ClientPacket
 
 	public uint Offset;
 
-	public List<uint> AuctionItemIDs = new List<uint>();
+	public readonly List<uint> AuctionItemIDs = new();
 
 	public AuctionListBidderItems(WorldPacket packet)
 		: base(packet)

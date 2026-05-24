@@ -18,7 +18,7 @@ public class InventoryChangeFailure : ServerPacket
 
 	public int Level;
 
-	public WowGuid128[] Item = new WowGuid128[2];
+	public readonly WowGuid128[] Item = new WowGuid128[2];
 
 	public InventoryChangeFailure()
 		: base(Opcode.SMSG_INVENTORY_CHANGE_FAILURE)

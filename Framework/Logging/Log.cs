@@ -31,12 +31,12 @@ namespace Framework.Logging
     {
         private static readonly Dictionary<LogType, (ConsoleColor Color, string Type)> LogToColorType = new()
         {
-            { LogType.Debug,    (ConsoleColor.DarkBlue, " Debug   ") },
-            { LogType.Server,   (ConsoleColor.Blue,     " Server  ") },
-            { LogType.Network,  (ConsoleColor.Green,    " Network ") },
-            { LogType.Error,    (ConsoleColor.Red,      " Error   ") },
-            { LogType.Warn,     (ConsoleColor.Yellow,   " Warning ") },
-            { LogType.Storage,  (ConsoleColor.Cyan,     " Storage ") },
+            { LogType.Debug, (ConsoleColor.DarkBlue, " Debug   ") },
+            { LogType.Server, (ConsoleColor.Blue, " Server  ") },
+            { LogType.Network, (ConsoleColor.Green, " Network ") },
+            { LogType.Error, (ConsoleColor.Red, " Error   ") },
+            { LogType.Warn, (ConsoleColor.Yellow, " Warning ") },
+            { LogType.Storage, (ConsoleColor.Cyan, " Storage ") },
         };
 
         private static readonly BlockingCollection<(LogType Type, string Message)> LogQueue = new();
@@ -56,19 +56,19 @@ namespace Framework.Logging
         {
             InitFileLogging();
 
-            if (_logOutputThread == null)
+            if (_logOutputThread != null) return;
+            _logOutputThread = new Thread(() =>
             {
-                _logOutputThread = new Thread(() =>
+                foreach (var msg in LogQueue.GetConsumingEnumerable())
                 {
-                    foreach (var msg in LogQueue.GetConsumingEnumerable())
-                    {
-                        PrintInternalDirectly(msg.Type, msg.Message);
-                    }
-                });
+                    PrintInternalDirectly(msg.Type, msg.Message);
+                }
+            })
+            {
+                IsBackground = true
+            };
 
-                _logOutputThread.IsBackground = true;
-                _logOutputThread.Start();
-            }
+            _logOutputThread.Start();
         }
 
         private static void InitFileLogging()
@@ -82,6 +82,7 @@ namespace Framework.Logging
                 {
                     _logWriter = new StreamWriter(logFile, append: true, encoding: Encoding.UTF8) { AutoFlush = true };
                 }
+
                 _logWriter.WriteLine($"=== HermesProxy Log Started {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===");
             }
             catch (Exception ex)
@@ -100,7 +101,10 @@ namespace Framework.Logging
                     _logWriter.WriteLine(line);
                 }
             }
-            catch { /* don't crash on log write failure */ }
+            catch
+            {
+                /* don't crash on log write failure */
+            }
         }
 
         private static void PrintInternalDirectly(LogType type, string text)
@@ -132,7 +136,8 @@ namespace Framework.Logging
         /// <param name="text">Text of the log message</param>
         /// <param name="method">Name of the method the log is called from</param>
         /// <param name="path">The relative path of the file.</param>
-        public static void Print(LogType type, object text, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
+        public static void Print(LogType type, object text, [CallerMemberName] string method = "",
+            [CallerFilePath] string path = "")
         {
             var formattedText = $"{FormatCaller(method, path)} | {text}";
 #if DEBUG
@@ -143,13 +148,18 @@ namespace Framework.Logging
                 {
                     PrintInternalDirectly(type, formattedText);
                 }
+
                 return;
             }
 #endif
             LogQueue.Add((type, formattedText));
         }
 
-        public static void PrintNet(LogType type, LogNetDir netDirection, object text, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
+        public static void PrintNet(LogType type,
+            LogNetDir netDirection,
+            object text,
+            [CallerMemberName] string method = "",
+            [CallerFilePath] string path = "")
         {
             var directionText = netDirection switch
             {
@@ -162,7 +172,9 @@ namespace Framework.Logging
             Print(type, $"{directionText} | {text}", method, path);
         }
 
-        public static void outException(Exception err, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
+        public static void outException(Exception err,
+            [CallerMemberName] string method = "",
+            [CallerFilePath] string path = "")
         {
             Print(LogType.Error, err.ToString(), method, path);
         }

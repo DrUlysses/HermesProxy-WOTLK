@@ -6,5 +6,5 @@ public class Battleground
 {
 	public bool IsArena;
 
-	public List<uint> MapIds = new List<uint>();
+	public readonly List<uint> MapIds = new();
 }

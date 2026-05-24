@@ -14,17 +14,17 @@ public class QuestGiverQuestDetails : ServerPacket
 
 	public int QuestPackageID;
 
-	public uint[] QuestFlags = new uint[3];
+	public readonly uint[] QuestFlags = new uint[3];
 
 	public uint SuggestedPartyMembers;
 
-	public QuestRewards Rewards = new QuestRewards();
+	public readonly QuestRewards Rewards = new();
 
-	public List<QuestObjectiveSimple> Objectives = new List<QuestObjectiveSimple>();
+	public readonly List<QuestObjectiveSimple> Objectives = new();
 
-	public QuestDescEmote[] DescEmotes = new QuestDescEmote[4];
+	public readonly QuestDescEmote[] DescEmotes = new QuestDescEmote[4];
 
-	public List<uint> LearnSpells = new List<uint>();
+	public readonly List<uint> LearnSpells = new();
 
 	public uint PortraitTurnIn;
 
@@ -40,13 +40,13 @@ public class QuestGiverQuestDetails : ServerPacket
 
 	public int QuestGiverCreatureID;
 
-	public string PortraitGiverText = "";
+	public readonly string PortraitGiverText = "";
 
-	public string PortraitGiverName = "";
+	public readonly string PortraitGiverName = "";
 
-	public string PortraitTurnInText = "";
+	public readonly string PortraitTurnInText = "";
 
-	public string PortraitTurnInName = "";
+	public readonly string PortraitTurnInName = "";
 
 	public string QuestTitle = "";
 
@@ -83,7 +83,7 @@ public class QuestGiverQuestDetails : ServerPacket
 		_worldPacket.WriteUInt32(QuestFlags[1]);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			_worldPacket.WriteUInt32((QuestFlags.Length > 2) ? QuestFlags[2] : 0u);
+			_worldPacket.WriteUInt32(QuestFlags.Length > 2 ? QuestFlags[2] : 0u);
 		}
 		_worldPacket.WriteInt32((int)SuggestedPartyMembers);
 		_worldPacket.WriteUInt32((uint)LearnSpells.Count);

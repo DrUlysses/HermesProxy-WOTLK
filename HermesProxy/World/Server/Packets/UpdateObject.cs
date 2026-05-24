@@ -18,11 +18,11 @@ public class UpdateObject : ServerPacket
 
 	public byte[] Data;
 
-	public List<WowGuid128> OutOfRangeGuids = new List<WowGuid128>();
+	public readonly List<WowGuid128> OutOfRangeGuids = new();
 
-	public List<WowGuid128> DestroyedGuids = new List<WowGuid128>();
+	public readonly List<WowGuid128> DestroyedGuids = new();
 
-	public List<ObjectUpdate> ObjectUpdates = new List<ObjectUpdate>();
+	public List<ObjectUpdate> ObjectUpdates = new();
 
 	public UpdateObject(GameSessionData gameState)
 		: base(Opcode.SMSG_UPDATE_OBJECT, ConnectionType.Instance)

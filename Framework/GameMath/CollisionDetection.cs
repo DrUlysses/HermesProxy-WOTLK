@@ -96,8 +96,8 @@ namespace Framework.GameMath
                 if (i != WhichPlane)
                 {
                     location[i] = origin[i] + MaxT[WhichPlane] * dir[i];
-                    if ((location[i] < MinB[i]) ||
-                        (location[i] > MaxB[i]))
+                    if (location[i] < MinB[i] ||
+                        location[i] > MaxB[i])
                     {
                         // On this plane we're outside the box extents, so
                         // we miss the box
@@ -108,7 +108,7 @@ namespace Framework.GameMath
 
             // Choose the normal to be the plane normal facing into the ray
             normal = Vector3.Zero;
-            normal[WhichPlane] = (float)((dir[WhichPlane] > 0) ? -1.0 : 1.0);
+            normal[WhichPlane] = (float)(dir[WhichPlane] > 0 ? -1.0 : 1.0);
 
             return true;
         }

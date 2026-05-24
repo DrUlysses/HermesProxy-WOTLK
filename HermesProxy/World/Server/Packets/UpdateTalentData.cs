@@ -13,8 +13,8 @@ public class TalentInfoData
 public class TalentGroupInfoData
 {
 	public byte SpecID;
-	public List<TalentInfoData> Talents = new List<TalentInfoData>();
-	public List<ushort> GlyphIDs = new List<ushort>();
+	public readonly List<TalentInfoData> Talents = new();
+	public readonly List<ushort> GlyphIDs = new();
 }
 
 public class UpdateTalentData : ServerPacket
@@ -22,7 +22,7 @@ public class UpdateTalentData : ServerPacket
 	public uint UnspentTalentPoints;
 	public byte ActiveGroup;
 	public bool IsPetTalents;
-	public List<TalentGroupInfoData> TalentGroups = new List<TalentGroupInfoData>();
+	public readonly List<TalentGroupInfoData> TalentGroups = new();
 
 	public UpdateTalentData()
 		: base(Opcode.SMSG_UPDATE_TALENT_DATA, ConnectionType.Instance)

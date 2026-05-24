@@ -10,7 +10,7 @@ public class GuildPermissionsQueryResults : ServerPacket
     public uint Flags;
     public uint WithdrawGoldLimit;
     public uint RemainingWithdrawGoldLimit;
-    public uint[] TabPermissions = new uint[6];
+    public readonly uint[] TabPermissions = new uint[6];
 
     public GuildPermissionsQueryResults()
         : base(Opcode.SMSG_GUILD_PERMISSIONS_QUERY_RESULTS, ConnectionType.Instance)

@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class QueryPlayerNames : ClientPacket
 {
-	public List<WowGuid128> Players = new List<WowGuid128>();
+	public readonly List<WowGuid128> Players = new();
 
 	public QueryPlayerNames(WorldPacket packet)
 		: base(packet)

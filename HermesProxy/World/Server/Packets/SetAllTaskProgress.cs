@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SetAllTaskProgress : ServerPacket
 {
-	public List<TaskProgress> Tasks = new List<TaskProgress>();
+	public readonly List<TaskProgress> Tasks = new();
 
 	public SetAllTaskProgress()
 		: base(Opcode.SMSG_SET_ALL_TASK_PROGRESS, ConnectionType.Instance)

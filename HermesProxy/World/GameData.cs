@@ -15,84 +15,84 @@ namespace HermesProxy.World;
 
 public static class GameData
 {
-	public static Dictionary<uint, Dictionary<string, byte[]>> BuildAuthSeeds = new Dictionary<uint, Dictionary<string, byte[]>>();
+	public static readonly Dictionary<uint, Dictionary<string, byte[]>> BuildAuthSeeds = new();
 
-	public static SortedDictionary<uint, BroadcastText> BroadcastTextStore = new SortedDictionary<uint, BroadcastText>();
+	public static readonly SortedDictionary<uint, BroadcastText> BroadcastTextStore = new();
 
-	public static Dictionary<uint, uint> ItemDisplayIdStore = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> ItemDisplayIdStore = new();
 
-	public static Dictionary<uint, uint> ItemDisplayIdToFileDataIdStore = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> ItemDisplayIdToFileDataIdStore = new();
 
-	public static Dictionary<uint, ItemSpellsData> ItemSpellsDataStore = new Dictionary<uint, ItemSpellsData>();
+	public static readonly Dictionary<uint, ItemSpellsData> ItemSpellsDataStore = new();
 
-	public static Dictionary<uint, ItemRecord> ItemRecordsStore = new Dictionary<uint, ItemRecord>();
+	public static readonly Dictionary<uint, ItemRecord> ItemRecordsStore = new();
 
-	public static Dictionary<uint, ItemSparseRecord> ItemSparseRecordsStore = new Dictionary<uint, ItemSparseRecord>();
+	public static readonly Dictionary<uint, ItemSparseRecord> ItemSparseRecordsStore = new();
 
-	public static Dictionary<uint, ItemAppearance> ItemAppearanceStore = new Dictionary<uint, ItemAppearance>();
+	public static readonly Dictionary<uint, ItemAppearance> ItemAppearanceStore = new();
 
-	public static Dictionary<uint, ItemModifiedAppearance> ItemModifiedAppearanceStore = new Dictionary<uint, ItemModifiedAppearance>();
+	public static readonly Dictionary<uint, ItemModifiedAppearance> ItemModifiedAppearanceStore = new();
 
-	public static Dictionary<uint, ItemEffect> ItemEffectStore = new Dictionary<uint, ItemEffect>();
+	public static readonly Dictionary<uint, ItemEffect> ItemEffectStore = new();
 
-	public static Dictionary<uint, Battleground> Battlegrounds = new Dictionary<uint, Battleground>();
+	public static readonly Dictionary<uint, Battleground> Battlegrounds = new();
 
-	public static Dictionary<uint, ChatChannel> ChatChannels = new Dictionary<uint, ChatChannel>();
+	public static readonly Dictionary<uint, ChatChannel> ChatChannels = new();
 
-	public static Dictionary<uint, Dictionary<uint, byte>> ItemEffects = new Dictionary<uint, Dictionary<uint, byte>>();
+	public static readonly Dictionary<uint, Dictionary<uint, byte>> ItemEffects = new();
 
-	public static Dictionary<uint, uint> ItemEnchantVisuals = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> ItemEnchantVisuals = new();
 
-	public static Dictionary<uint, uint> SpellVisuals = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> SpellVisuals = new();
 
-	public static Dictionary<uint, uint> LearnSpells = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> LearnSpells = new();
 
-	public static Dictionary<uint, uint> TotemSpells = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> TotemSpells = new();
 
-	public static Dictionary<uint, uint> Gems = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> Gems = new();
 
-	public static Dictionary<uint, CreatureDisplayInfo> CreatureDisplayInfos = new Dictionary<uint, CreatureDisplayInfo>();
+	public static readonly Dictionary<uint, CreatureDisplayInfo> CreatureDisplayInfos = new();
 
-	public static Dictionary<uint, CreatureModelCollisionHeight> CreatureModelCollisionHeights = new Dictionary<uint, CreatureModelCollisionHeight>();
+	public static readonly Dictionary<uint, CreatureModelCollisionHeight> CreatureModelCollisionHeights = new();
 
-	public static Dictionary<uint, uint> TransportPeriods = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> TransportPeriods = new();
 
 	// Entries from TransportAnimation DB2 — elevators the 3.4.3 client knows about
-	public static HashSet<uint> TransportAnimationEntries = new HashSet<uint>();
+	public static readonly HashSet<uint> TransportAnimationEntries = new();
 
-	public static Dictionary<uint, string> AreaNames = new Dictionary<uint, string>();
+	public static readonly Dictionary<uint, string> AreaNames = new();
 
-	public static Dictionary<uint, uint> RaceFaction = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> RaceFaction = new();
 
-	public static HashSet<uint> DispellSpells = new HashSet<uint>();
+	public static readonly HashSet<uint> DispellSpells = new();
 
-	public static Dictionary<uint, List<float>> SpellEffectPoints = new Dictionary<uint, List<float>>();
+	public static readonly Dictionary<uint, List<float>> SpellEffectPoints = new();
 
-	public static HashSet<uint> StackableAuras = new HashSet<uint>();
+	public static readonly HashSet<uint> StackableAuras = new();
 
-	public static HashSet<uint> MountAuras = new HashSet<uint>();
+	public static readonly HashSet<uint> MountAuras = new();
 
-	public static HashSet<uint> MountSpells = new HashSet<uint>();
+	public static readonly HashSet<uint> MountSpells = new();
 
-	public static HashSet<uint> NextMeleeSpells = new HashSet<uint>();
+	public static readonly HashSet<uint> NextMeleeSpells = new();
 
-	public static HashSet<uint> AutoRepeatSpells = new HashSet<uint>();
+	public static readonly HashSet<uint> AutoRepeatSpells = new();
 
-	public static HashSet<uint> AuraSpells = new HashSet<uint>();
+	public static readonly HashSet<uint> AuraSpells = new();
 
-	public static Dictionary<uint, TaxiPath> TaxiPaths = new Dictionary<uint, TaxiPath>();
+	public static readonly Dictionary<uint, TaxiPath> TaxiPaths = new();
 
-	public static int[,] TaxiNodesGraph = new int[250, 250];
+	public static readonly int[,] TaxiNodesGraph = new int[250, 250];
 
-	public static Dictionary<uint, uint> QuestBits = new Dictionary<uint, uint>();
+	public static readonly Dictionary<uint, uint> QuestBits = new();
 
-	public static Dictionary<uint, ItemTemplate> ItemTemplates = new Dictionary<uint, ItemTemplate>();
+	public static readonly Dictionary<uint, ItemTemplate> ItemTemplates = new();
 
-	public static Dictionary<uint, CreatureTemplate> CreatureTemplates = new Dictionary<uint, CreatureTemplate>();
+	public static readonly Dictionary<uint, CreatureTemplate> CreatureTemplates = new();
 
-	public static Dictionary<uint, QuestTemplate> QuestTemplates = new Dictionary<uint, QuestTemplate>();
+	public static readonly Dictionary<uint, QuestTemplate> QuestTemplates = new();
 
-	public static Dictionary<uint, string> ItemNames = new Dictionary<uint, string>();
+	public static readonly Dictionary<uint, string> ItemNames = new();
 
 	public const uint HotfixAreaTriggerBegin = 100000u;
 
@@ -134,7 +134,7 @@ public static class GameData
 
 	public const uint HotfixCreatureDisplayInfoOptionBegin = 290000u;
 
-	public static Dictionary<uint, HotfixRecord> Hotfixes = new Dictionary<uint, HotfixRecord>();
+	public static readonly Dictionary<uint, HotfixRecord> Hotfixes = new();
 
 	public static void StoreItemName(uint entry, string name)
 	{
@@ -1648,7 +1648,7 @@ public static class GameData
 				var lastNode = TaxiPathNodes[curNode];
 				dist += (float)Math.Sqrt(Math.Pow(nodeTo.x - lastNode.x, 2.0) + Math.Pow(nodeTo.y - lastNode.y, 2.0));
 			}
-			TaxiNodesGraph[TaxiPaths[i].From, TaxiPaths[i].To] = ((dist > 0f) ? ((int)dist) : 0);
+			TaxiNodesGraph[TaxiPaths[i].From, TaxiPaths[i].To] = dist > 0f ? (int)dist : 0;
 		}
 	}
 
@@ -3504,9 +3504,9 @@ public static class GameData
 					}
 					effect.TriggerType = (sbyte)item.TriggeredSpellTypes[slot];
 					effect.Charges = (short)item.TriggeredSpellCharges[slot];
-					effect.CoolDownMSec = (wrongCooldown ? item.TriggeredSpellCooldowns[slot] : (-1));
-					effect.CategoryCoolDownMSec = (wrongCatCooldown ? item.TriggeredSpellCategoryCooldowns[slot] : (-1));
-					effect.SpellCategoryID = (ushort)(wrongCategory ? ((ushort)item.TriggeredSpellCategories[slot]) : 0);
+					effect.CoolDownMSec = wrongCooldown ? item.TriggeredSpellCooldowns[slot] : -1;
+					effect.CategoryCoolDownMSec = wrongCatCooldown ? item.TriggeredSpellCategoryCooldowns[slot] : -1;
+					effect.SpellCategoryID = (ushort)(wrongCategory ? (ushort)item.TriggeredSpellCategories[slot] : 0);
 					effect.SpellID = item.TriggeredSpellIds[slot];
 					UpdateItemEffectRecord(effect, item);
 					UpdateHotfix(effect);

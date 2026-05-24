@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class SendSpellHistory : ServerPacket
 {
-	public List<SpellHistoryEntry> Entries = new List<SpellHistoryEntry>();
+	public readonly List<SpellHistoryEntry> Entries = new();
 
 	public SendSpellHistory()
 		: base(Opcode.SMSG_SEND_SPELL_HISTORY, ConnectionType.Instance)

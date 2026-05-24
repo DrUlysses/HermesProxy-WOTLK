@@ -7,9 +7,9 @@ public class ShowTaxiNodes : ServerPacket
 {
 	public ShowTaxiNodesWindowInfo WindowInfo;
 
-	public List<byte> CanLandNodes = new List<byte>();
+	public readonly List<byte> CanLandNodes = new();
 
-	public List<byte> CanUseNodes = new List<byte>();
+	public readonly List<byte> CanUseNodes = new();
 
 	public ShowTaxiNodes()
 		: base(Opcode.SMSG_SHOW_TAXI_NODES)

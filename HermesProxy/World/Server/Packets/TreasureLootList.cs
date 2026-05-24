@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class TreasureLootList
 {
-	public List<TreasureItem> Items = new List<TreasureItem>();
+	public readonly List<TreasureItem> Items = new();
 
 	public void Write(WorldPacket data)
 	{

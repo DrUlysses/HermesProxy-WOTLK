@@ -230,7 +230,7 @@ namespace Framework.IO
             _bitValue = (byte)(2 * returnValue); // BitValue <<= 1;
             ++_bitPosition;
 
-            return (returnValue >> 7) != 0;
+            return returnValue >> 7 != 0;
         }
 
         public bool HasBit()
@@ -254,7 +254,7 @@ namespace Framework.IO
 
             for (var i = bitCount - 1; i >= 0; --i)
                 if (HasBit())
-                    value |= (1 << i);
+                    value |= 1 << i;
 
             return (T)Convert.ChangeType(value, typeof(T));
         }
@@ -393,7 +393,7 @@ namespace Framework.IO
         public void WritePackXYZ(Vector3 pos)
         {
             uint packed = 0;
-            packed |= ((uint)(pos.X / 0.25f) & 0x7FF);
+            packed |= (uint)(pos.X / 0.25f) & 0x7FF;
             packed |= ((uint)(pos.Y / 0.25f) & 0x7FF) << 11;
             packed |= ((uint)(pos.Z / 0.25f) & 0x3FF) << 22;
             WriteUInt32(packed);

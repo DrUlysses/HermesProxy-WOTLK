@@ -16,6 +16,6 @@ namespace Framework.Web
         public string Prompt { get; set; }
 
         [DataMember(Name = "inputs")]
-        public List<FormInput> Inputs { get; set; } = new List<FormInput>();
+        public List<FormInput> Inputs { get; set; } = new();
     }
 }

@@ -9,9 +9,9 @@ internal class QuestGiverInvalidQuest : ServerPacket
 
 	public int ContributionRewardID;
 
-	public bool SendErrorMessage = true;
+	public readonly bool SendErrorMessage = true;
 
-	public string ReasonText = "";
+	public readonly string ReasonText = "";
 
 	public QuestGiverInvalidQuest()
 		: base(Opcode.SMSG_QUEST_GIVER_INVALID_QUEST)

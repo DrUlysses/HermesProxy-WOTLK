@@ -13,7 +13,7 @@ internal class PartyCommandResult : ServerPacket
 
 	public uint ResultData;
 
-	public WowGuid128 ResultGUID = WowGuid128.Empty;
+	public readonly WowGuid128 ResultGUID = WowGuid128.Empty;
 
 	public PartyCommandResult()
 		: base(Opcode.SMSG_PARTY_COMMAND_RESULT)

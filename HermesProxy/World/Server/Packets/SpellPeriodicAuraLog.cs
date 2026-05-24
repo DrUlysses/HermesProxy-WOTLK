@@ -69,7 +69,7 @@ internal class SpellPeriodicAuraLog : ServerPacket
 
 	public SpellCastLogData LogData;
 
-	public List<SpellLogEffect> Effects = new List<SpellLogEffect>();
+	public List<SpellLogEffect> Effects = new();
 
 	public SpellPeriodicAuraLog()
 		: base(Opcode.SMSG_SPELL_PERIODIC_AURA_LOG, ConnectionType.Instance)

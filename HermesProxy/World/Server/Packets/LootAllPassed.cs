@@ -6,7 +6,7 @@ internal class LootAllPassed : ServerPacket
 {
 	public WowGuid128 LootObj;
 
-	public LootItemData Item = new LootItemData();
+	public readonly LootItemData Item = new();
 
 	public LootAllPassed()
 		: base(Opcode.SMSG_LOOT_ALL_PASSED)

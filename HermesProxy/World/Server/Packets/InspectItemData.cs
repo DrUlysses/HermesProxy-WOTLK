@@ -4,21 +4,21 @@ namespace HermesProxy.World.Server.Packets;
 
 public class InspectItemData
 {
-	public WowGuid128 CreatorGUID = WowGuid128.Empty;
+	public readonly WowGuid128 CreatorGUID = WowGuid128.Empty;
 
-	public ItemInstance Item = new ItemInstance();
+	public readonly ItemInstance Item = new();
 
 	public byte Index;
 
 	public bool Usable;
 
-	public List<InspectEnchantData> Enchants = new List<InspectEnchantData>();
+	public readonly List<InspectEnchantData> Enchants = new();
 
-	public List<ItemGemData> Gems = new List<ItemGemData>();
+	public readonly List<ItemGemData> Gems = new();
 
-	public List<int> AzeritePowers = new List<int>();
+	public readonly List<int> AzeritePowers = new();
 
-	public List<AzeriteEssenceData> AzeriteEssences = new List<AzeriteEssenceData>();
+	public readonly List<AzeriteEssenceData> AzeriteEssences = new();
 
 	public void Write(WorldPacket data)
 	{

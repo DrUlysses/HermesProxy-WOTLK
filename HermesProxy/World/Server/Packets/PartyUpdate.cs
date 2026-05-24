@@ -21,7 +21,7 @@ public class PartyUpdate : ServerPacket
 
     public byte LeaderFactionGroup;
 
-    public List<PartyPlayerInfo> PlayerList = new List<PartyPlayerInfo>();
+    public readonly List<PartyPlayerInfo> PlayerList = new();
 
 	public PartyLFGInfo LfgInfos;
 

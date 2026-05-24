@@ -288,10 +288,10 @@ namespace Framework.IO
 				for(var i=0; i<HEAP_SIZE; i++) ret.dyn_ltree[i]=new ct_data(dyn_ltree[i]);
 				
 				ret.dyn_dtree=new ct_data[2*D_CODES+1];
-				for(var i=0; i<(2*D_CODES+1); i++) ret.dyn_dtree[i]=new ct_data(dyn_dtree[i]);
+				for(var i=0; i<2*D_CODES+1; i++) ret.dyn_dtree[i]=new ct_data(dyn_dtree[i]);
 
 				ret.bl_tree=new ct_data[2*BL_CODES+1];
-				for(var i=0; i<(2*BL_CODES+1); i++) ret.bl_tree[i]=new ct_data(bl_tree[i]);
+				for(var i=0; i<2*BL_CODES+1; i++) ret.bl_tree[i]=new ct_data(bl_tree[i]);
 
 				ret.bl_count=new ushort[MAX_BITS+1]; bl_count.CopyTo(ret.bl_count, 0);
 				ret.heap=new int[2*L_CODES+1]; heap.CopyTo(ret.heap, 0);
@@ -380,16 +380,16 @@ namespace Framework.IO
 		}
 
 		static readonly config[] configuration_table={ // good lazy nice chain
-			new config( 0,   0,   0,    0, deflate_stored),	// store only
-			new config( 4,   4,   8,    4, deflate_fast),	// max speed, no lazy matches
-			new config( 4,   5,  16,    8, deflate_fast),
-			new config( 4,   6,  32,   32, deflate_fast),
-			new config( 4,   4,  16,   16, deflate_slow),	// lazy matches
-			new config( 8,  16,  32,   32, deflate_slow),
-			new config( 8,  16, 128,  128, deflate_slow),
-			new config( 8,  32, 128,  256, deflate_slow),
-			new config(32, 128, 258, 1024, deflate_slow),
-			new config(32, 258, 258, 4096, deflate_slow)	// max compression
+			new( 0,   0,   0,    0, deflate_stored),	// store only
+			new( 4,   4,   8,    4, deflate_fast),	// max speed, no lazy matches
+			new( 4,   5,  16,    8, deflate_fast),
+			new( 4,   6,  32,   32, deflate_fast),
+			new( 4,   4,  16,   16, deflate_slow),	// lazy matches
+			new( 8,  16,  32,   32, deflate_slow),
+			new( 8,  16, 128,  128, deflate_slow),
+			new( 8,  32, 128,  256, deflate_slow),
+			new(32, 128, 258, 1024, deflate_slow),
+			new(32, 258, 258, 4096, deflate_slow)	// max compression
 		};
 
 		// Note: the deflate() code requires max_lazy >= MIN_MATCH and max_chain >= 4
@@ -1038,7 +1038,7 @@ namespace Framework.IO
 						s.pending_buf[s.pending++]=0;
 						s.pending_buf[s.pending++]=0;
 
-						s.pending_buf[s.pending++]=(byte)(s.level==9?2:(s.strategy>=Z_HUFFMAN_ONLY||s.level<2?4:0));
+						s.pending_buf[s.pending++]=(byte)(s.level==9?2:s.strategy>=Z_HUFFMAN_ONLY||s.level<2?4:0);
 						s.pending_buf[s.pending++]=OS_CODE;
 						s.status=BUSY_STATE;
 					}
@@ -1050,7 +1050,7 @@ namespace Framework.IO
 						s.pending_buf[s.pending++]=(byte)((s.gzhead.time>>8)&0xff);
 						s.pending_buf[s.pending++]=(byte)((s.gzhead.time>>16)&0xff);
 						s.pending_buf[s.pending++]=(byte)((s.gzhead.time>>24)&0xff);
-						s.pending_buf[s.pending++]=(byte)(s.level==9?2:(s.strategy>=Z_HUFFMAN_ONLY||s.level<2?4:0));
+						s.pending_buf[s.pending++]=(byte)(s.level==9?2:s.strategy>=Z_HUFFMAN_ONLY||s.level<2?4:0);
 						s.pending_buf[s.pending++]=(byte)(s.gzhead.os&0xff);
 						if(s.gzhead.extra!=null)
 						{
@@ -1072,9 +1072,9 @@ namespace Framework.IO
 					else if(s.level==6) level_flags=2;
 					else level_flags=3;
 
-					header|=(level_flags<<6);
+					header|=level_flags<<6;
 					if(s.strstart!=0) header|=PRESET_DICT;
-					header+=31-(header%31);
+					header+=31-header%31;
 
 					s.status=BUSY_STATE;
 					putShortMSB(s, header);
@@ -1226,7 +1226,7 @@ namespace Framework.IO
 			// Start a new block or continue the current one.
 			if(strm.avail_in!=0||s.lookahead!=0||(flush!=Z_NO_FLUSH&&s.status!=FINISH_STATE))
 			{
-				var bstate=s.strategy==Z_HUFFMAN_ONLY?deflate_huff(s, flush):(s.strategy==Z_RLE?deflate_rle(s, flush):configuration_table[s.level].func(s, flush));
+				var bstate=s.strategy==Z_HUFFMAN_ONLY?deflate_huff(s, flush):s.strategy==Z_RLE?deflate_rle(s, flush):configuration_table[s.level].func(s, flush);
 
 				if(bstate==block_state.finish_started||bstate==block_state.finish_done) s.status=FINISH_STATE;
 				if(bstate==block_state.need_more||bstate==block_state.finish_started)
@@ -1453,7 +1453,7 @@ namespace Framework.IO
 			s.head[s.hash_size-1]=NIL;
 
 			//was memset((byte*)s.head, 0, (uint)(s.hash_size-1)*sizeof(*s.head));
-			for(var i=0; i<(s.hash_size-1); i++) s.head[i]=0;
+			for(var i=0; i<s.hash_size-1; i++) s.head[i]=0;
 
 			// Set the default configuration parameters:
 			s.max_lazy_match=configuration_table[s.level].max_lazy;
@@ -1655,7 +1655,7 @@ namespace Framework.IO
 					{
 						m=s.head[--p];
 						s.head[p]=(ushort)(m>=wsize?m-wsize:NIL);
-					} while((--n)!=0);
+					} while(--n!=0);
 
 					n=wsize;
 					p=n;
@@ -1665,7 +1665,7 @@ namespace Framework.IO
 						s.prev[p]=(ushort)(m>=wsize?m-wsize:NIL);
 						// If n is not on any hash chain, prev[n] is garbage but
 						// its value will never be used.
-					} while((--n)!=0);
+					} while(--n!=0);
 					more+=wsize;
 				}
 				if(s.strm.avail_in==0) return;
@@ -1806,7 +1806,7 @@ namespace Framework.IO
 				}
 				// Flush if we may have to slide, otherwise block_start may become
 				// negative and the data will be gone:
-				if(s.strstart-(uint)s.block_start>=(s.w_size-MIN_LOOKAHEAD))
+				if(s.strstart-(uint)s.block_start>=s.w_size-MIN_LOOKAHEAD)
 				{
 					//was FLUSH_BLOCK(s, 0);
 					_tr_flush_block(s, s.block_start >= 0 ? s.window : null, s.block_start >= 0?s.block_start:0,
@@ -1866,7 +1866,7 @@ namespace Framework.IO
 
 				// Find the longest match, discarding those <= prev_length.
 				// At this point we have always match_length < MIN_MATCH
-				if(hash_head!=NIL&&s.strstart-hash_head<=(s.w_size-MIN_LOOKAHEAD))
+				if(hash_head!=NIL&&s.strstart-hash_head<=s.w_size-MIN_LOOKAHEAD)
 				{
 					// To simplify the code, we prevent matches with the string
 					// of window index 0 (in particular we have to avoid a match
@@ -1884,8 +1884,8 @@ namespace Framework.IO
 						s.l_buf[s.last_lit++]=len;
 						dist--;
 						s.dyn_ltree[_length_code[len]+LITERALS+1].Freq++;
-						s.dyn_dtree[(dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)])].Freq++;
-						bflush=(s.last_lit==s.lit_bufsize-1)?1:0;
+						s.dyn_dtree[dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)]].Freq++;
+						bflush=s.last_lit==s.lit_bufsize-1?1:0;
 					}
 
 					s.lookahead-=s.match_length;
@@ -1931,7 +1931,7 @@ namespace Framework.IO
 						s.d_buf[s.last_lit]=0;
 						s.l_buf[s.last_lit++]=cc;
 						s.dyn_ltree[cc].Freq++;
-						bflush=(s.last_lit==s.lit_bufsize-1)?1:0;
+						bflush=s.last_lit==s.lit_bufsize-1?1:0;
 					}
 
 					s.lookahead--;
@@ -1999,7 +1999,7 @@ namespace Framework.IO
 				s.prev_match=s.match_start;
 				s.match_length=MIN_MATCH-1;
 
-				if(hash_head!=NIL&&s.prev_length<s.max_lazy_match&&s.strstart-hash_head<=(s.w_size-MIN_LOOKAHEAD))
+				if(hash_head!=NIL&&s.prev_length<s.max_lazy_match&&s.strstart-hash_head<=s.w_size-MIN_LOOKAHEAD)
 				{
 					// To simplify the code, we prevent matches with the string
 					// of window index 0 (in particular we have to avoid a match
@@ -2031,8 +2031,8 @@ namespace Framework.IO
 						s.l_buf[s.last_lit++]=len;
 						dist--;
 						s.dyn_ltree[_length_code[len]+LITERALS+1].Freq++;
-						s.dyn_dtree[(dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)])].Freq++;
-						bflush=(s.last_lit==s.lit_bufsize-1)?1:0;
+						s.dyn_dtree[dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)]].Freq++;
+						bflush=s.last_lit==s.lit_bufsize-1?1:0;
 					}
 
 					// Insert in hash table all strings up to the end of the match.
@@ -2079,7 +2079,7 @@ namespace Framework.IO
 						s.d_buf[s.last_lit]=0;
 						s.l_buf[s.last_lit++]=cc;
 						s.dyn_ltree[cc].Freq++;
-						bflush=(s.last_lit==s.lit_bufsize-1)?1:0;
+						bflush=s.last_lit==s.lit_bufsize-1?1:0;
 					}
 
 					if(bflush!=0)
@@ -2115,7 +2115,7 @@ namespace Framework.IO
 					s.d_buf[s.last_lit]=0;
 					s.l_buf[s.last_lit++]=cc;
 					s.dyn_ltree[cc].Freq++;
-					bflush=(s.last_lit==s.lit_bufsize-1)?1:0;
+					bflush=s.last_lit==s.lit_bufsize-1?1:0;
 				}
 
 				s.match_available=0;
@@ -2185,8 +2185,8 @@ namespace Framework.IO
 						s.l_buf[s.last_lit++]=len;
 						dist--;
 						s.dyn_ltree[_length_code[len]+LITERALS+1].Freq++;
-						s.dyn_dtree[(dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)])].Freq++;
-						bflush=(s.last_lit==s.lit_bufsize-1)?true:false;
+						s.dyn_dtree[dist<256?_dist_code[dist]:_dist_code[256+(dist>>7)]].Freq++;
+						bflush=s.last_lit==s.lit_bufsize-1?true:false;
 					}
 
 					s.lookahead-=s.match_length;
@@ -2203,7 +2203,7 @@ namespace Framework.IO
 						s.d_buf[s.last_lit]=0;
 						s.l_buf[s.last_lit++]=cc;
 						s.dyn_ltree[cc].Freq++;
-						bflush=(s.last_lit==s.lit_bufsize-1)?true:false;
+						bflush=s.last_lit==s.lit_bufsize-1?true:false;
 					}
 
 					s.lookahead--;
@@ -2263,7 +2263,7 @@ namespace Framework.IO
 					s.d_buf[s.last_lit]=0;
 					s.l_buf[s.last_lit++]=cc;
 					s.dyn_ltree[cc].Freq++;
-					bflush=(s.last_lit==s.lit_bufsize-1)?true:false;
+					bflush=s.last_lit==s.lit_bufsize-1?true:false;
 				}
 
 				s.lookahead--;

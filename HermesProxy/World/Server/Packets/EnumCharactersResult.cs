@@ -103,9 +103,9 @@ public class EnumCharactersResult : ServerPacket
 
 		public VisualItemInfo[] VisualItems = new VisualItemInfo[23];
 
-		public List<string> MailSenders = new List<string>();
+		public List<string> MailSenders = new();
 
-		public List<uint> MailSenderTypes = new List<uint>();
+		public List<uint> MailSenderTypes = new();
 
 		public void Write(WorldPacket data)
 		{
@@ -130,7 +130,7 @@ public class EnumCharactersResult : ServerPacket
 			data.WriteUInt32(PetCreatureFamilyId);
 			data.WriteUInt32(ProfessionIds[0]);
 			data.WriteUInt32(ProfessionIds[1]);
-			var visualItemCount = ((ModernVersion.ExpansionVersion >= 3) ? 34 : VisualItems.Length);
+			var visualItemCount = ModernVersion.ExpansionVersion >= 3 ? 34 : VisualItems.Length;
 			for (var vi = 0; vi < visualItemCount; vi++)
 			{
 				if (vi < VisualItems.Length)
@@ -209,13 +209,13 @@ public class EnumCharactersResult : ServerPacket
 
 	public struct RaceUnlock
 	{
-		public int RaceID;
+		public readonly int RaceID;
 
-		public bool HasExpansion;
+		public readonly bool HasExpansion;
 
-		public bool HasAchievement;
+		public readonly bool HasAchievement;
 
-		public bool HasHeritageArmor;
+		public readonly bool HasHeritageArmor;
 
 		public RaceUnlock(int raceId, bool hasExpansion, bool hasAchievement, bool hasHeritageArmor)
 		{
@@ -264,11 +264,11 @@ public class EnumCharactersResult : ServerPacket
 
 	public uint? DisabledClassesMask = 0u;
 
-	public List<CharacterInfo> Characters = new List<CharacterInfo>();
+	public List<CharacterInfo> Characters = new();
 
-	public List<RaceUnlock> RaceUnlockData = new List<RaceUnlock>();
+	public List<RaceUnlock> RaceUnlockData = new();
 
-	public List<UnlockedConditionalAppearance> UnlockedConditionalAppearances = new List<UnlockedConditionalAppearance>();
+	public List<UnlockedConditionalAppearance> UnlockedConditionalAppearances = new();
 
 	public EnumCharactersResult()
 		: base(Opcode.SMSG_ENUM_CHARACTERS_RESULT)

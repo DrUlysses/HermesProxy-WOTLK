@@ -18,7 +18,7 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 {
 	private readonly BnetServices.ServiceManager _handlerManager;
 
-	private List<byte> _currentBuffer = new List<byte>();
+	private List<byte> _currentBuffer = new();
 
 	public BnetTcpSession(Socket socket)
 		: base(socket)

@@ -7,7 +7,7 @@ internal class BattlenetNotification : ServerPacket
 {
 	public MethodCall Method;
 
-	public ByteBuffer Data = new ByteBuffer();
+	public readonly ByteBuffer Data = new();
 
 	public BattlenetNotification()
 		: base(Opcode.SMSG_BATTLENET_NOTIFICATION)

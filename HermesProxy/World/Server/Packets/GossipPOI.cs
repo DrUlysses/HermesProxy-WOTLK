@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class GossipPOI : ServerPacket
 {
-	public uint Id = 1u;
+	public readonly uint Id = 1u;
 
 	public uint Flags;
 

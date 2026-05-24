@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class HotfixConnect : ServerPacket
 {
-	public List<HotfixRecord> Hotfixes = new List<HotfixRecord>();
+	public readonly List<HotfixRecord> Hotfixes = new();
 
 	public HotfixConnect()
 		: base(Opcode.SMSG_HOTFIX_CONNECT)

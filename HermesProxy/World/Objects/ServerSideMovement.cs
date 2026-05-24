@@ -34,5 +34,5 @@ public sealed class ServerSideMovement
 
 	public sbyte TransportSeat;
 
-	public List<Vector3> SplinePoints = new List<Vector3>();
+	public List<Vector3> SplinePoints = new();
 }

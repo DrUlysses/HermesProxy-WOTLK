@@ -23,6 +23,7 @@ using HermesProxy.World.Client;
 using HermesProxy.World.Enums;
 using HermesProxy.World.Objects;
 using HermesProxy.World.Server.Packets;
+using JetBrains.Annotations;
 using AuthResult = HermesProxy.Auth.AuthResult;
 
 namespace HermesProxy.World.Server;
@@ -155,11 +156,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private ZLib.z_stream _compressionStream;
 
-	private ConcurrentDictionary<Opcode, PacketHandler> _clientPacketTable = new ConcurrentDictionary<Opcode, PacketHandler>();
+	private ConcurrentDictionary<Opcode, PacketHandler> _clientPacketTable = new();
 
 	private GlobalSessionData _globalSession;
 
-	private Mutex _sendMutex = new Mutex();
+	private Mutex _sendMutex = new();
 
 	private BnetServices.ServiceManager _bnetRpc;
 
@@ -643,7 +644,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		var packet = new WorldPacket(Opcode.CMSG_NAME_QUERY);
 		packet.WriteGuid(queryPlayerName.Player.To64());
-		SendPacketToServer(packet, (!GetSession().GameState.IsInWorld) ? Opcode.SMSG_LOGIN_VERIFY_WORLD : Opcode.MSG_NULL_ACTION);
+		SendPacketToServer(packet, !GetSession().GameState.IsInWorld ? Opcode.SMSG_LOGIN_VERIFY_WORLD : Opcode.MSG_NULL_ACTION);
 	}
 
 	[PacketHandler(Opcode.CMSG_QUERY_PLAYER_NAMES)]
@@ -653,7 +654,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			var packet = new WorldPacket(Opcode.CMSG_NAME_QUERY);
 			packet.WriteGuid(guid.To64());
-			SendPacketToServer(packet, (!GetSession().GameState.IsInWorld) ? Opcode.SMSG_LOGIN_VERIFY_WORLD : Opcode.MSG_NULL_ACTION);
+			SendPacketToServer(packet, !GetSession().GameState.IsInWorld ? Opcode.SMSG_LOGIN_VERIFY_WORLD : Opcode.MSG_NULL_ACTION);
 		}
 	}
 
@@ -1027,7 +1028,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			type = ChatMessageTypeModern.RaidWarning;
 			break;
 		case Opcode.CMSG_CHAT_MESSAGE_INSTANCE_CHAT:
-			type = ((!GetSession().GameState.IsInBattleground()) ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground);
+			type = !GetSession().GameState.IsInBattleground() ? ChatMessageTypeModern.Party : ChatMessageTypeModern.Battleground;
 			break;
 		default:
 			Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "ChatHandler.cs");
@@ -1071,7 +1072,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		var language = uint.MaxValue;
 		var text = packet.Params.Prefix + "\t" + packet.Params.Text;
-		var channelName = (packet.ChannelGuid.IsEmpty() ? "" : GetSession().GameState.GetChannelName((int)packet.ChannelGuid.GetCounter()));
+		var channelName = packet.ChannelGuid.IsEmpty() ? "" : GetSession().GameState.GetChannelName((int)packet.ChannelGuid.GetCounter());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			var chatMsg = (ChatMessageTypeWotLK)Enum.Parse(typeof(ChatMessageTypeWotLK), packet.Params.Type.ToString());
@@ -2065,7 +2066,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		var quantity = item.Quantity / GetSession().GameState.GetItemBuyCount(item.Item.ItemID);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
-			packet.WriteUInt32((ModernVersion.ExpansionVersion >= 3) ? item.Muid : item.Slot);
+			packet.WriteUInt32(ModernVersion.ExpansionVersion >= 3 ? item.Muid : item.Slot);
 			packet.WriteUInt32(quantity);
 		}
 		else
@@ -2100,10 +2101,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleSplitItem(SplitItem item)
 	{
 		var packet = new WorldPacket(Opcode.CMSG_SPLIT_ITEM);
-		var containerSlot1 = ((item.FromPackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.FromPackSlot) : item.FromPackSlot);
-		var slot1 = ((item.FromPackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.FromSlot) : item.FromSlot);
-		var containerSlot2 = ((item.ToPackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ToPackSlot) : item.ToPackSlot);
-		var slot2 = ((item.ToPackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ToSlot) : item.ToSlot);
+		var containerSlot1 = item.FromPackSlot != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.FromPackSlot) : item.FromPackSlot;
+		var slot1 = item.FromPackSlot == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.FromSlot) : item.FromSlot;
+		var containerSlot2 = item.ToPackSlot != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ToPackSlot) : item.ToPackSlot;
+		var slot2 = item.ToPackSlot == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ToSlot) : item.ToSlot;
 		packet.WriteUInt8(containerSlot1);
 		packet.WriteUInt8(slot1);
 		packet.WriteUInt8(containerSlot2);
@@ -2136,10 +2137,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleSwapItem(SwapItem item)
 	{
 		var packet = new WorldPacket(Opcode.CMSG_SWAP_ITEM);
-		var containerSlotB = ((item.ContainerSlotB != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB);
-		var slotB = ((item.ContainerSlotB == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotB) : item.SlotB);
-		var containerSlotA = ((item.ContainerSlotA != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA);
-		var slotA = ((item.ContainerSlotA == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotA) : item.SlotA);
+		var containerSlotB = item.ContainerSlotB != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB;
+		var slotB = item.ContainerSlotB == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.SlotB) : item.SlotB;
+		var containerSlotA = item.ContainerSlotA != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA;
+		var slotA = item.ContainerSlotA == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.SlotA) : item.SlotA;
 		packet.WriteUInt8(containerSlotB);
 		packet.WriteUInt8(slotB);
 		packet.WriteUInt8(containerSlotA);
@@ -2151,8 +2152,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleDestroyItem(DestroyItem item)
 	{
 		var packet = new WorldPacket(Opcode.CMSG_DESTROY_ITEM);
-		var containerSlot = ((item.ContainerId != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerId) : item.ContainerId);
-		var slot = ((item.ContainerId == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotNum) : item.SlotNum);
+		var containerSlot = item.ContainerId != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ContainerId) : item.ContainerId;
+		var slot = item.ContainerId == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.SlotNum) : item.SlotNum;
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		packet.WriteUInt32(item.Count);
@@ -2171,10 +2172,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleAutoStoreBagItem(AutoStoreBagItem item)
 	{
 		var packet = new WorldPacket(Opcode.CMSG_AUTO_STORE_BAG_ITEM);
-		var srcBag = ((item.ContainerSlotA != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA);
+		var srcBag = item.ContainerSlotA != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA;
 		packet.WriteUInt8(srcBag);
 		packet.WriteUInt8(item.SlotA);
-		var dstBag = ((item.ContainerSlotB != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB);
+		var dstBag = item.ContainerSlotB != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB;
 		packet.WriteUInt8(dstBag);
 		SendPacketToServer(packet);
 	}
@@ -2185,8 +2186,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleAutoEquipItem(AutoEquipItem item)
 	{
 		var packet = new WorldPacket(item.GetUniversalOpcode());
-		var containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
-		var slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
+		var containerSlot = item.PackSlot != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot;
+		var slot = item.PackSlot == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot;
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -2206,8 +2207,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleReadItem(ReadItem item)
 	{
 		var packet = new WorldPacket(Opcode.CMSG_READ_ITEM);
-		var containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
-		var slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
+		var containerSlot = item.PackSlot != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot;
+		var slot = item.PackSlot == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot;
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -2286,8 +2287,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleOpenItem(OpenItem item)
 	{
 		var packet = new WorldPacket(Opcode.CMSG_OPEN_ITEM);
-		var containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
-		var slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
+		var containerSlot = item.PackSlot != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot;
+		var slot = item.PackSlot == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot;
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -2316,10 +2317,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleWrapItem(WrapItem item)
 	{
 		var packet = new WorldPacket(Opcode.CMSG_WRAP_ITEM);
-		var giftBag = ((item.GiftBag != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.GiftBag) : item.GiftBag);
-		var giftSlot = ((item.GiftBag == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.GiftSlot) : item.GiftSlot);
-		var itemBag = ((item.ItemBag != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ItemBag) : item.ItemBag);
-		var itemSlot = ((item.ItemBag == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ItemSlot) : item.ItemSlot);
+		var giftBag = item.GiftBag != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.GiftBag) : item.GiftBag;
+		var giftSlot = item.GiftBag == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.GiftSlot) : item.GiftSlot;
+		var itemBag = item.ItemBag != byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ItemBag) : item.ItemBag;
+		var itemSlot = item.ItemBag == byte.MaxValue ? ModernVersion.AdjustInventorySlot(item.ItemSlot) : item.ItemSlot;
 		packet.WriteUInt8(giftBag);
 		packet.WriteUInt8(giftSlot);
 		packet.WriteUInt8(itemBag);
@@ -4072,12 +4073,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	}
 
 	// Mining proficiency spells → Opening spell (6478) — mining nodes are opened like chests
-	private static readonly HashSet<uint> _miningProficiencySpells = new HashSet<uint>
+	private static readonly HashSet<uint> _miningProficiencySpells = new()
 	{
 		2575, 2576, 3564, 10248, 29354, 50310
 	};
 	// Herbalism proficiency spells → Opening spell (6478) — herb nodes are opened like chests
-	private static readonly HashSet<uint> _herbalismProficiencySpells = new HashSet<uint>
+	private static readonly HashSet<uint> _herbalismProficiencySpells = new()
 	{
 		2366, 2368, 3570, 11993, 28695, 50300
 	};
@@ -4309,8 +4310,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			GetSession().GameState.CurrentClientNormalCast = castRequest;
 			var packet = new WorldPacket(Opcode.CMSG_USE_ITEM);
-			var containerSlot = ((use.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.PackSlot) : use.PackSlot);
-			var slot = ((use.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.Slot) : use.Slot);
+			var containerSlot = use.PackSlot != byte.MaxValue ? ModernVersion.AdjustInventorySlot(use.PackSlot) : use.PackSlot;
+			var slot = use.PackSlot == byte.MaxValue ? ModernVersion.AdjustInventorySlot(use.Slot) : use.Slot;
 			packet.WriteUInt8(containerSlot); // bagIndex
 			packet.WriteUInt8(slot); // slot
 			packet.WriteUInt8(GetSession().GameState.GetItemSpellSlot(use.CastItem, use.Cast.SpellID)); // castCount
@@ -4419,7 +4420,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		var packet = new WorldPacket(Opcode.CMSG_RESURRECT_RESPONSE);
 		packet.WriteGuid(revive.CasterGUID.To64());
-		packet.WriteUInt8((revive.Response == 0) ? ((byte)1) : ((byte)0));
+		packet.WriteUInt8(revive.Response == 0 ? (byte)1 : (byte)0);
 		SendPacketToServer(packet);
 	}
 
@@ -4710,8 +4711,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		tradeSession.ClientStateIndex++;
 		var packet = new WorldPacket(Opcode.CMSG_SET_TRADE_ITEM);
 		packet.WriteUInt8(trade.TradeSlot);
-		var containerSlot = ((trade.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(trade.PackSlot) : trade.PackSlot);
-		var slot = ((trade.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(trade.ItemSlotInPack) : trade.ItemSlotInPack);
+		var containerSlot = trade.PackSlot != byte.MaxValue ? ModernVersion.AdjustInventorySlot(trade.PackSlot) : trade.PackSlot;
+		var slot = trade.PackSlot == byte.MaxValue ? ModernVersion.AdjustInventorySlot(trade.ItemSlotInPack) : trade.ItemSlotInPack;
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -4859,7 +4860,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		return true;
 	}
 
-	private static readonly HashSet<Opcode> _suppressedLogOpcodes = new HashSet<Opcode>
+	private static readonly HashSet<Opcode> _suppressedLogOpcodes = new()
 	{
 		Opcode.CMSG_HOTFIX_REQUEST,
 		Opcode.UNKNOWN_SMSG,
@@ -5185,7 +5186,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleAuthContinuedSession(AuthContinuedSession authSession)
 	{
 		var key = default(ConnectToKey);
-		var key2 = (key.Raw = authSession.Key);
+		var key2 = key.Raw = authSession.Key;
 		_key = key2;
 		_connectType = key.connectionType;
 		if (_connectType != ConnectionType.Instance)
@@ -5202,7 +5203,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleAuthContinuedSessionCallback(AuthContinuedSession authSession)
 	{
 		var key = default(ConnectToKey);
-		var key2 = (key.Raw = authSession.Key);
+		var key2 = key.Raw = authSession.Key;
 		_key = key2;
 		_globalSession = BnetSessionTicketStorage.SessionsByKey[_key];
 		var accountId = key.AccountId;
@@ -5675,7 +5676,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		accountData.AccountTimes = new long[count];
 		for (var i = 0; i < count; i++)
 		{
-			accountData.AccountTimes[i] = ((GetSession().AccountDataMgr.Data[i] != null) ? GetSession().AccountDataMgr.Data[i].Timestamp : 0);
+			accountData.AccountTimes[i] = GetSession().AccountDataMgr.Data[i] != null ? GetSession().AccountDataMgr.Data[i].Timestamp : 0;
 		}
 		SendPacket(accountData);
 	}
@@ -5687,7 +5688,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		methodInfo.SetMethodId(methodId);
 		methodInfo.Token = token;
 		methodInfo.ObjectId = serviceId;
-		var bytes = ((message == null) ? Array.Empty<byte>() : message.ToByteArray());
+		var bytes = message == null ? Array.Empty<byte>() : message.ToByteArray();
 		var response = new BattlenetResponse
 		{
 			Method = methodInfo,

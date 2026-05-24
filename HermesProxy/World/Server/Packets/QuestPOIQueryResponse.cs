@@ -25,18 +25,18 @@ public class QuestPOIBlobData
 	public int NavigationPlayerConditionID;
 	public int SpawnTrackingID;
 	public bool AlwaysAllowMergingBlobs;
-	public List<QuestPOIBlobPoint> Points = new List<QuestPOIBlobPoint>();
+	public readonly List<QuestPOIBlobPoint> Points = new();
 }
 
 public class QuestPOIData
 {
 	public int QuestID;
-	public List<QuestPOIBlobData> Blobs = new List<QuestPOIBlobData>();
+	public readonly List<QuestPOIBlobData> Blobs = new();
 }
 
 public class QuestPOIQueryResponse : ServerPacket
 {
-	public List<QuestPOIData> QuestPOIDataStats = new List<QuestPOIData>();
+	public readonly List<QuestPOIData> QuestPOIDataStats = new();
 
 	public QuestPOIQueryResponse()
 		: base(Opcode.SMSG_QUEST_POI_QUERY_RESPONSE)

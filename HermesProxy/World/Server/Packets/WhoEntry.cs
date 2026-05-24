@@ -4,7 +4,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class WhoEntry
 {
-	public PlayerGuidLookupData PlayerData = new PlayerGuidLookupData();
+	public readonly PlayerGuidLookupData PlayerData = new();
 
 	public WowGuid128 GuildGUID = WowGuid128.Empty;
 

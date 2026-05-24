@@ -5,10 +5,10 @@ namespace HermesProxy.World.Server.Packets;
 
 public class DfJoinResult : ServerPacket
 {
-	public RideTicket Ticket = new RideTicket();
+	public readonly RideTicket Ticket = new();
 	public byte Result;
 	public byte ResultDetail;
-	public List<DfJoinBlackList> BlackList = new List<DfJoinBlackList>();
+	public readonly List<DfJoinBlackList> BlackList = new();
 
 	public DfJoinResult()
 		: base(Opcode.SMSG_LFG_JOIN_RESULT)
@@ -45,7 +45,7 @@ public class DfJoinResult : ServerPacket
 public class DfJoinBlackList
 {
 	public WowGuid128 PlayerGuid;
-	public List<DfJoinBlackListSlot> Slots = new List<DfJoinBlackListSlot>();
+	public readonly List<DfJoinBlackListSlot> Slots = new();
 }
 
 public class DfJoinBlackListSlot
@@ -59,12 +59,12 @@ public class DfJoinBlackListSlot
 
 public class DfUpdateStatus : ServerPacket
 {
-	public RideTicket Ticket = new RideTicket();
+	public readonly RideTicket Ticket = new();
 	public byte SubType;
 	public byte Reason;
-	public List<uint> Slots = new List<uint>();
+	public readonly List<uint> Slots = new();
 	public byte RequestedRoles;
-	public List<WowGuid128> SuspendedPlayers = new List<WowGuid128>();
+	public readonly List<WowGuid128> SuspendedPlayers = new();
 	public uint QueueMapID;
 	public bool IsParty;
 	public bool NotifyUI;
@@ -106,14 +106,14 @@ public class DfUpdateStatus : ServerPacket
 
 public class DfProposalUpdate : ServerPacket
 {
-	public RideTicket Ticket = new RideTicket();
+	public readonly RideTicket Ticket = new();
 	public ulong InstanceID;
 	public uint ProposalID;
 	public uint Slot;
 	public sbyte State;
 	public uint CompletedMask;
 	public uint EncounterMask;
-	public List<DfProposalPlayer> Players = new List<DfProposalPlayer>();
+	public readonly List<DfProposalPlayer> Players = new();
 	public bool ValidCompletedMask;
 	public bool ProposalSilent;
 	public bool IsRequeue;
@@ -163,12 +163,12 @@ public class DfProposalPlayer
 
 public class DfQueueStatus : ServerPacket
 {
-	public RideTicket Ticket = new RideTicket();
+	public readonly RideTicket Ticket = new();
 	public uint Slot;
 	public uint AvgWaitTimeMe;
 	public uint AvgWaitTime;
-	public uint[] AvgWaitTimeByRole = new uint[3]; // Tank, Healer, DPS
-	public byte[] LastNeeded = new byte[3];
+	public readonly uint[] AvgWaitTimeByRole = new uint[3]; // Tank, Healer, DPS
+	public readonly byte[] LastNeeded = new byte[3];
 	public uint QueuedTime;
 
 	public DfQueueStatus()
@@ -193,7 +193,7 @@ public class DfQueueStatus : ServerPacket
 
 public class DfProposalResponsePkt : ClientPacket
 {
-	public RideTicket Ticket = new RideTicket();
+	public readonly RideTicket Ticket = new();
 	public ulong InstanceID;
 	public uint ProposalID;
 	public bool Accepted;

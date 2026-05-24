@@ -46,15 +46,18 @@ namespace Framework.Collections
             _str = str.Split(separator, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public string this[int index]
+        public string? this[int index]
         {
-            get { return _str[index]; }
-            set { _str[index] = value; }
+            get => _str?[index];
+            set
+            {
+                if (_str != null) _str[index] = value ?? "";
+            }
         }
 
-        public IEnumerator GetEnumerator()
+        public IEnumerator? GetEnumerator()
         {
-            return _str.GetEnumerator();
+            return _str?.GetEnumerator();
         }
 
         public bool IsEmpty()
@@ -62,8 +65,8 @@ namespace Framework.Collections
             return _str == null || _str.Length == 0;
         }
 
-        public int Length => _str != null ? _str.Length : 0;
+        public int Length => _str?.Length ?? 0;
 
-        string[] _str;
+        private readonly string[]? _str;
     }
 }

@@ -6,7 +6,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class LFGListUpdateBlacklist : ServerPacket
 {
-	public List<LFGListBlacklistEntry> Blacklist = new List<LFGListBlacklistEntry>();
+	public readonly List<LFGListBlacklistEntry> Blacklist = new();
 
 	public LFGListUpdateBlacklist()
 		: base(Opcode.SMSG_LFG_LIST_UPDATE_BLACKLIST, ConnectionType.Instance)

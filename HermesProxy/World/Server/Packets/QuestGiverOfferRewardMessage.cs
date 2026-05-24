@@ -19,15 +19,15 @@ public class QuestGiverOfferRewardMessage : ServerPacket
 
 	public string RewardText = "";
 
-	public string PortraitGiverText = "";
+	public readonly string PortraitGiverText = "";
 
-	public string PortraitGiverName = "";
+	public readonly string PortraitGiverName = "";
 
-	public string PortraitTurnInText = "";
+	public readonly string PortraitTurnInText = "";
 
-	public string PortraitTurnInName = "";
+	public readonly string PortraitTurnInName = "";
 
-	public QuestGiverOfferReward QuestData = new QuestGiverOfferReward();
+	public readonly QuestGiverOfferReward QuestData = new();
 
 	public int QuestPackageID;
 

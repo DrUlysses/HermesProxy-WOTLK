@@ -10,7 +10,7 @@ public class SniffFile
 
 	private ushort _gameVersion;
 
-	private Mutex _mutex = new Mutex();
+	private Mutex _mutex = new();
 
 	public SniffFile(string fileName, ushort build)
 	{
@@ -43,7 +43,7 @@ public class SniffFile
 	public void WritePacket(uint opcode, bool isFromClient, byte[] data)
 	{
 		_mutex.WaitOne();
-		var direction = (byte)((!isFromClient) ? byte.MaxValue : 0);
+		var direction = (byte)(!isFromClient ? byte.MaxValue : 0);
 		_fileWriter.Write(direction);
 		var unixtime = (uint)Time.UnixTime;
 		_fileWriter.Write(unixtime);

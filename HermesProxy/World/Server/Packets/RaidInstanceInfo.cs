@@ -5,7 +5,7 @@ namespace HermesProxy.World.Server.Packets;
 
 internal class RaidInstanceInfo : ServerPacket
 {
-	public List<InstanceLock> LockList = new List<InstanceLock>();
+	public readonly List<InstanceLock> LockList = new();
 
 	public RaidInstanceInfo()
 		: base(Opcode.SMSG_RAID_INSTANCE_INFO)

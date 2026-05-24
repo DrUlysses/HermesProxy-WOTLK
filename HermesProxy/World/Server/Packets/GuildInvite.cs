@@ -7,7 +7,7 @@ public class GuildInvite : ServerPacket
 {
 	public WowGuid128 GuildGUID;
 
-	public WowGuid128 OldGuildGUID = WowGuid128.Empty;
+	public readonly WowGuid128 OldGuildGUID = WowGuid128.Empty;
 
 	public uint EmblemColor;
 
@@ -19,7 +19,7 @@ public class GuildInvite : ServerPacket
 
 	public uint BackgroundColor;
 
-	public int AchievementPoints = -1;
+	public readonly int AchievementPoints = -1;
 
 	public uint GuildVirtualRealmAddress;
 
@@ -31,7 +31,7 @@ public class GuildInvite : ServerPacket
 
 	public string GuildName;
 
-	public string OldGuildName = "";
+	public readonly string OldGuildName = "";
 
 	public GuildInvite()
 		: base(Opcode.SMSG_GUILD_INVITE)

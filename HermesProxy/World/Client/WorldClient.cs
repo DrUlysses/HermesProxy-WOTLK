@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Numerics;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,7 +13,6 @@ using System.Threading.Tasks;
 using Framework;
 using Framework.Constants;
 using Framework.Cryptography;
-using Framework.GameMath;
 using Framework.IO;
 using Framework.Logging;
 using Framework.Networking;
@@ -50,7 +48,7 @@ public class WorldClient
 
 	private GlobalSessionData _globalSession;
 
-	private Mutex _sendMutex = new Mutex();
+	private Mutex _sendMutex = new();
 
 	private Dictionary<Opcode, List<WorldPacket>> _delayedPacketsToServer;
 
@@ -113,10 +111,10 @@ public class WorldClient
 			var cache = new PlayerCache();
 			member.MemberGUID = packet.ReadGuid().To128(GetSession().GameState);
 			member.Online = packet.ReadBool();
-			member.Name = (cache.Name = packet.ReadCString());
+			member.Name = cache.Name = packet.ReadCString();
 			member.Captain = packet.ReadInt32();
-			member.Level = (cache.Level = packet.ReadUInt8());
-			member.ClassId = (cache.ClassId = (Class)packet.ReadUInt8());
+			member.Level = cache.Level = packet.ReadUInt8();
+			member.ClassId = cache.ClassId = (Class)packet.ReadUInt8();
 			GetSession().GameState.UpdatePlayerCache(member.MemberGUID, cache);
 			member.WeekGamesPlayed = packet.ReadUInt32();
 			member.WeekGamesWon = packet.ReadUInt32();
@@ -241,7 +239,7 @@ public class WorldClient
 				ItemID = packet.ReadUInt32()
 			}
 		};
-		var enchantmentCount = (byte)(LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 7 : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? 1 : 6));
+		var enchantmentCount = (byte)(LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 7 : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 1 : 6);
 		for (byte j = 0; j < enchantmentCount; j++)
 		{
 			var enchant = new ItemEnchantData
@@ -364,7 +362,7 @@ public class WorldClient
 		WowGuid buyer = packet.ReadGuid();
 		info.Item.ItemID = packet.ReadUInt32();
 		info.Item.RandomPropertiesID = packet.ReadUInt32();
-		var mailDelay = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)) ? 3600f : packet.ReadFloat());
+		var mailDelay = !LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 3600f : packet.ReadFloat();
 		if (buyer.IsEmpty())
 		{
 			var auction = new AuctionClosedNotification
@@ -958,17 +956,17 @@ public class WorldClient
 			};
 			var cache = new PlayerCache();
 			char1.Guid = packet.ReadGuid().To128(GetSession().GameState);
-			char1.Name = (cache.Name = packet.ReadCString());
-			char1.RaceId = (cache.RaceId = (Race)packet.ReadUInt8());
-			char1.ClassId = (cache.ClassId = (Class)packet.ReadUInt8());
-			char1.SexId = (cache.SexId = (Gender)packet.ReadUInt8());
+			char1.Name = cache.Name = packet.ReadCString();
+			char1.RaceId = cache.RaceId = (Race)packet.ReadUInt8();
+			char1.ClassId = cache.ClassId = (Class)packet.ReadUInt8();
+			char1.SexId = cache.SexId = (Gender)packet.ReadUInt8();
 			var skin = packet.ReadUInt8();
 			var face = packet.ReadUInt8();
 			var hairStyle = packet.ReadUInt8();
 			var hairColor = packet.ReadUInt8();
 			var facialHair = packet.ReadUInt8();
 			char1.Customizations = CharacterCustomizations.ConvertLegacyCustomizationsToModern(char1.RaceId, char1.SexId, skin, face, hairStyle, hairColor, facialHair);
-			char1.ExperienceLevel = (cache.Level = packet.ReadUInt8());
+			char1.ExperienceLevel = cache.Level = packet.ReadUInt8();
 			if (char1.ExperienceLevel > charEnum.MaxCharacterLevel)
 			{
 				charEnum.MaxCharacterLevel = char1.ExperienceLevel;
@@ -979,7 +977,7 @@ public class WorldClient
 			char1.PreloadPos = packet.ReadVector3();
 			var guildId = packet.ReadUInt32();
 			GetSession().GameState.StorePlayerGuildId(char1.Guid, guildId);
-			char1.GuildGuid = ((guildId != 0) ? WowGuid128.Create(HighGuidType703.Guild, guildId) : WowGuid128.Empty);
+			char1.GuildGuid = guildId != 0 ? WowGuid128.Create(HighGuidType703.Guild, guildId) : WowGuid128.Empty;
 			char1.Flags = (CharacterFlags)packet.ReadUInt32();
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 			{
@@ -998,7 +996,7 @@ public class WorldClient
 					char1.VisualItems[j].DisplayEnchantId = packet.ReadUInt32();
 				}
 			}
-			var bagCount = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_3_11685)) ? 1 : 4);
+			var bagCount = !LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_3_11685) ? 1 : 4;
 			for (var k = 0; k < bagCount; k++)
 			{
 				char1.VisualItems[19 + k].DisplayId = packet.ReadUInt32();
@@ -1122,19 +1120,19 @@ public class WorldClient
 		}
 
 		var cache = new PlayerCache();
-		data.Name = (cache.Name = packet.ReadCString());
+		data.Name = cache.Name = packet.ReadCString();
 		packet.ReadCString();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
-			data.RaceID = (cache.RaceId = (Race)packet.ReadUInt8());
-			data.Sex = (cache.SexId = (Gender)packet.ReadUInt8());
-			data.ClassID = (cache.ClassId = (Class)packet.ReadUInt8());
+			data.RaceID = cache.RaceId = (Race)packet.ReadUInt8();
+			data.Sex = cache.SexId = (Gender)packet.ReadUInt8();
+			data.ClassID = cache.ClassId = (Class)packet.ReadUInt8();
 		}
 		else
 		{
-			data.RaceID = (cache.RaceId = (Race)packet.ReadUInt32());
-			data.Sex = (cache.SexId = (Gender)packet.ReadUInt32());
-			data.ClassID = (cache.ClassId = (Class)packet.ReadInt32());
+			data.RaceID = cache.RaceId = (Race)packet.ReadUInt32();
+			data.Sex = cache.SexId = (Gender)packet.ReadUInt32();
+			data.ClassID = cache.ClassId = (Class)packet.ReadInt32();
 		}
 		if (GetSession().GameState.CachedPlayers.ContainsKey(playerGuid))
 		{
@@ -1676,7 +1674,7 @@ public class WorldClient
 			break;
 		case ChatNotify.YouJoined:
 		{
-			var flags = (ChannelFlags)((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? packet.ReadUInt32() : packet.ReadUInt8());
+			var flags = (ChannelFlags)(!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? packet.ReadUInt32() : packet.ReadUInt8());
 			var channelId = packet.ReadInt32();
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
@@ -2102,7 +2100,7 @@ public class WorldClient
 		var nameLength = packet.ReadUInt32();
 		var targetName = packet.ReadString(nameLength);
 		var targetGuid = GetSession().GameState.GetPlayerGuidByName(targetName);
-		emote.TargetGUID = ((targetGuid != null) ? targetGuid : WowGuid128.Empty);
+		emote.TargetGUID = targetGuid != null ? targetGuid : WowGuid128.Empty;
 		SendPacketToClient(emote);
 	}
 
@@ -2678,7 +2676,7 @@ public class WorldClient
 		}
 		if (hitInfo.HasAnyFlag(HitInfo.Unk0))
 		{
-			attack.UnkState = default(UnkAttackerState);
+			attack.UnkState = default;
 			attack.UnkState.State1 = packet.ReadUInt32();
 			attack.UnkState.State2 = packet.ReadFloat();
 			attack.UnkState.State3 = packet.ReadFloat();
@@ -2708,7 +2706,7 @@ public class WorldClient
 			var PLAYER_VISIBLE_ITEM_1_ENTRYID = LegacyVersion.GetUpdateField(PlayerField.PLAYER_VISIBLE_ITEM_1_ENTRYID);
 			if (PLAYER_VISIBLE_ITEM_1_ENTRYID >= 0)
 			{
-				var offset = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 2 : (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 16 : 12);
+				var offset = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 2 : LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 16 : 12;
 				var rangedIdx = PLAYER_VISIBLE_ITEM_1_ENTRYID + 17 * offset;
 				if (visibleItems != null && visibleItems.ContainsKey(rangedIdx) && visibleItems[rangedIdx].UInt32Value != 0)
 				{
@@ -2969,7 +2967,7 @@ public class WorldClient
 		};
 		var isRaid = packet.ReadBool();
 		var ownSubGroupAndFlags = packet.ReadUInt8();
-		party.PartyIndex = (byte)((isRaid && GetSession().GameState.IsInBattleground()) ? 1u : 0u);
+		party.PartyIndex = (byte)(isRaid && GetSession().GameState.IsInBattleground() ? 1u : 0u);
 		party.PartyGUID = WowGuid128.Create(HighGuidType703.Party, (ulong)(1000 + party.PartyIndex));
 		if (party.PartyIndex != 0)
 		{
@@ -3007,7 +3005,7 @@ public class WorldClient
 			player.GUID = GetSession().GameState.CurrentPlayerGuid;
 			player.Name = GetSession().GameState.GetPlayerName(player.GUID);
 			player.Subgroup = (byte)(ownSubGroupAndFlags & 0xF);
-			player.Flags = (((ownSubGroupAndFlags & 0x80) != 0) ? GroupMemberFlags.Assistant : GroupMemberFlags.None);
+			player.Flags = (ownSubGroupAndFlags & 0x80) != 0 ? GroupMemberFlags.Assistant : GroupMemberFlags.None;
 			player.Status = GroupMemberOnlineStatus.Online;
 			party.PlayerList.Add(player);
 			var allAssist = true;
@@ -3019,7 +3017,7 @@ public class WorldClient
 				member.Status = (GroupMemberOnlineStatus)packet.ReadUInt8();
 				var subGroupAndFlags = packet.ReadUInt8();
 				member.Subgroup = (byte)(subGroupAndFlags & 0xF);
-				member.Flags = (((subGroupAndFlags & 0x80) != 0) ? GroupMemberFlags.Assistant : GroupMemberFlags.None);
+				member.Flags = (subGroupAndFlags & 0x80) != 0 ? GroupMemberFlags.Assistant : GroupMemberFlags.None;
 				member.ClassId = GetSession().GameState.GetUnitClass(member.GUID);
 				if (!member.Flags.HasAnyFlag(GroupMemberFlags.Assistant))
 				{
@@ -4469,13 +4467,13 @@ public class WorldClient
 			member.Guid = packet.ReadGuid().To128(GetSession().GameState);
 			member.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 			member.Status = packet.ReadUInt8();
-			member.Name = (cache.Name = packet.ReadCString());
+			member.Name = cache.Name = packet.ReadCString();
 			member.RankID = packet.ReadInt32();
-			member.Level = (cache.Level = packet.ReadUInt8());
-			member.ClassID = (cache.ClassId = (Class)packet.ReadUInt8());
+			member.Level = cache.Level = packet.ReadUInt8();
+			member.ClassID = cache.ClassId = (Class)packet.ReadUInt8();
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089))
 			{
-				member.SexID = (cache.SexId = (Gender)packet.ReadUInt8());
+				member.SexID = cache.SexId = (Gender)packet.ReadUInt8();
 			}
 			GetSession().GameState.UpdatePlayerCache(member.Guid, cache);
 			member.AreaID = packet.ReadInt32();
@@ -5583,7 +5581,7 @@ public class WorldClient
 			mailItem.AttachID = packet.ReadInt32();
 		}
 		mailItem.Item.ItemID = packet.ReadUInt32();
-		var enchantmentCount = (byte)(LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 7 : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? 1 : 6));
+		var enchantmentCount = (byte)(LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 7 : !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 1 : 6);
 		for (byte k = 0; k < enchantmentCount; k++)
 		{
 			var enchant = new ItemEnchantData
@@ -5829,7 +5827,7 @@ public class WorldClient
 		}
 		else
 		{
-			corpse.MapID = (corpse.ActualMapID = (int)GetSession().GameState.CurrentMapId.Value);
+			corpse.MapID = corpse.ActualMapID = (int)GetSession().GameState.CurrentMapId.Value;
 		}
 		SendPacketToClient(corpse);
 	}
@@ -6690,7 +6688,7 @@ public class WorldClient
 		}
 		var transfer = new TransferPending
 		{
-			MapID = (GetSession().GameState.PendingTransferMapId = packet.ReadUInt32()),
+			MapID = GetSession().GameState.PendingTransferMapId = packet.ReadUInt32(),
 			OldMapPosition = Vector3.Zero
 		};
 		SendPacketToClient(transfer);
@@ -6737,7 +6735,7 @@ public class WorldClient
 	private void HandleNewWorld(WorldPacket packet)
 	{
 		var teleport = new NewWorld();
-		GetSession().GameState.CurrentMapId = (teleport.MapID = packet.ReadUInt32());
+		GetSession().GameState.CurrentMapId = teleport.MapID = packet.ReadUInt32();
 		teleport.Position = packet.ReadVector3();
 		teleport.Orientation = packet.ReadFloat();
 		teleport.Reason = 4u;
@@ -7078,7 +7076,7 @@ public class WorldClient
 			for (var j = 1; j < moveSpline.SplineCount; j++)
 			{
 				var vec2 = packet.ReadPackedVector3();
-				vec2 = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? (moveSpline.EndPosition - vec2) : (mid - vec2));
+				vec2 = !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? moveSpline.EndPosition - vec2 : mid - vec2;
 				moveSpline.SplinePoints.Add(vec2);
 			}
 		}
@@ -7506,7 +7504,7 @@ public class WorldClient
 			var petition = default(PetitionEntry);
 			petition.Index = packet.ReadUInt32();
 			petition.CharterEntry = packet.ReadUInt32();
-			petition.IsArena = ((petition.CharterEntry != 5863) ? 1u : 0u);
+			petition.IsArena = petition.CharterEntry != 5863 ? 1u : 0u;
 			packet.ReadUInt32();
 			petition.CharterCost = packet.ReadUInt32();
 			packet.ReadUInt32();
@@ -7549,14 +7547,18 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_QUERY_PETITION_RESPONSE)]
 	private void HandlePetitionQueryResponse(WorldPacket packet)
 	{
-		QueryPetitionResponse petition = new QueryPetitionResponse();
-		petition.PetitionID = packet.ReadUInt32();
-		petition.Allow = true;
-		petition.Info = new PetitionInfo();
-		petition.Info.PetitionID = packet.ReadUInt32();
-		petition.Info.Petitioner = packet.ReadGuid().To128(GetSession().GameState);
-		petition.Info.Title = packet.ReadCString();
-		petition.Info.BodyText = packet.ReadCString();
+		var petition = new QueryPetitionResponse
+		{
+			PetitionID = packet.ReadUInt32(),
+			Allow = true,
+			Info = new PetitionInfo
+			{
+				PetitionID = packet.ReadUInt32(),
+				Petitioner = packet.ReadGuid().To128(GetSession().GameState),
+				Title = packet.ReadCString(),
+				BodyText = packet.ReadCString()
+			}
+		};
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.ReadUInt32();
@@ -7834,7 +7836,7 @@ public class WorldClient
 					QuestID = response.QuestID,
 					Id = QuestObjective.QuestObjectiveCounter++,
 					StorageIndex = objectiveCounter++,
-					Type = (isGo ? QuestObjectiveType.GameObject : QuestObjectiveType.Monster),
+					Type = isGo ? QuestObjectiveType.GameObject : QuestObjectiveType.Monster,
 					ObjectID = creatureOrGoId,
 					Amount = creatureOrGoAmount
 				};
@@ -7944,7 +7946,7 @@ public class WorldClient
 			}
 			creature.PetSpellDataId = packet.ReadUInt32();
 		}
-		var displayIdCount = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? 1 : 4);
+		var displayIdCount = !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 1 : 4;
 		for (var k = 0; k < displayIdCount; k++)
 		{
 			var displayId = packet.ReadUInt32();
@@ -7968,7 +7970,7 @@ public class WorldClient
 			creature.Civilian = packet.ReadBool();
 		}
 		creature.Leader = packet.ReadBool();
-		var questItems = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192) ? 6 : 4);
+		var questItems = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192) ? 6 : 4;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
 			for (var i2 = 0u; i2 < questItems; i2++)
@@ -8026,7 +8028,7 @@ public class WorldClient
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
-			var count = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192) ? 6u : 4u);
+			var count = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192) ? 6u : 4u;
 			for (var i2 = 0u; i2 < count; i2++)
 			{
 				var itemId = packet.ReadUInt32();
@@ -8753,7 +8755,7 @@ public class WorldClient
 		};
 		var entry = packet.ReadEntry();
 		credit.ObjectID = entry.Key;
-		credit.ObjectiveType = (entry.Value ? QuestObjectiveType.GameObject : QuestObjectiveType.Monster);
+		credit.ObjectiveType = entry.Value ? QuestObjectiveType.GameObject : QuestObjectiveType.Monster;
 		credit.Count = (ushort)packet.ReadUInt32();
 		credit.Required = (ushort)packet.ReadUInt32();
 		credit.VictimGUID = packet.ReadGuid().To128(GetSession().GameState);
@@ -9004,7 +9006,7 @@ public class WorldClient
 		for (ushort i = 0; i < spellCount; i++)
 		{
 			if (!packet.CanRead()) break;
-			var spellId = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767)) ? packet.ReadUInt16() : packet.ReadUInt32());
+			var spellId = !LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? packet.ReadUInt16() : packet.ReadUInt32();
 			spells.KnownSpells.Add(spellId);
 			GetSession().GameState.KnownSpells.Add(spellId);
 			if (!packet.CanRead()) break;
@@ -9023,9 +9025,9 @@ public class WorldClient
 			{
 				if (!packet.CanRead()) break;
 				var history = new SpellHistoryEntry();
-				var spellId2 = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767)) ? packet.ReadUInt16() : packet.ReadUInt32());
+				var spellId2 = !LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? packet.ReadUInt16() : packet.ReadUInt32();
 				history.SpellID = spellId2;
-				var itemId = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V4_2_2_14545)) ? packet.ReadUInt16() : packet.ReadUInt32());
+				var itemId = !LegacyVersion.AddedInVersion(ClientVersionBuild.V4_2_2_14545) ? packet.ReadUInt16() : packet.ReadUInt32();
 				history.ItemID = itemId;
 				history.Category = packet.ReadUInt16();
 				history.RecoveryTime = packet.ReadInt32();
@@ -9113,7 +9115,7 @@ public class WorldClient
 	private void HandleUnlearnedSpells(WorldPacket packet)
 	{
 		var spells = new UnlearnedSpells();
-		var spellId = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767)) ? packet.ReadUInt16() : packet.ReadUInt32());
+		var spellId = !LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? packet.ReadUInt16() : packet.ReadUInt32();
 		spells.Spells.Add(spellId);
 		SendPacketToClient(spells);
 	}
@@ -9296,7 +9298,7 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_SPELL_FAILED_OTHER)]
 	private void HandleSpellFailedOther(WorldPacket packet)
 	{
-		var casterUnit = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? packet.ReadGuid().To128(GetSession().GameState) : packet.ReadPackedGuid().To128(GetSession().GameState));
+		var casterUnit = !LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? packet.ReadGuid().To128(GetSession().GameState) : packet.ReadPackedGuid().To128(GetSession().GameState);
 		if (casterUnit == GetSession().GameState.CurrentPlayerGuid && Settings.ClientSpellDelay > 0)
 		{
 			Thread.Sleep(Settings.ClientSpellDelay);
@@ -9484,7 +9486,7 @@ public class WorldClient
 		{
 			packet.ReadUInt8();
 		}
-		var flags = (dbdata.CastFlags = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056)) ? packet.ReadUInt16() : packet.ReadUInt32()));
+		var flags = dbdata.CastFlags = !LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? packet.ReadUInt16() : packet.ReadUInt32();
 		if (!isSpellGo || LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			dbdata.CastTime = packet.ReadUInt32();
@@ -10035,7 +10037,7 @@ public class WorldClient
 		}
 		else
 		{
-			spell.CasterGUID = (spell.TargetGUID = packet.ReadGuid().To128(GetSession().GameState));
+			spell.CasterGUID = spell.TargetGUID = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		spell.SpellID = packet.ReadUInt32();
 		SendPacketToClient(spell);
@@ -10357,7 +10359,7 @@ public class WorldClient
 	private void HandleGmTicketCreate(WorldPacket packet)
 	{
 		var response = (LegacyGmTicketResponse)packet.ReadUInt32();
-		var flag = ((response == LegacyGmTicketResponse.CreateSuccess || response == LegacyGmTicketResponse.UpdateSuccess) ? true : false);
+		var flag = response == LegacyGmTicketResponse.CreateSuccess || response == LegacyGmTicketResponse.UpdateSuccess ? true : false;
 		var isError = !flag;
 		Session.SendHermesTextMessage($"GM Ticket Status: {response}", isError);
 	}
@@ -10393,7 +10395,7 @@ public class WorldClient
 			FlightMaster = packet.ReadGuid().To128(GetSession().GameState)
 		};
 		var learned = packet.ReadBool();
-		taxi.Status = (learned ? TaxiNodeStatus.Learned : TaxiNodeStatus.Unlearned);
+		taxi.Status = learned ? TaxiNodeStatus.Learned : TaxiNodeStatus.Unlearned;
 		SendPacketToClient(taxi);
 	}
 
@@ -10413,7 +10415,7 @@ public class WorldClient
 			taxi.WindowInfo = new ShowTaxiNodesWindowInfo
 			{
 				UnitGUID = packet.ReadGuid().To128(GetSession().GameState),
-				CurrentNode = (GetSession().GameState.CurrentTaxiNode = packet.ReadUInt32())
+				CurrentNode = GetSession().GameState.CurrentTaxiNode = packet.ReadUInt32()
 			};
 		}
 		while (packet.CanRead())
@@ -10475,8 +10477,8 @@ public class WorldClient
 		switch (trade.Status)
 		{
 		case TradeStatus.Proposed:
-			trade.Partner = (tradeSession.Partner = packet.ReadGuid().To128(GetSession().GameState));
-			trade.PartnerAccount = (tradeSession.PartnerAccount = GetSession().GetGameAccountGuidForPlayer(trade.Partner));
+			trade.Partner = tradeSession.Partner = packet.ReadGuid().To128(GetSession().GameState);
+			trade.PartnerAccount = tradeSession.PartnerAccount = GetSession().GetGameAccountGuidForPlayer(trade.Partner);
 			break;
 		case TradeStatus.Initiated:
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -10853,7 +10855,7 @@ public class WorldClient
 			}
 			case UpdateTypeLegacy.Movement:
 			{
-				var guid2 = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_2_9901) ? packet.ReadPackedGuid() : packet.ReadGuid());
+				var guid2 = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_2_9901) ? packet.ReadPackedGuid() : packet.ReadGuid();
 				PrintString("Guid = " + guid2, i);
 				ReadMovementUpdateBlock(packet, guid2, null, i);
 				break;
@@ -10929,7 +10931,7 @@ public class WorldClient
 				PrintString("Guid = " + guid, i);
 				// In 3.4.3, CreateObject2 is ONLY for the self-player.
 				// Legacy 3.3.5a uses CreateObject2 for all nearby objects, so downgrade non-self objects to CreateObject1.
-				var createType = (guid == GetSession().GameState.CurrentPlayerGuid)
+				var createType = guid == GetSession().GameState.CurrentPlayerGuid
 					? UpdateTypeModern.CreateObject2
 					: UpdateTypeModern.CreateObject1;
 				var updateData = new ObjectUpdate(guid, createType, GetSession());
@@ -11188,7 +11190,7 @@ public class WorldClient
 		var list = values.Flatten();
 		return list.Where(value => value != null).Aggregate(string.Empty, delegate(string current, object value)
 		{
-			var text = ((value is string) ? "()" : "[]");
+			var text = value is string ? "()" : "[]";
 			return current + text[0] + value + text[1] + " ";
 		});
 	}
@@ -11211,7 +11213,7 @@ public class WorldClient
 		{
 			updateMask[i] = packet.ReadInt32();
 		}
-		var mask = (outUpdateMaskArray = new BitArray(updateMask));
+		var mask = outUpdateMaskArray = new BitArray(updateMask);
 		outActuallyChangedValuesMaskArray = new BitArray(new int[maskSize]);
 		var dict = oldValues ?? new Dictionary<int, UpdateField>();
 		if (missingCreateObject)
@@ -11419,7 +11421,7 @@ public class WorldClient
 			{
 			case UpdateFieldType.Guid:
 			{
-				var guidSize = (LegacyVersion.AddedInVersion(ClientVersionBuild.V6_0_2_19033) ? 4 : 2);
+				var guidSize = LegacyVersion.AddedInVersion(ClientVersionBuild.V6_0_2_19033) ? 4 : 2;
 				var guidCount = size / guidSize;
 				for (var guidI = 0; guidI < guidCount; guidI++)
 				{
@@ -11442,7 +11444,7 @@ public class WorldClient
 						guid |= fieldData[guidI * guidSize].UInt32Value;
 						if (!isCreating || guid != 0)
 						{
-							PrintValue(key + ((guidCount > 1) ? (" + " + guidI) : ""), new WowGuid64(guid), index);
+							PrintValue(key + (guidCount > 1 ? " + " + guidI : ""), new WowGuid64(guid), index);
 						}
 						continue;
 					}
@@ -11454,7 +11456,7 @@ public class WorldClient
 					high |= fieldData[guidI * guidSize + 2].UInt32Value;
 					if (!isCreating || high != 0L || low != 0)
 					{
-						PrintValue(key + ((guidCount > 1) ? (" + " + guidI) : ""), new WowGuid128(low, high), index);
+						PrintValue(key + (guidCount > 1 ? " + " + guidI : ""), new WowGuid128(low, high), index);
 					}
 				}
 				break;
@@ -11474,7 +11476,7 @@ public class WorldClient
 					}
 					if (hasQuatValue)
 					{
-						PrintValue(key + ((quaternionCount > 1) ? (" + " + quatI) : ""), new Quaternion(fieldData[quatI * 4].FloatValue, fieldData[quatI * 4 + 1].FloatValue, fieldData[quatI * 4 + 2].FloatValue, fieldData[quatI * 4 + 3].FloatValue), index);
+						PrintValue(key + (quaternionCount > 1 ? " + " + quatI : ""), new Quaternion(fieldData[quatI * 4].FloatValue, fieldData[quatI * 4 + 1].FloatValue, fieldData[quatI * 4 + 2].FloatValue, fieldData[quatI * 4 + 3].FloatValue), index);
 					}
 				}
 				break;
@@ -11497,7 +11499,7 @@ public class WorldClient
 						long quat = fieldData[num5 * 2 + 1].UInt32Value;
 						quat <<= 32;
 						quat |= fieldData[num5 * 2].UInt32Value;
-						PrintValue(key + ((quaternionCount2 > 1) ? (" + " + num5) : ""), new Quaternion(quat), index);
+						PrintValue(key + (quaternionCount2 > 1 ? " + " + num5 : ""), new Quaternion(quat), index);
 					}
 				}
 				break;
@@ -11508,7 +11510,7 @@ public class WorldClient
 				{
 					if (mask[start + num] && (!isCreating || fieldData[num].UInt32Value != 0))
 					{
-						PrintValue((num > 0) ? (key + " + " + num) : key, fieldData[num].UInt32Value, index);
+						PrintValue(num > 0 ? key + " + " + num : key, fieldData[num].UInt32Value, index);
 					}
 				}
 				break;
@@ -11519,7 +11521,7 @@ public class WorldClient
 				{
 					if (mask[start + num7] && (!isCreating || fieldData[num7].UInt32Value != 0))
 					{
-						PrintValue((num7 > 0) ? (key + " + " + num7) : key, fieldData[num7].Int32Value, index);
+						PrintValue(num7 > 0 ? key + " + " + num7 : key, fieldData[num7].Int32Value, index);
 					}
 				}
 				break;
@@ -11530,7 +11532,7 @@ public class WorldClient
 				{
 					if (mask[start + num4] && (!isCreating || fieldData[num4].UInt32Value != 0))
 					{
-						PrintValue((num4 > 0) ? (key + " + " + num4) : key, fieldData[num4].FloatValue, index);
+						PrintValue(num4 > 0 ? key + " + " + num4 : key, fieldData[num4].FloatValue, index);
 					}
 				}
 				break;
@@ -11542,7 +11544,7 @@ public class WorldClient
 					if (mask[start + num2] && (!isCreating || fieldData[num2].UInt32Value != 0))
 					{
 						var intBytes = BitConverter.GetBytes(fieldData[num2].UInt32Value);
-						PrintValue((num2 > 0) ? (key + " + " + num2) : key, intBytes[0] + "/" + intBytes[1] + "/" + intBytes[2] + "/" + intBytes[3], index);
+						PrintValue(num2 > 0 ? key + " + " + num2 : key, intBytes[0] + "/" + intBytes[1] + "/" + intBytes[2] + "/" + intBytes[3], index);
 					}
 				}
 				break;
@@ -11553,7 +11555,7 @@ public class WorldClient
 				{
 					if (mask[start + n] && (!isCreating || fieldData[n].UInt32Value != 0))
 					{
-						PrintValue((n > 0) ? (key + " + " + n) : key, (short)(fieldData[n].UInt32Value & 0xFFFF) + "/" + (short)(fieldData[n].UInt32Value >> 16), index);
+						PrintValue(n > 0 ? key + " + " + n : key, (short)(fieldData[n].UInt32Value & 0xFFFF) + "/" + (short)(fieldData[n].UInt32Value >> 16), index);
 					}
 				}
 				break;
@@ -11564,7 +11566,7 @@ public class WorldClient
 				{
 					if (mask[start + m] && (!isCreating || fieldData[m].UInt32Value != 0))
 					{
-						PrintValue((m > 0) ? (key + " + " + m) : key, fieldData[m].UInt32Value + "/" + fieldData[m].FloatValue, index);
+						PrintValue(m > 0 ? key + " + " + m : key, fieldData[m].UInt32Value + "/" + fieldData[m].FloatValue, index);
 					}
 				}
 				break;
@@ -11591,7 +11593,7 @@ public class WorldClient
 	private void ReadMovementUpdateBlock(WorldPacket packet, WowGuid guid, ObjectUpdate updateData, object index)
 	{
 		MovementInfo moveInfo = null;
-		var flags = (UpdateFlag)((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767)) ? packet.ReadUInt8() : packet.ReadUInt16());
+		var flags = (UpdateFlag)(!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? packet.ReadUInt8() : packet.ReadUInt16());
 		if (flags.HasAnyFlag(UpdateFlag.Self))
 		{
 			if (updateData != null)
@@ -11717,7 +11719,7 @@ public class WorldClient
 					packet.ReadInt32();
 					packet.ReadInt32();
 				}
-				var splineCount = (monsterMove.SplineCount = packet.ReadUInt32());
+				var splineCount = monsterMove.SplineCount = packet.ReadUInt32();
 				monsterMove.SplinePoints = new List<Vector3>();
 				for (var i = 0; i < splineCount; i++)
 				{
@@ -11832,10 +11834,10 @@ public class WorldClient
 		var PLAYER_QUEST_LOG_1_1 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_QUEST_LOG_1_1);
 		// 3.3.5a quest log: 5 fields per entry (QuestID, StateFlags, Progress, [gap], Timer)
 		// Fields: _1=QuestID(+0), _2=StateFlags(+1), _3=Progress(+2), skip(+3), _4/_5=Timer(+4)
-		var sizePerEntry = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 5 : 3);
+		var sizePerEntry = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 5 : 3;
 		var stateOffset = 1;
-		var progressOffset = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 2 : (-1));
-		var timerOffset = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 4 : 2);
+		var progressOffset = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 2 : -1;
+		var timerOffset = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089) ? 4 : 2;
 		QuestLog questLog = null;
 		var index = PLAYER_QUEST_LOG_1_1 + i * sizePerEntry;
 		if ((updateMaskArray != null && updateMaskArray[index]) || (updateMaskArray == null && updates.ContainsKey(index)))
@@ -12064,12 +12066,12 @@ public class WorldClient
 			}
 			if (calculatedBaseHeight == 0f)
 			{
-				calculatedBaseHeight = ((mountDisplayId != 0) ? 3.081099f : 2.438083f);
+				calculatedBaseHeight = mountDisplayId != 0 ? 3.081099f : 2.438083f;
 			}
 			var heightScale = Math.Max(scale, regularNativeDisplaySize);
 			var scaledHeight = heightScale * calculatedBaseHeight;
 			var displayScale = regularNativeDisplaySize * scale;
-			var reason = (changedValuesMask.Get(UNIT_FIELD_MOUNTDISPLAYID) ? MoveSetCollisionHeight.UpdateCollisionHeightReason.Mount : MoveSetCollisionHeight.UpdateCollisionHeightReason.Force);
+			var reason = changedValuesMask.Get(UNIT_FIELD_MOUNTDISPLAYID) ? MoveSetCollisionHeight.UpdateCollisionHeightReason.Mount : MoveSetCollisionHeight.UpdateCollisionHeightReason.Force;
 			var height = new MoveSetCollisionHeight
 			{
 				MoverGUID = guid,
@@ -12387,7 +12389,7 @@ public class WorldClient
 						}
 						else
 						{
-							var classId = ((!updateData.UnitData.ClassId.HasValue) ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
+							var classId = !updateData.UnitData.ClassId.HasValue ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : (Class)updateData.UnitData.ClassId.Value;
 							powerSlot = ClassPowerTypes.GetPowerSlotForClass(classId, (PowerType)i4);
 						}
 						if (powerSlot >= 0)
@@ -12406,8 +12408,8 @@ public class WorldClient
 					{
 						continue;
 					}
-					var classId2 = ((!updateData.UnitData.ClassId.HasValue) ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
-					var powerSlot2 = ((!GetSession().GameState.HunterPetGuids.Contains(guid)) ? ClassPowerTypes.GetPowerSlotForClass(classId2, (PowerType)i5) : ClassPowerTypes.GetPowerSlotForPet((PowerType)i5));
+					var classId2 = !updateData.UnitData.ClassId.HasValue ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : (Class)updateData.UnitData.ClassId.Value;
+					var powerSlot2 = !GetSession().GameState.HunterPetGuids.Contains(guid) ? ClassPowerTypes.GetPowerSlotForClass(classId2, (PowerType)i5) : ClassPowerTypes.GetPowerSlotForPet((PowerType)i5);
 					if (powerSlot2 >= 0)
 					{
 						updateData.UnitData.MaxPower[powerSlot2] = updates[UNIT_FIELD_MAXPOWER1 + i5].Int32Value;
@@ -13012,7 +13014,7 @@ public class WorldClient
 			var PLAYER_VISIBLE_ITEM_1_0 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_VISIBLE_ITEM_1_0);
 			if (PLAYER_VISIBLE_ITEM_1_0 >= 0)
 			{
-				var offset = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 16 : 12);
+				var offset = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 16 : 12;
 				for (var i19 = 0; i19 < 19; i19++)
 				{
 					var itemIdIndex = PLAYER_VISIBLE_ITEM_1_0 + i19 * offset;
@@ -13076,7 +13078,7 @@ public class WorldClient
 			var PLAYER_FIELD_BANK_SLOT_1 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_BANK_SLOT_1);
 			if (PLAYER_FIELD_BANK_SLOT_1 >= 0)
 			{
-				var bankSlots = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 28 : 24);
+				var bankSlots = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 28 : 24;
 				for (var i23 = 0; i23 < bankSlots; i23++)
 				{
 					if (updateMaskArray[PLAYER_FIELD_BANK_SLOT_1 + i23 * 2])
@@ -13089,7 +13091,7 @@ public class WorldClient
 			var PLAYER_FIELD_BANKBAG_SLOT_1 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_BANKBAG_SLOT_1);
 			if (PLAYER_FIELD_BANKBAG_SLOT_1 >= 0)
 			{
-				var bankBagSlots = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 7 : 6);
+				var bankBagSlots = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 7 : 6;
 				for (var i24 = 0; i24 < bankBagSlots; i24++)
 				{
 					if (updateMaskArray[PLAYER_FIELD_BANKBAG_SLOT_1 + i24 * 2])
@@ -13133,7 +13135,7 @@ public class WorldClient
 				hairStyle = (byte)((updates[PLAYER_BYTES].UInt32Value >> 16) & 0xFF);
 				hairColor = (byte)((updates[PLAYER_BYTES].UInt32Value >> 24) & 0xFF);
 			}
-			var restInfo = ((isCreate && guid == GetSession().GameState.CurrentPlayerGuid) ? new RestInfo() : null);
+			var restInfo = isCreate && guid == GetSession().GameState.CurrentPlayerGuid ? new RestInfo() : null;
 			if (restInfo != null)
 			{
 				restInfo.StateID = 2u;
@@ -13221,7 +13223,7 @@ public class WorldClient
 			var PLAYER_FIELD_KNOWN_TITLES = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_KNOWN_TITLES);
 			if (PLAYER_FIELD_KNOWN_TITLES >= 0)
 			{
-				var count = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 3 : 2);
+				var count = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 3 : 2;
 				for (var i28 = 0; i28 < count; i28++)
 				{
 					if (updateMaskArray[PLAYER_FIELD_KNOWN_TITLES + i28])
@@ -13345,14 +13347,14 @@ public class WorldClient
 			var PLAYER_EXPLORED_ZONES_1 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_EXPLORED_ZONES_1);
 			if (PLAYER_EXPLORED_ZONES_1 >= 0)
 			{
-				var maxZones = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 128 : 64);
+				var maxZones = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 128 : 64;
 				for (var i31 = 0; i31 < maxZones; i31++)
 				{
 					if (updateMaskArray[PLAYER_EXPLORED_ZONES_1 + i31])
 					{
 						if ((i31 & 1) != 0)
 						{
-							var oldValue = (updateData.ActivePlayerData.ExploredZones[i31 / 2].HasValue ? updateData.ActivePlayerData.ExploredZones[i31 / 2].Value : 0);
+							var oldValue = updateData.ActivePlayerData.ExploredZones[i31 / 2].HasValue ? updateData.ActivePlayerData.ExploredZones[i31 / 2].Value : 0;
 							updateData.ActivePlayerData.ExploredZones[i31 / 2] = oldValue | ((ulong)updates[PLAYER_EXPLORED_ZONES_1 + i31].UInt32Value << 32);
 						}
 						else
@@ -13467,7 +13469,7 @@ public class WorldClient
 				{
 					var comboPoints = (byte)((updates[PLAYER_FIELD_BYTES].UInt32Value >> 8) & 0xFF);
 					var classId3 = Class.None;
-					classId3 = ((!updateData.UnitData.ClassId.HasValue) ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
+					classId3 = !updateData.UnitData.ClassId.HasValue ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : (Class)updateData.UnitData.ClassId.Value;
 					var powerSlot3 = ClassPowerTypes.GetPowerSlotForClass(classId3, PowerType.ComboPoints);
 					if (powerSlot3 >= 0)
 					{
@@ -13624,7 +13626,7 @@ public class WorldClient
 					var startOffset = PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + i42 * sizePerEntry2;
 					if (updateMaskArray[startOffset + teamIdOffset] && guid == GetSession().GameState.CurrentPlayerGuid)
 					{
-						var teamId = (GetSession().GameState.CurrentArenaTeamIds[i42] = updates[startOffset + teamIdOffset].UInt32Value);
+						var teamId = GetSession().GameState.CurrentArenaTeamIds[i42] = updates[startOffset + teamIdOffset].UInt32Value;
 						if (teamId != 0)
 						{
 							var packet = new WorldPacket(Opcode.CMSG_ARENA_TEAM_QUERY);
@@ -13961,7 +13963,7 @@ public class WorldClient
 		};
 		GetSession().GameState.CurrentMapId = states.MapID;
 		states.ZoneID = packet.ReadUInt32();
-		states.AreaID = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_1_0_6692) ? packet.ReadUInt32() : states.ZoneID);
+		states.AreaID = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_1_0_6692) ? packet.ReadUInt32() : states.ZoneID;
 		GetSession().GameState.HasWsgAllyFlagCarrier = false;
 		GetSession().GameState.HasWsgHordeFlagCarrier = false;
 		var count = packet.ReadUInt16();
@@ -14167,7 +14169,7 @@ public class WorldClient
 			while (true)
 			{
 				var headerBuffer = new byte[4];
-				if (!(await ReceiveBufferFully(headerBuffer)))
+				if (!await ReceiveBufferFully(headerBuffer))
 				{
 					Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (header)", "WorldClient.cs");
 					if (!_isSuccessful.HasValue)
@@ -14189,14 +14191,14 @@ public class WorldClient
 				var packetSize = header.Size;
 				if (header.Opcode != 221)
 				{
-					Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Decoded header: size={packetSize}, opcode={header.Opcode} (0x{header.Opcode:X4}), crypt={((_worldCrypt != null) ? "ON" : "OFF")}", "WorldClient.cs");
+					Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Decoded header: size={packetSize}, opcode={header.Opcode} (0x{header.Opcode:X4}), crypt={(_worldCrypt != null ? "ON" : "OFF")}", "WorldClient.cs");
 				}
 				if (packetSize != 0)
 				{
 					var buffer = new byte[packetSize];
 					buffer[0] = headerBuffer[2];
 					buffer[1] = headerBuffer[3];
-					if (!(await ReceiveBufferFully(new ArraySegment<byte>(buffer, 2, buffer.Length - 2))))
+					if (!await ReceiveBufferFully(new ArraySegment<byte>(buffer, 2, buffer.Length - 2)))
 					{
 						break;
 					}
@@ -14426,7 +14428,7 @@ public class WorldClient
 			ServerPacket next;
 			while (pendingPackets.TryPeek(out next))
 			{
-				var socket = (next.GetConnection() == ConnectionType.Realm) ? GetSession().RealmSocket : GetSession().InstanceSocket;
+				var socket = next.GetConnection() == ConnectionType.Realm ? GetSession().RealmSocket : GetSession().InstanceSocket;
 				if (socket != null)
 				{
 					pendingPackets.TryDequeue(out next);
@@ -14438,7 +14440,7 @@ public class WorldClient
 		}
 	}
 
-	private static readonly HashSet<Opcode> _suppressedLogOpcodes = new HashSet<Opcode>
+	private static readonly HashSet<Opcode> _suppressedLogOpcodes = new()
 	{
 		Opcode.SMSG_ON_MONSTER_MOVE,
 		Opcode.MSG_MOVE_HEARTBEAT,

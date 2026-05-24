@@ -10,7 +10,7 @@ public class PartyMemberAuraStates
 
 	public uint ActiveFlags;
 
-	public List<float> Points = new List<float>();
+	public readonly List<float> Points = new();
 
 	public void Write(WorldPacket data)
 	{

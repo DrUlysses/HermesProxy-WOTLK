@@ -38,7 +38,7 @@ public class QuestTemplate
 
 	public uint RewardBonusMoney;
 
-	public uint[] RewardDisplaySpell = new uint[3];
+	public readonly uint[] RewardDisplaySpell = new uint[3];
 
 	public uint RewardSpell;
 
@@ -92,13 +92,13 @@ public class QuestTemplate
 
 	public uint PortraitTurnIn;
 
-	public string PortraitGiverText;
+	public readonly string PortraitGiverText;
 
-	public string PortraitGiverName;
+	public readonly string PortraitGiverName;
 
-	public string PortraitTurnInText;
+	public readonly string PortraitTurnInText;
 
-	public string PortraitTurnInName;
+	public readonly string PortraitTurnInName;
 
 	public string QuestCompletionLog;
 
@@ -124,29 +124,29 @@ public class QuestTemplate
 
 	public uint PortraitGiverModelSceneID;
 
-	public List<QuestObjective> Objectives = new List<QuestObjective>();
+	public readonly List<QuestObjective> Objectives = new();
 
-	public uint[] RewardItems = new uint[4];
+	public readonly uint[] RewardItems = new uint[4];
 
-	public uint[] RewardAmount = new uint[4];
+	public readonly uint[] RewardAmount = new uint[4];
 
-	public int[] ItemDrop = new int[4];
+	public readonly int[] ItemDrop = new int[4];
 
-	public int[] ItemDropQuantity = new int[4];
+	public readonly int[] ItemDropQuantity = new int[4];
 
-	public QuestInfoChoiceItem[] UnfilteredChoiceItems = new QuestInfoChoiceItem[6];
+	public readonly QuestInfoChoiceItem[] UnfilteredChoiceItems = new QuestInfoChoiceItem[6];
 
-	public uint[] RewardFactionID = new uint[5];
+	public readonly uint[] RewardFactionID = new uint[5];
 
-	public int[] RewardFactionValue = new int[5];
+	public readonly int[] RewardFactionValue = new int[5];
 
-	public int[] RewardFactionOverride = new int[5];
+	public readonly int[] RewardFactionOverride = new int[5];
 
-	public int[] RewardFactionCapIn = new int[5];
+	public readonly int[] RewardFactionCapIn = new int[5];
 
-	public uint[] RewardCurrencyID = new uint[4];
+	public readonly uint[] RewardCurrencyID = new uint[4];
 
-	public uint[] RewardCurrencyQty = new uint[4];
+	public readonly uint[] RewardCurrencyQty = new uint[4];
 
 	public bool ReadyForTranslation;
 

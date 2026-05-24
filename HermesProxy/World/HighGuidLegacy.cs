@@ -8,7 +8,7 @@ public class HighGuidLegacy : HighGuid
 {
 	private HighGuidTypeLegacy high;
 
-	private static readonly Dictionary<HighGuidTypeLegacy, HighGuidType> HighLegacyToHighType = new Dictionary<HighGuidTypeLegacy, HighGuidType>
+	private static readonly Dictionary<HighGuidTypeLegacy, HighGuidType> HighLegacyToHighType = new()
 	{
 		{
 			HighGuidTypeLegacy.None,
