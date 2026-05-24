@@ -22,7 +22,7 @@ public class DfJoinResult : ServerPacket
 		_worldPacket.WriteUInt8(ResultDetail);
 		_worldPacket.WriteUInt32((uint)BlackList.Count);
 		_worldPacket.WriteUInt32(0u); // BlackListNames count
-		foreach (DfJoinBlackList entry in BlackList)
+		foreach (var entry in BlackList)
 		{
 			_worldPacket.WriteBit(entry.PlayerGuid != null);
 			_worldPacket.WriteUInt32((uint)entry.Slots.Count);
@@ -30,7 +30,7 @@ public class DfJoinResult : ServerPacket
 			{
 				_worldPacket.WritePackedGuid128(entry.PlayerGuid);
 			}
-			foreach (DfJoinBlackListSlot slot in entry.Slots)
+			foreach (var slot in entry.Slots)
 			{
 				_worldPacket.WriteUInt32(slot.Slot);
 				_worldPacket.WriteUInt32(slot.Reason);
@@ -86,11 +86,11 @@ public class DfUpdateStatus : ServerPacket
 		_worldPacket.WriteUInt8(RequestedRoles);
 		_worldPacket.WriteUInt32((uint)SuspendedPlayers.Count);
 		_worldPacket.WriteUInt32(QueueMapID);
-		foreach (uint slot in Slots)
+		foreach (var slot in Slots)
 		{
 			_worldPacket.WriteUInt32(slot);
 		}
-		foreach (WowGuid128 guid in SuspendedPlayers)
+		foreach (var guid in SuspendedPlayers)
 		{
 			_worldPacket.WritePackedGuid128(guid);
 		}
@@ -138,7 +138,7 @@ public class DfProposalUpdate : ServerPacket
 		_worldPacket.WriteBit(ProposalSilent);
 		_worldPacket.WriteBit(IsRequeue);
 		_worldPacket.FlushBits();
-		foreach (DfProposalPlayer player in Players)
+		foreach (var player in Players)
 		{
 			_worldPacket.WriteUInt8(player.Roles);
 			_worldPacket.WriteBit(player.Me);
@@ -182,7 +182,7 @@ public class DfQueueStatus : ServerPacket
 		_worldPacket.WriteUInt32(Slot);
 		_worldPacket.WriteUInt32(AvgWaitTimeMe);
 		_worldPacket.WriteUInt32(AvgWaitTime);
-		for (int i = 0; i < 3; i++)
+		for (var i = 0; i < 3; i++)
 		{
 			_worldPacket.WriteUInt32(AvgWaitTimeByRole[i]);
 			_worldPacket.WriteUInt8(LastNeeded[i]);

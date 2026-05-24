@@ -38,7 +38,7 @@ public class InitWorldStates : ServerPacket
 		_worldPacket.WriteUInt32(ZoneID);
 		_worldPacket.WriteUInt32(AreaID);
 		_worldPacket.WriteInt32(Worldstates.Count);
-		foreach (WorldStateInfo wsi in Worldstates)
+		foreach (var wsi in Worldstates)
 		{
 			_worldPacket.WriteUInt32(wsi.VariableID);
 			_worldPacket.WriteInt32(wsi.Value);
@@ -57,7 +57,7 @@ public class InitWorldStates : ServerPacket
 
 	public void AddMissingState(uint variableID, int value)
 	{
-		foreach (WorldStateInfo worldstate in Worldstates)
+		foreach (var worldstate in Worldstates)
 		{
 			if (worldstate.VariableID == variableID)
 			{

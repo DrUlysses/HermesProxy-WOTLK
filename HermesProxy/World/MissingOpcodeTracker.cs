@@ -27,19 +27,19 @@ public static class MissingOpcodeTracker
 
 	public static void LogDroppedSMSG(Opcode universalOpcode, int size)
 	{
-		string key = $"DROPPED_SMSG:{universalOpcode}:sz{size}";
+		var key = $"DROPPED_SMSG:{universalOpcode}:sz{size}";
 		Log(key, $"[DROPPED SMSG] {universalOpcode} (mapped to opcode 0, size={size}) - needs modern opcode value or handler");
 	}
 
 	public static void LogUnhandledCMSG(Opcode universalOpcode, uint rawOpcode)
 	{
-		string key = $"UNHANDLED_CMSG:{universalOpcode}:{rawOpcode}";
+		var key = $"UNHANDLED_CMSG:{universalOpcode}:{rawOpcode}";
 		Log(key, $"[UNHANDLED CMSG] {universalOpcode} (raw=0x{rawOpcode:X4}/{rawOpcode}) - needs handler");
 	}
 
 	public static void LogUnhandledLegacySMSG(Opcode universalOpcode, uint rawOpcode)
 	{
-		string key = $"UNHANDLED_LEGACY_SMSG:{universalOpcode}";
+		var key = $"UNHANDLED_LEGACY_SMSG:{universalOpcode}";
 		Log(key, $"[UNHANDLED LEGACY SMSG] {universalOpcode} (raw=0x{rawOpcode:X4}/{rawOpcode}) - needs conversion handler");
 	}
 

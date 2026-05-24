@@ -17,7 +17,7 @@ internal class AvailableHotfixes : ServerPacket
 	{
 		_worldPacket.WriteUInt32(VirtualRealmAddress);
 		_worldPacket.WriteInt32(GameData.Hotfixes.Count);
-		foreach (KeyValuePair<uint, HotfixRecord> hotfix2 in GameData.Hotfixes)
+		foreach (var hotfix2 in GameData.Hotfixes)
 		{
 			hotfix2.Value.WriteAvailable(_worldPacket);
 		}

@@ -20,7 +20,7 @@ public class PowerUpdate : ServerPacket
 	{
 		_worldPacket.WritePackedGuid128(Guid);
 		_worldPacket.WriteInt32(Powers.Count);
-		foreach (PowerUpdatePower power in Powers)
+		foreach (var power in Powers)
 		{
 			_worldPacket.WriteInt32(power.Power);
 			_worldPacket.WriteUInt8(power.PowerType);

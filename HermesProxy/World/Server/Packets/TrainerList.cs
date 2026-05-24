@@ -28,13 +28,13 @@ public class TrainerList : ServerPacket
 		_worldPacket.WriteInt32(TrainerType);
 		_worldPacket.WriteUInt32(TrainerID);
 		_worldPacket.WriteInt32(Spells.Count);
-		foreach (TrainerListSpell spell in Spells)
+		foreach (var spell in Spells)
 		{
 			_worldPacket.WriteUInt32(spell.SpellID);
 			_worldPacket.WriteUInt32(spell.MoneyCost);
 			_worldPacket.WriteUInt32(spell.ReqSkillLine);
 			_worldPacket.WriteUInt32(spell.ReqSkillRank);
-			for (uint i = 0u; i < 3; i++)
+			for (var i = 0u; i < 3; i++)
 			{
 				_worldPacket.WriteUInt32(spell.ReqAbility[i]);
 			}

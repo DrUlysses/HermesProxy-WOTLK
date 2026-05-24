@@ -19,9 +19,9 @@ internal class AuctionListBidderItems : ClientPacket
 	{
 		Auctioneer = _worldPacket.ReadPackedGuid128();
 		Offset = _worldPacket.ReadUInt32();
-		uint auctionIDCount = _worldPacket.ReadBits<uint>(7);
+		var auctionIDCount = _worldPacket.ReadBits<uint>(7);
 		_worldPacket.ResetBitPos();
-		for (int i = 0; i < auctionIDCount; i++)
+		for (var i = 0; i < auctionIDCount; i++)
 		{
 			AuctionItemIDs[i] = _worldPacket.ReadUInt32();
 		}

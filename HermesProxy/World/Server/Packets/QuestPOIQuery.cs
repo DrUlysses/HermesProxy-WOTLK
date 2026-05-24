@@ -13,7 +13,7 @@ public class QuestPOIQuery : ClientPacket
 	public override void Read()
 	{
 		MissingQuestCount = _worldPacket.ReadInt32();
-		for (int i = 0; i < MissingQuestCount && i < 175; i++)
+		for (var i = 0; i < MissingQuestCount && i < 175; i++)
 		{
 			MissingQuestPOIs[i] = _worldPacket.ReadInt32();
 		}

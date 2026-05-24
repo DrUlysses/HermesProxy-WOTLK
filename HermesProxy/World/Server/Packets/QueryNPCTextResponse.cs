@@ -26,11 +26,11 @@ public class QueryNPCTextResponse : ServerPacket
 		_worldPacket.WriteInt32(Allow ? 64 : 0);
 		if (Allow)
 		{
-			for (uint i = 0u; i < 8; i++)
+			for (var i = 0u; i < 8; i++)
 			{
 				_worldPacket.WriteFloat(Probabilities[i]);
 			}
-			for (uint i2 = 0u; i2 < 8; i2++)
+			for (var i2 = 0u; i2 < 8; i2++)
 			{
 				_worldPacket.WriteUInt32(BroadcastTextID[i2]);
 			}

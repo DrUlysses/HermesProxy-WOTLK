@@ -31,7 +31,7 @@ namespace Framework.Cryptography
 
         static byte[] SHA1Func(params byte[][] data)
         {
-            using (SHA1 alg = SHA1.Create())
+            using (var alg = SHA1.Create())
             {
                 return alg.ComputeHash(Combine(data));
             }
@@ -39,13 +39,13 @@ namespace Framework.Cryptography
 
         static byte[] Combine(byte[][] buffers)
         {
-            int length = 0;
+            var length = 0;
             foreach (var buffer in buffers)
                 length += buffer.Length;
 
-            byte[] result = new byte[length];
+            var result = new byte[length];
 
-            int position = 0;
+            var position = 0;
 
             foreach (var buffer in buffers)
             {

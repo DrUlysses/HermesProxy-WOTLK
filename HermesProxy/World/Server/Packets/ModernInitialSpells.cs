@@ -13,14 +13,14 @@ public class ModernInitialSpells : ServerPacket
         if (ModernVersion.ExpansionVersion >= 3)
         {
             // 3.4.3 SMSG_SEND_KNOWN_SPELLS
-            bool hasSpells = Spells.Count > 0;
+            var hasSpells = Spells.Count > 0;
             _worldPacket.WriteBit(hasSpells);
             _worldPacket.FlushBits();
 
             if (hasSpells)
             {
                 _worldPacket.WriteUInt32((uint)Spells.Count);
-                foreach (uint spell in Spells)
+                foreach (var spell in Spells)
                 {
                     _worldPacket.WriteUInt32(spell);
                     _worldPacket.WriteBit(false); // isFavorite
@@ -39,7 +39,7 @@ public class ModernInitialSpells : ServerPacket
             if (Spells.Count > 0)
             {
                 _worldPacket.WriteUInt32((uint)Spells.Count);
-                foreach (uint spell in Spells)
+                foreach (var spell in Spells)
                 {
                     _worldPacket.WriteUInt32(spell);
                 }

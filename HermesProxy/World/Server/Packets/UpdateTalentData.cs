@@ -51,7 +51,7 @@ public class UpdateTalentData : ServerPacket
 				_worldPacket.WriteUInt8(talent.Rank);
 			}
 
-			foreach (ushort glyphId in group.GlyphIDs)
+			foreach (var glyphId in group.GlyphIDs)
 			{
 				_worldPacket.WriteUInt16(glyphId);
 			}

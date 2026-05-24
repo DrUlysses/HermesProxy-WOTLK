@@ -37,11 +37,11 @@ public class MailAttachedItem
 		data.WriteBits(Gems.Count, 2);
 		data.WriteBit(Unlocked);
 		data.FlushBits();
-		foreach (ItemGemData gem in Gems)
+		foreach (var gem in Gems)
 		{
 			gem.Write(data);
 		}
-		foreach (ItemEnchantData en in Enchants)
+		foreach (var en in Enchants)
 		{
 			en.Write(data);
 		}

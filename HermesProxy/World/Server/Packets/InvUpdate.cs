@@ -16,11 +16,11 @@ public struct InvUpdate
 	public InvUpdate(WorldPacket data)
 	{
 		Items = new List<InvItem>();
-		int size = data.ReadBits<int>(2);
+		var size = data.ReadBits<int>(2);
 		data.ResetBitPos();
-		for (int i = 0; i < size; i++)
+		for (var i = 0; i < size; i++)
 		{
-			InvItem item = new InvItem
+			var item = new InvItem
 			{
 				ContainerSlot = data.ReadUInt8(),
 				Slot = data.ReadUInt8()

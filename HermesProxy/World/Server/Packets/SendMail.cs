@@ -38,16 +38,16 @@ public class SendMail : ClientPacket
 		StationeryID = _worldPacket.ReadInt32();
 		SendMoney = _worldPacket.ReadInt64();
 		Cod = _worldPacket.ReadInt64();
-		uint targetLength = _worldPacket.ReadBits<uint>(9);
-		uint subjectLength = _worldPacket.ReadBits<uint>(9);
-		uint bodyLength = _worldPacket.ReadBits<uint>(11);
-		uint count = _worldPacket.ReadBits<uint>(5);
+		var targetLength = _worldPacket.ReadBits<uint>(9);
+		var subjectLength = _worldPacket.ReadBits<uint>(9);
+		var bodyLength = _worldPacket.ReadBits<uint>(11);
+		var count = _worldPacket.ReadBits<uint>(5);
 		Target = _worldPacket.ReadString(targetLength);
 		Subject = _worldPacket.ReadString(subjectLength);
 		Body = _worldPacket.ReadString(bodyLength);
-		for (int i = 0; i < count; i++)
+		for (var i = 0; i < count; i++)
 		{
-			MailAttachment att = new MailAttachment
+			var att = new MailAttachment
 			{
 				AttachPosition = _worldPacket.ReadUInt8(),
 				ItemGUID = _worldPacket.ReadPackedGuid128()

@@ -135,7 +135,7 @@ public class LfgPlayerInfoPkt : ServerPacket
 	{
 		_worldPacket.WriteUInt32((uint)Dungeons.Count);
 		// Write BlackList
-		bool hasGuid = BlackList.PlayerGuid != null;
+		var hasGuid = BlackList.PlayerGuid != null;
 		_worldPacket.WriteBit(hasGuid);
 		_worldPacket.WriteUInt32((uint)(BlackList.Slots?.Count ?? 0));
 		if (hasGuid)

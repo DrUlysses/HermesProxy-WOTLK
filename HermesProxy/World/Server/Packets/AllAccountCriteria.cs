@@ -16,7 +16,7 @@ internal class AllAccountCriteria : ServerPacket
 	protected override void Write()
 	{
 		_worldPacket.WriteInt32(Progress.Count);
-		foreach (CriteriaProgressPkt item in Progress)
+		foreach (var item in Progress)
 		{
 			item.Write(_worldPacket);
 		}

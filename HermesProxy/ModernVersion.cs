@@ -80,20 +80,20 @@ public static class ModernVersion
 
 	private static bool LoadOpcodeDictionaries()
 	{
-		Type enumType = Opcodes.GetOpcodesEnumForVersion(Build);
+		var enumType = Opcodes.GetOpcodesEnumForVersion(Build);
 		if (enumType == null)
 		{
 			return false;
 		}
-		foreach (string oldOpcodeName in Enum.GetNames(enumType))
+		foreach (var oldOpcodeName in Enum.GetNames(enumType))
 		{
-			object item = Enum.Parse(enumType, oldOpcodeName);
-			uint opcodeValue = (uint)item;
+			var item = Enum.Parse(enumType, oldOpcodeName);
+			var opcodeValue = (uint)item;
 			if (opcodeValue == 0 && oldOpcodeName != "MSG_NULL_ACTION")
 			{
 				continue;
 			}
-			Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
+			var universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
 			if (universalOpcode == Opcode.UNKNOWN_SMSG && oldOpcodeName != "MSG_NULL_ACTION")
 			{
 				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "VersionChecker.cs");
@@ -206,7 +206,7 @@ public static class ModernVersion
 
 	private static bool LoadUFDictionariesInto(Dictionary<Type, SortedList<int, UpdateFieldInfo>> dicts, Dictionary<Type, Dictionary<string, int>> nameToValueDict)
 	{
-		Type[] enumTypes = new Type[28]
+		var enumTypes = new Type[28]
 		{
 			typeof(ObjectField),
 			typeof(ItemField),
@@ -237,13 +237,13 @@ public static class ModernVersion
 			typeof(SceneObjectDynamicField),
 			typeof(ConversationDynamicField)
 		};
-		ClientVersionBuild ufDefiningBuild = GetUpdateFieldsDefiningBuild(Build);
-		bool loaded = false;
-		Type[] array = enumTypes;
-		foreach (Type enumType in array)
+		var ufDefiningBuild = GetUpdateFieldsDefiningBuild(Build);
+		var loaded = false;
+		var array = enumTypes;
+		foreach (var enumType in array)
 		{
-			string vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
-			Type vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
+			var vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
+			var vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
 			if (vEnumType == null)
 			{
 				vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
@@ -253,13 +253,13 @@ public static class ModernVersion
 					continue;
 				}
 			}
-			Array vValues = Enum.GetValues(vEnumType);
-			string[] vNames = Enum.GetNames(vEnumType);
-			SortedList<int, UpdateFieldInfo> result = new SortedList<int, UpdateFieldInfo>(vValues.Length);
-			Dictionary<string, int> namesResult = new Dictionary<string, int>(vNames.Length);
-			for (int j = 0; j < vValues.Length; j++)
+			var vValues = Enum.GetValues(vEnumType);
+			var vNames = Enum.GetNames(vEnumType);
+			var result = new SortedList<int, UpdateFieldInfo>(vValues.Length);
+			var namesResult = new Dictionary<string, int>(vNames.Length);
+			for (var j = 0; j < vValues.Length; j++)
 			{
-				UpdateFieldType format = (from attribute in enumType.GetMember(vNames[j]).SelectMany(member => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
+				var format = (from attribute in enumType.GetMember(vNames[j]).SelectMany(member => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
 					where ((UpdateFieldAttribute)attribute).Version <= Build
 					orderby ((UpdateFieldAttribute)attribute).Version descending
 					select ((UpdateFieldAttribute)attribute).UFAttribute).DefaultIfEmpty(UpdateFieldType.Default).First();
@@ -272,7 +272,7 @@ public static class ModernVersion
 				});
 				namesResult.Add(vNames[j], (int)vValues.GetValue(j));
 			}
-			for (int i2 = 0; i2 < result.Count - 1; i2++)
+			for (var i2 = 0; i2 < result.Count - 1; i2++)
 			{
 				result.Values[i2].Size = result.Keys[i2 + 1] - result.Keys[i2];
 			}
@@ -296,13 +296,13 @@ public static class ModernVersion
 	{
 		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
-			int index = infoDict.BinarySearch(field);
+			var index = infoDict.BinarySearch(field);
 			if (index >= 0)
 			{
 				return infoDict.Values[index].Name;
 			}
 			index = ~index - 1;
-			int start = infoDict.Keys[index];
+			var start = infoDict.Keys[index];
 			return infoDict.Values[index].Name + " + " + (field - start);
 		}
 		return field.ToString(CultureInfo.InvariantCulture);
@@ -312,7 +312,7 @@ public static class ModernVersion
 	{
 		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
-			int index = infoDict.BinarySearch(field);
+			var index = infoDict.BinarySearch(field);
 			if (index >= 0)
 			{
 				return infoDict.Values[index];
@@ -340,7 +340,7 @@ public static class ModernVersion
 
 	private static byte GetExpansionVersion()
 	{
-		string str = VersionString;
+		var str = VersionString;
 		str = str.Replace("V", "");
 		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
@@ -348,7 +348,7 @@ public static class ModernVersion
 
 	private static byte GetMajorPatchVersion()
 	{
-		string str = VersionString;
+		var str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
@@ -356,7 +356,7 @@ public static class ModernVersion
 
 	private static byte GetMinorPatchVersion()
 	{
-		string str = VersionString;
+		var str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
@@ -684,14 +684,14 @@ public static class ModernVersion
 
 	public static byte ConvertResponseCodesValue(byte legacyValue)
 	{
-		string legacyName = Enum.ToObject(LegacyVersion.GetResponseCodesEnum(), legacyValue).ToString();
+		var legacyName = Enum.ToObject(LegacyVersion.GetResponseCodesEnum(), legacyValue).ToString();
 		return (byte)Enum.Parse(GetResponseCodesEnum(), legacyName);
 	}
 
 	public static byte ConvertSocketColor(byte legacyValue)
 	{
-		Type typeFromHandle = typeof(SocketColorModern);
-		SocketColorLegacy socketColorLegacy = (SocketColorLegacy)legacyValue;
+		var typeFromHandle = typeof(SocketColorModern);
+		var socketColorLegacy = (SocketColorLegacy)legacyValue;
 		return (byte)Enum.Parse(typeFromHandle, socketColorLegacy.ToString());
 	}
 }

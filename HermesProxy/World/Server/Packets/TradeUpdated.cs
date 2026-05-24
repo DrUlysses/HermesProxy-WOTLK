@@ -35,7 +35,7 @@ public class TradeUpdated : ServerPacket
 			data.WriteBits(Gems.Count, 2);
 			data.WriteBit(Lock);
 			data.FlushBits();
-			foreach (ItemGemData gem in Gems)
+			foreach (var gem in Gems)
 			{
 				gem.Write(data);
 			}

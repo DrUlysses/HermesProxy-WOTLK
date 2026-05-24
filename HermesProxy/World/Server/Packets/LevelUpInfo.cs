@@ -25,13 +25,13 @@ public class LevelUpInfo : ServerPacket
 	{
 		_worldPacket.WriteInt32(Level);
 		_worldPacket.WriteInt32(HealthDelta);
-		int powerCount = ((ModernVersion.ExpansionVersion >= 3) ? 10 : ModernVersion.GetPowerCountForClientVersion());
-		for (int i = 0; i < powerCount; i++)
+		var powerCount = ((ModernVersion.ExpansionVersion >= 3) ? 10 : ModernVersion.GetPowerCountForClientVersion());
+		for (var i = 0; i < powerCount; i++)
 		{
 			_worldPacket.WriteInt32((i < PowerDelta.Length) ? PowerDelta[i] : 0);
 		}
-		int[] statDelta = StatDelta;
-		foreach (int stat in statDelta)
+		var statDelta = StatDelta;
+		foreach (var stat in statDelta)
 		{
 			_worldPacket.WriteInt32(stat);
 		}

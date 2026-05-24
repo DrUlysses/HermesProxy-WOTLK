@@ -39,14 +39,14 @@ public class SupportTicketSubmitComplaint : ClientPacket
 
 		public void Read(WorldPacket worldPacket)
 		{
-			uint chatLogLineCount = worldPacket.ReadUInt32();
-			bool hasReportedLineIndex = worldPacket.ReadBool();
-			for (int i = 0; i < chatLogLineCount; i++)
+			var chatLogLineCount = worldPacket.ReadUInt32();
+			var hasReportedLineIndex = worldPacket.ReadBool();
+			for (var i = 0; i < chatLogLineCount; i++)
 			{
-				DateTime time = worldPacket.ReadTime64();
-				uint textLength = worldPacket.ReadBits<uint>(12);
+				var time = worldPacket.ReadTime64();
+				var textLength = worldPacket.ReadBits<uint>(12);
 				worldPacket.ResetBitPos();
-				string text = worldPacket.ReadString(textLength);
+				var text = worldPacket.ReadString(textLength);
 				ChatLines.Add(new ChatLine
 				{
 					Time = time,
@@ -71,8 +71,8 @@ public class SupportTicketSubmitComplaint : ClientPacket
 		public void Read(WorldPacket worldPacket)
 		{
 			MailId = worldPacket.ReadUInt32();
-			uint textBodyLength = worldPacket.ReadBits<uint>(13);
-			uint subjectLength = worldPacket.ReadBits<uint>(9);
+			var textBodyLength = worldPacket.ReadBits<uint>(13);
+			var subjectLength = worldPacket.ReadBits<uint>(9);
 			worldPacket.ResetBitPos();
 			MailTextBody = worldPacket.ReadString(textBodyLength);
 			MailSubject = worldPacket.ReadString(subjectLength);
@@ -102,20 +102,20 @@ public class SupportTicketSubmitComplaint : ClientPacket
 		TargetCharacterGuid = _worldPacket.ReadPackedGuid128();
 		ChatLog.Read(_worldPacket);
 		ComplaintType = (GmTicketComplaintType)_worldPacket.ReadBits<uint>(5);
-		uint noteLength = _worldPacket.ReadBits<uint>(10);
-		bool hasMailInfo = _worldPacket.ReadBit();
-		bool unk2 = _worldPacket.ReadBit();
-		bool unk3 = _worldPacket.ReadBit();
-		bool hasGuildInfo = _worldPacket.ReadBit();
-		bool unk5 = _worldPacket.ReadBit();
-		bool unk6 = _worldPacket.ReadBit();
-		bool hasClubMessage = _worldPacket.ReadBit();
-		bool unk8 = _worldPacket.ReadBit();
-		bool unk9 = _worldPacket.ReadBit();
+		var noteLength = _worldPacket.ReadBits<uint>(10);
+		var hasMailInfo = _worldPacket.ReadBit();
+		var unk2 = _worldPacket.ReadBit();
+		var unk3 = _worldPacket.ReadBit();
+		var hasGuildInfo = _worldPacket.ReadBit();
+		var unk5 = _worldPacket.ReadBit();
+		var unk6 = _worldPacket.ReadBit();
+		var hasClubMessage = _worldPacket.ReadBit();
+		var unk8 = _worldPacket.ReadBit();
+		var unk9 = _worldPacket.ReadBit();
 		_worldPacket.ResetBitPos();
 		if (hasClubMessage)
 		{
-			bool isUsingVoice = _worldPacket.ReadBit();
+			var isUsingVoice = _worldPacket.ReadBit();
 			_worldPacket.ResetBitPos();
 		}
 		if (_worldPacket.ReadUInt32() != 0)

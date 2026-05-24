@@ -16,7 +16,7 @@ public class SetAllTaskProgress : ServerPacket
 	protected override void Write()
 	{
 		_worldPacket.WriteInt32(Tasks.Count);
-		foreach (TaskProgress task in Tasks)
+		foreach (var task in Tasks)
 		{
 			task.Write(_worldPacket);
 		}

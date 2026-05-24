@@ -240,7 +240,7 @@ public class FeatureSystemStatus : ServerPacket
 			{
 				_worldPacket.WriteInt16(PlayerNameQueryTelemetryInterval);
 			}
-			foreach (GameRuleValuePair rulePair in GameRuleValues)
+			foreach (var rulePair in GameRuleValues)
 			{
 				rulePair.Write(_worldPacket);
 			}
@@ -322,7 +322,7 @@ public class FeatureSystemStatus : ServerPacket
 		if (ModernVersion.IsClassicVersionBuild() && RaceClassExpansionLevels != null)
 		{
 			_worldPacket.WriteInt32(RaceClassExpansionLevels.Count);
-			for (int i = 0; i < RaceClassExpansionLevels.Count; i++)
+			for (var i = 0; i < RaceClassExpansionLevels.Count; i++)
 			{
 				_worldPacket.WriteUInt8(RaceClassExpansionLevels[i]);
 			}
@@ -357,7 +357,7 @@ public class FeatureSystemStatus : ServerPacket
 		_worldPacket.WriteInt16(MaxPlayerNameQueriesPerPacket);
 		_worldPacket.WriteInt16(PlayerNameQueryTelemetryInterval);
 		_worldPacket.WriteInt32(0);
-		foreach (GameRuleValuePair rulePair in GameRuleValues)
+		foreach (var rulePair in GameRuleValues)
 		{
 			rulePair.Write(_worldPacket);
 		}

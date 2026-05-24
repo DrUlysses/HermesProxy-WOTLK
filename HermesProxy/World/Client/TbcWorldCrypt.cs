@@ -23,12 +23,12 @@ public class TbcWorldCrypt : LegacyWorldCrypt
 
 	public void Initialize(byte[] sessionKey)
 	{
-		byte[] recvSeed = new byte[16]
+		var recvSeed = new byte[16]
 		{
 			56, 167, 131, 21, 248, 146, 37, 48, 113, 152,
 			103, 177, 140, 4, 226, 170
 		};
-		HmacHash recvHash = new HmacHash(recvSeed);
+		var recvHash = new HmacHash(recvSeed);
 		recvHash.Finish(sessionKey, sessionKey.Count());
 		m_key = recvHash.Digest.ToArray();
 		m_send_i = (m_send_j = (m_recv_i = (m_recv_j = 0)));
@@ -43,7 +43,7 @@ public class TbcWorldCrypt : LegacyWorldCrypt
 			while (t < 4u)
 			{
 				m_recv_i %= (byte)m_key.Count();
-				byte x = (byte)((data[t] - m_recv_j) ^ m_key[m_recv_i]);
+				var x = (byte)((data[t] - m_recv_j) ^ m_key[m_recv_i]);
 				m_recv_i++;
 				m_recv_j = data[t];
 				data[t] = x;
@@ -60,7 +60,7 @@ public class TbcWorldCrypt : LegacyWorldCrypt
 			while (t < 6u)
 			{
 				m_send_i %= (byte)m_key.Count();
-				byte x = (byte)((data[t] ^ m_key[m_send_i]) + m_send_j);
+				var x = (byte)((data[t] ^ m_key[m_send_i]) + m_send_j);
 				m_send_i++;
 				data[t] = (m_send_j = x);
 				t++;

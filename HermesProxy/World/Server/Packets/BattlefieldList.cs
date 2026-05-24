@@ -34,7 +34,7 @@ internal class BattlefieldList : ServerPacket
 		_worldPacket.WriteUInt8(MinLevel);
 		_worldPacket.WriteUInt8(MaxLevel);
 		_worldPacket.WriteInt32(BattlefieldInstances.Count);
-		foreach (int field in BattlefieldInstances)
+		foreach (var field in BattlefieldInstances)
 		{
 			_worldPacket.WriteInt32(field);
 		}

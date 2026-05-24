@@ -19,7 +19,7 @@ internal class SendRaidTargetUpdateAll : ServerPacket
 	{
 		_worldPacket.WriteInt8(PartyIndex);
 		_worldPacket.WriteInt32(TargetIcons.Count);
-		foreach (Tuple<sbyte, WowGuid128> pair in TargetIcons)
+		foreach (var pair in TargetIcons)
 		{
 			_worldPacket.WritePackedGuid128(pair.Item2);
 			_worldPacket.WriteInt8(pair.Item1);

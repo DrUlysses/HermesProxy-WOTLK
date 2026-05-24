@@ -25,26 +25,26 @@ public class QueryGameObjectResponse : ServerPacket
 		_worldPacket.WritePackedGuid128(Guid);
 		_worldPacket.WriteBit(Allow);
 		_worldPacket.FlushBits();
-		ByteBuffer statsData = new ByteBuffer();
+		var statsData = new ByteBuffer();
 		if (Allow)
 		{
 			statsData.WriteUInt32(Stats.Type);
 			statsData.WriteUInt32(Stats.DisplayID);
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 			{
 				statsData.WriteCString(Stats.Name[i]);
 			}
 			statsData.WriteCString(Stats.IconName);
 			statsData.WriteCString(Stats.CastBarCaption);
 			statsData.WriteCString(Stats.UnkString);
-			int dataFieldsCount = (ModernVersion.AddedInClassicVersion(1, 14, 1, 2, 5, 3) ? 35 : 34);
-			for (int j = 0; j < dataFieldsCount; j++)
+			var dataFieldsCount = (ModernVersion.AddedInClassicVersion(1, 14, 1, 2, 5, 3) ? 35 : 34);
+			for (var j = 0; j < dataFieldsCount; j++)
 			{
 				statsData.WriteInt32(Stats.Data[j]);
 			}
 			statsData.WriteFloat(Stats.Size);
 			statsData.WriteUInt8((byte)Stats.QuestItems.Count);
-			foreach (uint questItem in Stats.QuestItems)
+			foreach (var questItem in Stats.QuestItems)
 			{
 				statsData.WriteUInt32(questItem);
 			}

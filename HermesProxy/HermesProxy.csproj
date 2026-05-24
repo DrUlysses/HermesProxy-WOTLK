@@ -8,6 +8,7 @@
     <Copyright>Copyright © WowLegacyCore 2023</Copyright>
     <Authors>WowLegacyCore</Authors>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(UsePublishBuildSettings)' == 'true'">

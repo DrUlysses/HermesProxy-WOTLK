@@ -49,8 +49,8 @@ public class UpdateObject : ServerPacket
 			{
 				ResetLoginBuffer(_gameState);
 			}
-			bool hasPlayer = false;
-			foreach (ObjectUpdate update in ObjectUpdates)
+			var hasPlayer = false;
+			foreach (var update in ObjectUpdates)
 			{
 				if (update.Guid == _gameState.CurrentPlayerGuid)
 				{
@@ -68,7 +68,7 @@ public class UpdateObject : ServerPacket
 			}
 			if (hasPlayer)
 			{
-				List<ObjectUpdate> merged = new List<ObjectUpdate>(_gameState.PendingLoginUpdates);
+				var merged = new List<ObjectUpdate>(_gameState.PendingLoginUpdates);
 				merged.AddRange(ObjectUpdates);
 				ObjectUpdates = merged;
 				DestroyedGuids.AddRange(_gameState.PendingLoginDestroys);
@@ -100,7 +100,7 @@ public class UpdateObject : ServerPacket
 			{
 				if (u.Guid.GetHighType() != HighGuidType.Transport && u.Guid.GetHighType() != HighGuidType.MOTransport)
 					return false;
-				uint entry = u.ObjectData?.EntryID.HasValue == true ? (uint)u.ObjectData.EntryID.Value : 0;
+				var entry = u.ObjectData?.EntryID.HasValue == true ? (uint)u.ObjectData.EntryID.Value : 0;
 				Log.Print(LogType.Debug, $"[Transport] FILTERED old-style transport entry {entry} — not compatible with 3.4.3 client", "");
 				return true;
 			});
@@ -108,54 +108,54 @@ public class UpdateObject : ServerPacket
 		NumObjUpdates = (uint)ObjectUpdates.Count;
 		_worldPacket.WriteUInt32(NumObjUpdates);
 		_worldPacket.WriteUInt16(MapID);
-		WorldPacket buffer = new WorldPacket();
+		var buffer = new WorldPacket();
 		if (buffer.WriteBit(!OutOfRangeGuids.Empty() || !DestroyedGuids.Empty()))
 		{
 			buffer.WriteUInt16((ushort)DestroyedGuids.Count);
 			buffer.WriteInt32(DestroyedGuids.Count + OutOfRangeGuids.Count);
-			foreach (WowGuid128 destroyGuid in DestroyedGuids)
+			foreach (var destroyGuid in DestroyedGuids)
 			{
 				buffer.WritePackedGuid128(destroyGuid);
 			}
-			foreach (WowGuid128 outOfRangeGuid in OutOfRangeGuids)
+			foreach (var outOfRangeGuid in OutOfRangeGuids)
 			{
 				buffer.WritePackedGuid128(outOfRangeGuid);
 			}
 		}
-		WorldPacket data = new WorldPacket();
+		var data = new WorldPacket();
 		Log.Print(LogType.Debug, $"[UpdateObject] Writing {ObjectUpdates.Count} updates, {DestroyedGuids.Count} destroyed, {OutOfRangeGuids.Count} OOR, map={MapID}", "UpdateObject.cs");
-		foreach (ObjectUpdate update2 in ObjectUpdates)
+		foreach (var update2 in ObjectUpdates)
 		{
 			update2.InitializePlaceholders();
 			switch (ModernVersion.GetUpdateFieldsDefiningBuild())
 			{
 			case ClientVersionBuild.V1_14_0_40237:
 			{
-				Objects.Version.V1_14_0_40237.ObjectUpdateBuilder builder5 = new Objects.Version.V1_14_0_40237.ObjectUpdateBuilder(update2, _gameState);
+				var builder5 = new Objects.Version.V1_14_0_40237.ObjectUpdateBuilder(update2, _gameState);
 				builder5.WriteToPacket(data);
 				break;
 			}
 			case ClientVersionBuild.V1_14_1_40688:
 			{
-				Objects.Version.V1_14_1_40688.ObjectUpdateBuilder builder4 = new Objects.Version.V1_14_1_40688.ObjectUpdateBuilder(update2, _gameState);
+				var builder4 = new Objects.Version.V1_14_1_40688.ObjectUpdateBuilder(update2, _gameState);
 				builder4.WriteToPacket(data);
 				break;
 			}
 			case ClientVersionBuild.V2_5_2_39570:
 			{
-				Objects.Version.V2_5_2_39570.ObjectUpdateBuilder builder3 = new Objects.Version.V2_5_2_39570.ObjectUpdateBuilder(update2, _gameState);
+				var builder3 = new Objects.Version.V2_5_2_39570.ObjectUpdateBuilder(update2, _gameState);
 				builder3.WriteToPacket(data);
 				break;
 			}
 			case ClientVersionBuild.V2_5_3_41750:
 			{
-				Objects.Version.V2_5_3_41750.ObjectUpdateBuilder builder2 = new Objects.Version.V2_5_3_41750.ObjectUpdateBuilder(update2, _gameState);
+				var builder2 = new Objects.Version.V2_5_3_41750.ObjectUpdateBuilder(update2, _gameState);
 				builder2.WriteToPacket(data);
 				break;
 			}
 			case ClientVersionBuild.V3_4_3_54261:
 			{
-				ObjectUpdateBuilder builder = new ObjectUpdateBuilder(update2, _gameState);
+				var builder = new ObjectUpdateBuilder(update2, _gameState);
 				builder.WriteToPacket(data);
 				break;
 			}
@@ -164,7 +164,7 @@ public class UpdateObject : ServerPacket
 			}
 		}
 		data.FlushBits();
-		byte[] bytes = data.GetData();
+		var bytes = data.GetData();
 		Log.Print(LogType.Debug, $"[UpdateObject] Data block size={bytes.Length}, first 64 bytes: {BitConverter.ToString(bytes, 0, Math.Min(64, bytes.Length))}", "UpdateObject.cs");
 		buffer.WriteInt32(bytes.Length);
 		buffer.WriteBytes(bytes);

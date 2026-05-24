@@ -40,13 +40,13 @@ public class SpellCastRequest
 		SpellXSpellVisualID = data.ReadUInt32();
 		MissileTrajectory.Read(data);
 		CraftingNPC = data.ReadPackedGuid128();
-		uint optionalReagents = data.ReadUInt32();
-		uint optionalCurrencies = data.ReadUInt32();
-		for (int i = 0; i < optionalReagents; i++)
+		var optionalReagents = data.ReadUInt32();
+		var optionalCurrencies = data.ReadUInt32();
+		for (var i = 0; i < optionalReagents; i++)
 		{
 			OptionalReagents[i].Read(data);
 		}
-		for (int j = 0; j < optionalCurrencies; j++)
+		for (var j = 0; j < optionalCurrencies; j++)
 		{
 			OptionalCurrencies[j].Read(data);
 		}
@@ -55,15 +55,15 @@ public class SpellCastRequest
 		{
 			MoveUpdate = new MovementInfo();
 		}
-		uint weightCount = data.ReadBits<uint>(2);
+		var weightCount = data.ReadBits<uint>(2);
 		Target.Read(data);
 		if (MoveUpdate != null)
 		{
 			MoverGUID = data.ReadPackedGuid128();
 			MoveUpdate.ReadMovementInfoModern(data);
 		}
-		SpellWeight weight = default(SpellWeight);
-		for (int k = 0; k < weightCount; k++)
+		var weight = default(SpellWeight);
+		for (var k = 0; k < weightCount; k++)
 		{
 			data.ResetBitPos();
 			weight.Type = data.ReadBits<uint>(2);

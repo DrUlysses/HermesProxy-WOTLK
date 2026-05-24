@@ -46,7 +46,7 @@ internal class ArenaTeamRosterResponse : ServerPacket
 			_worldPacket.WriteBit(UnkBit);
 			_worldPacket.FlushBits();
 		}
-		foreach (ArenaTeamMember member2 in Members)
+		foreach (var member2 in Members)
 		{
 			member2.Write(_worldPacket);
 		}

@@ -25,11 +25,11 @@ public class AuctionListMyItemsResult : ServerPacket
 		_worldPacket.WriteUInt32(DesiredDelay);
 		_worldPacket.WriteBit(HasMoreResults);
 		_worldPacket.FlushBits();
-		foreach (AuctionItem item in Items)
+		foreach (var item in Items)
 		{
 			item.Write(_worldPacket);
 		}
-		foreach (AuctionItem item in SoldItems)
+		foreach (var item in SoldItems)
 		{
 			item.Write(_worldPacket);
 		}

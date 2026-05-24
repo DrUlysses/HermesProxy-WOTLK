@@ -23,7 +23,7 @@ public class GuildBankLogQueryResults : ServerPacket
 		_worldPacket.WriteInt32(Entry.Count);
 		_worldPacket.WriteBit(WeeklyBonusMoney.HasValue);
 		_worldPacket.FlushBits();
-		foreach (GuildBankLogEntry logEntry in Entry)
+		foreach (var logEntry in Entry)
 		{
 			_worldPacket.WritePackedGuid128(logEntry.PlayerGUID);
 			_worldPacket.WriteUInt32(logEntry.TimeOffset);

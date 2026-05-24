@@ -45,18 +45,18 @@ public class InspectResult : ServerPacket
 		_worldPacket.WriteUInt16(YesterdayHK);
 		_worldPacket.WriteUInt32(LifetimeHK);
 		_worldPacket.WriteUInt32(HonorLevel);
-		for (int i = 0; i < Glyphs.Count; i++)
+		for (var i = 0; i < Glyphs.Count; i++)
 		{
 			_worldPacket.WriteUInt16(Glyphs[i]);
 		}
-		for (int j = 0; j < Talents.Count; j++)
+		for (var j = 0; j < Talents.Count; j++)
 		{
 			_worldPacket.WriteUInt8(Talents[j]);
 		}
 		_worldPacket.WriteBit(GuildData != null);
 		_worldPacket.WriteBit(AzeriteLevel.HasValue);
 		_worldPacket.FlushBits();
-		foreach (PVPBracketData item in Bracket)
+		foreach (var item in Bracket)
 		{
 			item.Write(_worldPacket);
 		}

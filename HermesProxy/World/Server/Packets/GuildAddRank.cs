@@ -13,7 +13,7 @@ public class GuildAddRank : ClientPacket
 
 	public override void Read()
 	{
-		uint nameLen = _worldPacket.ReadBits<uint>(7);
+		var nameLen = _worldPacket.ReadBits<uint>(7);
 		_worldPacket.ResetBitPos();
 		RankOrder = _worldPacket.ReadInt32();
 		Name = _worldPacket.ReadString(nameLen);

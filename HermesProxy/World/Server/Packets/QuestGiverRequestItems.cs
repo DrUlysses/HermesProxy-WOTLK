@@ -60,13 +60,13 @@ public class QuestGiverRequestItems : ServerPacket
 		_worldPacket.WriteInt32(Collect.Count);
 		_worldPacket.WriteInt32(Currency.Count);
 		_worldPacket.WriteInt32((int)StatusFlags);
-		foreach (QuestObjectiveCollect obj in Collect)
+		foreach (var obj in Collect)
 		{
 			_worldPacket.WriteInt32((int)obj.ObjectID);
 			_worldPacket.WriteInt32((int)obj.Amount);
 			_worldPacket.WriteUInt32(obj.Flags);
 		}
-		foreach (QuestCurrency cur in Currency)
+		foreach (var cur in Currency)
 		{
 			_worldPacket.WriteInt32((int)cur.CurrencyID);
 			_worldPacket.WriteInt32(cur.Amount);

@@ -13,7 +13,7 @@ public class AddIgnore : ClientPacket
 
 	public override void Read()
 	{
-		uint nameLength = _worldPacket.ReadBits<uint>(9);
+		var nameLength = _worldPacket.ReadBits<uint>(9);
 		if (ModernVersion.AddedInVersion(9, 1, 5, 1, 14, 1, 2, 5, 3))
 		{
 			AccountGuid = _worldPacket.ReadPackedGuid128();

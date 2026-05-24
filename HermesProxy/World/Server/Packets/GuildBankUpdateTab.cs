@@ -20,8 +20,8 @@ public class GuildBankUpdateTab : ClientPacket
 		BankGuid = _worldPacket.ReadPackedGuid128();
 		BankTab = _worldPacket.ReadUInt8();
 		_worldPacket.ResetBitPos();
-		uint nameLen = _worldPacket.ReadBits<uint>(7);
-		uint iconLen = _worldPacket.ReadBits<uint>(9);
+		var nameLen = _worldPacket.ReadBits<uint>(7);
+		var iconLen = _worldPacket.ReadBits<uint>(9);
 		Name = _worldPacket.ReadString(nameLen);
 		Icon = _worldPacket.ReadString(iconLen);
 	}

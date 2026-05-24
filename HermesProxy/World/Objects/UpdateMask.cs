@@ -33,7 +33,7 @@ public class UpdateMask
 	public virtual void AppendToPacket(ByteBuffer data)
 	{
 		data.WriteUInt8((byte)_blockCount);
-		byte[] maskArray = new byte[_blockCount << 2];
+		var maskArray = new byte[_blockCount << 2];
 		_mask.CopyTo(maskArray, 0);
 		data.WriteBytes(maskArray);
 	}

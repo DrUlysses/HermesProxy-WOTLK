@@ -46,7 +46,7 @@ internal class AttackerStateUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		WorldPacket attackRoundInfo = new WorldPacket();
+		var attackRoundInfo = new WorldPacket();
 		attackRoundInfo.WriteUInt32((uint)HitInfo);
 		attackRoundInfo.WritePackedGuid128(AttackerGUID);
 		attackRoundInfo.WritePackedGuid128(VictimGUID);
@@ -54,7 +54,7 @@ internal class AttackerStateUpdate : ServerPacket
 		attackRoundInfo.WriteInt32(OriginalDamage);
 		attackRoundInfo.WriteInt32(OverDamage);
 		attackRoundInfo.WriteUInt8((byte)SubDmg.Count);
-		foreach (SubDamage subDmg in SubDmg)
+		foreach (var subDmg in SubDmg)
 		{
 			attackRoundInfo.WriteUInt32(subDmg.SchoolMask);
 			attackRoundInfo.WriteFloat(subDmg.FloatDamage);

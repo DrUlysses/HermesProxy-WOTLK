@@ -26,11 +26,11 @@ public class GameAccountInfo
 		UnbanDate = 0u;
 		IsPermanenetlyBanned = false;
 		IsBanned = IsPermanenetlyBanned || UnbanDate > Time.UnixTime;
-		int hashPos = Name.IndexOf('#');
+		var hashPos = Name.IndexOf('#');
 		if (hashPos != -1)
 		{
-			string name2 = Name;
-			int num = hashPos + 1;
+			var name2 = Name;
+			var num = hashPos + 1;
 			DisplayName = "WoW" + name2.Substring(num, name2.Length - num);
 		}
 		else

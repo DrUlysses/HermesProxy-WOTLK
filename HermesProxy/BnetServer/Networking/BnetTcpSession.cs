@@ -28,7 +28,7 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 
 	public override void Accept()
 	{
-		string ipAddress = base.GetRemoteIpEndPoint().ToString();
+		var ipAddress = base.GetRemoteIpEndPoint().ToString();
 		Log.Print(LogType.Server, "Accepting connection from " + ipAddress + ".", "BnetTcpSession.cs");
 		AsyncHandshake(BnetServerCertificate.Certificate);
 	}
@@ -57,24 +57,24 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 	{
 		while (_currentBuffer.Count > 2)
 		{
-			byte[] headerLengthBuffer = _currentBuffer.Take(2).ToArray();
-			ushort headerLength = (ushort)IPAddress.HostToNetworkOrder(BitConverter.ToInt16(headerLengthBuffer));
+			var headerLengthBuffer = _currentBuffer.Take(2).ToArray();
+			var headerLength = (ushort)IPAddress.HostToNetworkOrder(BitConverter.ToInt16(headerLengthBuffer));
 			if (_currentBuffer.Count < 2 + headerLength)
 			{
 				return Task.CompletedTask;
 			}
-			byte[] headerBuffer = _currentBuffer.Skip(2).Take(headerLength).ToArray();
-			Header header = new Header();
+			var headerBuffer = _currentBuffer.Skip(2).Take(headerLength).ToArray();
+			var header = new Header();
 			header.MergeFrom(headerBuffer);
-			int payloadLength = (int)header.Size;
+			var payloadLength = (int)header.Size;
 			if (_currentBuffer.Count < 2 + headerLength + payloadLength)
 			{
 				return Task.CompletedTask;
 			}
-			byte[] payloadBuffer = _currentBuffer.Skip(2).Skip(headerLength).Take(payloadLength)
+			var payloadBuffer = _currentBuffer.Skip(2).Skip(headerLength).Take(payloadLength)
 				.ToArray();
 			_currentBuffer.RemoveRange(0, 2 + headerLength + (int)header.Size);
-			CodedInputStream stream = new CodedInputStream(payloadBuffer);
+			var stream = new CodedInputStream(payloadBuffer);
 			if (header.ServiceId != 254 && header.ServiceHash != 0)
 			{
 				_handlerManager.Invoke(header.ServiceId, (OriginalHash)header.ServiceHash, header.MethodId, header.Token, stream);
@@ -85,17 +85,19 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 
 	public void SendRpcMessage(uint serviceId, OriginalHash service, uint methodId, uint token, BattlenetRpcErrorCode status, IMessage? message)
 	{
-		Header header = new Header();
-		header.Token = token;
-		header.Status = (uint)status;
-		header.ServiceId = serviceId;
-		header.ServiceHash = (uint)service;
-		header.MethodId = methodId;
+		var header = new Header
+		{
+			Token = token,
+			Status = (uint)status,
+			ServiceId = serviceId,
+			ServiceHash = (uint)service,
+			MethodId = methodId
+		};
 		if (message != null)
 		{
 			header.Size = (uint)message.CalculateSize();
 		}
-		ByteBuffer buffer = new ByteBuffer();
+		var buffer = new ByteBuffer();
 		buffer.WriteBytes(GetHeaderSize(header), 2u);
 		buffer.WriteBytes(header.ToByteArray());
 		if (message != null)
@@ -105,15 +107,15 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 		AsyncWrite(buffer.GetData());
 	}
 
-	public byte[] GetHeaderSize(Header header)
+	private byte[] GetHeaderSize(Header header)
 	{
-		ushort size = (ushort)header.CalculateSize();
-		byte[] bytes = new byte[2]
+		var size = (ushort)header.CalculateSize();
+		var bytes = new byte[2]
 		{
 			(byte)((size >> 8) & 0xFF),
 			(byte)(size & 0xFF)
 		};
-		byte[] headerSizeBytes = BitConverter.GetBytes((ushort)header.CalculateSize());
+		var headerSizeBytes = BitConverter.GetBytes((ushort)header.CalculateSize());
 		Array.Reverse(headerSizeBytes);
 		return bytes;
 	}

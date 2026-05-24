@@ -184,7 +184,7 @@ internal class PartyMemberPartialState : ServerPacket
 		if (Auras != null)
 		{
 			_worldPacket.WriteInt32(Auras.Count);
-			foreach (PartyMemberAuraStates aura in Auras)
+			foreach (var aura in Auras)
 			{
 				aura.Write(_worldPacket);
 			}

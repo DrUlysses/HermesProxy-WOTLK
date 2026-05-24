@@ -22,7 +22,7 @@ public class SpellCooldownPkt : ServerPacket
 		_worldPacket.WritePackedGuid128(Caster);
 		_worldPacket.WriteUInt8(Flags);
 		_worldPacket.WriteInt32(SpellCooldowns.Count);
-		foreach (SpellCooldownStruct cd in SpellCooldowns)
+		foreach (var cd in SpellCooldowns)
 		{
 			cd.Write(_worldPacket);
 		}

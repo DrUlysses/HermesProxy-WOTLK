@@ -44,7 +44,7 @@ public class QueryQuestInfoResponse : ServerPacket
 		_worldPacket.WriteUInt32(Info.RewardMoneyDifficulty);
 		_worldPacket.WriteFloat(Info.RewardMoneyMultiplier);
 		_worldPacket.WriteUInt32(Info.RewardBonusMoney);
-		for (uint i = 0u; i < 3; i++)
+		for (var i = 0u; i < 3; i++)
 		{
 			_worldPacket.WriteUInt32(Info.RewardDisplaySpell[i]);
 		}
@@ -58,14 +58,14 @@ public class QueryQuestInfoResponse : ServerPacket
 		_worldPacket.WriteUInt32(Info.Flags);
 		_worldPacket.WriteUInt32(Info.FlagsEx);
 		_worldPacket.WriteUInt32(Info.FlagsEx2);
-		for (uint i2 = 0u; i2 < 4; i2++)
+		for (var i2 = 0u; i2 < 4; i2++)
 		{
 			_worldPacket.WriteUInt32(Info.RewardItems[i2]);
 			_worldPacket.WriteUInt32(Info.RewardAmount[i2]);
 			_worldPacket.WriteInt32(Info.ItemDrop[i2]);
 			_worldPacket.WriteInt32(Info.ItemDropQuantity[i2]);
 		}
-		for (uint i3 = 0u; i3 < 6; i3++)
+		for (var i3 = 0u; i3 < 6; i3++)
 		{
 			_worldPacket.WriteUInt32(Info.UnfilteredChoiceItems[i3].ItemID);
 			_worldPacket.WriteUInt32(Info.UnfilteredChoiceItems[i3].Quantity);
@@ -83,7 +83,7 @@ public class QueryQuestInfoResponse : ServerPacket
 		_worldPacket.WriteInt32((int)Info.PortraitGiverMount);
 		_worldPacket.WriteInt32((int)Info.PortraitGiverModelSceneID);
 		_worldPacket.WriteInt32((int)Info.PortraitTurnIn);
-		for (uint i4 = 0u; i4 < 5; i4++)
+		for (var i4 = 0u; i4 < 5; i4++)
 		{
 			_worldPacket.WriteUInt32(Info.RewardFactionID[i4]);
 			_worldPacket.WriteInt32(Info.RewardFactionValue[i4]);
@@ -91,7 +91,7 @@ public class QueryQuestInfoResponse : ServerPacket
 			_worldPacket.WriteInt32(Info.RewardFactionCapIn[i4]);
 		}
 		_worldPacket.WriteUInt32(Info.RewardFactionFlags);
-		for (uint i5 = 0u; i5 < 4; i5++)
+		for (var i5 = 0u; i5 < 4; i5++)
 		{
 			_worldPacket.WriteUInt32(Info.RewardCurrencyID[i5]);
 			_worldPacket.WriteUInt32(Info.RewardCurrencyQty[i5]);
@@ -121,7 +121,7 @@ public class QueryQuestInfoResponse : ServerPacket
 		_worldPacket.WriteBits(Info.QuestCompletionLog.GetByteCount(), 11);
 		_worldPacket.WriteBit(Info.ReadyForTranslation);
 		_worldPacket.FlushBits();
-		foreach (QuestObjective questObjective in Info.Objectives)
+		foreach (var questObjective in Info.Objectives)
 		{
 			_worldPacket.WriteUInt32(questObjective.Id);
 			_worldPacket.WriteUInt8((byte)questObjective.Type);
@@ -132,8 +132,8 @@ public class QueryQuestInfoResponse : ServerPacket
 			_worldPacket.WriteUInt32(questObjective.Flags2);
 			_worldPacket.WriteFloat(questObjective.ProgressBarWeight);
 			_worldPacket.WriteInt32(questObjective.VisualEffects.Length);
-			int[] visualEffects = questObjective.VisualEffects;
-			foreach (int visualEffect in visualEffects)
+			var visualEffects = questObjective.VisualEffects;
+			foreach (var visualEffect in visualEffects)
 			{
 				_worldPacket.WriteInt32(visualEffect);
 			}

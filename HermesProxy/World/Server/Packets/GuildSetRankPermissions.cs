@@ -36,7 +36,7 @@ public class GuildSetRankPermissions : ClientPacket
 		}
 		OldFlags = _worldPacket.ReadUInt32();
 		_worldPacket.ResetBitPos();
-		uint rankNameLen = _worldPacket.ReadBits<uint>(7);
+		var rankNameLen = _worldPacket.ReadBits<uint>(7);
 		RankName = _worldPacket.ReadString(rankNameLen);
 	}
 }

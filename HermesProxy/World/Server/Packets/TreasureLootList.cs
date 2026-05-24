@@ -9,7 +9,7 @@ public class TreasureLootList
 	public void Write(WorldPacket data)
 	{
 		data.WriteInt32(Items.Count);
-		foreach (TreasureItem item in Items)
+		foreach (var item in Items)
 		{
 			item.Write(data);
 		}

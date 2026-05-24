@@ -35,7 +35,7 @@ public class SetupCurrency : ServerPacket
 	protected override void Write()
 	{
 		_worldPacket.WriteInt32(Data.Count);
-		foreach (Record data in Data)
+		foreach (var data in Data)
 		{
 			_worldPacket.WriteUInt32(data.Type);
 			_worldPacket.WriteUInt32(data.Quantity);

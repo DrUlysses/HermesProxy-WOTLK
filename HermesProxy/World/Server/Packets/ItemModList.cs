@@ -8,11 +8,11 @@ public class ItemModList
 
 	public void Read(WorldPacket data)
 	{
-		uint itemModListCount = data.ReadBits<uint>(6);
+		var itemModListCount = data.ReadBits<uint>(6);
 		data.ResetBitPos();
-		for (int i = 0; i < itemModListCount; i++)
+		for (var i = 0; i < itemModListCount; i++)
 		{
-			ItemMod itemMod = new ItemMod();
+			var itemMod = new ItemMod();
 			itemMod.Read(data);
 			Values[i] = itemMod;
 		}
@@ -22,7 +22,7 @@ public class ItemModList
 	{
 		data.WriteBits(Values.Count, 6);
 		data.FlushBits();
-		foreach (ItemMod itemMod in Values)
+		foreach (var itemMod in Values)
 		{
 			itemMod.Write(data);
 		}

@@ -19,8 +19,8 @@ public class AccountDataTimes : ServerPacket
 	{
 		_worldPacket.WritePackedGuid128(PlayerGuid);
 		_worldPacket.WriteInt64(ServerTime);
-		long[] accountTimes = AccountTimes;
-		foreach (long accounttime in accountTimes)
+		var accountTimes = AccountTimes;
+		foreach (var accounttime in accountTimes)
 		{
 			_worldPacket.WriteInt64(accounttime);
 		}

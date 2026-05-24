@@ -11,7 +11,7 @@ public class ChatMessageAFK : ClientPacket
 
 	public override void Read()
 	{
-		uint len = _worldPacket.ReadBits<uint>(9);
+		var len = _worldPacket.ReadBits<uint>(9);
 		Text = _worldPacket.ReadString(len);
 	}
 }

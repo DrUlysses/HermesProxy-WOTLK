@@ -13,10 +13,10 @@ internal class LootItemPkt : ClientPacket
 
 	public override void Read()
 	{
-		uint Count = _worldPacket.ReadUInt32();
-		for (uint i = 0u; i < Count; i++)
+		var Count = _worldPacket.ReadUInt32();
+		for (var i = 0u; i < Count; i++)
 		{
-			LootRequest loot = new LootRequest
+			var loot = new LootRequest
 			{
 				LootObj = _worldPacket.ReadPackedGuid128(),
 				LootListID = _worldPacket.ReadUInt8()

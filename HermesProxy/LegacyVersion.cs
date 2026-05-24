@@ -64,15 +64,15 @@ public static class LegacyVersion
 
 	private static bool LoadOpcodeDictionaries()
 	{
-		Type enumType = Opcodes.GetOpcodesEnumForVersion(Build);
+		var enumType = Opcodes.GetOpcodesEnumForVersion(Build);
 		if (enumType == null)
 		{
 			return false;
 		}
-		foreach (object item in Enum.GetValues(enumType))
+		foreach (var item in Enum.GetValues(enumType))
 		{
-			string oldOpcodeName = Enum.GetName(enumType, item);
-			Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
+			var oldOpcodeName = Enum.GetName(enumType, item);
+			var universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
 			if (universalOpcode == Opcode.MSG_NULL_ACTION && oldOpcodeName != "MSG_NULL_ACTION")
 			{
 				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "VersionChecker.cs");
@@ -132,7 +132,7 @@ public static class LegacyVersion
 
 	private static bool LoadUFDictionariesInto(Dictionary<Type, SortedList<int, UpdateFieldInfo>> dicts, Dictionary<Type, Dictionary<string, int>> nameToValueDict)
 	{
-		Type[] enumTypes = new Type[28]
+		var enumTypes = new Type[28]
 		{
 			typeof(ObjectField),
 			typeof(ItemField),
@@ -163,13 +163,13 @@ public static class LegacyVersion
 			typeof(SceneObjectDynamicField),
 			typeof(ConversationDynamicField)
 		};
-		ClientVersionBuild ufDefiningBuild = GetUpdateFieldsDefiningBuild(Build);
-		bool loaded = false;
-		Type[] array = enumTypes;
-		foreach (Type enumType in array)
+		var ufDefiningBuild = GetUpdateFieldsDefiningBuild(Build);
+		var loaded = false;
+		var array = enumTypes;
+		foreach (var enumType in array)
 		{
-			string vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
-			Type vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
+			var vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
+			var vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
 			if (vEnumType == null)
 			{
 				vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
@@ -179,13 +179,13 @@ public static class LegacyVersion
 					continue;
 				}
 			}
-			Array vValues = Enum.GetValues(vEnumType);
-			string[] vNames = Enum.GetNames(vEnumType);
-			SortedList<int, UpdateFieldInfo> result = new SortedList<int, UpdateFieldInfo>(vValues.Length);
-			Dictionary<string, int> namesResult = new Dictionary<string, int>(vNames.Length);
-			for (int j = 0; j < vValues.Length; j++)
+			var vValues = Enum.GetValues(vEnumType);
+			var vNames = Enum.GetNames(vEnumType);
+			var result = new SortedList<int, UpdateFieldInfo>(vValues.Length);
+			var namesResult = new Dictionary<string, int>(vNames.Length);
+			for (var j = 0; j < vValues.Length; j++)
 			{
-				UpdateFieldType format = (from attribute in enumType.GetMember(vNames[j]).SelectMany(member => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
+				var format = (from attribute in enumType.GetMember(vNames[j]).SelectMany(member => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
 					where ((UpdateFieldAttribute)attribute).Version <= Build
 					orderby ((UpdateFieldAttribute)attribute).Version descending
 					select ((UpdateFieldAttribute)attribute).UFAttribute).DefaultIfEmpty(UpdateFieldType.Default).First();
@@ -198,7 +198,7 @@ public static class LegacyVersion
 				});
 				namesResult.Add(vNames[j], (int)vValues.GetValue(j));
 			}
-			for (int i2 = 0; i2 < result.Count - 1; i2++)
+			for (var i2 = 0; i2 < result.Count - 1; i2++)
 			{
 				result.Values[i2].Size = result.Keys[i2 + 1] - result.Keys[i2];
 			}
@@ -222,13 +222,13 @@ public static class LegacyVersion
 	{
 		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
-			int index = infoDict.BinarySearch(field);
+			var index = infoDict.BinarySearch(field);
 			if (index >= 0)
 			{
 				return infoDict.Values[index].Name;
 			}
 			index = ~index - 1;
-			int start = infoDict.Keys[index];
+			var start = infoDict.Keys[index];
 			return infoDict.Values[index].Name + " + " + (field - start);
 		}
 		return field.ToString(CultureInfo.InvariantCulture);
@@ -238,7 +238,7 @@ public static class LegacyVersion
 	{
 		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
-			int index = infoDict.BinarySearch(field);
+			var index = infoDict.BinarySearch(field);
 			if (index >= 0)
 			{
 				return infoDict.Values[index];
@@ -265,7 +265,7 @@ public static class LegacyVersion
 
 	private static byte GetExpansionVersion()
 	{
-		string str = VersionString;
+		var str = VersionString;
 		str = str.Replace("V", "");
 		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
@@ -273,7 +273,7 @@ public static class LegacyVersion
 
 	private static byte GetMajorPatchVersion()
 	{
-		string str = VersionString;
+		var str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
@@ -281,7 +281,7 @@ public static class LegacyVersion
 
 	private static byte GetMinorPatchVersion()
 	{
-		string str = VersionString;
+		var str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
@@ -339,18 +339,18 @@ public static class LegacyVersion
 	{
 		if (AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			Type typeFromHandle = typeof(SpellCastResultClassic);
-			SpellCastResultWotLK spellCastResultWotLK = (SpellCastResultWotLK)result;
+			var typeFromHandle = typeof(SpellCastResultClassic);
+			var spellCastResultWotLK = (SpellCastResultWotLK)result;
 			return (uint)Enum.Parse(typeFromHandle, spellCastResultWotLK.ToString());
 		}
 		if (AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			Type typeFromHandle2 = typeof(SpellCastResultClassic);
-			SpellCastResultTBC spellCastResultTBC = (SpellCastResultTBC)result;
+			var typeFromHandle2 = typeof(SpellCastResultClassic);
+			var spellCastResultTBC = (SpellCastResultTBC)result;
 			return (uint)Enum.Parse(typeFromHandle2, spellCastResultTBC.ToString());
 		}
-		Type typeFromHandle3 = typeof(SpellCastResultClassic);
-		SpellCastResultVanilla spellCastResultVanilla = (SpellCastResultVanilla)result;
+		var typeFromHandle3 = typeof(SpellCastResultClassic);
+		var spellCastResultVanilla = (SpellCastResultVanilla)result;
 		return (uint)Enum.Parse(typeFromHandle3, spellCastResultVanilla.ToString());
 	}
 
@@ -358,18 +358,18 @@ public static class LegacyVersion
 	{
 		if (AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			Type typeFromHandle = typeof(QuestGiverStatusModern);
-			QuestGiverStatusWotLK questGiverStatusWotLK = (QuestGiverStatusWotLK)status;
+			var typeFromHandle = typeof(QuestGiverStatusModern);
+			var questGiverStatusWotLK = (QuestGiverStatusWotLK)status;
 			return (QuestGiverStatusModern)Enum.Parse(typeFromHandle, questGiverStatusWotLK.ToString());
 		}
 		if (AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			Type typeFromHandle2 = typeof(QuestGiverStatusModern);
-			QuestGiverStatusTBC questGiverStatusTBC = (QuestGiverStatusTBC)status;
+			var typeFromHandle2 = typeof(QuestGiverStatusModern);
+			var questGiverStatusTBC = (QuestGiverStatusTBC)status;
 			return (QuestGiverStatusModern)Enum.Parse(typeFromHandle2, questGiverStatusTBC.ToString());
 		}
-		Type typeFromHandle3 = typeof(QuestGiverStatusModern);
-		QuestGiverStatusVanilla questGiverStatusVanilla = (QuestGiverStatusVanilla)status;
+		var typeFromHandle3 = typeof(QuestGiverStatusModern);
+		var questGiverStatusVanilla = (QuestGiverStatusVanilla)status;
 		return (QuestGiverStatusModern)Enum.Parse(typeFromHandle3, questGiverStatusVanilla.ToString());
 	}
 
@@ -377,14 +377,14 @@ public static class LegacyVersion
 	{
 		if (RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			Type typeFromHandle = typeof(InventoryResult);
-			InventoryResultVanilla inventoryResultVanilla = (InventoryResultVanilla)result;
+			var typeFromHandle = typeof(InventoryResult);
+			var inventoryResultVanilla = (InventoryResultVanilla)result;
 			return (InventoryResult)Enum.Parse(typeFromHandle, inventoryResultVanilla.ToString());
 		}
 		if (RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			Type typeFromHandle2 = typeof(InventoryResult);
-			InventoryResultTBC inventoryResultTBC = (InventoryResultTBC)result;
+			var typeFromHandle2 = typeof(InventoryResult);
+			var inventoryResultTBC = (InventoryResultTBC)result;
 			return (InventoryResult)Enum.Parse(typeFromHandle2, inventoryResultTBC.ToString());
 		}
 		return (InventoryResult)result;

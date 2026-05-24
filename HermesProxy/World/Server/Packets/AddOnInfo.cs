@@ -13,8 +13,8 @@ public class AddOnInfo
 	public void Read(WorldPacket data)
 	{
 		data.ResetBitPos();
-		uint nameLength = data.ReadBits<uint>(10);
-		uint versionLength = data.ReadBits<uint>(10);
+		var nameLength = data.ReadBits<uint>(10);
+		var versionLength = data.ReadBits<uint>(10);
 		Loaded = data.HasBit();
 		Disabled = data.HasBit();
 		if (nameLength > 1)

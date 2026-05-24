@@ -31,13 +31,13 @@ internal class AuthSession : ClientPacket
 		RegionID = _worldPacket.ReadUInt32();
 		BattlegroupID = _worldPacket.ReadUInt32();
 		RealmID = _worldPacket.ReadUInt32();
-		for (int i = 0; i < LocalChallenge.GetLimit(); i++)
+		for (var i = 0; i < LocalChallenge.GetLimit(); i++)
 		{
 			LocalChallenge[i] = _worldPacket.ReadUInt8();
 		}
 		Digest = _worldPacket.ReadBytes(24u);
 		UseIPv6 = _worldPacket.HasBit();
-		uint realmJoinTicketSize = _worldPacket.ReadUInt32();
+		var realmJoinTicketSize = _worldPacket.ReadUInt32();
 		if (realmJoinTicketSize != 0)
 		{
 			RealmJoinTicket = _worldPacket.ReadString(realmJoinTicketSize);

@@ -25,7 +25,7 @@ public class EmoteMessage : ServerPacket
 		_worldPacket.WriteUInt32(EmoteID);
 		_worldPacket.WriteInt32(SpellVisualKitIDs.Count);
 		_worldPacket.WriteInt32(SequenceVariation);
-		foreach (uint id in SpellVisualKitIDs)
+		foreach (var id in SpellVisualKitIDs)
 		{
 			_worldPacket.WriteUInt32(id);
 		}

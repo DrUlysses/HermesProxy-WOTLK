@@ -16,8 +16,8 @@ public class JoinChannel : ClientPacket
 	public override void Read()
 	{
 		ChatChannelId = _worldPacket.ReadInt32();
-		uint channelLength = _worldPacket.ReadBits<uint>(7);
-		uint passwordLength = _worldPacket.ReadBits<uint>(7);
+		var channelLength = _worldPacket.ReadBits<uint>(7);
+		var passwordLength = _worldPacket.ReadBits<uint>(7);
 		_worldPacket.ResetBitPos();
 		ChannelName = _worldPacket.ReadString(channelLength);
 		Password = _worldPacket.ReadString(passwordLength);

@@ -9,7 +9,7 @@ internal static class OsSpecific
 	{
 		try
 		{
-			IntPtr consoleWindowHandle = GetConsoleWindow();
+			var consoleWindowHandle = GetConsoleWindow();
 			GetWindowThreadProcessId(consoleWindowHandle, out var consoleWindowProcess);
 			return consoleWindowProcess == Environment.ProcessId;
 		}

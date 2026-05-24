@@ -52,7 +52,7 @@ public class PartyMemberPetStats
 			return;
 		}
 		data.WriteInt32(Auras.Count);
-		foreach (PartyMemberAuraStates aura in Auras)
+		foreach (var aura in Auras)
 		{
 			aura.Write(data);
 		}

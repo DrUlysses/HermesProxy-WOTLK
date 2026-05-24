@@ -18,14 +18,14 @@ public struct EulerAngles
     
     public Quaternion AsQuaternion()
     {
-        double cy = Math.Cos(Yaw * 0.5);
-        double sy = Math.Sin(Yaw * 0.5);
-        double cp = Math.Cos(Pitch * 0.5);
-        double sp = Math.Sin(Pitch * 0.5);
-        double cr = Math.Cos(Roll * 0.5);
-        double sr = Math.Sin(Roll * 0.5);
+        var cy = Math.Cos(Yaw * 0.5);
+        var sy = Math.Sin(Yaw * 0.5);
+        var cp = Math.Cos(Pitch * 0.5);
+        var sp = Math.Sin(Pitch * 0.5);
+        var cr = Math.Cos(Roll * 0.5);
+        var sr = Math.Sin(Roll * 0.5);
 
-        Quaternion q = new Quaternion();
+        var q = new Quaternion();
         q.W = (float)(cr * cp * cy + sr * sp * sy);
         q.X = (float)(sr * cp * cy - cr * sp * sy);
         q.Y = (float)(cr * sp * cy + sr * cp * sy);

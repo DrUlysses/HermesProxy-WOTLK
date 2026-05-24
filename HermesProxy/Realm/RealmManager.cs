@@ -52,12 +52,14 @@ public class RealmManager
 
     void LoadBuildInfo()
     {
-        RealmBuildInfo build = new RealmBuildInfo();
-        build.MajorVersion = ModernVersion.ExpansionVersion;
-        build.MinorVersion = ModernVersion.MajorVersion;
-        build.BugfixVersion = ModernVersion.MinorVersion;
+        var build = new RealmBuildInfo
+        {
+            MajorVersion = ModernVersion.ExpansionVersion,
+            MinorVersion = ModernVersion.MajorVersion,
+            BugfixVersion = ModernVersion.MinorVersion
+        };
 
-        string hotfixVersion = "";
+        var hotfixVersion = "";
         if (!hotfixVersion.IsEmpty() && hotfixVersion.Length < build.HotfixVersion.Length)
             build.HotfixVersion = hotfixVersion.ToCharArray();
 
@@ -80,16 +82,18 @@ public class RealmManager
 
     public void AddRealm(uint id, string name, string externalAddress, ushort port, RealmType type, RealmFlags flags, byte characterCount, byte timezone, float populationLevel)
     {
-        Dictionary<RealmId, string> existingRealms = new Dictionary<RealmId, string>();
+        var existingRealms = new Dictionary<RealmId, string>();
         foreach (var p in _realms)
             existingRealms[p.Key] = p.Value.Name;
 
-        var realm = new Realm();
-        realm.Name = name;
-        realm.ExternalAddress = externalAddress;
+        var realm = new Realm
+        {
+            Name = name,
+            ExternalAddress = externalAddress,
+            Port = port
+        };
 
-        realm.Port = port;
-        RealmType realmType = type;
+        var realmType = type;
         if (realmType == RealmType.FFAPVP)
             realmType = RealmType.PVP;
         if (realmType >= RealmType.MaxType)
@@ -160,35 +164,39 @@ public class RealmManager
 
     public uint GetMinorMajorBugfixVersionForBuild(uint build)
     {
-        RealmBuildInfo buildInfo = _builds.FirstOrDefault(p => p.Build < build);
+        var buildInfo = _builds.FirstOrDefault(p => p.Build < build);
         return buildInfo != null ? (buildInfo.MajorVersion * 10000 + buildInfo.MinorVersion * 100 + buildInfo.BugfixVersion) : 0;
     }
 
     public void WriteSubRegions(GetAllValuesForAttributeResponse response)
     {
-        foreach (string subRegion in GetSubRegions())
+        foreach (var subRegion in GetSubRegions())
         {
-            var variant = new Variant();
-            variant.StringValue = subRegion;
+            var variant = new Variant
+            {
+                StringValue = subRegion
+            };
             response.AttributeValue.Add(variant);
         }
     }
 
     public byte[] GetCompressdRealmEntryJSON(Realm realm, uint build)
     {
-        byte[] compressed = new byte[0];
+        var compressed = new byte[0];
         if (realm != null)
         {
             if (!realm.Flags.HasAnyFlag(RealmFlags.Offline) && realm.Build == build)
             {
-                var realmEntry = new RealmEntry();
-                realmEntry.WowRealmAddress = (int)realm.Id.GetAddress();
-                realmEntry.CfgTimezonesID = 1;
-                realmEntry.PopulationState = Math.Max((int)realm.PopulationLevel, 1);
-                realmEntry.CfgCategoriesID = realm.Timezone;
+                var realmEntry = new RealmEntry
+                {
+                    WowRealmAddress = (int)realm.Id.GetAddress(),
+                    CfgTimezonesID = 1,
+                    PopulationState = Math.Max((int)realm.PopulationLevel, 1),
+                    CfgCategoriesID = realm.Timezone
+                };
 
-                ClientVersion version = new ClientVersion();
-                RealmBuildInfo buildInfo = GetBuildInfo(realm.Build);
+                var version = new ClientVersion();
+                var buildInfo = GetBuildInfo(realm.Build);
                 if (buildInfo != null)
                 {
                     version.Major = (int)buildInfo.MajorVersion;
@@ -226,17 +234,22 @@ public class RealmManager
             if (realm.Value.Id.GetSubRegionAddress() != subRegion)
                 continue;
 
-            RealmFlags flag = realm.Value.Flags;
+            var flag = realm.Value.Flags;
             if (realm.Value.Build != build)
                 flag |= RealmFlags.VersionMismatch;
 
-            RealmListUpdate realmListUpdate = new RealmListUpdate();
-            realmListUpdate.Update.WowRealmAddress = (int)realm.Value.Id.GetAddress();
-            realmListUpdate.Update.CfgTimezonesID = 1;
-            realmListUpdate.Update.PopulationState = (realm.Value.Flags.HasAnyFlag(RealmFlags.Offline) ? 0 : Math.Max((int)realm.Value.PopulationLevel, 1));
-            realmListUpdate.Update.CfgCategoriesID = realm.Value.Timezone;
+            var realmListUpdate = new RealmListUpdate
+            {
+                Update =
+                {
+                    WowRealmAddress = (int)realm.Value.Id.GetAddress(),
+                    CfgTimezonesID = 1,
+                    PopulationState = (realm.Value.Flags.HasAnyFlag(RealmFlags.Offline) ? 0 : Math.Max((int)realm.Value.PopulationLevel, 1)),
+                    CfgCategoriesID = realm.Value.Timezone
+                }
+            };
 
-            RealmBuildInfo buildInfo = GetBuildInfo(realm.Value.Build);
+            var buildInfo = GetBuildInfo(realm.Value.Build);
             if (buildInfo != null)
             {
                 realmListUpdate.Update.Version.Major = (int)buildInfo.MajorVersion;
@@ -272,26 +285,30 @@ public class RealmManager
         Log.Print(LogType.Debug, $"JoinRealm: realmAddress=0x{realmAddress:X8}, decoded={globalSession.RealmId}, realms count={_realms.Count}");
         foreach (var r in _realms)
             Log.Print(LogType.Debug, $"  Available realm: {r.Key} -> {r.Value.Name}");
-        Realm realm = GetRealm(globalSession.RealmId);
+        var realm = GetRealm(globalSession.RealmId);
         if (realm != null)
         {
             if (realm.Flags.HasAnyFlag(RealmFlags.Offline) || realm.Build != build)
                 return BattlenetRpcErrorCode.UserServerNotPermittedOnRealm;
 
-            RealmListServerIPAddresses serverAddresses = new RealmListServerIPAddresses();
-            AddressFamily addressFamily = new AddressFamily();
-            addressFamily.Id = 1;
+            var serverAddresses = new RealmListServerIPAddresses();
+            var addressFamily = new AddressFamily
+            {
+                Id = 1
+            };
 
-            var address = new Address();
-            address.Ip = realm.GetAddressForClient(clientAddress).Address.ToString();
-            address.Port = Settings.RealmPort;
+            var address = new Address
+            {
+                Ip = realm.GetAddressForClient(clientAddress).Address.ToString(),
+                Port = Settings.RealmPort
+            };
             addressFamily.Addresses.Add(address);
             serverAddresses.Families.Add(addressFamily);
 
-            byte[] compressed = Json.Deflate("JSONRealmListServerIPAddresses", serverAddresses);
+            var compressed = Json.Deflate("JSONRealmListServerIPAddresses", serverAddresses);
 
-            byte[] serverSecret = new byte[0].GenerateRandomKey(32);
-            byte[] keyData = clientSecret.ToArray().Combine(serverSecret);
+            var serverSecret = new byte[0].GenerateRandomKey(32);
+            var keyData = clientSecret.ToArray().Combine(serverSecret);
 
             globalSession.SessionKey = keyData;
 

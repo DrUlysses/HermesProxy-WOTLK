@@ -40,7 +40,7 @@ public class SpellTargetData
 		{
 			MapID = 0;
 		}
-		uint nameLength = data.ReadBits<uint>(7);
+		var nameLength = data.ReadBits<uint>(7);
 		Unit = data.ReadPackedGuid128();
 		Item = data.ReadPackedGuid128();
 		if (SrcLocation != null)

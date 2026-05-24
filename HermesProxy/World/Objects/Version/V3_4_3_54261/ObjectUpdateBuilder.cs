@@ -49,7 +49,7 @@ public class ObjectUpdateBuilder
 	{
 		m_updateData = updateData;
 		m_gameState = gameState;
-		ObjectType objectType = updateData.Guid.GetObjectType();
+		var objectType = updateData.Guid.GetObjectType();
 		if (updateData.CreateData != null)
 		{
 			objectType = updateData.CreateData.ObjectType;
@@ -96,7 +96,7 @@ public class ObjectUpdateBuilder
 
 	private static uint ConvertTypeMask(ObjectTypeMask mask)
 	{
-		uint result = 0u;
+		var result = 0u;
 		if (mask.HasAnyFlag(ObjectTypeMask.Object))
 		{
 			result |= 1;
@@ -175,7 +175,7 @@ public class ObjectUpdateBuilder
 		packet.WritePackedGuid128(m_updateData.Guid);
 		if (m_updateData.Type != UpdateTypeModern.Values)
 		{
-			ObjectTypeBCC headerType = m_objectType;
+			var headerType = m_objectType;
 			packet.WriteUInt8(ConvertTypeId(headerType));
 			SetCreateObjectBits();
 			Log.Print(LogType.Debug, $"[UpdateBuilder] CreateBits: Move={m_createBits.MovementUpdate} Stationary={m_createBits.Stationary} Vehicle={m_createBits.Vehicle} ActivePlayer={m_createBits.ActivePlayer} Transport={m_createBits.MovementTransport} Rotation={m_createBits.Rotation}", "ObjectUpdateBuilder.cs");
@@ -189,13 +189,13 @@ public class ObjectUpdateBuilder
 		// Dump full item create data for debugging login vs loot comparison
 		if (m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Item) && m_updateData.Type != UpdateTypeModern.Values)
 		{
-			ItemData item = m_updateData.ItemData;
-			string itemInfo = item != null ?
+			var item = m_updateData.ItemData;
+			var itemInfo = item != null ?
 				$"Owner={item.Owner} ContainedIn={item.ContainedIn} Stack={item.StackCount} Dur={item.Durability}/{item.MaxDurability} Flags={item.Flags} Charges=[{item.SpellCharges[0]},{item.SpellCharges[1]},{item.SpellCharges[2]},{item.SpellCharges[3]},{item.SpellCharges[4]}] PropSeed={item.PropertySeed} RandProp={item.RandomProperty}" :
 				"null";
 			Log.Print(LogType.Debug, $"[ItemCreate] {m_updateData.Guid} Entry={m_updateData.ObjectData?.EntryID} IsOwner={IsOwner} ItemData: {itemInfo}", "");
 		}
-		WorldPacket valuesBuffer = new WorldPacket();
+		var valuesBuffer = new WorldPacket();
 		if (m_updateData.Type == UpdateTypeModern.Values)
 		{
 			WriteValuesUpdate(valuesBuffer);
@@ -204,7 +204,7 @@ public class ObjectUpdateBuilder
 		{
 			WriteValuesCreate(valuesBuffer);
 		}
-		byte[] valuesData = valuesBuffer.GetData();
+		var valuesData = valuesBuffer.GetData();
 		if (m_updateData.Type == UpdateTypeModern.Values && m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit))
 		{
 			Log.Print(LogType.Debug, $"[ValuesUpdate] guid={m_updateData.Guid} type={m_objectType} size={valuesData.Length} hex={BitConverter.ToString(valuesData, 0, Math.Min(64, valuesData.Length))}", "");
@@ -215,7 +215,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteValuesCreate(WorldPacket data)
 	{
-		ObjectTypeMask effectiveMask = m_objectTypeMask;
+		var effectiveMask = m_objectTypeMask;
 		if (IsOwner && DEBUG_STRIP_LEVEL == 1)
 		{
 			effectiveMask &= ~(ObjectTypeMask.Player | ObjectTypeMask.ActivePlayer);
@@ -225,17 +225,17 @@ public class ObjectUpdateBuilder
 			effectiveMask &= ~ObjectTypeMask.ActivePlayer;
 		}
 		// Owner=0x01, PartyMember=0x02 (needed for QuestLog visibility)
-		byte updateFieldFlags = (byte)(IsOwner ? 0x03 : 0);
+		var updateFieldFlags = (byte)(IsOwner ? 0x03 : 0);
 		Log.Print(LogType.Debug, $"[ValuesCreate] type={m_objectType} flags=0x{updateFieldFlags:X2} IsOwner={IsOwner}", "");
 		data.WriteUInt8(updateFieldFlags);
-		int sectionStart = data.GetData().Length;
+		var sectionStart = data.GetData().Length;
 		WriteCreateObjectData(data);
-		int afterObj = data.GetData().Length;
+		var afterObj = data.GetData().Length;
 		Log.Print(LogType.Debug, $"[Sizes] ObjectData={afterObj - sectionStart} bytes", "ObjectUpdateBuilder.cs");
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.Item))
 		{
 			WriteCreateItemData(data);
-			int afterItem = data.GetData().Length;
+			var afterItem = data.GetData().Length;
 			Log.Print(LogType.Debug, $"[Sizes] ItemData={afterItem - afterObj} bytes", "ObjectUpdateBuilder.cs");
 		}
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.Container))
@@ -244,23 +244,23 @@ public class ObjectUpdateBuilder
 		}
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.Unit))
 		{
-			int beforeUnit = data.GetData().Length;
+			var beforeUnit = data.GetData().Length;
 			WriteCreateUnitData(data);
-			int afterUnit = data.GetData().Length;
+			var afterUnit = data.GetData().Length;
 			Log.Print(LogType.Debug, $"[Sizes] UnitData={afterUnit - beforeUnit} bytes", "ObjectUpdateBuilder.cs");
 		}
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.Player))
 		{
-			int beforePlayer = data.GetData().Length;
+			var beforePlayer = data.GetData().Length;
 			WriteCreatePlayerData(data);
-			int afterPlayer = data.GetData().Length;
+			var afterPlayer = data.GetData().Length;
 			Log.Print(LogType.Debug, $"[Sizes] PlayerData={afterPlayer - beforePlayer} bytes", "ObjectUpdateBuilder.cs");
 		}
 		if (effectiveMask.HasAnyFlag(ObjectTypeMask.ActivePlayer))
 		{
-			int beforeActive = data.GetData().Length;
+			var beforeActive = data.GetData().Length;
 			WriteCreateActivePlayerData(data);
-			int afterActive = data.GetData().Length;
+			var afterActive = data.GetData().Length;
 			Log.Print(LogType.Debug, $"[Sizes] ActivePlayerData={afterActive - beforeActive} bytes", "ObjectUpdateBuilder.cs");
 		}
 		if (m_objectTypeMask.HasAnyFlag(ObjectTypeMask.GameObject))
@@ -290,42 +290,42 @@ public class ObjectUpdateBuilder
 		else if (modernIdx >= 30 && modernIdx <= 33)
 		{
 			// Bag slots: legacy InvSlots[19-22] -> modern [30-33]
-			int legacyIdx = 19 + (modernIdx - 30);
+			var legacyIdx = 19 + (modernIdx - 30);
 			if (a.InvSlots != null && legacyIdx < a.InvSlots.Length)
 				return a.InvSlots[legacyIdx];
 		}
 		else if (modernIdx >= 35 && modernIdx <= 58)
 		{
 			// Backpack items: from PackSlots
-			int idx = modernIdx - 35;
+			var idx = modernIdx - 35;
 			if (a.PackSlots != null && idx < a.PackSlots.Length)
 				return a.PackSlots[idx];
 		}
 		else if (modernIdx >= 59 && modernIdx <= 86)
 		{
 			// Bank items
-			int idx = modernIdx - 59;
+			var idx = modernIdx - 59;
 			if (a.BankSlots != null && idx < a.BankSlots.Length)
 				return a.BankSlots[idx];
 		}
 		else if (modernIdx >= 87 && modernIdx <= 93)
 		{
 			// Bank bag slots
-			int idx = modernIdx - 87;
+			var idx = modernIdx - 87;
 			if (a.BankBagSlots != null && idx < a.BankBagSlots.Length)
 				return a.BankBagSlots[idx];
 		}
 		else if (modernIdx >= 94 && modernIdx <= 105)
 		{
 			// Buyback slots
-			int idx = modernIdx - 94;
+			var idx = modernIdx - 94;
 			if (a.BuyBackSlots != null && idx < a.BuyBackSlots.Length)
 				return a.BuyBackSlots[idx];
 		}
 		else if (modernIdx >= 106 && modernIdx <= 137)
 		{
 			// Keyring slots
-			int idx = modernIdx - 106;
+			var idx = modernIdx - 106;
 			if (a.KeyringSlots != null && idx < a.KeyringSlots.Length)
 				return a.KeyringSlots[idx];
 		}
@@ -336,7 +336,7 @@ public class ObjectUpdateBuilder
 	{
 		if (!m_objectTypeMask.HasAnyFlag(ObjectTypeMask.ActivePlayer))
 			return false;
-		ActivePlayerData a = m_updateData.ActivePlayerData;
+		var a = m_updateData.ActivePlayerData;
 		if (a == null) return false;
 
 		// Block 0 scalars (bits 26-37)
@@ -389,91 +389,91 @@ public class ObjectUpdateBuilder
 
 		// KnownTitles (dynamic field, bit 3)
 		if (a.KnownTitles != null)
-			for (int i = 0; i < a.KnownTitles.Length; i++)
+			for (var i = 0; i < a.KnownTitles.Length; i++)
 				if (a.KnownTitles[i].HasValue) return true;
 
 		// InvSlots (bits 124-265)
-		for (int i = 0; i < 141; i++)
+		for (var i = 0; i < 141; i++)
 			if (GetModernInvSlot(a, i) != null) return true;
 
 		// TrackResourceMask (bits 266-268)
 		if (a.TrackResourceMask != null)
-			for (int i = 0; i < a.TrackResourceMask.Length; i++)
+			for (var i = 0; i < a.TrackResourceMask.Length; i++)
 				if (a.TrackResourceMask[i].HasValue) return true;
 
 		// SpellCritPercentage / ModDamageDone arrays (bits 269-297)
 		if (a.SpellCritPercentage != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.SpellCritPercentage[i].HasValue) return true;
 		if (a.ModDamageDonePos != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.ModDamageDonePos[i].HasValue) return true;
 		if (a.ModDamageDoneNeg != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.ModDamageDoneNeg[i].HasValue) return true;
 		if (a.ModDamageDonePercent != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.ModDamageDonePercent[i].HasValue) return true;
 
 		// ExploredZones (bits 298-538)
 		if (a.ExploredZones != null)
-			for (int i = 0; i < 240; i++)
+			for (var i = 0; i < 240; i++)
 				if (a.ExploredZones[i].HasValue) return true;
 
 		// RestInfo (bits 539-541)
 		if (a.RestInfo != null)
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 				if (a.RestInfo[i] != null && (a.RestInfo[i].Threshold.HasValue || a.RestInfo[i].StateID.HasValue)) return true;
 
 		// WeaponDmgMultipliers / WeaponAtkSpeedMultipliers (bits 542-548)
 		if (a.WeaponDmgMultipliers != null)
-			for (int i = 0; i < 3; i++)
+			for (var i = 0; i < 3; i++)
 				if (a.WeaponDmgMultipliers[i].HasValue) return true;
 		if (a.WeaponAtkSpeedMultipliers != null)
-			for (int i = 0; i < 3; i++)
+			for (var i = 0; i < 3; i++)
 				if (a.WeaponAtkSpeedMultipliers[i].HasValue) return true;
 
 		// Buyback (bits 549-573)
 		if (a.BuybackPrice != null)
-			for (int i = 0; i < 12; i++)
+			for (var i = 0; i < 12; i++)
 				if (a.BuybackPrice[i].HasValue) return true;
 		if (a.BuybackTimestamp != null)
-			for (int i = 0; i < 12; i++)
+			for (var i = 0; i < 12; i++)
 				if (a.BuybackTimestamp[i].HasValue) return true;
 
 		// CombatRatings (bits 574-606)
 		if (a.CombatRatings != null)
-			for (int i = 0; i < 32; i++)
+			for (var i = 0; i < 32; i++)
 				if (a.CombatRatings[i].HasValue) return true;
 
 		// NoReagentCostMask (bits 615-619)
 		if (a.NoReagentCostMask != null)
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (a.NoReagentCostMask[i].HasValue) return true;
 
 		// ProfessionSkillLine (bits 620-622)
 		if (a.ProfessionSkillLine != null)
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 				if (a.ProfessionSkillLine[i].HasValue) return true;
 
 		// BagSlotFlags (bits 623-627)
 		if (a.BagSlotFlags != null)
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (a.BagSlotFlags[i].HasValue) return true;
 
 		// BankBagSlotFlags (bits 628-635)
 		if (a.BankBagSlotFlags != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.BankBagSlotFlags[i].HasValue) return true;
 
 		// QuestCompleted (bits 636-1511)
 		if (a.QuestCompleted != null)
-			for (int i = 0; i < 875; i++)
+			for (var i = 0; i < 875; i++)
 				if (a.QuestCompleted[i].HasValue) return true;
 
 		// PvpInfo (bits 607-614)
 		if (a.PvpInfo != null)
-			for (int i = 0; i < a.PvpInfo.Length; i++)
+			for (var i = 0; i < a.PvpInfo.Length; i++)
 				if (a.PvpInfo[i] != null && (a.PvpInfo[i].Rating != 0 || a.PvpInfo[i].SeasonPlayed != 0 || a.PvpInfo[i].Disqualified)) return true;
 
 		return false;
@@ -495,28 +495,28 @@ public class ObjectUpdateBuilder
 	/// </summary>
 	private void WriteUpdateActivePlayerData(WorldPacket data)
 	{
-		ActivePlayerData a = m_updateData.ActivePlayerData ?? new ActivePlayerData();
+		var a = m_updateData.ActivePlayerData ?? new ActivePlayerData();
 
 		// Build changesMask (1536 bits = 48 blocks of 32)
-		uint[] blocks = new uint[48];
+		var blocks = new uint[48];
 		void SetBit(int bit) { blocks[bit / 32] |= (1u << (bit % 32)); }
 		bool IsBitSet(int bit) { return (blocks[bit / 32] & (1u << (bit % 32))) != 0; }
 
 		// Pre-compute KnownTitles (uint?[12] → ulong[6])
-		int knownTitlesCount = 0;
-		ulong[] knownTitles64 = new ulong[6];
+		var knownTitlesCount = 0;
+		var knownTitles64 = new ulong[6];
 		if (a.KnownTitles != null)
 		{
-			bool hasAnyTitle = false;
-			for (int i = 0; i < a.KnownTitles.Length; i++)
+			var hasAnyTitle = false;
+			for (var i = 0; i < a.KnownTitles.Length; i++)
 				if (a.KnownTitles[i].HasValue) { hasAnyTitle = true; break; }
 			if (hasAnyTitle)
 			{
 				knownTitlesCount = 6;
-				for (int i = 0; i < 6; i++)
+				for (var i = 0; i < 6; i++)
 				{
-					uint lo = (i * 2 < a.KnownTitles.Length && a.KnownTitles[i * 2].HasValue) ? a.KnownTitles[i * 2].Value : 0;
-					uint hi = (i * 2 + 1 < a.KnownTitles.Length && a.KnownTitles[i * 2 + 1].HasValue) ? a.KnownTitles[i * 2 + 1].Value : 0;
+					var lo = (i * 2 < a.KnownTitles.Length && a.KnownTitles[i * 2].HasValue) ? a.KnownTitles[i * 2].Value : 0;
+					var hi = (i * 2 + 1 < a.KnownTitles.Length && a.KnownTitles[i * 2 + 1].HasValue) ? a.KnownTitles[i * 2 + 1].Value : 0;
 					knownTitles64[i] = lo | ((ulong)hi << 32);
 				}
 				SetBit(0); SetBit(3); // dynamic field KnownTitles
@@ -527,7 +527,7 @@ public class ObjectUpdateBuilder
 		// NOTE: Glyphs only change via specific packets, not update fields.
 		// Sending them in every Values update is wasteful and may cause format issues.
 		// Glyphs are already set correctly in the CREATE path.
-		bool hasGlyphChanges = false;
+		var hasGlyphChanges = false;
 
 		// ============================================================
 		// SET BITS — Block 0 scalar fields (group bit 0, fields 26-37)
@@ -638,8 +638,8 @@ public class ObjectUpdateBuilder
 		// ============================================================
 
 		// InvSlots (header 124, elements 125-265)
-		int invSlotsChanged = 0;
-		for (int i = 0; i < 141; i++)
+		var invSlotsChanged = 0;
+		for (var i = 0; i < 141; i++)
 		{
 			if (GetModernInvSlot(a, i) != null)
 			{
@@ -651,84 +651,84 @@ public class ObjectUpdateBuilder
 
 		// TrackResourceMask (header 266, elements 267-268)
 		if (a.TrackResourceMask != null)
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 				if (a.TrackResourceMask[i].HasValue) { SetBit(266); SetBit(267 + i); }
 
 		// Shared header 269: SpellCritPercentage (270-276), ModDamageDonePos (277-283),
 		// ModDamageDoneNeg (284-290), ModDamageDonePercent (291-297)
 		if (a.SpellCritPercentage != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.SpellCritPercentage[i].HasValue) { SetBit(269); SetBit(270 + i); }
 		if (a.ModDamageDonePos != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.ModDamageDonePos[i].HasValue) { SetBit(269); SetBit(277 + i); }
 		if (a.ModDamageDoneNeg != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.ModDamageDoneNeg[i].HasValue) { SetBit(269); SetBit(284 + i); }
 		if (a.ModDamageDonePercent != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.ModDamageDonePercent[i].HasValue) { SetBit(269); SetBit(291 + i); }
 
 		// ExploredZones (header 298, elements 299-538)
 		if (a.ExploredZones != null)
-			for (int i = 0; i < 240; i++)
+			for (var i = 0; i < 240; i++)
 				if (a.ExploredZones[i].HasValue) { SetBit(298); SetBit(299 + i); }
 
 		// RestInfo (header 539, elements 540-541)
 		if (a.RestInfo != null)
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 				if (a.RestInfo[i] != null && (a.RestInfo[i].Threshold.HasValue || a.RestInfo[i].StateID.HasValue))
 				{ SetBit(539); SetBit(540 + i); }
 
 		// Shared header 542: WeaponDmgMultipliers (543-545), WeaponAtkSpeedMultipliers (546-548)
 		if (a.WeaponDmgMultipliers != null)
-			for (int i = 0; i < 3; i++)
+			for (var i = 0; i < 3; i++)
 				if (a.WeaponDmgMultipliers[i].HasValue) { SetBit(542); SetBit(543 + i); }
 		if (a.WeaponAtkSpeedMultipliers != null)
-			for (int i = 0; i < 3; i++)
+			for (var i = 0; i < 3; i++)
 				if (a.WeaponAtkSpeedMultipliers[i].HasValue) { SetBit(542); SetBit(546 + i); }
 
 		// Shared header 549: BuybackPrice (550-561), BuybackTimestamp (562-573)
 		if (a.BuybackPrice != null)
-			for (int i = 0; i < 12; i++)
+			for (var i = 0; i < 12; i++)
 				if (a.BuybackPrice[i].HasValue) { SetBit(549); SetBit(550 + i); }
 		if (a.BuybackTimestamp != null)
-			for (int i = 0; i < 12; i++)
+			for (var i = 0; i < 12; i++)
 				if (a.BuybackTimestamp[i].HasValue) { SetBit(549); SetBit(562 + i); }
 
 		// CombatRatings (header 574, elements 575-606)
 		if (a.CombatRatings != null)
-			for (int i = 0; i < 32; i++)
+			for (var i = 0; i < 32; i++)
 				if (a.CombatRatings[i].HasValue) { SetBit(574); SetBit(575 + i); }
 
 		// NoReagentCostMask (header 615, elements 616-619)
 		if (a.NoReagentCostMask != null)
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (a.NoReagentCostMask[i].HasValue) { SetBit(615); SetBit(616 + i); }
 
 		// ProfessionSkillLine (header 620, elements 621-622)
 		if (a.ProfessionSkillLine != null)
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 				if (a.ProfessionSkillLine[i].HasValue) { SetBit(620); SetBit(621 + i); }
 
 		// BagSlotFlags (header 623, elements 624-627)
 		if (a.BagSlotFlags != null)
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (a.BagSlotFlags[i].HasValue) { SetBit(623); SetBit(624 + i); }
 
 		// BankBagSlotFlags (header 628, elements 629-635)
 		if (a.BankBagSlotFlags != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (a.BankBagSlotFlags[i].HasValue) { SetBit(628); SetBit(629 + i); }
 
 		// QuestCompleted (header 636, elements 637-1511)
 		if (a.QuestCompleted != null)
-			for (int i = 0; i < 875; i++)
+			for (var i = 0; i < 875; i++)
 				if (a.QuestCompleted[i].HasValue) { SetBit(636); SetBit(637 + i); }
 
 		// PvpInfo (header 607, elements 608-614)
 		if (a.PvpInfo != null)
-			for (int i = 0; i < Math.Min(a.PvpInfo.Length, 7); i++)
+			for (var i = 0; i < Math.Min(a.PvpInfo.Length, 7); i++)
 				if (a.PvpInfo[i] != null && (a.PvpInfo[i].Rating != 0 || a.PvpInfo[i].SeasonPlayed != 0 || a.PvpInfo[i].Disqualified))
 				{ SetBit(607); SetBit(608 + i); }
 
@@ -737,7 +737,7 @@ public class ObjectUpdateBuilder
 		{
 			SetBit(1512); // shared header
 			uint[] glyphSlotIds = { 21, 22, 23, 24, 25, 26 };
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 			{
 				SetBit(1513 + i); // GlyphSlots[i]
 				SetBit(1519 + i); // Glyphs[i]
@@ -747,9 +747,9 @@ public class ObjectUpdateBuilder
 		// ============================================================
 		// DEBUG LOG
 		// ============================================================
-		int setBlockCount = 0;
-		StringBuilder dbgBlocks = new StringBuilder();
-		for (int b = 0; b < 48; b++)
+		var setBlockCount = 0;
+		var dbgBlocks = new StringBuilder();
+		for (var b = 0; b < 48; b++)
 		{
 			if (blocks[b] != 0)
 			{
@@ -763,18 +763,18 @@ public class ObjectUpdateBuilder
 		// WRITE BLOCK MASKS
 		// ============================================================
 		uint blocksMask0 = 0;
-		for (int b = 0; b < 32; b++)
+		for (var b = 0; b < 32; b++)
 			if (blocks[b] != 0) blocksMask0 |= (1u << b);
 		uint blocksMask1 = 0;
-		for (int b = 32; b < 48; b++)
+		for (var b = 32; b < 48; b++)
 			if (blocks[b] != 0) blocksMask1 |= (1u << (b - 32));
 
 		data.WriteUInt32(blocksMask0);
 		data.WriteBits(blocksMask1, 16);
 
-		for (int b = 0; b < 48; b++)
+		for (var b = 0; b < 48; b++)
 		{
-			bool blockSet = (b < 32) ? ((blocksMask0 & (1u << b)) != 0) : ((blocksMask1 & (1u << (b - 32))) != 0);
+			var blockSet = (b < 32) ? ((blocksMask0 & (1u << b)) != 0) : ((blocksMask1 & (1u << (b - 32))) != 0);
 			if (blockSet)
 				data.WriteBits(blocks[b], 32);
 		}
@@ -785,7 +785,7 @@ public class ObjectUpdateBuilder
 		if (IsBitSet(3)) // KnownTitles
 		{
 			data.WriteBits((uint)knownTitlesCount, 32); // array element count
-			for (int i = 0; i < knownTitlesCount; i++)
+			for (var i = 0; i < knownTitlesCount; i++)
 				data.WriteBit(true); // all elements changed
 		}
 		// Bits 4-25: other dynamic fields — not used
@@ -794,7 +794,7 @@ public class ObjectUpdateBuilder
 		// Dynamic field data (TC343 order: Research data, then KnownTitles, then others)
 		if (IsBitSet(3)) // KnownTitles data
 		{
-			for (int i = 0; i < knownTitlesCount; i++)
+			for (var i = 0; i < knownTitlesCount; i++)
 				data.WriteUInt64(knownTitles64[i]);
 		}
 
@@ -923,11 +923,11 @@ public class ObjectUpdateBuilder
 		// InvSlots (header 124, elements 125-265)
 		if (IsBitSet(124))
 		{
-			for (int i = 0; i < 141; i++)
+			for (var i = 0; i < 141; i++)
 			{
 				if (IsBitSet(125 + i))
 				{
-					WowGuid128 guid = GetModernInvSlot(a, i) ?? WowGuid128.Empty;
+					var guid = GetModernInvSlot(a, i) ?? WowGuid128.Empty;
 					data.WritePackedGuid128(guid);
 				}
 			}
@@ -936,7 +936,7 @@ public class ObjectUpdateBuilder
 		// TrackResourceMask (header 266, elements 267-268)
 		if (IsBitSet(266))
 		{
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 				if (IsBitSet(267 + i))
 					data.WriteUInt32(a.TrackResourceMask[i].Value);
 		}
@@ -947,16 +947,16 @@ public class ObjectUpdateBuilder
 		// ModDamageDonePercent (header 269, elements 291-297)
 		if (IsBitSet(269))
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (IsBitSet(270 + i))
 					data.WriteFloat(a.SpellCritPercentage[i].Value);
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (IsBitSet(277 + i))
 					data.WriteInt32(a.ModDamageDonePos[i].Value);
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (IsBitSet(284 + i))
 					data.WriteInt32(a.ModDamageDoneNeg[i].Value);
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (IsBitSet(291 + i))
 					data.WriteFloat(a.ModDamageDonePercent[i].Value);
 		}
@@ -964,7 +964,7 @@ public class ObjectUpdateBuilder
 		// ExploredZones (header 298, elements 299-538)
 		if (IsBitSet(298))
 		{
-			for (int i = 0; i < 240; i++)
+			for (var i = 0; i < 240; i++)
 				if (IsBitSet(299 + i))
 					data.WriteUInt64(a.ExploredZones[i].Value);
 		}
@@ -972,7 +972,7 @@ public class ObjectUpdateBuilder
 		// RestInfo (header 539, elements 540-541) — nested struct HasChangesMask<3>
 		if (IsBitSet(539))
 		{
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 			{
 				if (IsBitSet(540 + i))
 				{
@@ -993,10 +993,10 @@ public class ObjectUpdateBuilder
 		// WeaponAtkSpeedMultipliers (header 542, elements 546-548)
 		if (IsBitSet(542))
 		{
-			for (int i = 0; i < 3; i++)
+			for (var i = 0; i < 3; i++)
 				if (IsBitSet(543 + i))
 					data.WriteFloat(a.WeaponDmgMultipliers[i].Value);
-			for (int i = 0; i < 3; i++)
+			for (var i = 0; i < 3; i++)
 				if (IsBitSet(546 + i))
 					data.WriteFloat(a.WeaponAtkSpeedMultipliers[i].Value);
 		}
@@ -1005,10 +1005,10 @@ public class ObjectUpdateBuilder
 		// BuybackTimestamp (header 549, elements 562-573)
 		if (IsBitSet(549))
 		{
-			for (int i = 0; i < 12; i++)
+			for (var i = 0; i < 12; i++)
 				if (IsBitSet(550 + i))
 					data.WriteUInt32(a.BuybackPrice[i].Value);
-			for (int i = 0; i < 12; i++)
+			for (var i = 0; i < 12; i++)
 				if (IsBitSet(562 + i))
 					data.WriteInt64(a.BuybackTimestamp[i].Value);
 		}
@@ -1016,7 +1016,7 @@ public class ObjectUpdateBuilder
 		// CombatRatings (header 574, elements 575-606)
 		if (IsBitSet(574))
 		{
-			for (int i = 0; i < 32; i++)
+			for (var i = 0; i < 32; i++)
 				if (IsBitSet(575 + i))
 					data.WriteInt32(a.CombatRatings[i].Value);
 		}
@@ -1024,7 +1024,7 @@ public class ObjectUpdateBuilder
 		// NoReagentCostMask (header 615, elements 616-619)
 		if (IsBitSet(615))
 		{
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (IsBitSet(616 + i))
 					data.WriteUInt32(a.NoReagentCostMask[i].Value);
 		}
@@ -1032,7 +1032,7 @@ public class ObjectUpdateBuilder
 		// ProfessionSkillLine (header 620, elements 621-622)
 		if (IsBitSet(620))
 		{
-			for (int i = 0; i < 2; i++)
+			for (var i = 0; i < 2; i++)
 				if (IsBitSet(621 + i))
 					data.WriteInt32(a.ProfessionSkillLine[i].Value);
 		}
@@ -1040,7 +1040,7 @@ public class ObjectUpdateBuilder
 		// BagSlotFlags (header 623, elements 624-627)
 		if (IsBitSet(623))
 		{
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (IsBitSet(624 + i))
 					data.WriteUInt32(a.BagSlotFlags[i].Value);
 		}
@@ -1048,7 +1048,7 @@ public class ObjectUpdateBuilder
 		// BankBagSlotFlags (header 628, elements 629-635)
 		if (IsBitSet(628))
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (IsBitSet(629 + i))
 					data.WriteUInt32(a.BankBagSlotFlags[i].Value);
 		}
@@ -1056,7 +1056,7 @@ public class ObjectUpdateBuilder
 		// QuestCompleted (header 636, elements 637-1511)
 		if (IsBitSet(636))
 		{
-			for (int i = 0; i < 875; i++)
+			for (var i = 0; i < 875; i++)
 				if (IsBitSet(637 + i))
 					data.WriteUInt64(a.QuestCompleted[i].Value);
 		}
@@ -1065,10 +1065,10 @@ public class ObjectUpdateBuilder
 		if (IsBitSet(1512))
 		{
 			uint[] glyphSlotIds = { 21, 22, 23, 24, 25, 26 };
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 				if (IsBitSet(1513 + i))
 					data.WriteUInt32(glyphSlotIds[i]);
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 				if (IsBitSet(1519 + i))
 					data.WriteUInt32(m_gameState.ActiveGlyphs[i]);
 		}
@@ -1076,11 +1076,11 @@ public class ObjectUpdateBuilder
 		// PvpInfo (header 607, elements 608-614) — nested struct HasChangesMask<19>
 		if (IsBitSet(607))
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (IsBitSet(608 + i))
 				{
-					PVPInfo pi = (a.PvpInfo != null && i < a.PvpInfo.Length) ? a.PvpInfo[i] : null;
+					var pi = (a.PvpInfo != null && i < a.PvpInfo.Length) ? a.PvpInfo[i] : null;
 					// Build 19-bit changesMask for this PvpInfo entry
 					uint pvpMask = 0;
 					if (pi != null)
@@ -1134,7 +1134,7 @@ public class ObjectUpdateBuilder
 
 	private bool HasAnyUnitFieldSet()
 	{
-		UnitData u = m_updateData.UnitData;
+		var u = m_updateData.UnitData;
 		if (u == null) return false;
 		if (u.Health.HasValue || u.MaxHealth.HasValue || u.DisplayID.HasValue) return true;
 		if (u.Charm != null || u.Summon != null || u.CharmedBy != null) return true;
@@ -1149,13 +1149,13 @@ public class ObjectUpdateBuilder
 		if (u.NativeDisplayID.HasValue || u.MountDisplayID.HasValue) return true;
 		if (u.HoverHeight.HasValue || u.GuildGUID != null) return true;
 		if (u.NpcFlags != null)
-			for (int i = 0; i < u.NpcFlags.Length; i++)
+			for (var i = 0; i < u.NpcFlags.Length; i++)
 				if (u.NpcFlags[i].HasValue && u.NpcFlags[i] != 0) return true;
 		if (u.Power != null)
-			for (int i = 0; i < u.Power.Length; i++)
+			for (var i = 0; i < u.Power.Length; i++)
 				if (u.Power[i].HasValue) return true;
 		if (u.MaxPower != null)
-			for (int i = 0; i < u.MaxPower.Length; i++)
+			for (var i = 0; i < u.MaxPower.Length; i++)
 				if (u.MaxPower[i].HasValue) return true;
 		// Block 1 continued + Block 2 combat stats
 		if (u.MinDamage.HasValue || u.MaxDamage.HasValue || u.MinOffHandDamage.HasValue || u.MaxOffHandDamage.HasValue) return true;
@@ -1166,26 +1166,26 @@ public class ObjectUpdateBuilder
 		if (u.RangedAttackPower.HasValue || u.BaseMana.HasValue || u.BaseHealth.HasValue) return true;
 		// Block 5: Stats
 		if (u.Stats != null)
-			for (int i = 0; i < u.Stats.Length; i++)
+			for (var i = 0; i < u.Stats.Length; i++)
 				if (u.Stats[i].HasValue) return true;
 		if (u.StatPosBuff != null)
-			for (int i = 0; i < u.StatPosBuff.Length; i++)
+			for (var i = 0; i < u.StatPosBuff.Length; i++)
 				if (u.StatPosBuff[i].HasValue) return true;
 		if (u.StatNegBuff != null)
-			for (int i = 0; i < u.StatNegBuff.Length; i++)
+			for (var i = 0; i < u.StatNegBuff.Length; i++)
 				if (u.StatNegBuff[i].HasValue) return true;
 		// Blocks 5-6: Resistances
 		if (u.Resistances != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (u.Resistances[i].HasValue) return true;
 		if (u.ResistanceBuffModsPositive != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (u.ResistanceBuffModsPositive[i].HasValue) return true;
 		if (u.ResistanceBuffModsNegative != null)
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 				if (u.ResistanceBuffModsNegative[i].HasValue) return true;
 		if (u.AttackRoundBaseTime != null)
-			for (int i = 0; i < u.AttackRoundBaseTime.Length; i++)
+			for (var i = 0; i < u.AttackRoundBaseTime.Length; i++)
 				if (u.AttackRoundBaseTime[i].HasValue) return true;
 		return false;
 	}
@@ -1195,7 +1195,7 @@ public class ObjectUpdateBuilder
 	/// </summary>
 	private static bool HasAnySkillChanged(SkillInfo s)
 	{
-		for (int i = 0; i < 256; i++)
+		for (var i = 0; i < 256; i++)
 		{
 			if (s.SkillLineID[i].HasValue) return true;
 			if (s.SkillRank[i].HasValue) return true;
@@ -1231,11 +1231,11 @@ public class ObjectUpdateBuilder
 		}
 
 		// Build 1793-bit changesMask (57 blocks of 32)
-		uint[] skillBlocks = new uint[57];
+		var skillBlocks = new uint[57];
 		void SB(int bit) { skillBlocks[bit / 32] |= (1u << (bit % 32)); }
 
-		bool anyChanged = false;
-		for (int i = 0; i < 256; i++)
+		var anyChanged = false;
+		for (var i = 0; i < 256; i++)
 		{
 			if (s.SkillLineID[i].HasValue) { SB(1 + i); anyChanged = true; }
 			if (s.SkillStep[i].HasValue) { SB(257 + i); anyChanged = true; }
@@ -1251,12 +1251,12 @@ public class ObjectUpdateBuilder
 
 		// Compute blocksMask0 (which of blocks 0-31 have non-zero masks)
 		uint blocksMask0 = 0;
-		for (int b = 0; b < 32 && b < 57; b++)
+		for (var b = 0; b < 32 && b < 57; b++)
 			if (skillBlocks[b] != 0) blocksMask0 |= (1u << b);
 
 		// Compute blocksMask1 (which of blocks 32-56 have non-zero masks) — 25 bits
 		uint blocksMask1 = 0;
-		for (int b = 32; b < 57; b++)
+		for (var b = 32; b < 57; b++)
 			if (skillBlocks[b] != 0) blocksMask1 |= (1u << (b - 32));
 
 		// Write masks
@@ -1264,9 +1264,9 @@ public class ObjectUpdateBuilder
 		data.WriteBits(blocksMask1, 25);
 
 		// Write each set block's 32-bit mask
-		for (int b = 0; b < 57; b++)
+		for (var b = 0; b < 57; b++)
 		{
-			bool blockSet = (b < 32) ? ((blocksMask0 & (1u << b)) != 0) : ((blocksMask1 & (1u << (b - 32))) != 0);
+			var blockSet = (b < 32) ? ((blocksMask0 & (1u << b)) != 0) : ((blocksMask1 & (1u << (b - 32))) != 0);
 			if (blockSet)
 				data.WriteBits(skillBlocks[b], 32);
 		}
@@ -1276,33 +1276,33 @@ public class ObjectUpdateBuilder
 		// Write data — per-skill interleaved (TC343 order)
 		if ((skillBlocks[0] & 1) != 0) // root bit set
 		{
-			for (int i = 0; i < 256; i++)
+			for (var i = 0; i < 256; i++)
 			{
-				int lineIdBit = 1 + i;
+				var lineIdBit = 1 + i;
 				if ((skillBlocks[lineIdBit / 32] & (1u << (lineIdBit % 32))) != 0)
 					data.WriteUInt16(s.SkillLineID[i].Value);
 
-				int stepBit = 257 + i;
+				var stepBit = 257 + i;
 				if ((skillBlocks[stepBit / 32] & (1u << (stepBit % 32))) != 0)
 					data.WriteUInt16(s.SkillStep[i].Value);
 
-				int rankBit = 513 + i;
+				var rankBit = 513 + i;
 				if ((skillBlocks[rankBit / 32] & (1u << (rankBit % 32))) != 0)
 					data.WriteUInt16(s.SkillRank[i].Value);
 
-				int startBit = 769 + i;
+				var startBit = 769 + i;
 				if ((skillBlocks[startBit / 32] & (1u << (startBit % 32))) != 0)
 					data.WriteUInt16(s.SkillStartingRank[i].Value);
 
-				int maxBit = 1025 + i;
+				var maxBit = 1025 + i;
 				if ((skillBlocks[maxBit / 32] & (1u << (maxBit % 32))) != 0)
 					data.WriteUInt16(s.SkillMaxRank[i].Value);
 
-				int tempBit = 1281 + i;
+				var tempBit = 1281 + i;
 				if ((skillBlocks[tempBit / 32] & (1u << (tempBit % 32))) != 0)
 					data.WriteInt16(s.SkillTempBonus[i].Value);
 
-				int permBit = 1537 + i;
+				var permBit = 1537 + i;
 				if ((skillBlocks[permBit / 32] & (1u << (permBit % 32))) != 0)
 					data.WriteUInt16(s.SkillPermBonus[i].Value);
 			}
@@ -1311,12 +1311,12 @@ public class ObjectUpdateBuilder
 
 	private void WriteValuesUpdate(WorldPacket data)
 	{
-		uint changedMask = 0u;
-		bool hasObjectChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Object) && m_updateData.ObjectData != null && (m_updateData.ObjectData.EntryID.HasValue || m_updateData.ObjectData.DynamicFlags.HasValue || m_updateData.ObjectData.Scale.HasValue);
-		bool hasUnitChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit) && m_updateData.UnitData != null && HasAnyUnitFieldSet();
-		bool hasItemChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Item) && m_updateData.ItemData != null;
+		var changedMask = 0u;
+		var hasObjectChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Object) && m_updateData.ObjectData != null && (m_updateData.ObjectData.EntryID.HasValue || m_updateData.ObjectData.DynamicFlags.HasValue || m_updateData.ObjectData.Scale.HasValue);
+		var hasUnitChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Unit) && m_updateData.UnitData != null && HasAnyUnitFieldSet();
+		var hasItemChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Item) && m_updateData.ItemData != null;
 
-		bool hasActivePlayerChanges = HasActivePlayerChanges();
+		var hasActivePlayerChanges = HasActivePlayerChanges();
 
 		if (hasObjectChanges)
 		{
@@ -1331,7 +1331,7 @@ public class ObjectUpdateBuilder
 			changedMask |= 0x20;
 		}
 		// Only set Player block when there are actual PlayerData changes (matching TC343)
-		bool hasPlayerChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Player) && HasAnyPlayerFieldSet();
+		var hasPlayerChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.Player) && HasAnyPlayerFieldSet();
 		if (hasPlayerChanges)
 		{
 			changedMask |= 0x40;
@@ -1340,7 +1340,7 @@ public class ObjectUpdateBuilder
 		{
 			changedMask |= 0x80;
 		}
-		bool hasGameObjectChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.GameObject) && m_updateData.GameObjectData != null && HasAnyGameObjectFieldSet();
+		var hasGameObjectChanges = m_objectTypeMask.HasAnyFlag(ObjectTypeMask.GameObject) && m_updateData.GameObjectData != null && HasAnyGameObjectFieldSet();
 		if (hasGameObjectChanges)
 		{
 			changedMask |= 0x100;
@@ -1377,7 +1377,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateObjectData(WorldPacket data)
 	{
-		ObjectData obj = m_updateData.ObjectData;
+		var obj = m_updateData.ObjectData;
 		data.WriteInt32(obj.EntryID.GetValueOrDefault());
 		data.WriteUInt32(obj.DynamicFlags.GetValueOrDefault());
 		data.WriteFloat(obj.Scale ?? 1f);
@@ -1385,8 +1385,8 @@ public class ObjectUpdateBuilder
 
 	private void WriteUpdateObjectData(WorldPacket data)
 	{
-		ObjectData obj = m_updateData.ObjectData;
-		uint mask = 0u;
+		var obj = m_updateData.ObjectData;
+		var mask = 0u;
 		if (obj.EntryID.HasValue)
 		{
 			mask |= 2;
@@ -1424,7 +1424,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateItemData(WorldPacket data)
 	{
-		ItemData item = m_updateData.ItemData;
+		var item = m_updateData.ItemData;
 		if (item == null)
 		{
 			WriteEmptyItemCreate(data);
@@ -1438,13 +1438,13 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteUInt32(item.StackCount.GetValueOrDefault());
 			data.WriteUInt32(item.Duration.GetValueOrDefault());
-			for (int i = 0; i < 5; i++)
+			for (var i = 0; i < 5; i++)
 			{
 				data.WriteInt32(item.SpellCharges[i].GetValueOrDefault());
 			}
 		}
 		data.WriteUInt32(item.Flags.GetValueOrDefault());
-		for (int j = 0; j < 13; j++)
+		for (var j = 0; j < 13; j++)
 		{
 			if (item.Enchantment[j] != null)
 			{
@@ -1494,7 +1494,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteEmptyItemCreate(WorldPacket data)
 	{
-		for (int i = 0; i < 4; i++)
+		for (var i = 0; i < 4; i++)
 		{
 			data.WritePackedGuid128(WowGuid128.Empty);
 		}
@@ -1502,13 +1502,13 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteUInt32(0u);
 			data.WriteUInt32(0u);
-			for (int j = 0; j < 5; j++)
+			for (var j = 0; j < 5; j++)
 			{
 				data.WriteInt32(0);
 			}
 		}
 		data.WriteUInt32(0u);
-		for (int k = 0; k < 13; k++)
+		for (var k = 0; k < 13; k++)
 		{
 			data.WriteInt32(0);
 			data.WriteUInt32(0u);
@@ -1548,7 +1548,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteUpdateItemData(WorldPacket data)
 	{
-		ItemData item = m_updateData.ItemData;
+		var item = m_updateData.ItemData;
 		if (item == null)
 		{
 			data.WriteBits(0, 2);
@@ -1568,7 +1568,7 @@ public class ObjectUpdateBuilder
 		//  22: DEBUGItemLevel
 		//  23: group bit for SpellCharges[5] (bits 24-28)
 		//  29: group bit for Enchantment[13] (bits 30-42)
-		uint[] blocks = new uint[2];
+		var blocks = new uint[2];
 		void SetBit(int bit) { blocks[bit / 32] |= (1u << (bit % 32)); }
 
 		if (item.Owner != null) { SetBit(0); SetBit(3); }
@@ -1586,9 +1586,9 @@ public class ObjectUpdateBuilder
 		if (item.Context.HasValue) { SetBit(0); SetBit(15); }
 		if (item.ArtifactXP.HasValue) { SetBit(0); SetBit(17); }
 		if (item.ItemAppearanceModID.HasValue) { SetBit(0); SetBit(18); }
-		for (int i = 0; i < 5; i++)
+		for (var i = 0; i < 5; i++)
 			if (item.SpellCharges[i].HasValue) { SetBit(23); SetBit(24 + i); }
-		for (int i = 0; i < 13; i++)
+		for (var i = 0; i < 13; i++)
 			if (item.Enchantment[i] != null) { SetBit(29); SetBit(30 + i); }
 
 		// Write blocksMask (2 bits) then each set block (32 bits)
@@ -1596,7 +1596,7 @@ public class ObjectUpdateBuilder
 		if (blocks[0] != 0) blocksMask |= 1;
 		if (blocks[1] != 0) blocksMask |= 2;
 		data.WriteBits(blocksMask, 2);
-		for (int b = 0; b < 2; b++)
+		for (var b = 0; b < 2; b++)
 			if ((blocksMask & (1 << b)) != 0)
 				data.WriteBits(blocks[b], 32);
 
@@ -1626,7 +1626,7 @@ public class ObjectUpdateBuilder
 		// SpellCharges array (group bit 23, entries 24-28)
 		if ((blocks[0] & (1u << 23)) != 0)
 		{
-			for (int i = 0; i < 5; i++)
+			for (var i = 0; i < 5; i++)
 				if (item.SpellCharges[i].HasValue)
 					data.WriteInt32(item.SpellCharges[i].Value);
 		}
@@ -1634,7 +1634,7 @@ public class ObjectUpdateBuilder
 		// Enchantment array (group bit 29, entries 30-42)
 		if ((blocks[0] & (1u << 29)) != 0)
 		{
-			for (int i = 0; i < 13; i++)
+			for (var i = 0; i < 13; i++)
 			{
 				if (item.Enchantment[i] != null)
 				{
@@ -1656,8 +1656,8 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateContainerData(WorldPacket data)
 	{
-		ContainerData container = m_updateData.ContainerData;
-		for (int i = 0; i < 36; i++)
+		var container = m_updateData.ContainerData;
+		for (var i = 0; i < 36; i++)
 		{
 			data.WritePackedGuid128(((container != null) ? container.Slots[i] : null) ?? WowGuid128.Empty);
 		}
@@ -1666,8 +1666,8 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateUnitData(WorldPacket data)
 	{
-		UnitData unit = m_updateData.UnitData ?? new UnitData();
-		ObjectData obj = m_updateData.ObjectData;
+		var unit = m_updateData.UnitData ?? new UnitData();
+		var obj = m_updateData.ObjectData;
 		if (IsOwner)
 		{
 			Log.Print(LogType.Debug, $"[PlayerUnitData] DisplayID={unit.DisplayID} NativeDisplayID={unit.NativeDisplayID} Race={unit.RaceId} Class={unit.ClassId} Sex={unit.SexId} Health={unit.Health}/{unit.MaxHealth} Level={unit.Level}", "ObjectUpdateBuilder.cs");
@@ -1675,9 +1675,9 @@ public class ObjectUpdateBuilder
 		data.WriteInt64(unit.Health.GetValueOrDefault());
 		data.WriteInt64(unit.MaxHealth.GetValueOrDefault());
 		data.WriteInt32(unit.DisplayID.GetValueOrDefault());
-		for (int i = 0; i < 2; i++)
+		for (var i = 0; i < 2; i++)
 		{
-			uint?[] npcFlags = unit.NpcFlags;
+			var npcFlags = unit.NpcFlags;
 			data.WriteUInt32(((npcFlags != null) ? npcFlags[i] : null).GetValueOrDefault());
 		}
 		data.WriteUInt32(0u);
@@ -1709,13 +1709,13 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(0u);
 		if (IsOwner)
 		{
-			for (int j = 0; j < 10; j++)
+			for (var j = 0; j < 10; j++)
 			{
 				data.WriteFloat(0f);
 				data.WriteFloat(0f);
 			}
 		}
-		for (int k = 0; k < 10; k++)
+		for (var k = 0; k < 10; k++)
 		{
 			data.WriteInt32((k < 7) ? unit.Power[k].GetValueOrDefault() : 0);
 			data.WriteInt32((k < 7) ? unit.MaxPower[k].GetValueOrDefault() : 0);
@@ -1731,15 +1731,15 @@ public class ObjectUpdateBuilder
 		data.WriteInt32(0);
 		data.WriteInt32(0);
 		data.WriteInt32(unit.FactionTemplate.GetValueOrDefault());
-		for (int l = 0; l < 3; l++)
+		for (var l = 0; l < 3; l++)
 		{
-			VisibleItem[] virtualItems = unit.VirtualItems;
-			int vItemId = (((virtualItems != null) ? virtualItems[l] : null) != null) ? unit.VirtualItems[l].ItemID : 0;
+			var virtualItems = unit.VirtualItems;
+			var vItemId = (((virtualItems != null) ? virtualItems[l] : null) != null) ? unit.VirtualItems[l].ItemID : 0;
 			// For players, VirtualItems may not be set by the server (players use PLAYER_VISIBLE_ITEM).
 			// Populate from PlayerData.VisibleItems: slot 0=mainhand(15), 1=offhand(16), 2=ranged(17)
 			if (vItemId == 0 && IsOwner && m_updateData.PlayerData?.VisibleItems != null)
 			{
-				int playerSlot = 15 + l; // mainhand=15, offhand=16, ranged=17
+				var playerSlot = 15 + l; // mainhand=15, offhand=16, ranged=17
 				if (playerSlot < m_updateData.PlayerData.VisibleItems.Length)
 				{
 					var pv = m_updateData.PlayerData.VisibleItems[playerSlot];
@@ -1757,14 +1757,14 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(unit.Flags2.GetValueOrDefault());
 		data.WriteUInt32(0u);
 		data.WriteUInt32(unit.AuraState.GetValueOrDefault());
-		for (int m = 0; m < 2; m++)
+		for (var m = 0; m < 2; m++)
 		{
-			uint?[] attackRoundBaseTime = unit.AttackRoundBaseTime;
+			var attackRoundBaseTime = unit.AttackRoundBaseTime;
 			data.WriteUInt32(((attackRoundBaseTime != null) ? attackRoundBaseTime[m] : null).GetValueOrDefault());
 		}
 		if (IsOwner)
 		{
-			uint rangedTime = unit.RangedAttackRoundBaseTime.GetValueOrDefault();
+			var rangedTime = unit.RangedAttackRoundBaseTime.GetValueOrDefault();
 			// If server didn't send ranged attack time but player has a ranged weapon visible,
 			// default to 2300ms (standard bow speed) so the client enables Auto Shot
 			if (rangedTime == 0 && m_updateData.PlayerData?.VisibleItems != null)
@@ -1808,39 +1808,39 @@ public class ObjectUpdateBuilder
 		data.WriteInt16(0);
 		if (IsOwner)
 		{
-			for (int n = 0; n < 5; n++)
+			for (var n = 0; n < 5; n++)
 			{
-				int?[] stats = unit.Stats;
+				var stats = unit.Stats;
 				data.WriteInt32(((stats != null) ? stats[n] : null).GetValueOrDefault());
-				int?[] statPosBuff = unit.StatPosBuff;
+				var statPosBuff = unit.StatPosBuff;
 				data.WriteInt32(((statPosBuff != null) ? statPosBuff[n] : null).GetValueOrDefault());
-				int?[] statNegBuff = unit.StatNegBuff;
+				var statNegBuff = unit.StatNegBuff;
 				data.WriteInt32(((statNegBuff != null) ? statNegBuff[n] : null).GetValueOrDefault());
 			}
 		}
 		if (IsOwner)
 		{
-			for (int num = 0; num < 7; num++)
+			for (var num = 0; num < 7; num++)
 			{
-				int?[] resistances = unit.Resistances;
+				var resistances = unit.Resistances;
 				data.WriteInt32(((resistances != null) ? resistances[num] : null).GetValueOrDefault());
 			}
 		}
 		if (IsOwner)
 		{
-			for (int num2 = 0; num2 < 7; num2++)
+			for (var num2 = 0; num2 < 7; num2++)
 			{
-				int?[] powerCostModifier = unit.PowerCostModifier;
+				var powerCostModifier = unit.PowerCostModifier;
 				data.WriteInt32(((powerCostModifier != null) ? powerCostModifier[num2] : null).GetValueOrDefault());
-				float?[] powerCostMultiplier = unit.PowerCostMultiplier;
+				var powerCostMultiplier = unit.PowerCostMultiplier;
 				data.WriteFloat(((powerCostMultiplier != null) ? powerCostMultiplier[num2] : null).GetValueOrDefault());
 			}
 		}
-		for (int num3 = 0; num3 < 7; num3++)
+		for (var num3 = 0; num3 < 7; num3++)
 		{
-			int?[] resistanceBuffModsPositive = unit.ResistanceBuffModsPositive;
+			var resistanceBuffModsPositive = unit.ResistanceBuffModsPositive;
 			data.WriteInt32(((resistanceBuffModsPositive != null) ? resistanceBuffModsPositive[num3] : null).GetValueOrDefault());
-			int?[] resistanceBuffModsNegative = unit.ResistanceBuffModsNegative;
+			var resistanceBuffModsNegative = unit.ResistanceBuffModsNegative;
 			data.WriteInt32(((resistanceBuffModsNegative != null) ? resistanceBuffModsNegative[num3] : null).GetValueOrDefault());
 		}
 		data.WriteInt32(unit.BaseMana.GetValueOrDefault());
@@ -1896,7 +1896,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteUpdateUnitData(WorldPacket data)
 	{
-		UnitData unit = m_updateData.UnitData;
+		var unit = m_updateData.UnitData;
 		if (unit == null)
 		{
 			data.WriteBits(0, 8);
@@ -1904,7 +1904,7 @@ public class ObjectUpdateBuilder
 			data.FlushBits();
 			return;
 		}
-		uint[] blockMasks = new uint[8];
+		var blockMasks = new uint[8];
 		if (unit.Health.HasValue)
 		{
 			SetBit(5);
@@ -2067,8 +2067,8 @@ public class ObjectUpdateBuilder
 		}
 		if (unit.NpcFlags != null)
 		{
-			bool hasAnyNpcFlag = false;
-			for (int i = 0; i < unit.NpcFlags.Length; i++)
+			var hasAnyNpcFlag = false;
+			for (var i = 0; i < unit.NpcFlags.Length; i++)
 			{
 				if (unit.NpcFlags[i].HasValue && unit.NpcFlags[i] != 0)
 				{
@@ -2079,10 +2079,10 @@ public class ObjectUpdateBuilder
 			if (hasAnyNpcFlag)
 				SetBit(113); // parent bit for NpcFlags array
 		}
-		bool hasAnyPowerGroup = false;
+		var hasAnyPowerGroup = false;
 		if (unit.Power != null)
 		{
-			for (int j = 0; j < unit.Power.Length; j++)
+			for (var j = 0; j < unit.Power.Length; j++)
 			{
 				if (unit.Power[j].HasValue)
 				{
@@ -2093,7 +2093,7 @@ public class ObjectUpdateBuilder
 		}
 		if (unit.MaxPower != null)
 		{
-			for (int k = 0; k < unit.MaxPower.Length; k++)
+			for (var k = 0; k < unit.MaxPower.Length; k++)
 			{
 				if (unit.MaxPower[k].HasValue)
 				{
@@ -2104,7 +2104,7 @@ public class ObjectUpdateBuilder
 		}
 		if (unit.ModPowerRegen != null)
 		{
-			for (int j2 = 0; j2 < unit.ModPowerRegen.Length; j2++)
+			for (var j2 = 0; j2 < unit.ModPowerRegen.Length; j2++)
 			{
 				if (unit.ModPowerRegen[j2].HasValue)
 				{
@@ -2118,8 +2118,8 @@ public class ObjectUpdateBuilder
 		// VirtualItems array (parent bit 167, elements 168-170)
 		if (unit.VirtualItems != null)
 		{
-			bool hasAnyVI = false;
-			for (int i = 0; i < 3; i++)
+			var hasAnyVI = false;
+			for (var i = 0; i < 3; i++)
 			{
 				if (unit.VirtualItems[i] != null && unit.VirtualItems[i].ItemID != 0)
 				{
@@ -2134,8 +2134,8 @@ public class ObjectUpdateBuilder
 		// AttackRoundBaseTime array (parent bit 171, elements 172-173)
 		if (unit.AttackRoundBaseTime != null)
 		{
-			bool hasAnyART = false;
-			for (int i = 0; i < unit.AttackRoundBaseTime.Length && i < 2; i++)
+			var hasAnyART = false;
+			for (var i = 0; i < unit.AttackRoundBaseTime.Length && i < 2; i++)
 			{
 				if (unit.AttackRoundBaseTime[i].HasValue)
 				{
@@ -2146,71 +2146,71 @@ public class ObjectUpdateBuilder
 			if (hasAnyART) SetBit(171);
 		}
 		// Stats/StatPosBuff/StatNegBuff array (parent bit 174, elements 175-189)
-		bool hasAnyStatsGroup = false;
+		var hasAnyStatsGroup = false;
 		if (unit.Stats != null)
 		{
-			for (int i = 0; i < 5; i++)
+			for (var i = 0; i < 5; i++)
 			{
 				if (unit.Stats[i].HasValue) { SetBit(175 + i); hasAnyStatsGroup = true; }
 			}
 		}
 		if (unit.StatPosBuff != null)
 		{
-			for (int i = 0; i < 5; i++)
+			for (var i = 0; i < 5; i++)
 			{
 				if (unit.StatPosBuff[i].HasValue) { SetBit(180 + i); hasAnyStatsGroup = true; }
 			}
 		}
 		if (unit.StatNegBuff != null)
 		{
-			for (int i = 0; i < 5; i++)
+			for (var i = 0; i < 5; i++)
 			{
 				if (unit.StatNegBuff[i].HasValue) { SetBit(185 + i); hasAnyStatsGroup = true; }
 			}
 		}
 		if (hasAnyStatsGroup) SetBit(174);
 		// Resistances/PowerCostModifier/PowerCostMultiplier array (parent bit 190, elements 191-211)
-		bool hasAnyResistGroup = false;
+		var hasAnyResistGroup = false;
 		if (unit.Resistances != null)
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (unit.Resistances[i].HasValue) { SetBit(191 + i); hasAnyResistGroup = true; }
 			}
 		}
 		if (unit.PowerCostModifier != null)
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (unit.PowerCostModifier[i].HasValue) { SetBit(198 + i); hasAnyResistGroup = true; }
 			}
 		}
 		if (unit.PowerCostMultiplier != null)
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (unit.PowerCostMultiplier[i].HasValue) { SetBit(205 + i); hasAnyResistGroup = true; }
 			}
 		}
 		if (hasAnyResistGroup) SetBit(190);
 		// ResistanceBuffMods array (parent bit 212, elements 213-226)
-		bool hasAnyResBuffGroup = false;
+		var hasAnyResBuffGroup = false;
 		if (unit.ResistanceBuffModsPositive != null)
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (unit.ResistanceBuffModsPositive[i].HasValue) { SetBit(213 + i); hasAnyResBuffGroup = true; }
 			}
 		}
 		if (unit.ResistanceBuffModsNegative != null)
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (unit.ResistanceBuffModsNegative[i].HasValue) { SetBit(220 + i); hasAnyResBuffGroup = true; }
 			}
 		}
 		if (hasAnyResBuffGroup) SetBit(212);
-		for (int bi = 0; bi < 8; bi++)
+		for (var bi = 0; bi < 8; bi++)
 		{
 			if (blockMasks[bi] != 0)
 			{
@@ -2218,7 +2218,7 @@ public class ObjectUpdateBuilder
 			}
 		}
 		byte blocksMask = 0;
-		for (int l = 0; l < 8; l++)
+		for (var l = 0; l < 8; l++)
 		{
 			if (blockMasks[l] != 0)
 			{
@@ -2226,7 +2226,7 @@ public class ObjectUpdateBuilder
 			}
 		}
 		data.WriteBits(blocksMask, 8);
-		for (int m = 0; m < 8; m++)
+		for (var m = 0; m < 8; m++)
 		{
 			if ((blocksMask & (1 << m)) != 0)
 			{
@@ -2278,7 +2278,7 @@ public class ObjectUpdateBuilder
 			}
 			if (unit.ChannelData != null)
 			{
-				bool hasChannelObject = unit.ChannelObject != null && !unit.ChannelObject.IsEmpty();
+				var hasChannelObject = unit.ChannelObject != null && !unit.ChannelObject.IsEmpty();
 				data.WriteBits(hasChannelObject ? 7 : 3, 4);
 				data.FlushBits();
 				data.WriteInt32(unit.ChannelData.SpellID);
@@ -2416,7 +2416,7 @@ public class ObjectUpdateBuilder
 			// NpcFlags array (parent bit 113, elements 114-115) — gated by block 3
 			if (unit.NpcFlags != null)
 			{
-				for (int n = 0; n < unit.NpcFlags.Length; n++)
+				for (var n = 0; n < unit.NpcFlags.Length; n++)
 				{
 					if (unit.NpcFlags[n].HasValue && unit.NpcFlags[n] != 0)
 					{
@@ -2428,10 +2428,10 @@ public class ObjectUpdateBuilder
 		// Power group (parent bit 116) — TC343 interleaves all power arrays per-index
 		if ((blocksMask & 0x10) != 0)
 		{
-			int maxLen = 0;
+			var maxLen = 0;
 			if (unit.Power != null && unit.Power.Length > maxLen) maxLen = unit.Power.Length;
 			if (unit.MaxPower != null && unit.MaxPower.Length > maxLen) maxLen = unit.MaxPower.Length;
-			for (int pi = 0; pi < maxLen; pi++)
+			for (var pi = 0; pi < maxLen; pi++)
 			{
 				// PowerRegenFlatModifier[pi] (bits 117+) — not tracked, skip
 				// PowerRegenInterruptedFlatModifier[pi] (bits 127+) — not tracked, skip
@@ -2452,7 +2452,7 @@ public class ObjectUpdateBuilder
 		// VirtualItems (parent bit 167, elements 168-170)
 		if ((blockMasks[167 / 32] & (1u << (167 % 32))) != 0)
 		{
-			for (int vi = 0; vi < 3; vi++)
+			for (var vi = 0; vi < 3; vi++)
 			{
 				if ((blockMasks[(168 + vi) / 32] & (1u << ((168 + vi) % 32))) != 0)
 				{
@@ -2470,7 +2470,7 @@ public class ObjectUpdateBuilder
 		{
 			if (unit.AttackRoundBaseTime != null)
 			{
-				for (int i = 0; i < unit.AttackRoundBaseTime.Length && i < 2; i++)
+				for (var i = 0; i < unit.AttackRoundBaseTime.Length && i < 2; i++)
 				{
 					if (unit.AttackRoundBaseTime[i].HasValue)
 						data.WriteUInt32(unit.AttackRoundBaseTime[i].Value);
@@ -2480,7 +2480,7 @@ public class ObjectUpdateBuilder
 		// Stats/StatPosBuff/StatNegBuff (parent bit 174, interleaved per TC343) — block 5
 		if ((blockMasks[174 / 32] & (1u << (174 % 32))) != 0)
 		{
-			for (int i = 0; i < 5; i++)
+			for (var i = 0; i < 5; i++)
 			{
 				if (unit.Stats != null && unit.Stats[i].HasValue) data.WriteInt32(unit.Stats[i].Value);
 				if (unit.StatPosBuff != null && unit.StatPosBuff[i].HasValue) data.WriteInt32(unit.StatPosBuff[i].Value);
@@ -2490,7 +2490,7 @@ public class ObjectUpdateBuilder
 		// Resistances/PowerCostModifier/PowerCostMultiplier (parent bit 190, spans blocks 5-6)
 		if ((blockMasks[190 / 32] & (1u << (190 % 32))) != 0)
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (unit.Resistances != null && unit.Resistances[i].HasValue) data.WriteInt32(unit.Resistances[i].Value);
 				if (unit.PowerCostModifier != null && unit.PowerCostModifier[i].HasValue) data.WriteInt32(unit.PowerCostModifier[i].Value);
@@ -2500,7 +2500,7 @@ public class ObjectUpdateBuilder
 		// ResistanceBuffMods (parent bit 212, elements 213-226, spans blocks 6-7)
 		if ((blockMasks[212 / 32] & (1u << (212 % 32))) != 0)
 		{
-			for (int i = 0; i < 7; i++)
+			for (var i = 0; i < 7; i++)
 			{
 				if (unit.ResistanceBuffModsPositive != null && unit.ResistanceBuffModsPositive[i].HasValue) data.WriteInt32(unit.ResistanceBuffModsPositive[i].Value);
 				if (unit.ResistanceBuffModsNegative != null && unit.ResistanceBuffModsNegative[i].HasValue) data.WriteInt32(unit.ResistanceBuffModsNegative[i].Value);
@@ -2514,7 +2514,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreatePlayerData(WorldPacket data)
 	{
-		PlayerData player = m_updateData.PlayerData ?? new PlayerData();
+		var player = m_updateData.PlayerData ?? new PlayerData();
 		Log.Print(LogType.Debug, $"[PlayerDataCreate] PlayerFlags=0x{player.PlayerFlags.GetValueOrDefault():X8} FlagsEx=0x{player.PlayerFlagsEx.GetValueOrDefault():X8} DuelArbiter={player.DuelArbiter} WowAccount={player.WowAccount} LootTarget={player.LootTargetGUID}", "");
 		data.WritePackedGuid128(player.DuelArbiter ?? WowGuid128.Empty);
 		data.WritePackedGuid128(player.WowAccount ?? WowGuid128.Empty);
@@ -2524,8 +2524,8 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(player.GuildRankID.GetValueOrDefault());
 		data.WriteUInt32(player.GuildDeleteDate.GetValueOrDefault());
 		data.WriteInt32(player.GuildLevel.GetValueOrDefault());
-		int customizationCount = 0;
-		for (int i = 0; i < player.Customizations.Length; i++)
+		var customizationCount = 0;
+		for (var i = 0; i < player.Customizations.Length; i++)
 		{
 			if (player.Customizations[i] != null)
 			{
@@ -2555,33 +2555,33 @@ public class ObjectUpdateBuilder
 		// QuestLog[25] - gated by PartyMember flag (0x02) in TC343
 		if (IsOwner)
 		{
-			int questCount = 0;
-			for (int q = 0; q < 25; q++)
+			var questCount = 0;
+			for (var q = 0; q < 25; q++)
 			{
-				QuestLog quest = (player.QuestLog != null && q < player.QuestLog.Length) ? player.QuestLog[q] : null;
+				var quest = (player.QuestLog != null && q < player.QuestLog.Length) ? player.QuestLog[q] : null;
 				if (quest != null && quest.QuestID.HasValue && quest.QuestID.Value != 0)
 					questCount++;
 				data.WriteInt64(quest?.EndTime ?? 0);
 				data.WriteInt32(quest?.QuestID ?? 0);
 				data.WriteUInt32(quest?.StateFlags ?? 0);
-				for (int obj = 0; obj < 24; obj++)
+				for (var obj = 0; obj < 24; obj++)
 				{
 					data.WriteUInt16((ushort)(quest?.ObjectiveProgress[obj] ?? 0));
 				}
 			}
 			if (questCount > 0)
 			{
-				string questSlots = "";
-				for (int qi = 0; qi < 25; qi++)
+				var questSlots = "";
+				for (var qi = 0; qi < 25; qi++)
 				{
-					QuestLog qe = (player.QuestLog != null && qi < player.QuestLog.Length) ? player.QuestLog[qi] : null;
+					var qe = (player.QuestLog != null && qi < player.QuestLog.Length) ? player.QuestLog[qi] : null;
 					if (qe != null && qe.QuestID.HasValue && qe.QuestID.Value != 0)
 						questSlots += $" slot{qi}=QID:{qe.QuestID.Value}";
 				}
 				Log.Print(LogType.Debug, $"[QuestLogCreate] Writing {questCount} quests:{questSlots}", "");
 			}
 		}
-		for (int j = 0; j < 19; j++)
+		for (var j = 0; j < 19; j++)
 		{
 			if (player.VisibleItems != null && j < player.VisibleItems.Length && player.VisibleItems[j] != null)
 			{
@@ -2601,7 +2601,7 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(player.VirtualPlayerRealm.GetValueOrDefault());
 		data.WriteUInt32(player.CurrentSpecID.GetValueOrDefault());
 		data.WriteInt32(0);
-		for (int k = 0; k < 6; k++)
+		for (var k = 0; k < 6; k++)
 		{
 			data.WriteFloat(0f);
 		}
@@ -2612,11 +2612,11 @@ public class ObjectUpdateBuilder
 		data.WriteInt32(0);
 		data.WritePackedGuid128(WowGuid128.Empty);
 		data.WriteUInt32(0u);
-		for (int l = 0; l < 19; l++)
+		for (var l = 0; l < 19; l++)
 		{
 			data.WriteUInt32(0u);
 		}
-		for (int m = 0; m < player.Customizations.Length; m++)
+		for (var m = 0; m < player.Customizations.Length; m++)
 		{
 			if (player.Customizations[m] != null)
 			{
@@ -2631,7 +2631,7 @@ public class ObjectUpdateBuilder
 
 	private bool HasAnyPlayerFieldSet()
 	{
-		PlayerData p = m_updateData.PlayerData;
+		var p = m_updateData.PlayerData;
 		if (p == null) return false;
 		// Scalar fields (bits 4-31)
 		if (p.DuelArbiter != null || p.WowAccount != null || p.LootTargetGUID != null) return true;
@@ -2644,11 +2644,11 @@ public class ObjectUpdateBuilder
 		if (p.HonorLevel.HasValue) return true;
 		// Quest log (bits 35-60)
 		if (p.QuestLog != null)
-			for (int i = 0; i < p.QuestLog.Length; i++)
+			for (var i = 0; i < p.QuestLog.Length; i++)
 				if (p.QuestLog[i] != null && p.QuestLog[i].QuestID.HasValue) return true;
 		// Visible items (bits 61-80)
 		if (p.VisibleItems != null)
-			for (int i = 0; i < p.VisibleItems.Length; i++)
+			for (var i = 0; i < p.VisibleItems.Length; i++)
 				if (p.VisibleItems[i] != null) return true;
 		return false;
 	}
@@ -2668,9 +2668,9 @@ public class ObjectUpdateBuilder
 	/// </summary>
 	private void WriteUpdatePlayerData(WorldPacket data)
 	{
-		PlayerData p = m_updateData.PlayerData ?? new PlayerData();
+		var p = m_updateData.PlayerData ?? new PlayerData();
 
-		uint[] blocks = new uint[4];
+		var blocks = new uint[4];
 		void SetBit(int bit) { blocks[bit / 32] |= (1u << (bit % 32)); }
 		bool IsBitSet(int bit) { return (blocks[bit / 32] & (1u << (bit % 32))) != 0; }
 
@@ -2702,8 +2702,8 @@ public class ObjectUpdateBuilder
 		// 28-31: LogoutTime, CurrentBattlePetSpeciesID, BnetAccount, DungeonScore — not tracked
 
 		// QuestLog (header 35, elements 36-60)
-		bool hasAnyQuestLog = false;
-		for (int i = 0; i < 25; i++)
+		var hasAnyQuestLog = false;
+		for (var i = 0; i < 25; i++)
 		{
 			if (p.QuestLog[i] != null && p.QuestLog[i].QuestID.HasValue)
 			{
@@ -2714,8 +2714,8 @@ public class ObjectUpdateBuilder
 		}
 
 		// VisibleItems (header 61, elements 62-80)
-		bool hasAnyVisibleItem = false;
-		for (int i = 0; i < 19; i++)
+		var hasAnyVisibleItem = false;
+		for (var i = 0; i < 19; i++)
 		{
 			if (p.VisibleItems != null && i < p.VisibleItems.Length && p.VisibleItems[i] != null)
 			{
@@ -2729,11 +2729,11 @@ public class ObjectUpdateBuilder
 
 		// Write blocksMask (4 bits)
 		byte blocksMask = 0;
-		for (int i = 0; i < 4; i++)
+		for (var i = 0; i < 4; i++)
 			if (blocks[i] != 0) blocksMask |= (byte)(1 << i);
 
 		data.WriteBits(blocksMask, 4);
-		for (int i = 0; i < 4; i++)
+		for (var i = 0; i < 4; i++)
 			if ((blocksMask & (1 << i)) != 0)
 				data.WriteBits(blocks[i], 32);
 
@@ -2774,15 +2774,15 @@ public class ObjectUpdateBuilder
 		// QuestLog entries (bits 35-60) — WriteCreate format
 		if (hasAnyQuestLog)
 		{
-			for (int i = 0; i < 25; i++)
+			for (var i = 0; i < 25; i++)
 			{
 				if (IsBitSet(36 + i))
 				{
-					QuestLog quest = p.QuestLog[i];
+					var quest = p.QuestLog[i];
 					data.WriteInt64(quest?.EndTime ?? 0);
 					data.WriteInt32(quest?.QuestID ?? 0);
 					data.WriteUInt32(quest?.StateFlags ?? 0);
-					for (int obj = 0; obj < 24; obj++)
+					for (var obj = 0; obj < 24; obj++)
 						data.WriteUInt16((ushort)(quest?.ObjectiveProgress[obj] ?? 0));
 				}
 			}
@@ -2791,11 +2791,11 @@ public class ObjectUpdateBuilder
 		// VisibleItems (bits 61-80) — TC343 VisibleItem::WriteUpdate uses WriteBits(mask, 4)
 		if (hasAnyVisibleItem)
 		{
-			for (int i = 0; i < 19; i++)
+			for (var i = 0; i < 19; i++)
 			{
 				if (IsBitSet(62 + i))
 				{
-					VisibleItem item = p.VisibleItems[i];
+					var item = p.VisibleItems[i];
 					// VisibleItem has HasChangesMask<4>: bit 0=hasAny, 1=ItemID, 2=AppearanceModID, 3=ItemVisual
 					data.WriteBits(0x0F, 4); // all 4 bits set
 					data.FlushBits();
@@ -2812,7 +2812,7 @@ public class ObjectUpdateBuilder
 		data.WriteInt64(0L);
 		data.WriteInt32(0);
 		data.WriteUInt32(0u);
-		for (int i = 0; i < 24; i++)
+		for (var i = 0; i < 24; i++)
 		{
 			data.WriteUInt16(0);
 		}
@@ -2820,9 +2820,9 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateActivePlayerData(WorldPacket data)
 	{
-		ActivePlayerData active = m_updateData.ActivePlayerData ?? new ActivePlayerData();
+		var active = m_updateData.ActivePlayerData ?? new ActivePlayerData();
 		// Modern 3.4.3 InvSlots[141] - mapped from legacy arrays via GetModernInvSlot
-		for (int i = 0; i < 141; i++)
+		for (var i = 0; i < 141; i++)
 		{
 			data.WritePackedGuid128(GetModernInvSlot(active, i) ?? WowGuid128.Empty);
 		}
@@ -2833,8 +2833,8 @@ public class ObjectUpdateBuilder
 		data.WriteInt32(active.XP.GetValueOrDefault());
 		data.WriteInt32(active.NextLevelXP.GetValueOrDefault());
 		data.WriteInt32(0);
-		SkillInfo skill = active.Skill;
-		for (int j = 0; j < 256; j++)
+		var skill = active.Skill;
+		for (var j = 0; j < 256; j++)
 		{
 			data.WriteUInt16(((skill != null) ? skill.SkillLineID[j] : null).GetValueOrDefault());
 			data.WriteUInt16(((skill != null) ? skill.SkillStep[j] : null).GetValueOrDefault());
@@ -2861,7 +2861,7 @@ public class ObjectUpdateBuilder
 		data.WriteFloat(0f);
 		data.WriteFloat(0f);
 		data.WriteFloat(0f);
-		for (int k = 0; k < 7; k++)
+		for (var k = 0; k < 7; k++)
 		{
 			data.WriteFloat(0f);
 			data.WriteInt32(0);
@@ -2878,7 +2878,7 @@ public class ObjectUpdateBuilder
 		data.WriteFloat(0f);
 		data.WriteFloat(0f);
 		data.WriteFloat(0f);
-		for (int l = 0; l < 240; l++)
+		for (var l = 0; l < 240; l++)
 		{
 			data.WriteUInt64(0uL);
 		}
@@ -2890,7 +2890,7 @@ public class ObjectUpdateBuilder
 		data.WriteFloat(0f);
 		data.WriteFloat(0f);
 		data.WriteFloat(0f);
-		for (int m = 0; m < 3; m++)
+		for (var m = 0; m < 3; m++)
 		{
 			data.WriteFloat(1f);
 			data.WriteFloat(1f);
@@ -2908,12 +2908,12 @@ public class ObjectUpdateBuilder
 		data.WriteUInt8(0);
 		data.WriteInt32(0);
 		data.WriteUInt32(0u);
-		for (int n = 0; n < 12; n++)
+		for (var n = 0; n < 12; n++)
 		{
 			data.WriteUInt32(0u);
 			data.WriteInt64(0L);
 		}
-		for (int num = 0; num < 8; num++)
+		for (var num = 0; num < 8; num++)
 		{
 			data.WriteUInt16(0);
 		}
@@ -2925,22 +2925,22 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(0u);
 		data.WriteUInt32(0u);
 		data.WriteInt32(active.WatchedFactionIndex ?? (-1));
-		for (int num2 = 0; num2 < 32; num2++)
+		for (var num2 = 0; num2 < 32; num2++)
 		{
-			int?[] combatRatings = active.CombatRatings;
+			var combatRatings = active.CombatRatings;
 			data.WriteInt32(((combatRatings != null) ? combatRatings[num2] : null).GetValueOrDefault());
 		}
 		data.WriteInt32(active.MaxLevel ?? LegacyVersion.GetMaxLevel());
 		data.WriteInt32(0);
 		data.WriteInt32(0);
-		for (int num3 = 0; num3 < 4; num3++)
+		for (var num3 = 0; num3 < 4; num3++)
 		{
 			data.WriteUInt32(0u);
 		}
 		data.WriteInt32(active.PetSpellPower.GetValueOrDefault());
-		for (int num4 = 0; num4 < 2; num4++)
+		for (var num4 = 0; num4 < 2; num4++)
 		{
-			int?[] professionSkillLine = active.ProfessionSkillLine;
+			var professionSkillLine = active.ProfessionSkillLine;
 			data.WriteInt32(((professionSkillLine != null) ? professionSkillLine[num4] : null).GetValueOrDefault());
 		}
 		data.WriteFloat(0f);
@@ -2954,15 +2954,15 @@ public class ObjectUpdateBuilder
 		data.WriteInt32(0);
 		data.WriteUInt16(0);
 		data.WriteUInt32(0u);
-		for (int num5 = 0; num5 < 4; num5++)
+		for (var num5 = 0; num5 < 4; num5++)
 		{
 			data.WriteUInt32(0u);
 		}
-		for (int num6 = 0; num6 < 7; num6++)
+		for (var num6 = 0; num6 < 7; num6++)
 		{
 			data.WriteUInt32(0u);
 		}
-		for (int num7 = 0; num7 < 875; num7++)
+		for (var num7 = 0; num7 < 875; num7++)
 		{
 			data.WriteUInt64(0uL);
 		}
@@ -2994,7 +2994,7 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(0u);
 		// GlyphSlots[6] and Glyphs[6] - interleaved
 		uint[] glyphSlotIds = { 21, 22, 23, 24, 25, 26 }; // WotLK GlyphSlot.db2 IDs
-		for (int num8 = 0; num8 < 6; num8++)
+		for (var num8 = 0; num8 < 6; num8++)
 		{
 			data.WriteUInt32(glyphSlotIds[num8]); // GlyphSlots[i]
 			data.WriteUInt32(m_gameState.ActiveGlyphs[num8]); // Glyphs[i]
@@ -3004,7 +3004,7 @@ public class ObjectUpdateBuilder
 		data.WriteUInt32(0u);
 		data.WriteUInt32(0u);
 		data.WriteUInt8(0);
-		for (int num9 = 0; num9 < 7; num9++)
+		for (var num9 = 0; num9 < 7; num9++)
 		{
 			data.WriteInt8(0);
 			data.WriteInt32(0);
@@ -3048,7 +3048,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateGameObjectData(WorldPacket data)
 	{
-		GameObjectData go = m_updateData.GameObjectData ?? new GameObjectData();
+		var go = m_updateData.GameObjectData ?? new GameObjectData();
 		if (m_updateData.ObjectData?.EntryID == 35591)
 		{
 			Log.Print(LogType.Debug, $"[BobberCreate] DisplayID={go.DisplayID} Flags=0x{go.Flags:X} State={go.State} TypeID={go.TypeID} ArtKit={go.ArtKit} PercentHealth={go.PercentHealth} CreatedBy={go.CreatedBy} Level={go.Level} DynFlags=0x{m_updateData.ObjectData?.DynamicFlags:X}", "");
@@ -3062,10 +3062,10 @@ public class ObjectUpdateBuilder
 		data.WritePackedGuid128(go.CreatedBy ?? WowGuid128.Empty);
 		data.WritePackedGuid128(WowGuid128.Empty);
 		data.WriteUInt32(go.Flags.GetValueOrDefault());
-		CreateObjectData createData = m_updateData.CreateData;
+		var createData = m_updateData.CreateData;
 		if (createData != null && (createData.MoveInfo?.Rotation).HasValue)
 		{
-			Quaternion rot = m_updateData.CreateData.MoveInfo.Rotation;
+			var rot = m_updateData.CreateData.MoveInfo.Rotation;
 			data.WriteFloat(rot.X);
 			data.WriteFloat(rot.Y);
 			data.WriteFloat(rot.Z);
@@ -3091,7 +3091,7 @@ public class ObjectUpdateBuilder
 
 	private bool HasAnyGameObjectFieldSet()
 	{
-		GameObjectData go = m_updateData.GameObjectData;
+		var go = m_updateData.GameObjectData;
 		if (go == null) return false;
 		if (go.DisplayID.HasValue || go.SpellVisualID.HasValue || go.StateSpellVisualID.HasValue) return true;
 		if (go.StateAnimID.HasValue || go.StateAnimKitID.HasValue) return true;
@@ -3100,7 +3100,7 @@ public class ObjectUpdateBuilder
 		if (go.State.HasValue || go.TypeID.HasValue || go.PercentHealth.HasValue) return true;
 		if (go.ArtKit.HasValue || go.CustomParam.HasValue) return true;
 		if (go.ParentRotation != null)
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (go.ParentRotation[i].HasValue) return true;
 		return false;
 	}
@@ -3116,7 +3116,7 @@ public class ObjectUpdateBuilder
 	/// </summary>
 	private void WriteUpdateGameObjectData(WorldPacket data)
 	{
-		GameObjectData go = m_updateData.GameObjectData ?? new GameObjectData();
+		var go = m_updateData.GameObjectData ?? new GameObjectData();
 
 		uint mask = 0;
 		void SetBit(int bit) { mask |= (1u << bit); }
@@ -3131,9 +3131,9 @@ public class ObjectUpdateBuilder
 		if (go.CreatedBy != null) { SetBit(0); SetBit(9); }
 		if (go.GuildGUID != null) { SetBit(0); SetBit(10); }
 		if (go.Flags.HasValue) { SetBit(0); SetBit(11); }
-		bool hasRotation = false;
+		var hasRotation = false;
 		if (go.ParentRotation != null)
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 				if (go.ParentRotation[i].HasValue) hasRotation = true;
 		if (hasRotation) { SetBit(0); SetBit(12); }
 		if (go.FactionTemplate.HasValue) { SetBit(0); SetBit(13); }
@@ -3145,7 +3145,7 @@ public class ObjectUpdateBuilder
 		if (go.CustomParam.HasValue) { SetBit(0); SetBit(19); }
 
 		// 1 block, 20 bits — write blocksMask (1 bit) then block mask
-		byte blocksMask = (mask != 0) ? (byte)1 : (byte)0;
+		var blocksMask = (mask != 0) ? (byte)1 : (byte)0;
 		data.WriteBits(blocksMask, 1);
 		if (blocksMask != 0)
 			data.WriteBits(mask, 20);
@@ -3183,7 +3183,7 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateDynamicObjectData(WorldPacket data)
 	{
-		DynamicObjectData dyn = m_updateData.DynamicObjectData ?? new DynamicObjectData();
+		var dyn = m_updateData.DynamicObjectData ?? new DynamicObjectData();
 		data.WritePackedGuid128(dyn.Caster ?? WowGuid128.Empty);
 		data.WriteUInt8(0);
 		data.WriteInt32(0);
@@ -3194,16 +3194,16 @@ public class ObjectUpdateBuilder
 
 	private void WriteCreateCorpseData(WorldPacket data)
 	{
-		CorpseData corpse = m_updateData.CorpseData ?? new CorpseData();
+		var corpse = m_updateData.CorpseData ?? new CorpseData();
 		// TC343 field order: DynamicFlags FIRST, then Owner, Party, Guild, etc.
 		data.WriteUInt32(corpse.DynamicFlags.GetValueOrDefault());
 		data.WritePackedGuid128(corpse.Owner ?? WowGuid128.Empty);
 		data.WritePackedGuid128(corpse.PartyGUID ?? WowGuid128.Empty);
 		data.WritePackedGuid128(corpse.GuildGUID ?? WowGuid128.Empty);
 		data.WriteUInt32(corpse.DisplayID.GetValueOrDefault());
-		for (int i = 0; i < 19; i++)
+		for (var i = 0; i < 19; i++)
 		{
-			uint?[] items = corpse.Items;
+			var items = corpse.Items;
 			data.WriteUInt32(((items != null) ? items[i] : null).GetValueOrDefault());
 		}
 		data.WriteUInt8(corpse.RaceId.GetValueOrDefault());
@@ -3235,7 +3235,7 @@ public class ObjectUpdateBuilder
 
 	public void BuildMovementUpdate(WorldPacket data)
 	{
-		int PauseTimesCount = 0;
+		var PauseTimesCount = 0;
 		data.WriteBit(m_createBits.NoBirthAnim);
 		data.WriteBit(m_createBits.EnablePortals);
 		data.WriteBit(m_createBits.PlayHoverAnim);
@@ -3257,11 +3257,11 @@ public class ObjectUpdateBuilder
 		data.FlushBits();
 		if (m_createBits.MovementUpdate)
 		{
-			MovementInfo moveInfo = m_updateData.CreateData.MoveInfo;
-			bool hasSpline = m_updateData.CreateData.MoveSpline != null;
-			int beforeMove = data.GetData().Length;
+			var moveInfo = m_updateData.CreateData.MoveInfo;
+			var hasSpline = m_updateData.CreateData.MoveSpline != null;
+			var beforeMove = data.GetData().Length;
 			moveInfo.WriteMovementInfoModern(data, m_updateData.Guid);
-			int afterMoveInfo = data.GetData().Length;
+			var afterMoveInfo = data.GetData().Length;
 			Log.Print(LogType.Debug, $"[Movement] MoveInfo={afterMoveInfo - beforeMove}b Speeds: Walk={moveInfo.WalkSpeed} Run={moveInfo.RunSpeed} Swim={moveInfo.SwimSpeed} Flight={moveInfo.FlightSpeed} Turn={moveInfo.TurnRate} Pitch={moveInfo.PitchRate}", "ObjectUpdateBuilder.cs");
 			data.WriteFloat(moveInfo.WalkSpeed);
 			data.WriteFloat(moveInfo.RunSpeed);
@@ -3332,7 +3332,7 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteInt64(m_updateData.CreateData.MoveInfo.Rotation.GetPackedRotation());
 		}
-		for (int i = 0; i < PauseTimesCount; i++)
+		for (var i = 0; i < PauseTimesCount; i++)
 		{
 			data.WriteUInt32(0u);
 		}
@@ -3348,14 +3348,14 @@ public class ObjectUpdateBuilder
 		}
 		if (m_createBits.ActivePlayer)
 		{
-			bool hasSceneInstanceIDs = false;
-			bool hasRuneState = false;
-			bool hasActionButtons = true;
+			var hasSceneInstanceIDs = false;
+			var hasRuneState = false;
+			var hasActionButtons = true;
 			data.WriteBit(hasSceneInstanceIDs);
 			data.WriteBit(hasRuneState);
 			data.WriteBit(hasActionButtons);
 			data.FlushBits();
-			for (int j = 0; j < 180; j++)
+			for (var j = 0; j < 180; j++)
 			{
 				data.WriteInt32((j < m_gameState.ActionButtons.Count) ? m_gameState.ActionButtons[j] : 0);
 			}
@@ -3373,7 +3373,7 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteVector3(Vector3.Zero);
 		}
-		bool hasSplineMove = data.WriteBit(moveSpline.SplineCount != 0);
+		var hasSplineMove = data.WriteBit(moveSpline.SplineCount != 0);
 		data.FlushBits();
 		if (!hasSplineMove)
 		{
@@ -3385,7 +3385,7 @@ public class ObjectUpdateBuilder
 		data.WriteFloat(1f);
 		data.WriteFloat(1f);
 		data.WriteBits((byte)moveSpline.SplineType, 2);
-		bool hasFadeObjectTime = data.WriteBit(bit: false);
+		var hasFadeObjectTime = data.WriteBit(bit: false);
 		data.WriteBits(moveSpline.SplineCount, 16);
 		data.WriteBit(bit: false);
 		data.WriteBit(bit: false);
@@ -3409,7 +3409,7 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteInt32(0);
 		}
-		foreach (Vector3 vec in moveSpline.SplinePoints)
+		foreach (var vec in moveSpline.SplinePoints)
 		{
 			data.WriteVector3(vec);
 		}

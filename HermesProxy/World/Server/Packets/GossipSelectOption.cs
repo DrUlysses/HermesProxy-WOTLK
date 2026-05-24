@@ -20,7 +20,7 @@ public class GossipSelectOption : ClientPacket
 		GossipUnit = _worldPacket.ReadPackedGuid128();
 		GossipID = _worldPacket.ReadUInt32();
 		GossipIndex = _worldPacket.ReadUInt32();
-		uint length = _worldPacket.ReadBits<uint>(8);
+		var length = _worldPacket.ReadBits<uint>(8);
 		PromotionCode = _worldPacket.ReadString(length);
 	}
 }

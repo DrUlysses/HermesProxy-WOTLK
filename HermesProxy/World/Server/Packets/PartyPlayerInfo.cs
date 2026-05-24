@@ -35,7 +35,7 @@ public struct PartyPlayerInfo
         data.WriteBits(VoiceStateID.GetByteCount() + 1, 6);
         if (ModernVersion.ExpansionVersion == 3)
         {
-            bool isConnected = Connected || Status != GroupMemberOnlineStatus.Offline;
+            var isConnected = Connected || Status != GroupMemberOnlineStatus.Offline;
             data.WriteBit(isConnected);
             data.WriteBit(VoiceChatSilenced);
             data.WriteBit(FromSocialQueue);

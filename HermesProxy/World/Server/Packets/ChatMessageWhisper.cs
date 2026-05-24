@@ -16,8 +16,8 @@ public class ChatMessageWhisper : ClientPacket
 	public override void Read()
 	{
 		Language = _worldPacket.ReadUInt32();
-		uint targetLen = _worldPacket.ReadBits<uint>(9);
-		uint textLen = _worldPacket.ReadBits<uint>(9);
+		var targetLen = _worldPacket.ReadBits<uint>(9);
+		var textLen = _worldPacket.ReadBits<uint>(9);
 		Target = _worldPacket.ReadString(targetLen);
 		Text = _worldPacket.ReadString(textLen);
 	}

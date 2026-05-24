@@ -88,28 +88,22 @@ public static class VersionChecker
 
 	public static ClientVersionBuild GetBestLegacyVersion(ClientVersionBuild modernVersion)
 	{
-		byte expansionVersion = GetExpansionVersion(modernVersion);
-		if (1 == 0)
-		{
-		}
-		ClientVersionBuild result = expansionVersion switch
+		var expansionVersion = GetExpansionVersion(modernVersion);
+		var result = expansionVersion switch
 		{
 			1 => ClientVersionBuild.V1_12_1_5875, 
 			2 => ClientVersionBuild.V2_4_3_8606, 
 			3 => ClientVersionBuild.V3_3_5a_12340, 
 			_ => ClientVersionBuild.Zero, 
 		};
-		if (1 == 0)
-		{
-		}
 		return result;
 	}
 
 	private static byte GetExpansionVersion(ClientVersionBuild version)
 	{
-		string str = version.ToString();
+		var str = version.ToString();
 		str = str.Replace("V", "");
-		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
+		str = str[..str.IndexOf("_", StringComparison.Ordinal)];
 		return (byte)uint.Parse(str);
 	}
 }

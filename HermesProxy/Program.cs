@@ -21,7 +21,7 @@ public class Program
 			{
 				return "HermesProxy.config";
 			}
-			string value = result.Tokens.Single().Value;
+			var value = result.Tokens.Single().Value;
 			if (!File.Exists(value))
 			{
 				result.ErrorMessage = "Error: config file '" + value + "' does not exist";
@@ -36,7 +36,7 @@ public class Program
 			{
 				return ".";
 			}
-			string value = result.Tokens.Single().Value;
+			var value = result.Tokens.Single().Value;
 			if (!Directory.Exists(value))
 			{
 				result.ErrorMessage = "Error: directory '" + value + "' does not exist";
@@ -54,18 +54,18 @@ public class Program
 	{
 		CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 		Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-		RootCommand commandTree = new RootCommand("Hermes Proxy: Allows you to play on legacy WoW server with modern client")
+		var commandTree = new RootCommand("Hermes Proxy: Allows you to play on legacy WoW server with modern client")
 		{
 			CommandLineArgumentsTemplate.ConfigFileLocation,
 			CommandLineArgumentsTemplate.WorkingDirectory,
 			CommandLineArgumentsTemplate.DisableVersionCheck,
 			CommandLineArgumentsTemplate.OverwrittenConfigValues
 		};
-		Parser parser = new CommandLineBuilder(commandTree).UseDefaults().Build();
+		var parser = new CommandLineBuilder(commandTree).UseDefaults().Build();
 		commandTree.SetHandler(delegate(InvocationContext ctx)
 		{
-			ParseResult parseResult = ctx.ParseResult;
-			CommandLineArguments args2 = new CommandLineArguments
+			var parseResult = ctx.ParseResult;
+			var args2 = new CommandLineArguments
 			{
 				ConfigFileLocation = parseResult.GetValueForOption(CommandLineArgumentsTemplate.ConfigFileLocation),
 				WorkingDirectory = parseResult.GetValueForOption(CommandLineArgumentsTemplate.WorkingDirectory),
@@ -74,7 +74,7 @@ public class Program
 			};
 			Server.ServerMain(args2);
 		});
-		int exitCode = 1;
+		var exitCode = 1;
 		try
 		{
 			exitCode = parser.Invoke(args);
@@ -98,10 +98,10 @@ public class Program
 		{
 			return new Dictionary<string, string>();
 		}
-		Dictionary<string, string> result = new Dictionary<string, string>();
-		foreach (string arg in multiArgs)
+		var result = new Dictionary<string, string>();
+		foreach (var arg in multiArgs)
 		{
-			string[] keyValue = arg.Split('=', 2);
+			var keyValue = arg.Split('=', 2);
 			if (keyValue.Length != 2)
 			{
 				throw new Exception("Invalid argument '" + arg + "'");

@@ -31,7 +31,7 @@ public class LfgPlayerReward : ServerPacket
 		_worldPacket.WriteInt32(RewardMoney);
 		_worldPacket.WriteInt32(AddedXP);
 		_worldPacket.WriteUInt32((uint)Rewards.Count);
-		foreach (LfgPlayerRewardItem reward in Rewards)
+		foreach (var reward in Rewards)
 		{
 			_worldPacket.WriteUInt32(reward.ItemID);
 			_worldPacket.WriteUInt32(reward.Quantity);

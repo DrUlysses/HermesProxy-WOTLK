@@ -19,7 +19,7 @@ internal class MasterLootCandidateList : ServerPacket
 	{
 		_worldPacket.WritePackedGuid128(LootObj);
 		_worldPacket.WriteInt32(Players.Count);
-		foreach (WowGuid128 guid in Players)
+		foreach (var guid in Players)
 		{
 			_worldPacket.WritePackedGuid128(guid);
 		}

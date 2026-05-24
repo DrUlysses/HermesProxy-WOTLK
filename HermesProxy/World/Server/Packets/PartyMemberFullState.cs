@@ -84,7 +84,7 @@ internal class PartyMemberFullState : ServerPacket
 		_worldPacket.WriteInt32(Auras.Count);
 		Phases.Write(_worldPacket);
 		ChromieTime.Write(_worldPacket);
-		foreach (PartyMemberAuraStates aura in Auras)
+		foreach (var aura in Auras)
 		{
 			aura.Write(_worldPacket);
 		}

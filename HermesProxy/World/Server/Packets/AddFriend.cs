@@ -13,8 +13,8 @@ public class AddFriend : ClientPacket
 
 	public override void Read()
 	{
-		uint nameLength = _worldPacket.ReadBits<uint>(9);
-		uint noteslength = _worldPacket.ReadBits<uint>(10);
+		var nameLength = _worldPacket.ReadBits<uint>(9);
+		var noteslength = _worldPacket.ReadBits<uint>(10);
 		Name = _worldPacket.ReadString(nameLength);
 		Note = _worldPacket.ReadString(noteslength);
 	}

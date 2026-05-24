@@ -127,7 +127,7 @@ public class FeatureSystemStatusGlueScreen : ServerPacket
 				_worldPacket.WriteInt16(PlayerNameQueryTelemetryInterval);
 			}
 		}
-		foreach (int sourceRegion in LiveRegionCharacterCopySourceRegions)
+		foreach (var sourceRegion in LiveRegionCharacterCopySourceRegions)
 		{
 			_worldPacket.WriteInt32(sourceRegion);
 		}
@@ -135,7 +135,7 @@ public class FeatureSystemStatusGlueScreen : ServerPacket
 		{
 			return;
 		}
-		foreach (GameRuleValuePair rulePair in GameRuleValues)
+		foreach (var rulePair in GameRuleValues)
 		{
 			rulePair.Write(_worldPacket);
 		}
@@ -195,11 +195,11 @@ public class FeatureSystemStatusGlueScreen : ServerPacket
 		_worldPacket.WriteInt32(0);
 		_worldPacket.WriteInt32(0);
 		_worldPacket.WriteInt32(0);
-		foreach (int sourceRegion in LiveRegionCharacterCopySourceRegions)
+		foreach (var sourceRegion in LiveRegionCharacterCopySourceRegions)
 		{
 			_worldPacket.WriteInt32(sourceRegion);
 		}
-		foreach (GameRuleValuePair rulePair in GameRuleValues)
+		foreach (var rulePair in GameRuleValues)
 		{
 			rulePair.Write(_worldPacket);
 		}

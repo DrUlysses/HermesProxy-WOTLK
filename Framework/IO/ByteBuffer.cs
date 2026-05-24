@@ -74,8 +74,8 @@ namespace Framework.IO
 
         public byte PeekByte()
         {
-            long pos = _readStream.BaseStream.Position;
-            byte val = _readStream.ReadByte();
+            var pos = _readStream.BaseStream.Position;
+            var val = _readStream.ReadByte();
             _readStream.BaseStream.Position = pos;
             return val;
         }
@@ -118,12 +118,12 @@ namespace Framework.IO
         public string ReadCString()
         {
             ResetBitPos();
-            MemoryStream stream = (MemoryStream)_readStream.BaseStream;
-            StringBuilder tmpString = new StringBuilder();
+            var stream = (MemoryStream)_readStream.BaseStream;
+            var tmpString = new StringBuilder();
 
             while (stream.Position < stream.Length)
             {
-                byte next = _readStream.ReadByte();
+                var next = _readStream.ReadByte();
                 if (next == 0)
                 {
                     break;
@@ -194,10 +194,10 @@ namespace Framework.IO
 
         public Vector3 ReadPackedVector3()
         {
-            int packed = ReadInt32();
-            float x = ((packed & 0x7FF) << 21 >> 21) * 0.25f;
-            float y = ((((packed >> 11) & 0x7FF) << 21) >> 21) * 0.25f;
-            float z = ((packed >> 22 << 22) >> 22) * 0.25f;
+            var packed = ReadInt32();
+            var x = ((packed & 0x7FF) << 21 >> 21) * 0.25f;
+            var y = ((((packed >> 11) & 0x7FF) << 21) >> 21) * 0.25f;
+            var z = ((packed >> 22 << 22) >> 22) * 0.25f;
             return new Vector3(x, y, z);
         }
 
@@ -208,7 +208,7 @@ namespace Framework.IO
 
         public Quaternion ReadPackedQuaternion()
         {
-            long packed = ReadInt64();
+            var packed = ReadInt64();
             return new Quaternion(packed);
         }
 
@@ -250,7 +250,7 @@ namespace Framework.IO
 
         public T ReadBits<T>(int bitCount)
         {
-            int value = 0;
+            var value = 0;
 
             for (var i = bitCount - 1; i >= 0; --i)
                 if (HasBit())
@@ -348,7 +348,7 @@ namespace Framework.IO
             if (str.IsEmpty())
                 return;
 
-            byte[] sBytes = Encoding.UTF8.GetBytes(str);
+            var sBytes = Encoding.UTF8.GetBytes(str);
             WriteBytes(sBytes);
         }
 
@@ -418,7 +418,7 @@ namespace Framework.IO
 
         public void WriteBits(object bit, int count)
         {
-            for (int i = count - 1; i >= 0; --i)
+            for (var i = count - 1; i >= 0; --i)
                 WriteBit(((Convert.ToUInt32(bit) >> i) & 1) != 0);
         }
 
@@ -477,20 +477,20 @@ namespace Framework.IO
 
         public byte[] ReadToEnd()
         {
-            Stream stream = GetCurrentStream();
+            var stream = GetCurrentStream();
             var length = (uint)(stream.Length - stream.Position);
             return ReadBytes(length);
         }
 
         public byte[] GetData()
         {
-            Stream stream = GetCurrentStream();
+            var stream = GetCurrentStream();
 
             var data = new byte[stream.Length];
 
-            long pos = stream.Position;
+            var pos = stream.Position;
             stream.Seek(0, SeekOrigin.Begin);
-            for (int i = 0; i < data.Length; i++)
+            for (var i = 0; i < data.Length; i++)
                 data[i] = (byte)stream.ReadByte();
 
             stream.Seek(pos, SeekOrigin.Begin);

@@ -11,17 +11,17 @@ public static class UpdateFieldExtensions
 {
 	private static TypeCode GetTypeCodeOfReturnValue<TK>()
 	{
-		Type type = typeof(TK);
-		TypeCode typeCode = Type.GetTypeCode(type);
-		TypeCode typeCode2 = typeCode;
-		TypeCode typeCode3 = typeCode2;
+		var type = typeof(TK);
+		var typeCode = Type.GetTypeCode(type);
+		var typeCode2 = typeCode;
+		var typeCode3 = typeCode2;
 		if ((uint)(typeCode3 - 9) <= 1u || (uint)(typeCode3 - 13) <= 1u)
 		{
 			return typeCode;
 		}
 		typeCode = Type.GetTypeCode(Nullable.GetUnderlyingType(type));
-		TypeCode typeCode4 = typeCode;
-		TypeCode typeCode5 = typeCode4;
+		var typeCode4 = typeCode;
+		var typeCode5 = typeCode4;
 		if ((uint)(typeCode5 - 9) <= 1u || (uint)(typeCode5 - 13) <= 1u)
 		{
 			return typeCode;
@@ -74,9 +74,9 @@ public static class UpdateFieldExtensions
 
 	public static TK[] GetArray<TK>(this Dictionary<int, UpdateField> dict, int firstUpdateField, int count)
 	{
-		TK[] result = new TK[count];
-		TypeCode type = GetTypeCodeOfReturnValue<TK>();
-		for (int i = 0; i < count; i++)
+		var result = new TK[count];
+		var type = GetTypeCodeOfReturnValue<TK>();
+		for (var i = 0; i < count; i++)
 		{
 			if (dict != null && dict.TryGetValue(firstUpdateField + i, out var uf))
 			{
@@ -104,10 +104,10 @@ public static class UpdateFieldExtensions
 	{
 		if (!LegacyVersion.AddedInVersion(ClientVersionBuild.V6_0_2_19033))
 		{
-			uint[] parts = UpdateFields.GetArray<uint>(field, 2);
+			var parts = UpdateFields.GetArray<uint>(field, 2);
 			return new WowGuid64(MathFunctions.MakePair64(parts[0], parts[1]));
 		}
-		uint[] parts2 = UpdateFields.GetArray<uint>(field, 4);
+		var parts2 = UpdateFields.GetArray<uint>(field, 4);
 		return new WowGuid128(MathFunctions.MakePair64(parts2[0], parts2[1]), MathFunctions.MakePair64(parts2[2], parts2[3]));
 	}
 

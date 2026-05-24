@@ -94,12 +94,12 @@ public class ChatPkt : ServerPacket
 		if (language == uint.MaxValue)
 		{
 			language = 183u;
-			char tab = '\t';
+			var tab = '\t';
 			if (!text.Contains(tab))
 			{
 				return false;
 			}
-			string[] parts = text.Split(tab);
+			var parts = text.Split(tab);
 			addonPrefix = parts[0];
 			text = string.Join(" ", parts.Skip(1).ToList());
 			if (!registeredPrefixes.Contains(addonPrefix))

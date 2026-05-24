@@ -15,13 +15,13 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			string[] names = Names;
-			foreach (string str in names)
+			var names = Names;
+			foreach (var str in names)
 			{
 				data.WriteBits(str.GetByteCount(), 7);
 			}
 			data.FlushBits();
-			for (int j = 0; j < 2; j++)
+			for (var j = 0; j < 2; j++)
 			{
 				data.WritePackedGuid128(Guids[j]);
 				data.WriteString(Names[j]);
@@ -39,18 +39,18 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			uint[] prematch = Prematch;
-			foreach (uint id in prematch)
+			var prematch = Prematch;
+			foreach (var id in prematch)
 			{
 				data.WriteUInt32(id);
 			}
-			uint[] postmatch = Postmatch;
-			foreach (uint id2 in postmatch)
+			var postmatch = Postmatch;
+			foreach (var id2 in postmatch)
 			{
 				data.WriteUInt32(id2);
 			}
-			uint[] prematchMMR = PrematchMMR;
-			foreach (uint id3 in prematchMMR)
+			var prematchMMR = PrematchMMR;
+			foreach (var id3 in prematchMMR)
 			{
 				data.WriteUInt32(id3);
 			}
@@ -127,7 +127,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 			data.WriteInt32(CreatureID);
 			data.WriteInt32(HonorLevel);
 			data.WriteInt32(Rank);
-			foreach (uint pvpStat in Stats)
+			foreach (var pvpStat in Stats)
 			{
 				data.WriteUInt32(pvpStat);
 			}
@@ -187,8 +187,8 @@ public class PVPMatchStatisticsMessage : ServerPacket
 			ArenaTeams.Write(_worldPacket);
 		}
 		_worldPacket.WriteInt32(Statistics.Count);
-		sbyte[] playerCount = PlayerCount;
-		foreach (sbyte count in playerCount)
+		var playerCount = PlayerCount;
+		foreach (var count in playerCount)
 		{
 			_worldPacket.WriteInt8(count);
 		}
@@ -200,7 +200,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 		{
 			_worldPacket.WriteUInt8(Winner.Value);
 		}
-		foreach (PVPMatchPlayerStatistics player in Statistics)
+		foreach (var player in Statistics)
 		{
 			player.Write(_worldPacket);
 		}

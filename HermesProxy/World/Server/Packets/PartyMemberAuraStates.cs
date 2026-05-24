@@ -18,7 +18,7 @@ public class PartyMemberAuraStates
 		data.WriteUInt16(AuraFlags);
 		data.WriteUInt32(ActiveFlags);
 		data.WriteInt32(Points.Count);
-		foreach (float point in Points)
+		foreach (var point in Points)
 		{
 			data.WriteFloat(point);
 		}

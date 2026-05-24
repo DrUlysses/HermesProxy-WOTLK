@@ -45,9 +45,9 @@ namespace System
 
         public static string ToHexString(this byte[] array)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
-            for (int i = 0; i < array.Length; ++i)
+            for (var i = 0; i < array.Length; ++i)
                 builder.Append(array[i].ToString("X2"));
 
             return builder.ToString();
@@ -77,11 +77,11 @@ namespace System
         /// </summary>
         public static byte[] ToCleanByteArray(this BigInteger b)
         {
-            byte[] array = b.ToByteArray();
+            var array = b.ToByteArray();
             if (array[array.Length - 1] != 0)
                 return array;
 
-            byte[] temp = new byte[array.Length - 1];
+            var temp = new byte[array.Length - 1];
             Array.Copy(array, temp, temp.Length);
             return temp;
         }
@@ -93,7 +93,7 @@ namespace System
 
         public static byte[] SubArray(this byte[] array, int start, int count)
         {
-            byte[] subArray = new byte[count];
+            var subArray = new byte[count];
             Array.Copy(array, start, subArray, 0, count);
             return subArray;
         }
@@ -114,15 +114,15 @@ namespace System
 
         public static IEnumerable<TSource> TakeRandom<TSource>(this IEnumerable<TSource> source, int count)
         {
-            Random random = new Random();
-            List<int> indexes = new List<int>(source.Count());
-            for (int index = 0; index < indexes.Capacity; index++)
+            var random = new Random();
+            var indexes = new List<int>(source.Count());
+            for (var index = 0; index < indexes.Capacity; index++)
                 indexes.Add(index);
 
-            List<TSource> result = new List<TSource>(count);
-            for (int index = 0; index < count && indexes.Count() > 0; index++)
+            var result = new List<TSource>(count);
+            for (var index = 0; index < count && indexes.Count() > 0; index++)
             {
-                int randomIndex = random.Next(indexes.Count());
+                var randomIndex = random.Next(indexes.Count());
                 result.Add(source.ElementAt(randomIndex));
                 indexes.Remove(randomIndex);
             }
@@ -161,7 +161,7 @@ namespace System
             var random = new Random((int)((uint)(Guid.NewGuid().GetHashCode() ^ 1 >> 89 << 2 ^ 42)).LeftRotate(13));
             var key = new byte[length];
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 int randValue;
 
@@ -178,7 +178,7 @@ namespace System
 
         public static bool Compare(this byte[] b, byte[] b2)
         {
-            for (int i = 0; i < b2.Length; i++)
+            for (var i = 0; i < b2.Length; i++)
                 if (b[i] != b2[i])
                     return false;
 
@@ -219,7 +219,7 @@ namespace System
 
         public static void Swap<T>(ref T left, ref T right)
         {
-            T temp = left;
+            var temp = left;
             left = right;
             right = temp;
         }
@@ -231,14 +231,14 @@ namespace System
 
             var size = Marshal.SizeOf(typeof(T));
             var ptr = Marshal.AllocHGlobal(size);
-            byte[] array = new byte[size];
+            var array = new byte[size];
 
             Marshal.StructureToPtr(obj, ptr, true);
             Marshal.Copy(ptr, array, 0, size);
 
             Marshal.FreeHGlobal(ptr);
 
-            uint[] result = new uint[size / 4];
+            var result = new uint[size / 4];
             Buffer.BlockCopy(array, 0, result, 0, array.Length);
 
             return result;
@@ -246,7 +246,7 @@ namespace System
 
         public static List<T> DeserializeObjects<T>(this ICollection<uint> data)
         {
-            List<T> list = new List<T>();
+            var list = new List<T>();
 
             if (data.Count == 0)
                 return list;
@@ -254,7 +254,7 @@ namespace System
             if (typeof(T).GetCustomAttribute<StructLayoutAttribute>() == null)
                 return list;
 
-            byte[] result = new byte[data.Count * sizeof(uint)];
+            var result = new byte[data.Count * sizeof(uint)];
             Buffer.BlockCopy(data.ToArray(), 0, result, 0, result.Length);
 
             var typeSize = Marshal.SizeOf(typeof(T));
@@ -311,15 +311,15 @@ namespace System
 
         public static string Reverse(this string str)
         {
-            char[] charArray = str.ToCharArray();
+            var charArray = str.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
         }
 
         public static byte[] ToCString(this string str)
         {
-            byte[] utf8StringBytes = Encoding.UTF8.GetBytes(str);
-            byte[] data = new byte[utf8StringBytes.Length + 1];
+            var utf8StringBytes = Encoding.UTF8.GetBytes(str);
+            var data = new byte[utf8StringBytes.Length + 1];
             Array.Copy(utf8StringBytes, data, utf8StringBytes.Length);
             data[data.Length - 1] = 0;
             return data;
@@ -330,9 +330,9 @@ namespace System
             str = str.Replace(" ", String.Empty);
 
             var res = new byte[str.Length / 2];
-            for (int i = 0; i < res.Length; ++i)
+            for (var i = 0; i < res.Length; ++i)
             {
-                string temp = String.Concat(str[i * 2], str[i * 2 + 1]);
+                var temp = String.Concat(str[i * 2], str[i * 2 + 1]);
                 res[i] = Convert.ToByte(temp, 16);
             }
             return res;
@@ -343,9 +343,9 @@ namespace System
             str = str.Replace(" ", String.Empty);
 
             var res = new byte[str.Length / 2];
-            for (int i = 0; i < res.Length; ++i)
+            for (var i = 0; i < res.Length; ++i)
             {
-                string temp = String.Concat(str[i * 2], str[i * 2 + 1]);
+                var temp = String.Concat(str[i * 2], str[i * 2 + 1]);
                 res[i] = Convert.ToByte(temp, 16);
             }
             return res;
@@ -358,10 +358,10 @@ namespace System
 
         public static string ConvertFormatSyntax(this string str)
         {
-            string pattern = @"(%\W*\d*[a-zA-Z]*)";
+            var pattern = @"(%\W*\d*[a-zA-Z]*)";
             
-            int count = 0;
-            string result = Regex.Replace(str, pattern, m => string.Concat("{", count++, "}"));
+            var count = 0;
+            var result = Regex.Replace(str, pattern, m => string.Concat("{", count++, "}"));
 
             return result;
         }
@@ -420,7 +420,7 @@ namespace System
         public static string ReadCString(this BinaryReader reader)
         {
             byte num;
-            List<byte> temp = new List<byte>();
+            var temp = new List<byte>();
 
             while ((num = reader.ReadByte()) != 0)
                 temp.Add(num);
@@ -441,11 +441,11 @@ namespace System
 
         public static T[] ReadArray<T>(this BinaryReader reader, uint size) where T : struct
         {
-            int numBytes = Unsafe.SizeOf<T>() * (int)size;
+            var numBytes = Unsafe.SizeOf<T>() * (int)size;
 
-            byte[] source = reader.ReadBytes(numBytes);
+            var source = reader.ReadBytes(numBytes);
 
-            T[] result = new T[source.Length / Unsafe.SizeOf<T>()];
+            var result = new T[source.Length / Unsafe.SizeOf<T>()];
 
             if (source.Length > 0)
             {
@@ -460,7 +460,7 @@ namespace System
 
         public static T Read<T>(this BinaryReader reader) where T : struct
         {
-            byte[] result = reader.ReadBytes(Unsafe.SizeOf<T>());
+            var result = reader.ReadBytes(Unsafe.SizeOf<T>());
 
             return Unsafe.ReadUnaligned<T>(ref result[0]);
         }

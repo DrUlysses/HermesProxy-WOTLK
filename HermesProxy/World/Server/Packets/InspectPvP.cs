@@ -22,11 +22,11 @@ public class InspectPvP : ServerPacket
 		_worldPacket.WriteBits(Brackets.Count, 3);
 		_worldPacket.WriteBits(ArenaTeams.Count, 2);
 		_worldPacket.FlushBits();
-		foreach (PvPBracketInspectData bracket in Brackets)
+		foreach (var bracket in Brackets)
 		{
 			bracket.Write(_worldPacket);
 		}
-		foreach (ArenaTeamInspectData team in ArenaTeams)
+		foreach (var team in ArenaTeams)
 		{
 			team.Write(_worldPacket);
 		}

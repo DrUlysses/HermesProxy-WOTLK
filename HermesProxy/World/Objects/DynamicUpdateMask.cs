@@ -26,7 +26,7 @@ public class DynamicUpdateMask : UpdateMask
 		{
 			data.WriteInt32(ValueCount.Value);
 		}
-		byte[] maskArray = new byte[_blockCount << 2];
+		var maskArray = new byte[_blockCount << 2];
 		_mask.CopyTo(maskArray, 0);
 		data.WriteBytes(maskArray);
 	}

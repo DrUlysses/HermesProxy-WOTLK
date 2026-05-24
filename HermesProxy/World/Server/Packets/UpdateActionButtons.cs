@@ -17,7 +17,7 @@ public class UpdateActionButtons : ServerPacket
 
 	protected override void Write()
 	{
-		for (int i = 0; i < 180; i++)
+		for (var i = 0; i < 180; i++)
 		{
 			_worldPacket.WriteInt64((i < ActionButtons.Count) ? ActionButtons[i] : 0);
 		}

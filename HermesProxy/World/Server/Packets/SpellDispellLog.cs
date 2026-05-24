@@ -31,7 +31,7 @@ internal class SpellDispellLog : ServerPacket
 		_worldPacket.WritePackedGuid128(CasterGUID);
 		_worldPacket.WriteUInt32(DispelledBySpellID);
 		_worldPacket.WriteInt32(DispellData.Count);
-		foreach (SpellDispellData data in DispellData)
+		foreach (var data in DispellData)
 		{
 			_worldPacket.WriteUInt32(data.SpellID);
 			_worldPacket.WriteBit(data.Harmful);

@@ -31,7 +31,7 @@ public class MailQueryNextTimeResult : ServerPacket
 	{
 		_worldPacket.WriteFloat(NextMailTime);
 		_worldPacket.WriteInt32(Mails.Count);
-		foreach (MailNextTimeEntry entry in Mails)
+		foreach (var entry in Mails)
 		{
 			_worldPacket.WritePackedGuid128(entry.SenderGuid);
 			_worldPacket.WriteFloat(entry.TimeLeft);

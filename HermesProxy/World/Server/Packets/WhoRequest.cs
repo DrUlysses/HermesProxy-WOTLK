@@ -36,11 +36,11 @@ public class WhoRequest
 		MaxLevel = data.ReadInt32();
 		RaceFilter = data.ReadInt64();
 		ClassFilter = data.ReadInt32();
-		uint nameLength = data.ReadBits<uint>(6);
-		uint virtualRealmNameLength = data.ReadBits<uint>(9);
-		uint guildNameLength = data.ReadBits<uint>(7);
-		uint guildVirtualRealmNameLength = data.ReadBits<uint>(9);
-		uint wordsCount = data.ReadBits<uint>(3);
+		var nameLength = data.ReadBits<uint>(6);
+		var virtualRealmNameLength = data.ReadBits<uint>(9);
+		var guildNameLength = data.ReadBits<uint>(7);
+		var guildVirtualRealmNameLength = data.ReadBits<uint>(9);
+		var wordsCount = data.ReadBits<uint>(3);
 		ShowEnemies = data.HasBit();
 		ShowArenaPlayers = data.HasBit();
 		ExactName = data.HasBit();
@@ -49,7 +49,7 @@ public class WhoRequest
 			ServerInfo = new WhoRequestServerInfo();
 		}
 		data.ResetBitPos();
-		for (int i = 0; i < wordsCount; i++)
+		for (var i = 0; i < wordsCount; i++)
 		{
 			Words.Add(data.ReadString(data.ReadBits<uint>(7)));
 			data.ResetBitPos();

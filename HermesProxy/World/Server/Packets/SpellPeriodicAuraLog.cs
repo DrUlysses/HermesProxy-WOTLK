@@ -84,7 +84,7 @@ internal class SpellPeriodicAuraLog : ServerPacket
 		_worldPacket.WriteInt32(Effects.Count);
 		_worldPacket.WriteBit(LogData != null);
 		_worldPacket.FlushBits();
-		foreach (SpellLogEffect effect in Effects)
+		foreach (var effect in Effects)
 		{
 			effect.Write(_worldPacket);
 		}

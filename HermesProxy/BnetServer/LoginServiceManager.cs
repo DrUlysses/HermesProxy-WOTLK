@@ -1,5 +1,4 @@
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using Framework;
 using Framework.Logging;
 using Framework.Web;
@@ -14,8 +13,6 @@ public class LoginServiceManager : Singleton<LoginServiceManager>
 
 	private IPEndPoint localAddress;
 
-	private X509Certificate2 certificate;
-
 	private LoginServiceManager()
 	{
 		formInputs = new FormInputs();
@@ -23,14 +20,14 @@ public class LoginServiceManager : Singleton<LoginServiceManager>
 
 	public void Initialize()
 	{
-		int port = Settings.RestPort;
-		if (port < 0 || port > 65535)
+		var port = Settings.RestPort;
+		if (port is < 0 or > 65535)
 		{
 			Log.Print(LogType.Error, $"Specified login service port ({port}) out of allowed range (1-65535), defaulting to 8081", "LoginServiceManager.cs");
 			port = 8081;
 		}
-		string configuredAddress = Settings.ExternalAddress;
-		if (!IPAddress.TryParse(configuredAddress, out IPAddress address))
+		var configuredAddress = Settings.ExternalAddress;
+		if (!IPAddress.TryParse(configuredAddress, out var address))
 		{
 			Log.Print(LogType.Error, "Could not resolve LoginREST.ExternalAddress " + configuredAddress, "LoginServiceManager.cs");
 			return;
@@ -44,22 +41,28 @@ public class LoginServiceManager : Singleton<LoginServiceManager>
 		}
 		localAddress = new IPEndPoint(address, port);
 		formInputs.Type = "LOGIN_FORM";
-		FormInput input = new FormInput();
-		input.Id = "account_name";
-		input.Type = "text";
-		input.Label = "E-mail";
-		input.MaxLength = 320;
+		var input = new FormInput
+		{
+			Id = "account_name",
+			Type = "text",
+			Label = "E-mail",
+			MaxLength = 320
+		};
 		formInputs.Inputs.Add(input);
-		input = new FormInput();
-		input.Id = "password";
-		input.Type = "password";
-		input.Label = "Password";
-		input.MaxLength = 16;
+		input = new FormInput
+		{
+			Id = "password",
+			Type = "password",
+			Label = "Password",
+			MaxLength = 16
+		};
 		formInputs.Inputs.Add(input);
-		input = new FormInput();
-		input.Id = "log_in_submit";
-		input.Type = "submit";
-		input.Label = "Log In";
+		input = new FormInput
+		{
+			Id = "log_in_submit",
+			Type = "submit",
+			Label = "Log In"
+		};
 		formInputs.Inputs.Add(input);
 	}
 

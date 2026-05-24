@@ -39,7 +39,7 @@ public class ObjectUpdateBuilder
 		m_alreadyWritten = false;
 		m_updateData = updateData;
 		m_gameState = gameState;
-		ObjectType objectType = updateData.Guid.GetObjectType();
+		var objectType = updateData.Guid.GetObjectType();
 		if (updateData.CreateData != null)
 		{
 			objectType = updateData.CreateData.ObjectType;
@@ -162,7 +162,7 @@ public class ObjectUpdateBuilder
 
 	public void BuildMovementUpdate(WorldPacket data)
 	{
-		int PauseTimesCount = 0;
+		var PauseTimesCount = 0;
 		data.WriteBit(m_createBits.NoBirthAnim);
 		data.WriteBit(m_createBits.EnablePortals);
 		data.WriteBit(m_createBits.PlayHoverAnim);
@@ -184,8 +184,8 @@ public class ObjectUpdateBuilder
 		data.FlushBits();
 		if (m_createBits.MovementUpdate)
 		{
-			MovementInfo moveInfo = m_updateData.CreateData.MoveInfo;
-			bool hasSpline = m_updateData.CreateData.MoveSpline != null;
+			var moveInfo = m_updateData.CreateData.MoveInfo;
+			var hasSpline = m_updateData.CreateData.MoveSpline != null;
 			moveInfo.WriteMovementInfoModern(data, m_updateData.Guid);
 			data.WriteFloat(moveInfo.WalkSpeed);
 			data.WriteFloat(moveInfo.RunSpeed);
@@ -243,7 +243,7 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteInt64(m_updateData.CreateData.MoveInfo.Rotation.GetPackedRotation());
 		}
-		for (int i = 0; i < PauseTimesCount; i++)
+		for (var i = 0; i < PauseTimesCount; i++)
 		{
 			data.WriteUInt32(0u);
 		}
@@ -253,8 +253,8 @@ public class ObjectUpdateBuilder
 		}
 		if (m_createBits.GameObject)
 		{
-			bool bit8 = false;
-			uint Int1 = 0u;
+			var bit8 = false;
+			var Int1 = 0u;
 			data.WriteUInt32(0u);
 			data.WriteBit(bit8);
 			data.FlushBits();
@@ -267,18 +267,18 @@ public class ObjectUpdateBuilder
 		{
 			return;
 		}
-		bool hasSceneInstanceIDs = false;
-		bool hasRuneState = false;
-		bool hasActionButtons = m_gameState.ActionButtons.Count != 0;
+		var hasSceneInstanceIDs = false;
+		var hasRuneState = false;
+		var hasActionButtons = m_gameState.ActionButtons.Count != 0;
 		data.WriteBit(hasSceneInstanceIDs);
 		data.WriteBit(hasRuneState);
 		data.WriteBit(hasActionButtons);
 		data.FlushBits();
 		if (hasSceneInstanceIDs)
 		{
-			int sceneInstanceIDs = 0;
+			var sceneInstanceIDs = 0;
 			data.WriteInt32(sceneInstanceIDs);
-			for (int j = 0; j < sceneInstanceIDs; j++)
+			for (var j = 0; j < sceneInstanceIDs; j++)
 			{
 				data.WriteInt32(0);
 			}
@@ -289,16 +289,16 @@ public class ObjectUpdateBuilder
 			byte UsableRuneMask = 0;
 			data.WriteUInt8(RechargingRuneMask);
 			data.WriteUInt8(UsableRuneMask);
-			uint runeCount = 0u;
+			var runeCount = 0u;
 			data.WriteUInt32(runeCount);
-			for (int k = 0; k < runeCount; k++)
+			for (var k = 0; k < runeCount; k++)
 			{
 				data.WriteUInt8(0);
 			}
 		}
 		if (hasActionButtons)
 		{
-			for (int l = 0; l < 132; l++)
+			for (var l = 0; l < 132; l++)
 			{
 				data.WriteInt32(m_gameState.ActionButtons[l]);
 			}
@@ -316,7 +316,7 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteVector3(Vector3.Zero);
 		}
-		bool hasSplineMove = data.WriteBit(moveSpline.SplineCount != 0);
+		var hasSplineMove = data.WriteBit(moveSpline.SplineCount != 0);
 		data.FlushBits();
 		if (!hasSplineMove)
 		{
@@ -328,7 +328,7 @@ public class ObjectUpdateBuilder
 		data.WriteFloat(1f);
 		data.WriteFloat(1f);
 		data.WriteBits((byte)moveSpline.SplineType, 2);
-		bool hasFadeObjectTime = data.WriteBit(bit: false);
+		var hasFadeObjectTime = data.WriteBit(bit: false);
 		data.WriteBits(moveSpline.SplineCount, 16);
 		data.WriteBit(bit: false);
 		data.WriteBit(bit: false);
@@ -351,7 +351,7 @@ public class ObjectUpdateBuilder
 		{
 			data.WriteInt32(0);
 		}
-		foreach (Vector3 vec in moveSpline.SplinePoints)
+		foreach (var vec in moveSpline.SplinePoints)
 		{
 			data.WriteVector3(vec);
 		}
@@ -363,7 +363,7 @@ public class ObjectUpdateBuilder
 		{
 			return;
 		}
-		ObjectData objectData = m_updateData.ObjectData;
+		var objectData = m_updateData.ObjectData;
 		if (objectData.Guid != null)
 		{
 			m_fields.SetUpdateField(ObjectField.OBJECT_FIELD_GUID, objectData.Guid);
@@ -380,7 +380,7 @@ public class ObjectUpdateBuilder
 		{
 			m_fields.SetUpdateField(ObjectField.OBJECT_FIELD_SCALE_X, objectData.Scale.Value);
 		}
-		ItemData itemData = m_updateData.ItemData;
+		var itemData = m_updateData.ItemData;
 		if (itemData != null)
 		{
 			if (itemData.Owner != null)
@@ -407,9 +407,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ItemField.ITEM_FIELD_DURATION, itemData.Duration.Value);
 			}
-			for (int i = 0; i < 5; i++)
+			for (var i = 0; i < 5; i++)
 			{
-				int startIndex = 25;
+				var startIndex = 25;
 				if (itemData.SpellCharges[i].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex + i, itemData.SpellCharges[i].Value);
@@ -419,10 +419,10 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ItemField.ITEM_FIELD_FLAGS, itemData.Flags.Value);
 			}
-			for (int j = 0; j < 13; j++)
+			for (var j = 0; j < 13; j++)
 			{
-				int startIndex2 = 31;
-				int sizePerEntry = 3;
+				var startIndex2 = 31;
+				var sizePerEntry = 3;
 				if (itemData.Enchantment[j] != null)
 				{
 					if (itemData.Enchantment[j].ID.HasValue)
@@ -481,21 +481,21 @@ public class ObjectUpdateBuilder
 			}
 			if (itemData.HasGemsUpdate)
 			{
-				uint[] fields = new uint[30];
-				uint[] gems = m_gameState.GetGemsForItem(m_updateData.Guid);
+				var fields = new uint[30];
+				var gems = m_gameState.GetGemsForItem(m_updateData.Guid);
 				fields[0] = gems[0];
 				fields[10] = gems[1];
 				fields[20] = gems[2];
 				m_dynamicFields.SetUpdateField(3, fields, DynamicFieldChangeType.ValueAndSizeChanged);
 			}
 		}
-		ContainerData containerData = m_updateData.ContainerData;
+		var containerData = m_updateData.ContainerData;
 		if (containerData != null)
 		{
-			for (int k = 0; k < 36; k++)
+			for (var k = 0; k < 36; k++)
 			{
-				int startIndex3 = 80;
-				int sizePerEntry2 = 4;
+				var startIndex3 = 80;
+				var sizePerEntry2 = 4;
 				if (containerData.Slots[k] != null)
 				{
 					m_fields.SetUpdateField(startIndex3 + k * sizePerEntry2, containerData.Slots[k]);
@@ -506,7 +506,7 @@ public class ObjectUpdateBuilder
 				m_fields.SetUpdateField(ContainerField.CONTAINER_FIELD_NUM_SLOTS, containerData.NumSlots.Value);
 			}
 		}
-		UnitData unitData = m_updateData.UnitData;
+		var unitData = m_updateData.UnitData;
 		if (unitData != null)
 		{
 			if (unitData.Charm != null)
@@ -555,7 +555,7 @@ public class ObjectUpdateBuilder
 			}
 			if (unitData.ChannelData != null)
 			{
-				int startIndex4 = 49;
+				var startIndex4 = 49;
 				m_fields.SetUpdateField(startIndex4, unitData.ChannelData.SpellID);
 				m_fields.SetUpdateField(startIndex4 + 1, unitData.ChannelData.SpellXSpellVisualID);
 			}
@@ -594,9 +594,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(UnitField.UNIT_FIELD_HEALTH, (ulong)unitData.Health.Value);
 			}
-			for (int l = 0; l < 7; l++)
+			for (var l = 0; l < 7; l++)
 			{
-				int startIndex5 = 57;
+				var startIndex5 = 57;
 				if (unitData.Power[l].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex5 + l, unitData.Power[l].Value);
@@ -606,17 +606,17 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(UnitField.UNIT_FIELD_MAXHEALTH, (ulong)unitData.MaxHealth.Value);
 			}
-			for (int m = 0; m < 7; m++)
+			for (var m = 0; m < 7; m++)
 			{
-				int startIndex6 = 66;
+				var startIndex6 = 66;
 				if (unitData.MaxPower[m].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex6 + m, unitData.MaxPower[m].Value);
 				}
 			}
-			for (int n = 0; n < 7; n++)
+			for (var n = 0; n < 7; n++)
 			{
-				int startIndex7 = 73;
+				var startIndex7 = 73;
 				if (unitData.ModPowerRegen[n].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex7 + n, unitData.ModPowerRegen[n].Value);
@@ -662,10 +662,10 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(UnitField.UNIT_FIELD_FACTIONTEMPLATE, unitData.FactionTemplate.Value);
 			}
-			for (int num = 0; num < 3; num++)
+			for (var num = 0; num < 3; num++)
 			{
-				int startIndex8 = 90;
-				int sizePerEntry3 = 2;
+				var startIndex8 = 90;
+				var sizePerEntry3 = 2;
 				if (unitData.VirtualItems[num] != null)
 				{
 					m_fields.SetUpdateField(startIndex8 + num * sizePerEntry3, unitData.VirtualItems[num].ItemID);
@@ -689,9 +689,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(UnitField.UNIT_FIELD_AURASTATE, unitData.AuraState.Value);
 			}
-			for (int num2 = 0; num2 < 2; num2++)
+			for (var num2 = 0; num2 < 2; num2++)
 			{
-				int startIndex9 = 100;
+				var startIndex9 = 100;
 				if (unitData.AttackRoundBaseTime[num2].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex9 + num2, unitData.AttackRoundBaseTime[num2].Value);
@@ -808,9 +808,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(UnitField.UNIT_CREATED_BY_SPELL, unitData.CreatedBySpell.Value);
 			}
-			for (int num3 = 0; num3 < 2; num3++)
+			for (var num3 = 0; num3 < 2; num3++)
 			{
-				int startIndex10 = 126;
+				var startIndex10 = 126;
 				if (unitData.NpcFlags[num3].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex10 + num3, unitData.NpcFlags[num3].Value);
@@ -825,49 +825,49 @@ public class ObjectUpdateBuilder
 				m_fields.SetUpdateField(UnitField.UNIT_FIELD_TRAINING_POINTS_TOTAL, unitData.TrainingPointsUsed.Value);
 				m_fields.SetUpdateField(UnitField.UNIT_FIELD_TRAINING_POINTS_TOTAL, unitData.TrainingPointsTotal.Value, 1);
 			}
-			for (int num4 = 0; num4 < 5; num4++)
+			for (var num4 = 0; num4 < 5; num4++)
 			{
-				int startIndex11 = 130;
+				var startIndex11 = 130;
 				if (unitData.Stats[num4].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex11 + num4, unitData.Stats[num4].Value);
 				}
 			}
-			for (int num5 = 0; num5 < 5; num5++)
+			for (var num5 = 0; num5 < 5; num5++)
 			{
-				int startIndex12 = 135;
+				var startIndex12 = 135;
 				if (unitData.StatPosBuff[num5].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex12 + num5, unitData.StatPosBuff[num5].Value);
 				}
 			}
-			for (int num6 = 0; num6 < 5; num6++)
+			for (var num6 = 0; num6 < 5; num6++)
 			{
-				int startIndex13 = 140;
+				var startIndex13 = 140;
 				if (unitData.StatNegBuff[num6].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex13 + num6, unitData.StatNegBuff[num6].Value);
 				}
 			}
-			for (int num7 = 0; num7 < 7; num7++)
+			for (var num7 = 0; num7 < 7; num7++)
 			{
-				int startIndex14 = 145;
+				var startIndex14 = 145;
 				if (unitData.Resistances[num7].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex14 + num7, unitData.Resistances[num7].Value);
 				}
 			}
-			for (int num8 = 0; num8 < 7; num8++)
+			for (var num8 = 0; num8 < 7; num8++)
 			{
-				int startIndex15 = 152;
+				var startIndex15 = 152;
 				if (unitData.ResistanceBuffModsPositive[num8].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex15 + num8, unitData.ResistanceBuffModsPositive[num8].Value);
 				}
 			}
-			for (int num9 = 0; num9 < 7; num9++)
+			for (var num9 = 0; num9 < 7; num9++)
 			{
-				int startIndex16 = 159;
+				var startIndex16 = 159;
 				if (unitData.ResistanceBuffModsNegative[num9].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex16 + num9, unitData.ResistanceBuffModsNegative[num9].Value);
@@ -948,17 +948,17 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(UnitField.UNIT_FIELD_MAXRANGEDDAMAGE, unitData.MaxRangedDamage.Value);
 			}
-			for (int num10 = 0; num10 < 7; num10++)
+			for (var num10 = 0; num10 < 7; num10++)
 			{
-				int startIndex17 = 181;
+				var startIndex17 = 181;
 				if (unitData.PowerCostModifier[num10].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex17 + num10, unitData.PowerCostModifier[num10].Value);
 				}
 			}
-			for (int num11 = 0; num11 < 7; num11++)
+			for (var num11 = 0; num11 < 7; num11++)
 			{
-				int startIndex18 = 188;
+				var startIndex18 = 188;
 				if (unitData.PowerCostMultiplier[num11].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex18 + num11, unitData.PowerCostMultiplier[num11].Value);
@@ -1037,7 +1037,7 @@ public class ObjectUpdateBuilder
 				m_dynamicFields.SetUpdateField(UnitDynamicField.UNIT_DYNAMIC_FIELD_CHANNEL_OBJECTS, unitData.ChannelObject, DynamicFieldChangeType.ValueAndSizeChanged);
 			}
 		}
-		PlayerData playerData = m_updateData.PlayerData;
+		var playerData = m_updateData.PlayerData;
 		if (playerData != null)
 		{
 			if (playerData.DuelArbiter != null)
@@ -1114,10 +1114,10 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(PlayerField.PLAYER_GUILD_TIMESTAMP, playerData.GuildTimeStamp.Value);
 			}
-			for (int num12 = 0; num12 < 25; num12++)
+			for (var num12 = 0; num12 < 25; num12++)
 			{
-				int startIndex19 = 239;
-				int sizePerEntry4 = 16;
+				var startIndex19 = 239;
+				var sizePerEntry4 = 16;
 				if (playerData.QuestLog[num12] == null)
 				{
 					continue;
@@ -1130,7 +1130,7 @@ public class ObjectUpdateBuilder
 				{
 					m_fields.SetUpdateField(startIndex19 + num12 * sizePerEntry4 + 1, playerData.QuestLog[num12].StateFlags.Value);
 				}
-				for (int num13 = 0; num13 < 24; num13++)
+				for (var num13 = 0; num13 < 24; num13++)
 				{
 					if (playerData.QuestLog[num12].ObjectiveProgress[num13].HasValue)
 					{
@@ -1146,10 +1146,10 @@ public class ObjectUpdateBuilder
 					m_fields.SetUpdateField(startIndex19 + num12 * sizePerEntry4 + 3 + 12, playerData.QuestLog[num12].AcceptTime.Value);
 				}
 			}
-			for (int num14 = 0; num14 < 19; num14++)
+			for (var num14 = 0; num14 < 19; num14++)
 			{
-				int startIndex20 = 639;
-				int sizePerEntry5 = 2;
+				var startIndex20 = 639;
+				var sizePerEntry5 = 2;
 				if (playerData.VisibleItems[num14] != null)
 				{
 					m_fields.SetUpdateField(startIndex20 + num14 * sizePerEntry5, playerData.VisibleItems[num14].ItemID);
@@ -1177,9 +1177,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(PlayerField.PLAYER_FIELD_TAXI_MOUNT_ANIM_KIT_ID, playerData.TaxiMountAnimKitID.Value);
 			}
-			for (int num15 = 0; num15 < 6; num15++)
+			for (var num15 = 0; num15 < 6; num15++)
 			{
-				int startIndex21 = 682;
+				var startIndex21 = 682;
 				if (playerData.AvgItemLevel[num15].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex21 + num15, playerData.AvgItemLevel[num15].Value);
@@ -1193,10 +1193,10 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(PlayerField.PLAYER_FIELD_HONOR_LEVEL, playerData.HonorLevel.Value);
 			}
-			for (int num16 = 0; num16 < 35; num16++)
+			for (var num16 = 0; num16 < 35; num16++)
 			{
-				int startIndex22 = 690;
-				int sizePerEntry6 = 2;
+				var startIndex22 = 690;
+				var sizePerEntry6 = 2;
 				if (playerData.Customizations[num16] != null)
 				{
 					m_fields.SetUpdateField(startIndex22 + num16 * sizePerEntry6, playerData.Customizations[num16].ChrCustomizationOptionID);
@@ -1204,58 +1204,58 @@ public class ObjectUpdateBuilder
 				}
 			}
 		}
-		ActivePlayerData activeData = m_updateData.ActivePlayerData;
+		var activeData = m_updateData.ActivePlayerData;
 		if (activeData != null && m_objectType == ObjectTypeBCC.ActivePlayer)
 		{
-			for (int num17 = 0; num17 < 23; num17++)
+			for (var num17 = 0; num17 < 23; num17++)
 			{
-				int startIndex23 = 760;
-				int sizePerEntry7 = 4;
+				var startIndex23 = 760;
+				var sizePerEntry7 = 4;
 				if (activeData.InvSlots[num17] != null)
 				{
 					m_fields.SetUpdateField(startIndex23 + num17 * sizePerEntry7, activeData.InvSlots[num17]);
 				}
 			}
-			for (int num18 = 0; num18 < 24; num18++)
+			for (var num18 = 0; num18 < 24; num18++)
 			{
-				int startIndex24 = 852;
-				int sizePerEntry8 = 4;
+				var startIndex24 = 852;
+				var sizePerEntry8 = 4;
 				if (activeData.PackSlots[num18] != null)
 				{
 					m_fields.SetUpdateField(startIndex24 + num18 * sizePerEntry8, activeData.PackSlots[num18]);
 				}
 			}
-			for (int num19 = 0; num19 < 28; num19++)
+			for (var num19 = 0; num19 < 28; num19++)
 			{
-				int startIndex25 = 948;
-				int sizePerEntry9 = 4;
+				var startIndex25 = 948;
+				var sizePerEntry9 = 4;
 				if (activeData.BankSlots[num19] != null)
 				{
 					m_fields.SetUpdateField(startIndex25 + num19 * sizePerEntry9, activeData.BankSlots[num19]);
 				}
 			}
-			for (int num20 = 0; num20 < 7; num20++)
+			for (var num20 = 0; num20 < 7; num20++)
 			{
-				int startIndex26 = 1060;
-				int sizePerEntry10 = 4;
+				var startIndex26 = 1060;
+				var sizePerEntry10 = 4;
 				if (activeData.BankBagSlots[num20] != null)
 				{
 					m_fields.SetUpdateField(startIndex26 + num20 * sizePerEntry10, activeData.BankBagSlots[num20]);
 				}
 			}
-			for (int num21 = 0; num21 < 12; num21++)
+			for (var num21 = 0; num21 < 12; num21++)
 			{
-				int startIndex27 = 1088;
-				int sizePerEntry11 = 4;
+				var startIndex27 = 1088;
+				var sizePerEntry11 = 4;
 				if (activeData.BuyBackSlots[num21] != null)
 				{
 					m_fields.SetUpdateField(startIndex27 + num21 * sizePerEntry11, activeData.BuyBackSlots[num21]);
 				}
 			}
-			for (int num22 = 0; num22 < 32; num22++)
+			for (var num22 = 0; num22 < 32; num22++)
 			{
-				int startIndex28 = 1136;
-				int sizePerEntry12 = 4;
+				var startIndex28 = 1136;
+				var sizePerEntry12 = 4;
 				if (activeData.KeyringSlots[num22] != null)
 				{
 					m_fields.SetUpdateField(startIndex28 + num22 * sizePerEntry12, activeData.KeyringSlots[num22]);
@@ -1273,9 +1273,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_SUMMONED_BATTLE_PET_ID, activeData.SummonedBattlePetGUID);
 			}
-			for (int num23 = 0; num23 < 12; num23++)
+			for (var num23 = 0; num23 < 12; num23++)
 			{
-				int startIndex29 = 1288;
+				var startIndex29 = 1288;
 				if (activeData.KnownTitles[num23].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex29 + num23, activeData.KnownTitles[num23].Value);
@@ -1297,41 +1297,41 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_TRIAL_XP, activeData.TrialXP.Value);
 			}
-			for (int num24 = 0; num24 < 256; num24++)
+			for (var num24 = 0; num24 < 256; num24++)
 			{
 				if (activeData.Skill.SkillLineID[num24].HasValue)
 				{
-					int startIndex30 = 1305;
+					var startIndex30 = 1305;
 					m_fields.SetUpdateField(startIndex30 + num24 / 2, activeData.Skill.SkillLineID[num24].Value, (byte)(num24 & 1));
 				}
 				if (activeData.Skill.SkillStep[num24].HasValue)
 				{
-					int startIndex31 = 1433;
+					var startIndex31 = 1433;
 					m_fields.SetUpdateField(startIndex31 + num24 / 2, activeData.Skill.SkillStep[num24].Value, (byte)(num24 & 1));
 				}
 				if (activeData.Skill.SkillRank[num24].HasValue)
 				{
-					int startIndex32 = 1561;
+					var startIndex32 = 1561;
 					m_fields.SetUpdateField(startIndex32 + num24 / 2, activeData.Skill.SkillRank[num24].Value, (byte)(num24 & 1));
 				}
 				if (activeData.Skill.SkillStartingRank[num24].HasValue)
 				{
-					int startIndex33 = 1689;
+					var startIndex33 = 1689;
 					m_fields.SetUpdateField(startIndex33 + num24 / 2, activeData.Skill.SkillStartingRank[num24].Value, (byte)(num24 & 1));
 				}
 				if (activeData.Skill.SkillMaxRank[num24].HasValue)
 				{
-					int startIndex34 = 1817;
+					var startIndex34 = 1817;
 					m_fields.SetUpdateField(startIndex34 + num24 / 2, activeData.Skill.SkillMaxRank[num24].Value, (byte)(num24 & 1));
 				}
 				if (activeData.Skill.SkillTempBonus[num24].HasValue)
 				{
-					int startIndex35 = 1945;
+					var startIndex35 = 1945;
 					m_fields.SetUpdateField(startIndex35 + num24 / 2, (ushort)activeData.Skill.SkillTempBonus[num24].Value, (byte)(num24 & 1));
 				}
 				if (activeData.Skill.SkillPermBonus[num24].HasValue)
 				{
-					int startIndex36 = 2073;
+					var startIndex36 = 2073;
 					m_fields.SetUpdateField(startIndex36 + num24 / 2, activeData.Skill.SkillPermBonus[num24].Value, (byte)(num24 & 1));
 				}
 			}
@@ -1347,9 +1347,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_TRACK_CREATURES, activeData.TrackCreatureMask.Value);
 			}
-			for (int num25 = 0; num25 < 2; num25++)
+			for (var num25 = 0; num25 < 2; num25++)
 			{
-				int startIndex37 = 2204;
+				var startIndex37 = 2204;
 				if (activeData.TrackResourceMask[num25].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex37 + num25, activeData.TrackResourceMask[num25].Value);
@@ -1403,9 +1403,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_OFFHAND_CRIT_PERCENTAGE, activeData.OffhandCritPercentage.Value);
 			}
-			for (int num26 = 0; num26 < 7; num26++)
+			for (var num26 = 0; num26 < 7; num26++)
 			{
-				int startIndex38 = 2218;
+				var startIndex38 = 2218;
 				if (activeData.SpellCritPercentage[num26].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex38 + num26, activeData.SpellCritPercentage[num26].Value);
@@ -1447,18 +1447,18 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_PVP_POWER_HEALING, activeData.PvpPowerHealing.Value);
 			}
-			for (int num27 = 0; num27 < 240; num27++)
+			for (var num27 = 0; num27 < 240; num27++)
 			{
-				int startIndex39 = 2234;
+				var startIndex39 = 2234;
 				if (activeData.ExploredZones[num27].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex39 + num27 * 2, activeData.ExploredZones[num27].Value);
 				}
 			}
-			for (int num28 = 0; num28 < 2; num28++)
+			for (var num28 = 0; num28 < 2; num28++)
 			{
-				int startIndex40 = 2714;
-				int sizePerEntry13 = 2;
+				var startIndex40 = 2714;
+				var sizePerEntry13 = 2;
 				if (activeData.RestInfo[num28] != null)
 				{
 					if (activeData.RestInfo[num28].StateID.HasValue)
@@ -1471,25 +1471,25 @@ public class ObjectUpdateBuilder
 					}
 				}
 			}
-			for (int num29 = 0; num29 < 7; num29++)
+			for (var num29 = 0; num29 < 7; num29++)
 			{
-				int startIndex41 = 2718;
+				var startIndex41 = 2718;
 				if (activeData.ModDamageDonePos[num29].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex41 + num29, activeData.ModDamageDonePos[num29].Value);
 				}
 			}
-			for (int num30 = 0; num30 < 7; num30++)
+			for (var num30 = 0; num30 < 7; num30++)
 			{
-				int startIndex42 = 2725;
+				var startIndex42 = 2725;
 				if (activeData.ModDamageDoneNeg[num30].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex42 + num30, activeData.ModDamageDoneNeg[num30].Value);
 				}
 			}
-			for (int num31 = 0; num31 < 7; num31++)
+			for (var num31 = 0; num31 < 7; num31++)
 			{
-				int startIndex43 = 2732;
+				var startIndex43 = 2732;
 				if (activeData.ModDamageDonePercent[num31].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex43 + num31, activeData.ModDamageDonePercent[num31].Value);
@@ -1511,17 +1511,17 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_MOD_PERIODIC_HEALING_DONE_PERCENT, activeData.ModPeriodicHealingDonePercent.Value);
 			}
-			for (int num32 = 0; num32 < 3; num32++)
+			for (var num32 = 0; num32 < 3; num32++)
 			{
-				int startIndex44 = 2743;
+				var startIndex44 = 2743;
 				if (activeData.WeaponDmgMultipliers[num32].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex44 + num32, activeData.WeaponDmgMultipliers[num32].Value);
 				}
 			}
-			for (int num33 = 0; num33 < 3; num33++)
+			for (var num33 = 0; num33 < 3; num33++)
 			{
-				int startIndex45 = 2746;
+				var startIndex45 = 2746;
 				if (activeData.WeaponAtkSpeedMultipliers[num33].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex45 + num33, activeData.WeaponAtkSpeedMultipliers[num33].Value);
@@ -1582,17 +1582,17 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_PVP_MEDALS, activeData.PvpMedals.Value);
 			}
-			for (int num34 = 0; num34 < 12; num34++)
+			for (var num34 = 0; num34 < 12; num34++)
 			{
-				int startIndex46 = 2759;
+				var startIndex46 = 2759;
 				if (activeData.BuybackPrice[num34].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex46 + num34, activeData.BuybackPrice[num34].Value);
 				}
 			}
-			for (int num35 = 0; num35 < 12; num35++)
+			for (var num35 = 0; num35 < 12; num35++)
 			{
-				int startIndex47 = 2771;
+				var startIndex47 = 2771;
 				if (activeData.BuybackTimestamp[num35].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex47 + num35, activeData.BuybackTimestamp[num35].Value);
@@ -1646,18 +1646,18 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_WATCHED_FACTION_INDEX, activeData.WatchedFactionIndex.Value);
 			}
-			for (int num36 = 0; num36 < 32; num36++)
+			for (var num36 = 0; num36 < 32; num36++)
 			{
-				int startIndex48 = 2794;
+				var startIndex48 = 2794;
 				if (activeData.CombatRatings[num36].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex48 + num36, activeData.CombatRatings[num36].Value);
 				}
 			}
-			for (int num37 = 0; num37 < 6; num37++)
+			for (var num37 = 0; num37 < 6; num37++)
 			{
-				int startIndex49 = 2826;
-				int sizePerEntry14 = 12;
+				var startIndex49 = 2826;
+				var sizePerEntry14 = 12;
 				if (activeData.PvpInfo[num37] != null)
 				{
 					m_fields.SetUpdateField(startIndex49 + num37 * sizePerEntry14, activeData.PvpInfo[num37].WeeklyPlayed);
@@ -1686,9 +1686,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_MAX_CREATURE_SCALING_LEVEL, activeData.MaxCreatureScalingLevel.Value);
 			}
-			for (int num38 = 0; num38 < 4; num38++)
+			for (var num38 = 0; num38 < 4; num38++)
 			{
-				int startIndex50 = 2901;
+				var startIndex50 = 2901;
 				if (activeData.NoReagentCostMask[num38].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex50 + num38, activeData.NoReagentCostMask[num38].Value);
@@ -1698,9 +1698,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_PET_SPELL_POWER, activeData.PetSpellPower.Value);
 			}
-			for (int num39 = 0; num39 < 2; num39++)
+			for (var num39 = 0; num39 < 2; num39++)
 			{
-				int startIndex51 = 2906;
+				var startIndex51 = 2906;
 				if (activeData.ProfessionSkillLine[num39].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex51 + num39, activeData.ProfessionSkillLine[num39].Value);
@@ -1753,25 +1753,25 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(ActivePlayerField.ACTIVE_PLAYER_FIELD_OVERRIDE_ZONE_PVP_TYPE, activeData.OverrideZonePVPType.Value);
 			}
-			for (int num40 = 0; num40 < 4; num40++)
+			for (var num40 = 0; num40 < 4; num40++)
 			{
-				int startIndex52 = 2917;
+				var startIndex52 = 2917;
 				if (activeData.BagSlotFlags[num40].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex52 + num40, activeData.BagSlotFlags[num40].Value);
 				}
 			}
-			for (int num41 = 0; num41 < 7; num41++)
+			for (var num41 = 0; num41 < 7; num41++)
 			{
-				int startIndex53 = 2921;
+				var startIndex53 = 2921;
 				if (activeData.BankBagSlotFlags[num41].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex53 + num41, activeData.BankBagSlotFlags[num41].Value);
 				}
 			}
-			for (int num42 = 0; num42 < 875; num42++)
+			for (var num42 = 0; num42 < 875; num42++)
 			{
-				int startIndex54 = 2927;
+				var startIndex54 = 2927;
 				if (activeData.QuestCompleted[num42].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex54 + num42 * 2, activeData.QuestCompleted[num42].Value);
@@ -1806,8 +1806,8 @@ public class ObjectUpdateBuilder
 			}
 			if (activeData.SelfResSpells != null)
 			{
-				uint[] fields2 = new uint[activeData.SelfResSpells.Count];
-				for (int num43 = 0; num43 < activeData.SelfResSpells.Count; num43++)
+				var fields2 = new uint[activeData.SelfResSpells.Count];
+				for (var num43 = 0; num43 < activeData.SelfResSpells.Count; num43++)
 				{
 					fields2[num43] = activeData.SelfResSpells[num43];
 				}
@@ -1815,16 +1815,16 @@ public class ObjectUpdateBuilder
 			}
 			if (activeData.HasDailyQuestsUpdate)
 			{
-				uint[] fields3 = new uint[m_gameState.DailyQuestsDone.Count];
-				int counter = 0;
-				foreach (KeyValuePair<uint, uint> itr in m_gameState.DailyQuestsDone)
+				var fields3 = new uint[m_gameState.DailyQuestsDone.Count];
+				var counter = 0;
+				foreach (var itr in m_gameState.DailyQuestsDone)
 				{
 					fields3[counter++] = itr.Value;
 				}
 				m_dynamicFields.SetUpdateField(7, fields3, DynamicFieldChangeType.ValueAndSizeChanged);
 			}
 		}
-		GameObjectData goData = m_updateData.GameObjectData;
+		var goData = m_updateData.GameObjectData;
 		if (goData != null)
 		{
 			if (goData.CreatedBy != null)
@@ -1839,9 +1839,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(GameObjectField.GAMEOBJECT_FLAGS, goData.Flags.Value);
 			}
-			for (int num44 = 0; num44 < 4; num44++)
+			for (var num44 = 0; num44 < 4; num44++)
 			{
-				int startIndex55 = 17;
+				var startIndex55 = 17;
 				if (goData.ParentRotation[num44].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex55 + num44, goData.ParentRotation[num44].Value);
@@ -1890,9 +1890,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(GameObjectField.GAMEOBJECT_STATE_ANIM_KIT_ID, goData.StateAnimKitID.Value);
 			}
-			for (int num45 = 0; num45 < 4; num45++)
+			for (var num45 = 0; num45 < 4; num45++)
 			{
-				int startIndex56 = 28;
+				var startIndex56 = 28;
 				if (goData.StateWorldEffectIDs[num45].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex56 + num45, goData.StateWorldEffectIDs[num45].Value);
@@ -1903,7 +1903,7 @@ public class ObjectUpdateBuilder
 				m_fields.SetUpdateField(GameObjectField.GAMEOBJECT_FIELD_CUSTOM_PARAM, goData.CustomParam.Value);
 			}
 		}
-		DynamicObjectData dynData = m_updateData.DynamicObjectData;
+		var dynData = m_updateData.DynamicObjectData;
 		if (dynData != null)
 		{
 			if (dynData.Caster != null)
@@ -1931,7 +1931,7 @@ public class ObjectUpdateBuilder
 				m_fields.SetUpdateField(DynamicObjectField.DYNAMICOBJECT_CASTTIME, dynData.CastTime.Value);
 			}
 		}
-		CorpseData corpseData = m_updateData.CorpseData;
+		var corpseData = m_updateData.CorpseData;
 		if (corpseData != null)
 		{
 			if (corpseData.Owner != null)
@@ -1950,9 +1950,9 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(CorpseField.CORPSE_FIELD_DISPLAY_ID, corpseData.DisplayID.Value);
 			}
-			for (int num46 = 0; num46 < 19; num46++)
+			for (var num46 = 0; num46 < 19; num46++)
 			{
-				int startIndex57 = 20;
+				var startIndex57 = 20;
 				if (corpseData.Items[num46].HasValue)
 				{
 					m_fields.SetUpdateField(startIndex57 + num46, corpseData.Items[num46].Value);
@@ -1985,10 +1985,10 @@ public class ObjectUpdateBuilder
 			{
 				m_fields.SetUpdateField(CorpseField.CORPSE_FIELD_FACTION_TEMPLATE, corpseData.FactionTemplate.Value);
 			}
-			for (int num47 = 0; num47 < 35; num47++)
+			for (var num47 = 0; num47 < 35; num47++)
 			{
-				int startIndex58 = 43;
-				int sizePerEntry15 = 2;
+				var startIndex58 = 43;
+				var sizePerEntry15 = 2;
 				if (corpseData.Customizations[num47] != null)
 				{
 					m_fields.SetUpdateField(startIndex58 + num47 * sizePerEntry15, corpseData.Customizations[num47].ChrCustomizationOptionID);

@@ -36,7 +36,7 @@ public class GossipMessagePkt : ServerPacket
 		_worldPacket.WriteInt32(TextID);
 		_worldPacket.WriteInt32(GossipOptions.Count);
 		_worldPacket.WriteInt32(GossipQuests.Count);
-		foreach (ClientGossipOption options in GossipOptions)
+		foreach (var options in GossipOptions)
 		{
 			_worldPacket.WriteInt32(options.OptionIndex);
 			_worldPacket.WriteUInt8(options.OptionIcon);
@@ -59,7 +59,7 @@ public class GossipMessagePkt : ServerPacket
 				_worldPacket.WriteInt32(options.SpellID.Value);
 			}
 		}
-		foreach (ClientGossipQuest text in GossipQuests)
+		foreach (var text in GossipQuests)
 		{
 			text.Write(_worldPacket);
 		}
@@ -75,7 +75,7 @@ public class GossipMessagePkt : ServerPacket
 		_worldPacket.WriteBit(bit: true);
 		_worldPacket.WriteBit(bit: false);
 		_worldPacket.FlushBits();
-		foreach (ClientGossipOption options in GossipOptions)
+		foreach (var options in GossipOptions)
 		{
 			_worldPacket.WriteInt32(options.OptionIndex);
 			_worldPacket.WriteUInt8(options.OptionIcon);
@@ -99,7 +99,7 @@ public class GossipMessagePkt : ServerPacket
 			}
 		}
 		_worldPacket.WriteInt32(TextID);
-		foreach (ClientGossipQuest quest in GossipQuests)
+		foreach (var quest in GossipQuests)
 		{
 			quest.WriteWotLK(_worldPacket);
 		}

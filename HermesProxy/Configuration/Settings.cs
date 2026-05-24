@@ -44,7 +44,7 @@ public static class Settings
 	{
 		ClientSeed = config.GetByteArray("ClientSeed", "179D3DC3235629D07113A9B3867F97A7".ParseAsByteArray());
 		ClientBuild = config.GetEnum("ClientBuild", ClientVersionBuild.V2_5_2_40892);
-		string serverBuildStr = config.GetString("ServerBuild", "auto");
+		var serverBuildStr = config.GetString("ServerBuild", "auto");
 		if (serverBuildStr == "auto")
 		{
 			ServerBuild = VersionChecker.GetBestLegacyVersion(ClientBuild);

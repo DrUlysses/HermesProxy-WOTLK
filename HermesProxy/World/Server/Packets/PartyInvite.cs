@@ -56,7 +56,7 @@ internal class PartyInvite : ServerPacket
 		_worldPacket.WriteInt32(LfgSlots.Count);
 		_worldPacket.WriteInt32(LfgCompletedMask);
 		_worldPacket.WriteString(InviterName);
-		foreach (int LfgSlot in LfgSlots)
+		foreach (var LfgSlot in LfgSlots)
 		{
 			_worldPacket.WriteInt32(LfgSlot);
 		}

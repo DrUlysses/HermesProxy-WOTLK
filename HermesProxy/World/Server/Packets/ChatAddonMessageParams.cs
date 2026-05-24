@@ -15,8 +15,8 @@ public class ChatAddonMessageParams
 	public void Read(WorldPacket data)
 	{
 		data.ResetBitPos();
-		uint prefixLen = data.ReadBits<uint>(5);
-		uint textLen = data.ReadBits<uint>(8);
+		var prefixLen = data.ReadBits<uint>(5);
+		var textLen = data.ReadBits<uint>(8);
 		IsLogged = data.HasBit();
 		Type = (ChatMessageTypeModern)data.ReadInt32();
 		Prefix = data.ReadString(prefixLen);

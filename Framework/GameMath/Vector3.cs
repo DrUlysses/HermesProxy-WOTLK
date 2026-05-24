@@ -163,8 +163,8 @@ namespace Framework.GameMath
         /// <returns>A <see cref="Vector3"/> that represents the vector specified by the <paramref name="value"/> parameter.</returns>
         public static Vector3 Parse(string value)
         {
-            Regex r = new Regex(@"\((?<x>.*),(?<y>.*),(?<z>.*)\)", RegexOptions.Singleline);
-            Match m = r.Match(value);
+            var r = new Regex(@"\((?<x>.*),(?<y>.*),(?<z>.*)\)", RegexOptions.Singleline);
+            var m = r.Match(value);
             if (m.Success)
             {
                 return new Vector3(
@@ -188,8 +188,8 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if value was converted successfully; otherwise, <see langword="false"/>.</returns>
         public static bool TryParse(string value, out Vector3 result)
         {
-            Regex r = new Regex(@"\((?<x>.*),(?<y>.*),(?<z>.*)\)", RegexOptions.Singleline);
-            Match m = r.Match(value);
+            var r = new Regex(@"\((?<x>.*),(?<y>.*),(?<z>.*)\)", RegexOptions.Singleline);
+            var m = r.Match(value);
             if (m.Success)
             {
                 result = new Vector3(
@@ -519,7 +519,7 @@ namespace Framework.GameMath
         /// </summary>
         public void Normalize()
         {
-            float length = GetLength();
+            var length = GetLength();
             if (length == 0)
             {
                 throw new DivideByZeroException("Trying to normalize a vector with length of zero.");
@@ -592,7 +592,7 @@ namespace Framework.GameMath
         {
             if (obj is Vector3)
             {
-                Vector3 v = (Vector3)obj;
+                var v = (Vector3)obj;
                 return (X == v.X) && (Y == v.Y) && (Z == v.Z);
             }
             return false;
@@ -897,7 +897,7 @@ namespace Framework.GameMath
         /// <returns>An array of single-precision floating point values.</returns>
         public static explicit operator float[] (Vector3 vector)
         {
-            float[] array = new float[3];
+            var array = new float[3];
             array[0] = vector.X;
             array[1] = vector.Y;
             array[2] = vector.Z;
@@ -910,7 +910,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="System.Collections.Generic.List{T}"/> of single-precision floating point values.</returns>
         public static explicit operator List<float>(Vector3 vector)
         {
-            List<float> list = new List<float>(3);
+            var list = new List<float>(3);
             list.Add(vector.X);
             list.Add(vector.Y);
             list.Add(vector.Z);
@@ -924,7 +924,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="System.Collections.Generic.LinkedList{T}"/> of single-precision floating point values.</returns>
         public static explicit operator LinkedList<float>(Vector3 vector)
         {
-            LinkedList<float> list = new LinkedList<float>();
+            var list = new LinkedList<float>();
             list.AddLast(vector.X);
             list.AddLast(vector.Y);
             list.AddLast(vector.Z);
@@ -960,7 +960,7 @@ namespace Framework.GameMath
 
         public Axis primaryAxis()
         {
-            Axis a = Axis.X;
+            var a = Axis.X;
 
             double nx = Math.Abs(X);
             double ny = Math.Abs(Y);
@@ -997,7 +997,7 @@ namespace Framework.GameMath
         /// <returns>Vector3.Zero if the length is nearly zero, otherwise returns a unit vector</returns>
         public Vector3 directionOrZero()
         {
-            float mag = magnitude();
+            var mag = magnitude();
             if (mag < 0.0000001f)
             {
                 return Zero;
@@ -1061,7 +1061,7 @@ namespace Framework.GameMath
         {
             if ((destinationType == typeof(string)) && (value is Vector3))
             {
-                Vector3 v = (Vector3)value;
+                var v = (Vector3)value;
                 return v.ToString();
             }
 
@@ -1101,7 +1101,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="TypeConverter.StandardValuesCollection"/> that holds a standard set of valid values, or a null reference (Nothing in Visual Basic) if the data type does not support a standard set of values.</returns>
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            StandardValuesCollection svc =
+            var svc =
                 new StandardValuesCollection(new object[4] { Vector3.Zero, Vector3.XAxis, Vector3.YAxis, Vector3.ZAxis });
 
             return svc;

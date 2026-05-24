@@ -30,16 +30,16 @@ public class DynamicUpdateFieldsArray
 
 	public void SetUpdateField(int index, uint[] values, DynamicFieldChangeType changeType)
 	{
-		ByteBuffer valueBuffer = new ByteBuffer();
+		var valueBuffer = new ByteBuffer();
 		m_updateMask.SetBit(index);
-		DynamicUpdateMask arrayMask = new DynamicUpdateMask((uint)values.Length);
+		var arrayMask = new DynamicUpdateMask((uint)values.Length);
 		arrayMask.EncodeDynamicFieldChangeType(changeType, m_updateType);
 		if (m_updateType == UpdateTypeModern.Values && changeType == DynamicFieldChangeType.ValueAndSizeChanged)
 		{
 			arrayMask.ValueCount = values.Length;
 			arrayMask.SetCount(values.Length);
 		}
-		for (int v = 0; v < values.Length; v++)
+		for (var v = 0; v < values.Length; v++)
 		{
 			arrayMask.SetBit(v);
 			valueBuffer.WriteUInt32(values[v]);
@@ -52,8 +52,8 @@ public class DynamicUpdateFieldsArray
 	{
 		if (value is int intValue)
 		{
-			uint[] values = new uint[1];
-			UpdateValues union = new UpdateValues
+			var values = new uint[1];
+			var union = new UpdateValues
 			{
 				SignedValue = intValue
 			};
@@ -68,8 +68,8 @@ public class DynamicUpdateFieldsArray
 		}
 		if (value is float floatValue)
 		{
-			uint[] values2 = new uint[1];
-			UpdateValues union2 = new UpdateValues
+			var values2 = new uint[1];
+			var union2 = new UpdateValues
 			{
 				FloatValue = floatValue
 			};

@@ -138,8 +138,8 @@ public class WowGuid128 : WowGuid
 
 	public override bool HasEntry()
 	{
-		HighGuidType highType = GetHighType();
-		HighGuidType highGuidType = highType;
+		var highType = GetHighType();
+		var highGuidType = highType;
 		if ((uint)(highGuidType - 9) <= 3u || highGuidType == HighGuidType.AreaTrigger)
 		{
 			return true;

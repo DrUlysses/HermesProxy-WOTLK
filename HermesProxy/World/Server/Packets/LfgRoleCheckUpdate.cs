@@ -34,14 +34,14 @@ public class LfgRoleCheckUpdate : ServerPacket
 		_worldPacket.WriteUInt32(0); // BgQueueIDs count
 		_worldPacket.WriteInt32(GroupFinderActivityID);
 		_worldPacket.WriteUInt32((uint)Members.Count);
-		foreach (uint slot in JoinSlots)
+		foreach (var slot in JoinSlots)
 		{
 			_worldPacket.WriteUInt32(slot);
 		}
 		_worldPacket.WriteBit(IsBeginning);
 		_worldPacket.WriteBit(IsRequeue);
 		_worldPacket.FlushBits();
-		foreach (LfgRoleCheckMember member in Members)
+		foreach (var member in Members)
 		{
 			_worldPacket.WritePackedGuid128(member.Guid);
 			_worldPacket.WriteUInt32(member.RolesDesired);

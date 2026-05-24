@@ -36,7 +36,7 @@ public class QuestGiverOfferReward
 		}
 		data.WriteUInt32(SuggestedPartyMembers);
 		data.WriteInt32(Emotes.Count);
-		foreach (QuestDescEmote emote in Emotes)
+		foreach (var emote in Emotes)
 		{
 			data.WriteInt32((int)emote.Type);
 			data.WriteUInt32(emote.Delay);

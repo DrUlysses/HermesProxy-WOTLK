@@ -51,7 +51,7 @@ public class QueryPageTextResponse : ServerPacket
 			return;
 		}
 		_worldPacket.WriteInt32(Pages.Count);
-		foreach (PageTextInfo page in Pages)
+		foreach (var page in Pages)
 		{
 			page.Write(_worldPacket);
 		}

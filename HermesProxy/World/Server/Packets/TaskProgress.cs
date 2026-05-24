@@ -21,7 +21,7 @@ public class TaskProgress
 		data.WriteUInt32(Flags);
 		data.WriteUInt32(Unk);
 		data.WriteInt32(Progress.Count);
-		foreach (ushort progress in Progress)
+		foreach (var progress in Progress)
 		{
 			data.WriteUInt16(progress);
 		}

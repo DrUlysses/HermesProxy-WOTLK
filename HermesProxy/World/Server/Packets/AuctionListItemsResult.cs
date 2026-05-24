@@ -33,7 +33,7 @@ public class AuctionListItemsResult : ServerPacket
 		_worldPacket.WriteBits(0, 11); // ItemLevel
 		_worldPacket.WriteBit(false); // no SuffixItemNameDescriptionID
 		_worldPacket.FlushBits();
-		foreach (AuctionItem item in Items)
+		foreach (var item in Items)
 		{
 			item.Write(_worldPacket);
 		}

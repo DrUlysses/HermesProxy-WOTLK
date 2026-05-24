@@ -177,7 +177,7 @@ public static class ObjectTypeConverter
 
 	public static ObjectTypeLegacy ConvertToLegacy(ObjectType type)
 	{
-		foreach (KeyValuePair<ObjectTypeLegacy, ObjectType> itr in ConvDictLegacy)
+		foreach (var itr in ConvDictLegacy)
 		{
 			if (itr.Value == type)
 			{
@@ -198,7 +198,7 @@ public static class ObjectTypeConverter
 
 	public static ObjectType801 ConvertTo801(ObjectType type)
 	{
-		foreach (KeyValuePair<ObjectType801, ObjectType> itr in ConvDict801)
+		foreach (var itr in ConvDict801)
 		{
 			if (itr.Value == type)
 			{
@@ -219,7 +219,7 @@ public static class ObjectTypeConverter
 
 	public static ObjectTypeBCC ConvertToBCC(ObjectType type)
 	{
-		foreach (KeyValuePair<ObjectTypeBCC, ObjectType> itr in ConvDictBCC)
+		foreach (var itr in ConvDictBCC)
 		{
 			if (itr.Value == type)
 			{

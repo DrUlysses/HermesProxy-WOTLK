@@ -29,7 +29,7 @@ namespace Framework.Logging
 
     public static class Log
     {
-        static Dictionary<LogType, (ConsoleColor Color, string Type)> LogToColorType = new()
+        private static readonly Dictionary<LogType, (ConsoleColor Color, string Type)> LogToColorType = new()
         {
             { LogType.Debug,    (ConsoleColor.DarkBlue, " Debug   ") },
             { LogType.Server,   (ConsoleColor.Blue,     " Server  ") },
@@ -39,15 +39,15 @@ namespace Framework.Logging
             { LogType.Storage,  (ConsoleColor.Cyan,     " Storage ") },
         };
 
-        static BlockingCollection<(LogType Type, string Message)> logQueue = new();
+        private static readonly BlockingCollection<(LogType Type, string Message)> LogQueue = new();
         private static Thread? _logOutputThread;
-        public static bool IsLogging => _logOutputThread != null && !logQueue.IsCompleted;
+        public static bool IsLogging => _logOutputThread != null && !LogQueue.IsCompleted;
 
         public static bool DebugLogEnabled { get; set; }
 
-        private static string _logDir;
-        private static StreamWriter _logWriter;
-        private static readonly object _logWriterLock = new();
+        private static string? _logDir;
+        private static StreamWriter? _logWriter;
+        private static readonly object LogWriterLock = new();
 
         /// <summary>
         /// Start the logging Thread and take logs out of the <see cref="BlockingCollection{T}"/>
@@ -60,7 +60,7 @@ namespace Framework.Logging
             {
                 _logOutputThread = new Thread(() =>
                 {
-                    foreach (var msg in logQueue.GetConsumingEnumerable())
+                    foreach (var msg in LogQueue.GetConsumingEnumerable())
                     {
                         PrintInternalDirectly(msg.Type, msg.Message);
                     }
@@ -77,8 +77,11 @@ namespace Framework.Logging
             {
                 _logDir = Path.Combine(Directory.GetCurrentDirectory(), "logs");
                 Directory.CreateDirectory(_logDir);
-                string logFile = Path.Combine(_logDir, $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
-                _logWriter = new StreamWriter(logFile, append: true, encoding: Encoding.UTF8) { AutoFlush = true };
+                var logFile = Path.Combine(_logDir, $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
+                lock (LogWriterLock)
+                {
+                    _logWriter = new StreamWriter(logFile, append: true, encoding: Encoding.UTF8) { AutoFlush = true };
+                }
                 _logWriter.WriteLine($"=== HermesProxy Log Started {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===");
             }
             catch (Exception ex)
@@ -92,7 +95,7 @@ namespace Framework.Logging
             if (_logWriter == null) return;
             try
             {
-                lock (_logWriterLock)
+                lock (LogWriterLock)
                 {
                     _logWriter.WriteLine(line);
                 }
@@ -111,8 +114,8 @@ namespace Framework.Logging
 #else
             timestamp = $"{DateTime.Now:HH:mm:ss}";
 #endif
-            string typeStr = LogToColorType[type].Type;
-            string fullLine = $"{timestamp} |{typeStr}| {text}";
+            var typeStr = LogToColorType[type].Type;
+            var fullLine = $"{timestamp} |{typeStr}| {text}";
 
             // Write to file (always, no color codes)
             WriteToFile(fullLine);
@@ -131,29 +134,30 @@ namespace Framework.Logging
         /// <param name="path">The relative path of the file.</param>
         public static void Print(LogType type, object text, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
         {
-            string formattedText = $"{FormatCaller(method, path)} | {text}";
+            var formattedText = $"{FormatCaller(method, path)} | {text}";
 #if DEBUG
             // Fastpath when using breakpoints we want to see the log results immediately
             if (Debugger.IsAttached)
             {
-                lock (logQueue)
+                lock (LogQueue)
                 {
                     PrintInternalDirectly(type, formattedText);
                 }
                 return;
             }
 #endif
-            logQueue.Add((type, formattedText));
+            LogQueue.Add((type, formattedText));
         }
 
         public static void PrintNet(LogType type, LogNetDir netDirection, object text, [CallerMemberName] string method = "", [CallerFilePath] string path = "")
         {
-            string directionText = netDirection switch
+            var directionText = netDirection switch
             {
                 LogNetDir.C2P => "C>P S",
                 LogNetDir.P2S => "C P>S",
                 LogNetDir.S2P => "C P<S",
                 LogNetDir.P2C => "C<P S",
+                _ => "     "
             };
             Print(type, $"{directionText} | {text}", method, path);
         }

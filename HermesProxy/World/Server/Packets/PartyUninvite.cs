@@ -17,8 +17,8 @@ internal class PartyUninvite : ClientPacket
 	{
 		if (ModernVersion.ExpansionVersion == 3)
 		{
-            bool hasPartyIndex = _worldPacket.HasBit();
-            uint reasonLen = _worldPacket.ReadBits<uint>(8);
+            var hasPartyIndex = _worldPacket.HasBit();
+            var reasonLen = _worldPacket.ReadBits<uint>(8);
             TargetGUID = _worldPacket.ReadPackedGuid128();
             if (hasPartyIndex)
                 PartyIndex = _worldPacket.ReadUInt8();
@@ -28,7 +28,7 @@ internal class PartyUninvite : ClientPacket
 		{
             PartyIndex = _worldPacket.ReadUInt8();
             TargetGUID = _worldPacket.ReadPackedGuid128();
-            byte reasonLen = _worldPacket.ReadBits<byte>(8);
+            var reasonLen = _worldPacket.ReadBits<byte>(8);
             Reason = _worldPacket.ReadString(reasonLen);
         }
 	}

@@ -45,7 +45,7 @@ public class PlayerSettings
 
 	public PlayerFlags CreateNewFlags()
 	{
-		PlayerFlags flags = _lastCapturedFlags;
+		var flags = _lastCapturedFlags;
 		PatchFlags(ref flags);
 		return flags;
 	}

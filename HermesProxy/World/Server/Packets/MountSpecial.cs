@@ -18,7 +18,7 @@ internal class MountSpecial : ClientPacket
 		{
 			SequenceVariation = _worldPacket.ReadInt32();
 		}
-		for (int i = 0; i < SpellVisualKitIDs.Length; i++)
+		for (var i = 0; i < SpellVisualKitIDs.Length; i++)
 		{
 			SpellVisualKitIDs[i] = _worldPacket.ReadInt32();
 		}

@@ -72,11 +72,11 @@ public class AuraDataInfo
 		{
 			data.WriteFloat(TimeMod.Value);
 		}
-		foreach (float point in Points)
+		foreach (var point in Points)
 		{
 			data.WriteFloat(point);
 		}
-		foreach (float point2 in EstimatedPoints)
+		foreach (var point2 in EstimatedPoints)
 		{
 			data.WriteFloat(point2);
 		}

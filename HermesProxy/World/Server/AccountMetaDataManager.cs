@@ -20,7 +20,7 @@ public class AccountMetaDataManager
 
 	private string GetAccountMetaDataDirectory()
 	{
-		string path = Path.GetFullPath(Path.Combine("AccountData", _accountName));
+		var path = Path.GetFullPath(Path.Combine("AccountData", _accountName));
 		if (!Directory.Exists(path))
 		{
 			Directory.CreateDirectory(path);
@@ -30,7 +30,7 @@ public class AccountMetaDataManager
 
 	private string GetAccountCharacterMetaDataDirectory(string realm, string characterName)
 	{
-		string path = Path.GetFullPath(Path.Combine("AccountData", _accountName, realm, characterName));
+		var path = Path.GetFullPath(Path.Combine("AccountData", _accountName, realm, characterName));
 		if (!Directory.Exists(path))
 		{
 			Directory.CreateDirectory(path);
@@ -45,13 +45,13 @@ public class AccountMetaDataManager
 
 	public (string realmName, string charName, ulong charLowerGuid, long lastLoginUnixSec)? GetLastSelectedCharacter()
 	{
-		string path = Path.Combine(GetAccountMetaDataDirectory(), "last_character.txt");
+		var path = Path.Combine(GetAccountMetaDataDirectory(), "last_character.txt");
 		if (!File.Exists(path))
 		{
 			return null;
 		}
-		string rawContent = File.ReadAllText(path, Encoding.UTF8);
-		string[] content = rawContent.Split(',');
+		var rawContent = File.ReadAllText(path, Encoding.UTF8);
+		var content = rawContent.Split(',');
 		if (content.Length != 4)
 		{
 			Log.Print(LogType.Error, "Invalid split size in 'GetLastSelectedCharacter' for account '" + _accountName + "'", "AccountDataManager.cs");
@@ -62,16 +62,16 @@ public class AccountMetaDataManager
 
 	public void SaveLastSelectedCharacter(string realmName, string charName, ulong charLowerGuid, long lastLoginUnixSec)
 	{
-		string dir = GetAccountMetaDataDirectory();
-		string path = Path.Combine(dir, "last_character.txt");
+		var dir = GetAccountMetaDataDirectory();
+		var path = Path.Combine(dir, "last_character.txt");
 		File.WriteAllText(path, $"{realmName},{charName},{charLowerGuid},{lastLoginUnixSec}", Encoding.UTF8);
 		Log.Print(LogType.Debug, "Saved last selected char in '" + path + "'", "AccountDataManager.cs");
 	}
 
 	public void InvalidateLastSelectedCharacter()
 	{
-		string dir = GetAccountMetaDataDirectory();
-		string path = Path.Combine(dir, "last_character.txt");
+		var dir = GetAccountMetaDataDirectory();
+		var path = Path.Combine(dir, "last_character.txt");
 		if (File.Exists(path))
 		{
 			File.WriteAllText(path, "");
@@ -81,57 +81,57 @@ public class AccountMetaDataManager
 
 	public List<uint> GetAllCompletedQuests(string realmName, string charName)
 	{
-		string dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
-		string path = Path.Combine(dir, "completed_quests.csv");
+		var dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
+		var path = Path.Combine(dir, "completed_quests.csv");
 		if (!File.Exists(path))
 		{
 			return new List<uint>();
 		}
-		List<string> lines = File.ReadAllLines(path).ToList();
+		var lines = File.ReadAllLines(path).ToList();
 		return lines.Select(x => uint.Parse(x.Split(',').FirstOrDefault() ?? "0")).ToList();
 	}
 
 	public void MarkQuestAsCompleted(string realmName, string charName, uint questId)
 	{
-		string dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
-		string path = Path.Combine(dir, "completed_quests.csv");
-		long when = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		var dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
+		var path = Path.Combine(dir, "completed_quests.csv");
+		var when = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		File.AppendAllLines(path, new string[1] { $"{questId},{when}" }, Encoding.UTF8);
 	}
 
 	public void MarkQuestAsNotCompleted(string realmName, string charName, uint questId)
 	{
-		string dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
-		string path = Path.Combine(dir, "completed_quests.csv");
-		string needle = questId.ToString();
-		List<string> lines = File.ReadAllLines(path).ToList();
+		var dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
+		var path = Path.Combine(dir, "completed_quests.csv");
+		var needle = questId.ToString();
+		var lines = File.ReadAllLines(path).ToList();
 		lines.RemoveAll(l => l.Split(',').FirstOrDefault()?.Equals(needle) ?? false);
 		File.WriteAllLines(path, lines);
 	}
 
 	public void SaveCharacterSettingsStorage(string realmName, string charName, PlayerSettings.InternalStorage settings)
 	{
-		string dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
-		string path = Path.Combine(dir, "settings.json");
-		JsonSerializerOptions options = new JsonSerializerOptions
+		var dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
+		var path = Path.Combine(dir, "settings.json");
+		var options = new JsonSerializerOptions
 		{
 			WriteIndented = true
 		};
-		string jsonString = JsonSerializer.Serialize(settings, options);
+		var jsonString = JsonSerializer.Serialize(settings, options);
 		File.WriteAllText(path, jsonString, Encoding.UTF8);
 	}
 
 	public PlayerSettings.InternalStorage LoadCharacterSettingsStorage(string realmName, string charName)
 	{
-		string dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
-		string path = Path.Combine(dir, "settings.json");
+		var dir = GetAccountCharacterMetaDataDirectory(realmName, charName);
+		var path = Path.Combine(dir, "settings.json");
 		if (!File.Exists(path))
 		{
-			PlayerSettings.InternalStorage fallback = new PlayerSettings.InternalStorage();
+			var fallback = new PlayerSettings.InternalStorage();
 			SaveCharacterSettingsStorage(realmName, charName, fallback);
 			return fallback;
 		}
-		string jsonString = File.ReadAllText(path, Encoding.UTF8);
+		var jsonString = File.ReadAllText(path, Encoding.UTF8);
 		return JsonSerializer.Deserialize<PlayerSettings.InternalStorage>(jsonString);
 	}
 }

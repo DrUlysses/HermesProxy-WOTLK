@@ -24,7 +24,7 @@ public class QueryPlayerNamesResponse : ServerPacket
 	protected override void Write()
 	{
 		_worldPacket.WriteUInt32((uint)Players.Count);
-		foreach (NameCacheLookupResult result in Players)
+		foreach (var result in Players)
 		{
 			_worldPacket.WriteUInt8(result.Result);
 			_worldPacket.WritePackedGuid128(result.Player);

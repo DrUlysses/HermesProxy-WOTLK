@@ -20,8 +20,8 @@ internal class PartyInviteClient : ClientPacket
 	public override void Read()
 	{
 		PartyIndex = _worldPacket.ReadUInt8();
-		uint targetNameLen = _worldPacket.ReadBits<uint>(9);
-		uint targetRealmLen = _worldPacket.ReadBits<uint>(9);
+		var targetNameLen = _worldPacket.ReadBits<uint>(9);
+		var targetRealmLen = _worldPacket.ReadBits<uint>(9);
 		VirtualRealmAddress = _worldPacket.ReadUInt32();
 		TargetGUID = _worldPacket.ReadPackedGuid128();
 		TargetName = _worldPacket.ReadString(targetNameLen);

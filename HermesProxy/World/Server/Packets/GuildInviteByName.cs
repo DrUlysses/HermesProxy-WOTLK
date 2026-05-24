@@ -13,8 +13,8 @@ public class GuildInviteByName : ClientPacket
 
 	public override void Read()
 	{
-		uint nameLen = _worldPacket.ReadBits<uint>(9);
-		bool isArena = _worldPacket.HasBit();
+		var nameLen = _worldPacket.ReadBits<uint>(9);
+		var isArena = _worldPacket.HasBit();
 		Name = _worldPacket.ReadString(nameLen);
 		if (isArena)
 		{

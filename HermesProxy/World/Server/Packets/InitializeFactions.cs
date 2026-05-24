@@ -25,7 +25,7 @@ public class InitializeFactions : ServerPacket
 
 	protected override void Write()
 	{
-		ushort count = GetFactionCount();
+		var count = GetFactionCount();
 		for (ushort i = 0; i < count; i++)
 		{
 			if (ModernVersion.ExpansionVersion >= 3)

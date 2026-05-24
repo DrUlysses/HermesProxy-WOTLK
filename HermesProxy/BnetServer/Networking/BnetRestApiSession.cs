@@ -30,7 +30,7 @@ public class BnetRestApiSession : SSLSocket
 
 	public override async Task ReadHandler(byte[] data, int receivedLength)
 	{
-		HttpHeader httpRequest = HttpHelper.ParseRequest(data, receivedLength);
+		var httpRequest = HttpHelper.ParseRequest(data, receivedLength);
 		if (httpRequest == null || !RequestRouter(httpRequest))
 		{
 			CloseSocket();
@@ -48,14 +48,14 @@ public class BnetRestApiSession : SSLSocket
 			SendEmptyResponse(HttpCode.NotFound);
 			return false;
 		}
-		string path = httpRequest.Path.Substring("/bnetserver/".Length);
-		string[] pathElements = path.Split('/');
+		var path = httpRequest.Path.Substring("/bnetserver/".Length);
+		var pathElements = path.Split('/');
 		(string, string) tuple = (pathElements[0], httpRequest.Method);
-		(string, string) tuple2 = tuple;
+		var tuple2 = tuple;
 		var (text, _) = tuple2;
 		if (text == "login")
 		{
-			string item = tuple2.Item2;
+			var item = tuple2.Item2;
 			if (item == "GET")
 			{
 				SendResponse(HttpCode.Ok, Singleton<LoginServiceManager>.Instance.GetFormInput());
@@ -73,25 +73,27 @@ public class BnetRestApiSession : SSLSocket
 
 	public Task HandleLoginRequest(string[] pathElements, HttpHeader request)
 	{
-		LogonData loginForm = Json.CreateObject<LogonData>(request.Content);
+		var loginForm = Json.CreateObject<LogonData>(request.Content);
 		if (loginForm == null)
 		{
 			return SendEmptyResponse(HttpCode.InternalServerError);
 		}
-		GlobalSessionData globalSession = new GlobalSessionData();
-		globalSession.OS = pathElements[1];
-		globalSession.Build = uint.Parse(pathElements[2]);
-		globalSession.Locale = pathElements[3];
+		var globalSession = new GlobalSessionData
+		{
+			OS = pathElements[1],
+			Build = uint.Parse(pathElements[2]),
+			Locale = pathElements[3]
+		};
 		if (Settings.ClientBuild != (ClientVersionBuild)globalSession.Build)
 		{
 			return SendAuthError(AuthResult.FAIL_WRONG_MODERN_VER);
 		}
-		string login = "";
-		string password = "";
-		foreach (FormInputValue field in loginForm.Inputs)
+		var login = "";
+		var password = "";
+		foreach (var field in loginForm.Inputs)
 		{
-			string id = field.Id;
-			string text = id;
+			var id = field.Id;
+			var text = id;
 			if (!(text == "account_name"))
 			{
 				if (text == "password")
@@ -105,15 +107,15 @@ public class BnetRestApiSession : SSLSocket
 			}
 		}
 		globalSession.AuthClient = new AuthClient(globalSession);
-		AuthResult response = globalSession.AuthClient.ConnectToAuthServer(login, password, globalSession.Locale);
+		var response = globalSession.AuthClient.ConnectToAuthServer(login, password, globalSession.Locale);
 		if (response != AuthResult.SUCCESS)
 		{
 			return SendAuthError(response);
 		}
 		globalSession.AuthClient.SendRealmListUpdateRequest();
-		LogonResult loginResult = new LogonResult();
-		byte[] ticket = Array.Empty<byte>().GenerateRandomKey(20);
-		string loginTicket = (globalSession.LoginTicket = "HP-" + ticket.ToHexString());
+		var loginResult = new LogonResult();
+		var ticket = Array.Empty<byte>().GenerateRandomKey(20);
+		var loginTicket = (globalSession.LoginTicket = "HP-" + ticket.ToHexString());
 		globalSession.Username = login;
 		globalSession.AccountMetaDataMgr = new AccountMetaDataManager(login);
 		BnetSessionTicketStorage.AddNewSessionByName(login, globalSession);
@@ -130,11 +132,11 @@ public class BnetRestApiSession : SSLSocket
 
 	private async Task SendAuthError(AuthResult response)
 	{
-		LogonResult loginResult = new LogonResult();
-		LogonResult logonResult = loginResult;
-		LogonResult logonResult2 = loginResult;
-		LogonResult logonResult3 = loginResult;
-		(string, string, string) tuple = response switch
+		var loginResult = new LogonResult();
+		var logonResult = loginResult;
+		var logonResult2 = loginResult;
+		var logonResult3 = loginResult;
+		var tuple = response switch
 		{
 			AuthResult.FAIL_UNKNOWN_ACCOUNT => ("LOGIN", "UNABLE_TO_DECODE", "Invalid username or password."), 
 			AuthResult.FAIL_INCORRECT_PASSWORD => ("LOGIN", "UNABLE_TO_DECODE", "Invalid password."), 

@@ -20,7 +20,7 @@ public class ContactList : ServerPacket
 		_worldPacket.WriteUInt32((uint)Flags);
 		_worldPacket.WriteBits(Contacts.Count, 8);
 		_worldPacket.FlushBits();
-		foreach (ContactInfo contact in Contacts)
+		foreach (var contact in Contacts)
 		{
 			contact.Write(_worldPacket);
 		}

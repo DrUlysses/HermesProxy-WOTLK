@@ -23,7 +23,7 @@ public class AuraUpdate : ServerPacket
 	{
 		_worldPacket.WriteBit(UpdateAll);
 		_worldPacket.WriteBits(Auras.Count, 9);
-		foreach (AuraInfo aura2 in Auras)
+		foreach (var aura2 in Auras)
 		{
 			aura2.Write(_worldPacket);
 		}

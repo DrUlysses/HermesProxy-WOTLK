@@ -35,7 +35,7 @@ public class ServerPetitionShowSignatures : ServerPacket
 		_worldPacket.WritePackedGuid128(OwnerAccountID);
 		_worldPacket.WriteInt32(PetitionID);
 		_worldPacket.WriteInt32(Signatures.Count);
-		foreach (PetitionSignature signature in Signatures)
+		foreach (var signature in Signatures)
 		{
 			_worldPacket.WritePackedGuid128(signature.Signer);
 			_worldPacket.WriteInt32(signature.Choice);

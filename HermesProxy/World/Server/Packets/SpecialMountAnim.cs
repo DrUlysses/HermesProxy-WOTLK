@@ -22,7 +22,7 @@ internal class SpecialMountAnim : ServerPacket
 		_worldPacket.WritePackedGuid128(UnitGUID);
 		_worldPacket.WriteInt32(SpellVisualKitIDs.Count);
 		_worldPacket.WriteInt32(SequenceVariation);
-		foreach (int id in SpellVisualKitIDs)
+		foreach (var id in SpellVisualKitIDs)
 		{
 			_worldPacket.WriteInt32(id);
 		}

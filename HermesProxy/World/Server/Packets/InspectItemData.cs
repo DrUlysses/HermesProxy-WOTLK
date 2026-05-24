@@ -26,7 +26,7 @@ public class InspectItemData
 		data.WriteUInt8(Index);
 		data.WriteInt32(AzeritePowers.Count);
 		data.WriteInt32(AzeriteEssences.Count);
-		foreach (int id in AzeritePowers)
+		foreach (var id in AzeritePowers)
 		{
 			data.WriteInt32(id);
 		}
@@ -35,15 +35,15 @@ public class InspectItemData
 		data.WriteBits(Enchants.Count, 4);
 		data.WriteBits(Gems.Count, 2);
 		data.FlushBits();
-		foreach (AzeriteEssenceData azeriteEssence in AzeriteEssences)
+		foreach (var azeriteEssence in AzeriteEssences)
 		{
 			azeriteEssence.Write(data);
 		}
-		foreach (InspectEnchantData enchant in Enchants)
+		foreach (var enchant in Enchants)
 		{
 			enchant.Write(data);
 		}
-		foreach (ItemGemData gem in Gems)
+		foreach (var gem in Gems)
 		{
 			gem.Write(data);
 		}

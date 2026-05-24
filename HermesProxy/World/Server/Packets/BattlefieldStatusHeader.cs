@@ -34,10 +34,10 @@ public class BattlefieldStatusHeader
 		data.WriteUInt8(RangeMax);
 		data.WriteUInt8(ArenaTeamSize);
 		data.WriteUInt32(InstanceID);
-		foreach (uint battlefieldListID in BattlefieldListIDs)
+		foreach (var battlefieldListID in BattlefieldListIDs)
 		{
 			ulong bgId = battlefieldListID;
-			ulong queueID = bgId | 0x1F10000000000000L;
+			var queueID = bgId | 0x1F10000000000000L;
 			data.WriteUInt64(queueID);
 		}
 		data.WriteBit(IsArena);

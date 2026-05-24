@@ -41,19 +41,19 @@ public class PetSpells : ServerPacket
 		_worldPacket.WriteUInt32(TimeLimit);
 		_worldPacket.WriteUInt16((ushort)((byte)CommandState | (Flag << 16)));
 		_worldPacket.WriteUInt8((byte)ReactState);
-		uint[] actionButtons = ActionButtons;
-		foreach (uint actionButton in actionButtons)
+		var actionButtons = ActionButtons;
+		foreach (var actionButton in actionButtons)
 		{
 			_worldPacket.WriteUInt32(actionButton);
 		}
 		_worldPacket.WriteInt32(Actions.Count);
 		_worldPacket.WriteInt32(Cooldowns.Count);
 		_worldPacket.WriteInt32(SpellHistory.Count);
-		foreach (uint action in Actions)
+		foreach (var action in Actions)
 		{
 			_worldPacket.WriteUInt32(action);
 		}
-		foreach (PetSpellCooldown cooldown in Cooldowns)
+		foreach (var cooldown in Cooldowns)
 		{
 			_worldPacket.WriteUInt32(cooldown.SpellID);
 			_worldPacket.WriteUInt32(cooldown.Duration);
@@ -61,7 +61,7 @@ public class PetSpells : ServerPacket
 			_worldPacket.WriteFloat(cooldown.ModRate);
 			_worldPacket.WriteUInt16(cooldown.Category);
 		}
-		foreach (PetSpellHistory history in SpellHistory)
+		foreach (var history in SpellHistory)
 		{
 			_worldPacket.WriteUInt32(history.CategoryID);
 			_worldPacket.WriteUInt32(history.RecoveryTime);

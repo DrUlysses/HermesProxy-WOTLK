@@ -31,13 +31,13 @@ internal class AuctionSellItem : ClientPacket
 		{
 			TaintedBy = new AddOnInfo();
 		}
-		int itemCountBits = (ModernVersion.AddedInClassicVersion(1, 14, 3, 2, 5, 4) ? 6 : 5);
-		uint itemCount = _worldPacket.ReadBits<uint>(itemCountBits);
+		var itemCountBits = (ModernVersion.AddedInClassicVersion(1, 14, 3, 2, 5, 4) ? 6 : 5);
+		var itemCount = _worldPacket.ReadBits<uint>(itemCountBits);
 		if (TaintedBy != null)
 		{
 			TaintedBy.Read(_worldPacket);
 		}
-		for (int i = 0; i < itemCount; i++)
+		for (var i = 0; i < itemCount; i++)
 		{
 			Items.Add(new AuctionItemForSale(_worldPacket));
 		}

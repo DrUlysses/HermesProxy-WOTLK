@@ -36,11 +36,11 @@ public class AllAchievementData : ServerPacket
 	{
 		_worldPacket.WriteInt32(Earned.Count);
 		_worldPacket.WriteInt32(Progress.Count);
-		foreach (EarnedAchievement earned in Earned)
+		foreach (var earned in Earned)
 		{
 			earned.Write(_worldPacket);
 		}
-		foreach (CriteriaProgressPkt progress in Progress)
+		foreach (var progress in Progress)
 		{
 			progress.Write(_worldPacket);
 		}

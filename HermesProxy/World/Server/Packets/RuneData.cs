@@ -15,7 +15,7 @@ public class RuneData
 		data.WriteUInt8(Start);
 		data.WriteUInt8(Count);
 		data.WriteInt32(Cooldowns.Count);
-		foreach (byte cd in Cooldowns)
+		foreach (var cd in Cooldowns)
 		{
 			data.WriteUInt8(cd);
 		}

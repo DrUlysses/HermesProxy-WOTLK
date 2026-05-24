@@ -12,7 +12,7 @@ public class SpellModifierInfo
 	{
 		data.WriteUInt8(ModIndex);
 		data.WriteInt32(ModifierData.Count);
-		foreach (SpellModifierData modifierDatum in ModifierData)
+		foreach (var modifierDatum in ModifierData)
 		{
 			modifierDatum.Write(data);
 		}

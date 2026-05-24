@@ -15,7 +15,7 @@ internal class ChatAddonMessageTargeted : ClientPacket
 
 	public override void Read()
 	{
-		uint targetLen = _worldPacket.ReadBits<uint>(9);
+		var targetLen = _worldPacket.ReadBits<uint>(9);
 		Params.Read(_worldPacket);
 		ChannelGuid = _worldPacket.ReadPackedGuid128();
 		Target = _worldPacket.ReadString(targetLen);

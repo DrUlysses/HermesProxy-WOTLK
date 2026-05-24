@@ -22,11 +22,11 @@ public class SendKnownSpells : ServerPacket
 		_worldPacket.WriteBit(InitialLogin);
 		_worldPacket.WriteInt32(KnownSpells.Count);
 		_worldPacket.WriteInt32(FavoriteSpells.Count);
-		foreach (uint spellId in KnownSpells)
+		foreach (var spellId in KnownSpells)
 		{
 			_worldPacket.WriteUInt32(spellId);
 		}
-		foreach (uint spellId2 in FavoriteSpells)
+		foreach (var spellId2 in FavoriteSpells)
 		{
 			_worldPacket.WriteUInt32(spellId2);
 		}

@@ -36,7 +36,7 @@ public class ChannelListResponse : ServerPacket
 		_worldPacket.WriteUInt32((uint)ChannelFlags);
 		_worldPacket.WriteInt32(Members.Count);
 		_worldPacket.WriteString(ChannelName);
-		foreach (ChannelPlayer player in Members)
+		foreach (var player in Members)
 		{
 			_worldPacket.WritePackedGuid128(player.Guid);
 			_worldPacket.WriteUInt32(player.VirtualRealmAddress);

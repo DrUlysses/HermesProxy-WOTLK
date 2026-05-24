@@ -87,7 +87,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			{
 				return;
 			}
-			using ClientPacket clientPacket = (ClientPacket)Activator.CreateInstance(packetType, packet);
+			using var clientPacket = (ClientPacket)Activator.CreateInstance(packetType, packet);
 			clientPacket.LogPacket(ref session.GetSession().ModernSniff);
 			clientPacket.Read();
 			methodCaller(session, clientPacket);
@@ -95,7 +95,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 		private static Action<WorldSocket, ClientPacket> CreateDelegate<P1>(MethodInfo method) where P1 : ClientPacket
 		{
-			Action<WorldSocket, P1> d = (Action<WorldSocket, P1>)method.CreateDelegate(typeof(Action<WorldSocket, P1>));
+			var d = (Action<WorldSocket, P1>)method.CreateDelegate(typeof(Action<WorldSocket, P1>));
 			return delegate(WorldSocket target, ClientPacket p)
 			{
 				d(target, (P1)p);
@@ -170,15 +170,17 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) || GetSession().GameState.CurrentArenaTeamIds[arena.TeamIndex] == 0)
 		{
-			ArenaTeamRosterResponse response = new ArenaTeamRosterResponse();
-			response.TeamSize = ModernVersion.GetArenaTeamSizeFromIndex(arena.TeamIndex);
+			var response = new ArenaTeamRosterResponse
+			{
+				TeamSize = ModernVersion.GetArenaTeamSizeFromIndex(arena.TeamIndex)
+			};
 			SendPacket(response);
 			return;
 		}
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ARENA_TEAM_QUERY);
+		var packet = new WorldPacket(Opcode.CMSG_ARENA_TEAM_QUERY);
 		packet.WriteUInt32(GetSession().GameState.CurrentArenaTeamIds[arena.TeamIndex]);
 		SendPacketToServer(packet);
-		WorldPacket packet2 = new WorldPacket(Opcode.CMSG_ARENA_TEAM_ROSTER);
+		var packet2 = new WorldPacket(Opcode.CMSG_ARENA_TEAM_ROSTER);
 		packet2.WriteUInt32(GetSession().GameState.CurrentArenaTeamIds[arena.TeamIndex]);
 		SendPacketToServer(packet2);
 	}
@@ -188,17 +190,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (GetSession().GameState.ArenaTeams.TryGetValue(arena.TeamId, out var team))
 		{
-			ArenaTeamQueryResponse response = new ArenaTeamQueryResponse();
-			response.TeamId = arena.TeamId;
-			response.Emblem = new ArenaTeamEmblem();
-			response.Emblem.TeamId = arena.TeamId;
-			response.Emblem.TeamSize = team.TeamSize;
-			response.Emblem.BackgroundColor = team.BackgroundColor;
-			response.Emblem.EmblemStyle = team.EmblemStyle;
-			response.Emblem.EmblemColor = team.EmblemColor;
-			response.Emblem.BorderStyle = team.BorderStyle;
-			response.Emblem.BorderColor = team.BorderColor;
-			response.Emblem.TeamName = team.Name;
+			var response = new ArenaTeamQueryResponse
+			{
+				TeamId = arena.TeamId,
+				Emblem = new ArenaTeamEmblem
+				{
+					TeamId = arena.TeamId,
+					TeamSize = team.TeamSize,
+					BackgroundColor = team.BackgroundColor,
+					EmblemStyle = team.EmblemStyle,
+					EmblemColor = team.EmblemColor,
+					BorderStyle = team.BorderStyle,
+					BorderColor = team.BorderColor,
+					TeamName = team.Name
+				}
+			};
 			SendPacket(response);
 		}
 	}
@@ -206,7 +212,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BATTLEMASTER_JOIN_ARENA)]
 	private void HandleBattlematerJoinArena(BattlemasterJoinArena join)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEMASTER_JOIN_ARENA);
+		var packet = new WorldPacket(Opcode.CMSG_BATTLEMASTER_JOIN_ARENA);
 		packet.WriteGuid(join.Guid.To64());
 		packet.WriteUInt8(join.TeamIndex);
 		packet.WriteBool(data: true);
@@ -217,7 +223,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BATTLEMASTER_JOIN_SKIRMISH)]
 	private void HandleBattlematerJoinSkirmish(BattlemasterJoinSkirmish join)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEMASTER_JOIN_ARENA);
+		var packet = new WorldPacket(Opcode.CMSG_BATTLEMASTER_JOIN_ARENA);
 		packet.WriteGuid(join.Guid.To64());
 		packet.WriteUInt8(join.TeamSize);
 		packet.WriteBool(join.AsGroup);
@@ -229,7 +235,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ARENA_TEAM_LEADER)]
 	private void HandleArenaUnimplemented(ArenaTeamRemove arena)
 	{
-		WorldPacket packet = new WorldPacket(arena.GetUniversalOpcode());
+		var packet = new WorldPacket(arena.GetUniversalOpcode());
 		packet.WriteUInt32(arena.TeamId);
 		packet.WriteCString(GetSession().GameState.GetPlayerName(arena.PlayerGuid));
 		SendPacketToServer(packet);
@@ -239,7 +245,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ARENA_TEAM_LEAVE)]
 	private void HandleArenaTeamLeave(ArenaTeamLeave arena)
 	{
-		WorldPacket packet = new WorldPacket(arena.GetUniversalOpcode());
+		var packet = new WorldPacket(arena.GetUniversalOpcode());
 		packet.WriteUInt32(arena.TeamId);
 		SendPacketToServer(packet);
 	}
@@ -248,14 +254,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ARENA_TEAM_DECLINE)]
 	private void HandleArenaTeamInviteResponse(ArenaTeamAccept arena)
 	{
-		WorldPacket packet = new WorldPacket(arena.GetUniversalOpcode());
+		var packet = new WorldPacket(arena.GetUniversalOpcode());
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_AUCTION_HELLO_REQUEST)]
 	private void HandleAuctionHelloRequest(InteractWithNPC interact)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_AUCTION_HELLO);
+		var packet = new WorldPacket(Opcode.MSG_AUCTION_HELLO);
 		packet.WriteGuid(interact.CreatureGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -263,11 +269,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUCTION_LIST_BIDDED_ITEMS)]
 	private void HandleAuctionListBidderItems(AuctionListBidderItems auction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUCTION_LIST_BIDDED_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_AUCTION_LIST_BIDDED_ITEMS);
 		packet.WriteGuid(auction.Auctioneer.To64());
 		packet.WriteUInt32(auction.Offset);
 		packet.WriteInt32(auction.AuctionItemIDs.Count);
-		foreach (uint itemId in auction.AuctionItemIDs)
+		foreach (var itemId in auction.AuctionItemIDs)
 		{
 			packet.WriteUInt32(itemId);
 		}
@@ -277,7 +283,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUCTION_LIST_OWNED_ITEMS)]
 	private void HandleAuctionListOwnerItems(AuctionListOwnerItems auction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUCTION_LIST_OWNED_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_AUCTION_LIST_OWNED_ITEMS);
 		packet.WriteGuid(auction.Auctioneer.To64());
 		packet.WriteUInt32(auction.Offset);
 		SendPacketToServer(packet);
@@ -286,7 +292,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUCTION_LIST_ITEMS)]
 	private void HandleAuctionListItems(AuctionListItems auction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUCTION_LIST_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_AUCTION_LIST_ITEMS);
 		packet.WriteGuid(auction.Auctioneer.To64());
 		packet.WriteUInt32(auction.Offset);
 		packet.WriteCString(auction.Name);
@@ -319,7 +325,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			packet.WriteBool(auction.ExactMatch);
 			packet.WriteUInt8((byte)auction.Sorts.Count);
-			foreach (AuctionSort sort in auction.Sorts)
+			foreach (var sort in auction.Sorts)
 			{
 				packet.WriteUInt8(sort.Type);
 				packet.WriteUInt8(sort.Direction);
@@ -332,7 +338,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			{
 				return -1;
 			}
-			for (int i = 0; i < 32; i++)
+			for (var i = 0; i < 32; i++)
 			{
 				if ((modernInventoryFlag & (1 << i)) > 0)
 				{
@@ -362,7 +368,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUCTION_SELL_ITEM)]
 	private void HandleAuctionSellItem(AuctionSellItem auction)
 	{
-		uint expireTime = auction.ExpireTime;
+		var expireTime = auction.ExpireTime;
 		if (LegacyVersion.ExpansionVersion <= 1 && ModernVersion.ExpansionVersion > 1)
 		{
 			switch (expireTime)
@@ -395,9 +401,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_2_2a_10505))
 		{
-			foreach (AuctionItemForSale item in auction.Items)
+			foreach (var item in auction.Items)
 			{
-				WorldPacket packet = new WorldPacket(Opcode.CMSG_AUCTION_SELL_ITEM);
+				var packet = new WorldPacket(Opcode.CMSG_AUCTION_SELL_ITEM);
 				packet.WriteGuid(auction.Auctioneer.To64());
 				packet.WriteGuid(item.Guid.To64());
 				packet.WriteUInt32((uint)auction.MinBid);
@@ -407,10 +413,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			}
 			return;
 		}
-		WorldPacket packet2 = new WorldPacket(Opcode.CMSG_AUCTION_SELL_ITEM);
+		var packet2 = new WorldPacket(Opcode.CMSG_AUCTION_SELL_ITEM);
 		packet2.WriteGuid(auction.Auctioneer.To64());
 		packet2.WriteInt32(auction.Items.Count);
-		foreach (AuctionItemForSale item2 in auction.Items)
+		foreach (var item2 in auction.Items)
 		{
 			packet2.WriteGuid(item2.Guid.To64());
 			packet2.WriteUInt32(item2.UseCount);
@@ -424,7 +430,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUCTION_REMOVE_ITEM)]
 	private void HandleAuctionRemoveItem(AuctionRemoveItem auction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUCTION_REMOVE_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_AUCTION_REMOVE_ITEM);
 		packet.WriteGuid(auction.Auctioneer.To64());
 		packet.WriteUInt32(auction.AuctionID);
 		SendPacketToServer(packet);
@@ -433,7 +439,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUCTION_PLACE_BID)]
 	private void HandleAuctionPlaceBId(AuctionPlaceBid auction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUCTION_PLACE_BID);
+		var packet = new WorldPacket(Opcode.CMSG_AUCTION_PLACE_BID);
 		packet.WriteGuid(auction.Auctioneer.To64());
 		packet.WriteUInt32(auction.AuctionID);
 		packet.WriteUInt32((uint)auction.BidAmount);
@@ -443,7 +449,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BATTLEMASTER_JOIN)]
 	private void HandleBattlefieldJoin(BattlemasterJoin join)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEMASTER_JOIN);
+		var packet = new WorldPacket(Opcode.CMSG_BATTLEMASTER_JOIN);
 		packet.WriteGuid(join.BattlemasterGuid.To64());
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
@@ -461,7 +467,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BATTLEFIELD_PORT)]
 	private void HandleBattlefieldPort(BattlefieldPort port)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_PORT);
+		var packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_PORT);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteUInt8(2);
@@ -481,21 +487,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REQUEST_BATTLEFIELD_STATUS)]
 	private void HandleRequestBattlefieldStatus(RequestBattlefieldStatus log)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_STATUS);
+		var packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_STATUS);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_PVP_LOG_DATA)]
 	private void HandlePvPLogData(PVPLogDataRequest log)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_PVP_LOG_DATA);
+		var packet = new WorldPacket(Opcode.MSG_PVP_LOG_DATA);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_BATTLEFIELD_LIST)]
 	private void HandleBattlefieldList(BattlefieldListRequest request)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_LIST);
+		var packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_LIST);
 		packet.WriteUInt32((uint)request.ListID);
 		packet.WriteUInt8(0); // fromWhere: 0=battlemaster, 1=UI
 		packet.WriteUInt8(1); // canGainXP
@@ -505,7 +511,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BATTLEFIELD_LEAVE)]
 	private void HandleBattlefieldLeave(BattlefieldLeave leave)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_LEAVE);
+		var packet = new WorldPacket(Opcode.CMSG_BATTLEFIELD_LEAVE);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteUInt8(2);
@@ -523,16 +529,18 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ENUM_CHARACTERS)]
 	private void HandleEnumCharacters(EnumCharacters charEnum)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ENUM_CHARACTERS);
+		var packet = new WorldPacket(Opcode.CMSG_ENUM_CHARACTERS);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_GET_ACCOUNT_CHARACTER_LIST)]
 	private void HandleGetAccountCharacterList(GetAccountCharacterListRequest request)
 	{
-		GetAccountCharacterListResult response = new GetAccountCharacterListResult();
-		response.Token = request.Token;
-		foreach (OwnCharacterInfo ownCharacter in GetSession().GameState.OwnCharacters)
+		var response = new GetAccountCharacterListResult
+		{
+			Token = request.Token
+		};
+		foreach (var ownCharacter in GetSession().GameState.OwnCharacters)
 		{
 			response.CharacterList.Add(new AccountCharacterListEntry
 			{
@@ -554,8 +562,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GENERATE_RANDOM_CHARACTER_NAME)]
 	private void HandleGenerateRandomCharacterNameRequest(GenerateRandomCharacterNameRequest randomCharacterName)
 	{
-		GenerateRandomCharacterNameResult result = new GenerateRandomCharacterNameResult();
-		result.Success = false;
+		var result = new GenerateRandomCharacterNameResult
+		{
+			Success = false
+		};
 		SendPacket(result);
 	}
 
@@ -563,7 +573,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleAlterAppearance(AlterAppearance alter)
 	{
 		CharacterCustomizations.ConvertModernCustomizationsToLegacy(alter.Customizations, out var skin, out var face, out var hairStyle, out var hairColor, out var facialhair);
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ALTER_APPEARANCE);
+		var packet = new WorldPacket(Opcode.CMSG_ALTER_APPEARANCE);
 		packet.WriteUInt32(hairStyle);
 		packet.WriteUInt32(hairColor);
 		packet.WriteUInt32(facialhair);
@@ -574,7 +584,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_UPDATE_MISSILE_TRAJECTORY)]
 	private void HandleUpdateMissileTrajectory(UpdateMissileTrajectory missile)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_UPDATE_MISSILE_TRAJECTORY);
+		var packet = new WorldPacket(Opcode.CMSG_UPDATE_MISSILE_TRAJECTORY);
 		packet.WriteGuid(missile.Guid.To64());
 		packet.WriteUInt32((uint)missile.SpellID);
 		packet.WriteFloat(missile.Pitch);
@@ -592,7 +602,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CREATE_CHARACTER)]
 	private void HandleCreateCharacter(CreateCharacter charCreate)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CREATE_CHARACTER);
+		var packet = new WorldPacket(Opcode.CMSG_CREATE_CHARACTER);
 		packet.WriteCString(charCreate.CreateInfo.Name);
 		packet.WriteUInt8((byte)charCreate.CreateInfo.RaceId);
 		packet.WriteUInt8((byte)charCreate.CreateInfo.ClassId);
@@ -610,7 +620,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAR_DELETE)]
 	private void HandleCharDelete(CharDelete charDelete)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CHAR_DELETE);
+		var packet = new WorldPacket(Opcode.CMSG_CHAR_DELETE);
 		packet.WriteGuid(charDelete.Guid.To64());
 		SendPacketToServer(packet);
 	}
@@ -631,7 +641,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_PLAYER_NAME)]
 	private void HandleNameQueryRequest(QueryPlayerName queryPlayerName)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_NAME_QUERY);
+		var packet = new WorldPacket(Opcode.CMSG_NAME_QUERY);
 		packet.WriteGuid(queryPlayerName.Player.To64());
 		SendPacketToServer(packet, (!GetSession().GameState.IsInWorld) ? Opcode.SMSG_LOGIN_VERIFY_WORLD : Opcode.MSG_NULL_ACTION);
 	}
@@ -639,9 +649,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_PLAYER_NAMES)]
 	private void HandleNamesQueryRequest(QueryPlayerNames queryPlayerNames)
 	{
-		foreach (WowGuid128 guid in queryPlayerNames.Players)
+		foreach (var guid in queryPlayerNames.Players)
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_NAME_QUERY);
+			var packet = new WorldPacket(Opcode.CMSG_NAME_QUERY);
 			packet.WriteGuid(guid.To64());
 			SendPacketToServer(packet, (!GetSession().GameState.IsInWorld) ? Opcode.SMSG_LOGIN_VERIFY_WORLD : Opcode.MSG_NULL_ACTION);
 		}
@@ -655,7 +665,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			Log.Print(LogType.Error, $"Player tried to log in with unknown char id: {playerLogin.Guid}", "CharacterHandler.cs");
 			return;
 		}
-		Realm realm = GetSession().RealmManager.GetRealm(GetSession().RealmId);
+		var realm = GetSession().RealmManager.GetRealm(GetSession().RealmId);
 		if (realm == null)
 		{
 			Log.Print(LogType.Error, $"Player tried to log in to unknown realm id: {GetSession().RealmId}", "CharacterHandler.cs");
@@ -671,7 +681,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		GetSession().GameState.CurrentPlayerGuid = playerLogin.Guid;
 		GetSession().GameState.CurrentPlayerInfo = GetSession().GameState.OwnCharacters.Single(x => x.CharacterGuid == playerLogin.Guid);
 		GetSession().GameState.CurrentPlayerStorage.LoadCurrentPlayer();
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PLAYER_LOGIN);
+		var packet = new WorldPacket(Opcode.CMSG_PLAYER_LOGIN);
 		packet.WriteGuid(playerLogin.Guid.To64());
 		SendPacketToServer(packet);
 	}
@@ -679,21 +689,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LOGOUT_REQUEST)]
 	private void HandleLogoutRequest(LogoutRequest logoutRequest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_LOGOUT_REQUEST);
+		var packet = new WorldPacket(Opcode.CMSG_LOGOUT_REQUEST);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_LOGOUT_CANCEL)]
 	private void HandleLogoutCancel(LogoutCancel logoutCancel)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_LOGOUT_CANCEL);
+		var packet = new WorldPacket(Opcode.CMSG_LOGOUT_CANCEL);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_REQUEST_PLAYED_TIME)]
 	private void HandleRequestPlayedTime(RequestPlayedTime played)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REQUEST_PLAYED_TIME);
+		var packet = new WorldPacket(Opcode.CMSG_REQUEST_PLAYED_TIME);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			packet.WriteBool(played.TriggerScriptEvent);
@@ -705,7 +715,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_TITLE)]
 	private void HandleTogglePvP(SetTitle title)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_TITLE);
+		var packet = new WorldPacket(Opcode.CMSG_SET_TITLE);
 		packet.WriteInt32(title.TitleID);
 		SendPacketToServer(packet);
 	}
@@ -713,14 +723,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_TOGGLE_PVP)]
 	private void HandleTogglePvP(TogglePvP pvp)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_TOGGLE_PVP);
+		var packet = new WorldPacket(Opcode.CMSG_TOGGLE_PVP);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_SET_PVP)]
 	private void HandleTogglePvP(SetPvP pvp)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_TOGGLE_PVP);
+		var packet = new WorldPacket(Opcode.CMSG_TOGGLE_PVP);
 		packet.WriteBool(pvp.Enable);
 		SendPacketToServer(packet);
 	}
@@ -728,7 +738,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_ACTION_BUTTON)]
 	private void HandleSetActionButton(SetActionButton button)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_ACTION_BUTTON);
+		var packet = new WorldPacket(Opcode.CMSG_SET_ACTION_BUTTON);
 		packet.WriteUInt8(button.Index);
 		packet.WriteUInt16(button.Action);
 		packet.WriteUInt16(button.Type);
@@ -738,7 +748,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_ACTION_BAR_TOGGLES)]
 	private void HandleSetActionBarToggles(SetActionBarToggles bars)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_ACTION_BAR_TOGGLES);
+		var packet = new WorldPacket(Opcode.CMSG_SET_ACTION_BAR_TOGGLES);
 		packet.WriteUInt8(bars.Mask);
 		SendPacketToServer(packet);
 	}
@@ -746,7 +756,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_UNLEARN_SKILL)]
 	private void HandleUnlearnSkill(UnlearnSkill skill)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_UNLEARN_SKILL);
+		var packet = new WorldPacket(Opcode.CMSG_UNLEARN_SKILL);
 		packet.WriteUInt32(skill.SkillLine);
 		SendPacketToServer(packet);
 	}
@@ -755,7 +765,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PLAYER_SHOWING_HELM)]
 	private void HandleShowHelmOrCloak(PlayerShowingHelmOrCloak show)
 	{
-		WorldPacket packet = new WorldPacket(show.GetUniversalOpcode());
+		var packet = new WorldPacket(show.GetUniversalOpcode());
 		packet.WriteBool(show.Showing);
 		SendPacketToServer(packet);
 	}
@@ -763,7 +773,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_INSPECT)]
 	private void HandleInspect(Inspect inspect)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_INSPECT);
+		var packet = new WorldPacket(Opcode.CMSG_INSPECT);
 		packet.WriteGuid(inspect.Target.To64());
 		SendPacketToServer(packet);
 	}
@@ -771,7 +781,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_INSPECT_HONOR_STATS)]
 	private void HandleInspectHonorStats(Inspect inspect)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_INSPECT_HONOR_STATS);
+		var packet = new WorldPacket(Opcode.MSG_INSPECT_HONOR_STATS);
 		packet.WriteGuid(inspect.Target.To64());
 		SendPacketToServer(packet);
 	}
@@ -781,13 +791,15 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.MSG_INSPECT_ARENA_TEAMS);
+			var packet = new WorldPacket(Opcode.MSG_INSPECT_ARENA_TEAMS);
 			packet.WriteGuid(inspect.Target.To64());
 			SendPacketToServer(packet);
 			return;
 		}
-		InspectPvP pvp = new InspectPvP();
-		pvp.PlayerGUID = inspect.Target;
+		var pvp = new InspectPvP
+		{
+			PlayerGUID = inspect.Target
+		};
 		pvp.ArenaTeams.Add(new ArenaTeamInspectData());
 		pvp.ArenaTeams.Add(new ArenaTeamInspectData());
 		pvp.ArenaTeams.Add(new ArenaTeamInspectData());
@@ -797,7 +809,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHARACTER_RENAME_REQUEST)]
 	private void HandleCharacterRenameRequest(CharacterRenameRequest rename)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CHARACTER_RENAME_REQUEST);
+		var packet = new WorldPacket(Opcode.CMSG_CHARACTER_RENAME_REQUEST);
 		packet.WriteGuid(rename.Guid.To64());
 		packet.WriteCString(rename.NewName);
 		SendPacketToServer(packet);
@@ -826,7 +838,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_CHANNEL_ANNOUNCEMENTS)]
 	private void HandleChatChannelCommand(ChannelCommand command)
 	{
-		WorldPacket packet = new WorldPacket(command.GetUniversalOpcode());
+		var packet = new WorldPacket(command.GetUniversalOpcode());
 		packet.WriteCString(command.ChannelName);
 		SendPacketToServer(packet);
 	}
@@ -834,7 +846,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_CHANNEL_LIST)]
 	private void HandleChatChannelList(ChannelCommand command)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_LIST);
+		var packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_LIST);
 		packet.WriteCString(command.ChannelName);
 		SendPacketToServer(packet);
 		GetSession().GameState.ChannelDisplayList = false;
@@ -845,13 +857,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_LIST);
+			var packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_LIST);
 			packet.WriteCString(command.ChannelName);
 			SendPacketToServer(packet);
 		}
 		else
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_DISPLAY_LIST);
+			var packet2 = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_DISPLAY_LIST);
 			packet2.WriteCString(command.ChannelName);
 			SendPacketToServer(packet2);
 		}
@@ -863,7 +875,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_DECLINE_INVITE);
+			var packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_DECLINE_INVITE);
 			packet.WriteCString(command.ChannelName);
 			SendPacketToServer(packet);
 		}
@@ -880,7 +892,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_CHANNEL_UNSILENCE_ALL)]
 	private void HandleChatChannelPlayerCommand(ChannelPlayerCommand command)
 	{
-		WorldPacket packet = new WorldPacket(command.GetUniversalOpcode());
+		var packet = new WorldPacket(command.GetUniversalOpcode());
 		packet.WriteCString(command.ChannelName);
 		packet.WriteCString(command.Name);
 		SendPacketToServer(packet);
@@ -889,7 +901,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_CHANNEL_PASSWORD)]
 	private void HandleChatChannelPassword(ChannelPassword command)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_PASSWORD);
+		var packet = new WorldPacket(Opcode.CMSG_CHAT_CHANNEL_PASSWORD);
 		packet.WriteCString(command.ChannelName);
 		packet.WriteCString(command.Password);
 		SendPacketToServer(packet);
@@ -898,7 +910,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_MESSAGE_AFK)]
 	private void HandleChatMessageAFK(ChatMessageAFK afk)
 	{
-		List<string> toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(afk.Text);
+		var toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(afk.Text);
 		if (toBeSentTextParts.Count >= 1)
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -915,7 +927,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_MESSAGE_DND)]
 	private void HandleChatMessageDND(ChatMessageDND dnd)
 	{
-		List<string> toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(dnd.Text);
+		var toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(dnd.Text);
 		if (toBeSentTextParts.Count >= 1)
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -932,8 +944,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_MESSAGE_CHANNEL)]
 	private void HandleChatMessageChannel(ChatMessageChannel channel)
 	{
-		List<string> toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(channel.Text);
-		foreach (string text in toBeSentTextParts)
+		var toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(channel.Text);
+		foreach (var text in toBeSentTextParts)
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
@@ -949,8 +961,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_MESSAGE_WHISPER)]
 	private void HandleChatMessageWhisper(ChatMessageWhisper whisper)
 	{
-		List<string> toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(whisper.Text);
-		foreach (string text in toBeSentTextParts)
+		var toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(whisper.Text);
+		foreach (var text in toBeSentTextParts)
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
@@ -966,7 +978,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_MESSAGE_EMOTE)]
 	private void HandleChatMessageEmote(ChatMessageEmote emote)
 	{
-		List<string> toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(emote.Text);
+		var toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(emote.Text);
 		if (toBeSentTextParts.Count >= 1)
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -1021,17 +1033,17 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			Log.Print(LogType.Error, $"HandleMessagechatOpcode : Unknown chat opcode ({packet.GetOpcode()})", "ChatHandler.cs");
 			return;
 		}
-		List<string> toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(packet.Text);
-		foreach (string text in toBeSentTextParts)
+		var toBeSentTextParts = ConvertTextMessageIntoMaxLengthParts(packet.Text);
+		foreach (var text in toBeSentTextParts)
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
-				ChatMessageTypeWotLK chatMsg = (ChatMessageTypeWotLK)Enum.Parse(typeof(ChatMessageTypeWotLK), type.ToString());
+				var chatMsg = (ChatMessageTypeWotLK)Enum.Parse(typeof(ChatMessageTypeWotLK), type.ToString());
 				GetSession().WorldClient.SendMessageChatWotLK(chatMsg, packet.Language, text, "", "");
 			}
 			else
 			{
-				ChatMessageTypeVanilla chatMsg2 = (ChatMessageTypeVanilla)Enum.Parse(typeof(ChatMessageTypeVanilla), type.ToString());
+				var chatMsg2 = (ChatMessageTypeVanilla)Enum.Parse(typeof(ChatMessageTypeVanilla), type.ToString());
 				GetSession().WorldClient.SendMessageChatVanilla(chatMsg2, packet.Language, text, "", "");
 			}
 		}
@@ -1040,16 +1052,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_ADDON_MESSAGE)]
 	private void HandleAddonMessage(ChatAddonMessage packet)
 	{
-		uint language = uint.MaxValue;
-		string text = packet.Params.Prefix + "\t" + packet.Params.Text;
+		var language = uint.MaxValue;
+		var text = packet.Params.Prefix + "\t" + packet.Params.Text;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			ChatMessageTypeWotLK chatMsg = (ChatMessageTypeWotLK)Enum.Parse(typeof(ChatMessageTypeWotLK), packet.Params.Type.ToString());
+			var chatMsg = (ChatMessageTypeWotLK)Enum.Parse(typeof(ChatMessageTypeWotLK), packet.Params.Type.ToString());
 			GetSession().WorldClient.SendMessageChatWotLK(chatMsg, language, text, "", "");
 		}
 		else
 		{
-			ChatMessageTypeVanilla chatMsg2 = (ChatMessageTypeVanilla)Enum.Parse(typeof(ChatMessageTypeVanilla), packet.Params.Type.ToString());
+			var chatMsg2 = (ChatMessageTypeVanilla)Enum.Parse(typeof(ChatMessageTypeVanilla), packet.Params.Type.ToString());
 			GetSession().WorldClient.SendMessageChatVanilla(chatMsg2, language, text, "", "");
 		}
 	}
@@ -1057,17 +1069,17 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_ADDON_MESSAGE_TARGETED)]
 	private void HandleAddonMessageTargeted(ChatAddonMessageTargeted packet)
 	{
-		uint language = uint.MaxValue;
-		string text = packet.Params.Prefix + "\t" + packet.Params.Text;
-		string channelName = (packet.ChannelGuid.IsEmpty() ? "" : GetSession().GameState.GetChannelName((int)packet.ChannelGuid.GetCounter()));
+		var language = uint.MaxValue;
+		var text = packet.Params.Prefix + "\t" + packet.Params.Text;
+		var channelName = (packet.ChannelGuid.IsEmpty() ? "" : GetSession().GameState.GetChannelName((int)packet.ChannelGuid.GetCounter()));
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			ChatMessageTypeWotLK chatMsg = (ChatMessageTypeWotLK)Enum.Parse(typeof(ChatMessageTypeWotLK), packet.Params.Type.ToString());
+			var chatMsg = (ChatMessageTypeWotLK)Enum.Parse(typeof(ChatMessageTypeWotLK), packet.Params.Type.ToString());
 			GetSession().WorldClient.SendMessageChatWotLK(chatMsg, language, text, channelName, packet.Target);
 		}
 		else
 		{
-			ChatMessageTypeVanilla chatMsg2 = (ChatMessageTypeVanilla)Enum.Parse(typeof(ChatMessageTypeVanilla), packet.Params.Type.ToString());
+			var chatMsg2 = (ChatMessageTypeVanilla)Enum.Parse(typeof(ChatMessageTypeVanilla), packet.Params.Type.ToString());
 			GetSession().WorldClient.SendMessageChatVanilla(chatMsg2, language, text, channelName, packet.Target);
 		}
 	}
@@ -1075,7 +1087,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SEND_TEXT_EMOTE)]
 	private void HandleSendTextEmote(CTextEmote emote)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SEND_TEXT_EMOTE);
+		var packet = new WorldPacket(Opcode.CMSG_SEND_TEXT_EMOTE);
 		packet.WriteInt32(emote.EmoteID);
 		packet.WriteInt32(emote.SoundIndex);
 		packet.WriteGuid(emote.Target.To64());
@@ -1085,7 +1097,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHAT_REGISTER_ADDON_PREFIXES)]
 	private void HandleChatRegisterAddonPrefixes(ChatRegisterAddonPrefixes addons)
 	{
-		foreach (string prefix in addons.Prefixes)
+		foreach (var prefix in addons.Prefixes)
 		{
 			GetSession().GameState.AddonPrefixes.Add(prefix);
 		}
@@ -1099,19 +1111,19 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private static List<string> ConvertTextMessageIntoMaxLengthParts(string originalTextMessage)
 	{
-		List<string> toBeSendTextParts = new List<string>();
+		var toBeSendTextParts = new List<string>();
 		if (originalTextMessage.Length <= 255)
 		{
 			toBeSendTextParts.Add(originalTextMessage);
 		}
 		else
 		{
-			string linkBegin = "(?=\\|c[a-f0-9]{8}\\|H)";
-			string linkEnd = "(?<=\\|h\\|r)";
-			string[] splitted = Regex.Split(originalTextMessage, linkBegin + "|" + linkEnd);
-			IEnumerable<char[]> splittedAndSlicedToMaxLength = splitted.SelectMany(x => x.Chunk(255));
-			StringBuilder strBuilder = new StringBuilder();
-			foreach (char[] part in splittedAndSlicedToMaxLength)
+			var linkBegin = "(?=\\|c[a-f0-9]{8}\\|H)";
+			var linkEnd = "(?<=\\|h\\|r)";
+			var splitted = Regex.Split(originalTextMessage, linkBegin + "|" + linkEnd);
+			var splittedAndSlicedToMaxLength = splitted.SelectMany(x => x.Chunk(255));
+			var strBuilder = new StringBuilder();
+			foreach (var part in splittedAndSlicedToMaxLength)
 			{
 				if (strBuilder.Length + part.Length > 255)
 				{
@@ -1144,7 +1156,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			GetSession().AccountDataMgr.Data[data.DataType].CompressedData = new byte[0];
 		}
 		GetSession().AccountDataMgr.Data[data.DataType].Guid = data.PlayerGuid;
-		UpdateAccountData update = new UpdateAccountData(GetSession().AccountDataMgr.Data[data.DataType]);
+		var update = new UpdateAccountData(GetSession().AccountDataMgr.Data[data.DataType]);
 		SendPacket(update);
 	}
 
@@ -1157,7 +1169,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ATTACK_SWING)]
 	private void HandleAttackSwing(AttackSwing attack)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ATTACK_SWING);
+		var packet = new WorldPacket(Opcode.CMSG_ATTACK_SWING);
 		packet.WriteGuid(attack.Victim.To64());
 		SendPacketToServer(packet);
 
@@ -1165,7 +1177,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		// If player has a ranged weapon equipped, auto-cast Auto Shot (spell 75) for them.
 		if (GetSession().GameState.HasRangedWeapon())
 		{
-			WorldPacket castPacket = new WorldPacket(Opcode.CMSG_CAST_SPELL);
+			var castPacket = new WorldPacket(Opcode.CMSG_CAST_SPELL);
 			castPacket.WriteUInt8(0); // cast count
 			castPacket.WriteUInt32(75); // Auto Shot spell ID
 			castPacket.WriteUInt8(0); // cast flags
@@ -1179,14 +1191,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ATTACK_STOP)]
 	private void HandleAttackSwing(AttackStop attack)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ATTACK_STOP);
+		var packet = new WorldPacket(Opcode.CMSG_ATTACK_STOP);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_SET_SHEATHED)]
 	private void HandleSetSheathed(SetSheathed sheath)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_SHEATHED);
+		var packet = new WorldPacket(Opcode.CMSG_SET_SHEATHED);
 		packet.WriteInt32(sheath.SheathState);
 		SendPacketToServer(packet);
 	}
@@ -1194,9 +1206,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CAN_DUEL)]
 	private void HandleCanDuel(CanDuel request)
 	{
-		CanDuelResult result = new CanDuelResult();
-		result.TargetGUID = request.TargetGUID;
-		result.Result = true;
+		var result = new CanDuelResult
+		{
+			TargetGUID = request.TargetGUID,
+			Result = true
+		};
 		SendPacket(result);
 	}
 
@@ -1205,13 +1219,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (response.Accepted)
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_DUEL_ACCEPTED);
+			var packet = new WorldPacket(Opcode.CMSG_DUEL_ACCEPTED);
 			packet.WriteGuid(response.ArbiterGUID.To64());
 			SendPacketToServer(packet);
 		}
 		else
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_DUEL_CANCELLED);
+			var packet2 = new WorldPacket(Opcode.CMSG_DUEL_CANCELLED);
 			packet2.WriteGuid(response.ArbiterGUID.To64());
 			SendPacketToServer(packet2);
 		}
@@ -1220,9 +1234,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GAME_OBJ_USE)]
 	private void HandleGameObjUse(GameObjUse use)
 	{
-		WowGuid64 guid64 = use.Guid.To64();
+		var guid64 = use.Guid.To64();
 		Log.Print(LogType.Debug, $"[GameObjUse] Modern GUID={use.Guid} -> Legacy GUID={guid64} raw=0x{guid64.GetLowValue():X16}");
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GAME_OBJ_USE);
+		var packet = new WorldPacket(Opcode.CMSG_GAME_OBJ_USE);
 		packet.WriteGuid(guid64);
 		SendPacketToServer(packet);
 	}
@@ -1231,14 +1245,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleGameObjUse(GameObjReportUse use)
 	{
 		GetSession().GameState.CurrentInteractedWithGO = use.Guid;
-		WowGuid64 guid64 = use.Guid.To64();
+		var guid64 = use.Guid.To64();
 		Log.Print(LogType.Debug, $"[GameObjReportUse] Modern={use.Guid} Legacy={guid64} Entry={guid64.GetEntry()} Low={guid64.GetLowValue():X16}", "HandleGameObjReportUse", "");
 		// Send GAME_OBJ_USE to trigger the interaction on the server
-		WorldPacket usePacket = new WorldPacket(Opcode.CMSG_GAME_OBJ_USE);
+		var usePacket = new WorldPacket(Opcode.CMSG_GAME_OBJ_USE);
 		usePacket.WriteGuid(guid64);
 		SendPacketToServer(usePacket);
 		// Also send GAME_OBJ_REPORT_USE for tracking
-		WorldPacket reportPacket = new WorldPacket(Opcode.CMSG_GAME_OBJ_REPORT_USE);
+		var reportPacket = new WorldPacket(Opcode.CMSG_GAME_OBJ_REPORT_USE);
 		reportPacket.WriteGuid(guid64);
 		SendPacketToServer(reportPacket);
 	}
@@ -1246,7 +1260,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PARTY_INVITE)]
 	private void HandleUpdateRaidTarget(PartyInviteClient invite)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PARTY_INVITE);
+		var packet = new WorldPacket(Opcode.CMSG_PARTY_INVITE);
 		packet.WriteCString(invite.TargetName);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
@@ -1260,7 +1274,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (invite.Accept)
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_GROUP_ACCEPT);
+			var packet = new WorldPacket(Opcode.CMSG_GROUP_ACCEPT);
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 			{
 				packet.WriteUInt32(0u);
@@ -1269,7 +1283,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		else
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_GROUP_DECLINE);
+			var packet2 = new WorldPacket(Opcode.CMSG_GROUP_DECLINE);
 			SendPacketToServer(packet2);
 		}
 	}
@@ -1278,14 +1292,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleLeaveGroup(LeaveGroup leave)
 	{
 		GetSession().GameState.WeWantToLeaveGroup = true;
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GROUP_DISBAND);
+		var packet = new WorldPacket(Opcode.CMSG_GROUP_DISBAND);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_PARTY_UNINVITE)]
 	private void HandlePartyUninvite(PartyUninvite kick)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GROUP_UNINVITE_GUID);
+		var packet = new WorldPacket(Opcode.CMSG_GROUP_UNINVITE_GUID);
 		packet.WriteGuid(kick.TargetGUID.To64());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
@@ -1297,7 +1311,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_ASSISTANT_LEADER)]
 	private void HandleSetAssistantLeader(SetAssistantLeader assist)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_ASSISTANT_LEADER);
+		var packet = new WorldPacket(Opcode.CMSG_SET_ASSISTANT_LEADER);
 		packet.WriteGuid(assist.TargetGUID.To64());
 		packet.WriteBool(assist.Apply);
 		SendPacketToServer(packet);
@@ -1306,12 +1320,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_EVERYONE_IS_ASSISTANT)]
 	private void HandleSetAssistantLeader(SetEveryoneIsAssistant assist)
 	{
-		List<PartyPlayerInfo> groupMembers = GetSession().GameState.GetCurrentGroup().PlayerList;
-		foreach (PartyPlayerInfo member in groupMembers)
+		var groupMembers = GetSession().GameState.GetCurrentGroup().PlayerList;
+		foreach (var member in groupMembers)
 		{
 			if (!(member.GUID == GetSession().GameState.CurrentPlayerGuid))
 			{
-				WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_ASSISTANT_LEADER);
+				var packet = new WorldPacket(Opcode.CMSG_SET_ASSISTANT_LEADER);
 				packet.WriteGuid(member.GUID.To64());
 				packet.WriteBool(assist.Apply);
 				SendPacketToServer(packet);
@@ -1322,7 +1336,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_PARTY_LEADER)]
 	private void HandleSetPartyLeader(SetPartyLeader leader)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_PARTY_LEADER);
+		var packet = new WorldPacket(Opcode.CMSG_SET_PARTY_LEADER);
 		packet.WriteGuid(leader.TargetGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -1330,34 +1344,36 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CONVERT_RAID)]
 	private void HandleConvertRaid(ConvertRaid raid)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CONVERT_RAID);
+		var packet = new WorldPacket(Opcode.CMSG_CONVERT_RAID);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_DO_READY_CHECK)]
 	private void HandlReadyCheck(DoReadyCheck raid)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_RAID_READY_CHECK);
+		var packet = new WorldPacket(Opcode.MSG_RAID_READY_CHECK);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_READY_CHECK_RESPONSE)]
 	private void HandlReadyCheckResponse(ReadyCheckResponseClient raid)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_RAID_READY_CHECK);
+		var packet = new WorldPacket(Opcode.MSG_RAID_READY_CHECK);
 		packet.WriteBool(raid.IsReady);
 		SendPacketToServer(packet);
-		ReadyCheckResponse ready = new ReadyCheckResponse();
-		ready.Player = GetSession().GameState.CurrentPlayerGuid;
-		ready.IsReady = raid.IsReady;
-		ready.PartyGUID = WowGuid128.Create(HighGuidType703.Party, 1000uL);
+		var ready = new ReadyCheckResponse
+		{
+			Player = GetSession().GameState.CurrentPlayerGuid,
+			IsReady = raid.IsReady,
+			PartyGUID = WowGuid128.Create(HighGuidType703.Party, 1000uL)
+		};
 		SendPacket(ready);
 	}
 
 	[PacketHandler(Opcode.CMSG_UPDATE_RAID_TARGET)]
 	private void HandleUpdateRaidTarget(UpdateRaidTarget update)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_RAID_TARGET_UPDATE);
+		var packet = new WorldPacket(Opcode.MSG_RAID_TARGET_UPDATE);
 		packet.WriteInt8(update.Symbol);
 		packet.WriteGuid(update.Target.To64());
 		SendPacketToServer(packet);
@@ -1368,7 +1384,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (update.Accept || LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_SUMMON_RESPONSE);
+			var packet = new WorldPacket(Opcode.CMSG_SUMMON_RESPONSE);
 			packet.WriteGuid(update.SummonerGUID.To64());
 			packet.WriteBool(update.Accept);
 			SendPacketToServer(packet);
@@ -1378,7 +1394,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MINIMAP_PING)]
 	private void HandleMinimapPing(MinimapPingClient ping)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_MINIMAP_PING);
+		var packet = new WorldPacket(Opcode.MSG_MINIMAP_PING);
 		packet.WriteVector2(ping.Position);
 		SendPacketToServer(packet);
 	}
@@ -1386,7 +1402,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_RANDOM_ROLL)]
 	private void HandleMinimapPing(RandomRollClient roll)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_RANDOM_ROLL);
+		var packet = new WorldPacket(Opcode.MSG_RANDOM_ROLL);
 		packet.WriteInt32(roll.Min);
 		packet.WriteInt32(roll.Max);
 		SendPacketToServer(packet);
@@ -1395,7 +1411,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REQUEST_PARTY_MEMBER_STATS)]
 	private void HandleRequestPartyMemberStats(RequestPartyMemberStats request)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REQUEST_PARTY_MEMBER_STATS);
+		var packet = new WorldPacket(Opcode.CMSG_REQUEST_PARTY_MEMBER_STATS);
 		packet.WriteGuid(request.TargetGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -1403,7 +1419,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GROUP_CHANGE_SUB_GROUP)]
 	private void HandleGroupChangeSubGroup(ChangeSubGroup group)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GROUP_CHANGE_SUB_GROUP);
+		var packet = new WorldPacket(Opcode.CMSG_GROUP_CHANGE_SUB_GROUP);
 		packet.WriteCString(GetSession().GameState.GetPlayerName(group.TargetGUID));
 		packet.WriteUInt8(group.NewSubGroup);
 		SendPacketToServer(packet);
@@ -1412,7 +1428,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GROUP_SWAP_SUB_GROUP)]
 	private void HandleGroupSwapSubGroup(SwapSubGroups group)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GROUP_SWAP_SUB_GROUP);
+		var packet = new WorldPacket(Opcode.CMSG_GROUP_SWAP_SUB_GROUP);
 		packet.WriteCString(GetSession().GameState.GetPlayerName(group.FirstTarget));
 		packet.WriteCString(GetSession().GameState.GetPlayerName(group.SecondTarget));
 		SendPacketToServer(packet);
@@ -1421,7 +1437,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_GUILD_INFO)]
 	private void HandleQueryGuildInfo(QueryGuildInfo query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_GUILD_INFO);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_GUILD_INFO);
 		packet.WriteUInt32((uint)query.GuildGuid.GetCounter());
 		SendPacketToServer(packet);
 	}
@@ -1431,7 +1447,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.MSG_GUILD_PERMISSIONS);
+			var packet = new WorldPacket(Opcode.MSG_GUILD_PERMISSIONS);
 			SendPacketToServer(packet);
 		}
 	}
@@ -1441,7 +1457,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.MSG_GUILD_BANK_MONEY_WITHDRAWN);
+			var packet = new WorldPacket(Opcode.MSG_GUILD_BANK_MONEY_WITHDRAWN);
 			SendPacketToServer(packet);
 		}
 	}
@@ -1449,16 +1465,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_GET_ROSTER)]
 	private void HandleGuildGetRoster(GuildGetRoster query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_INFO);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_INFO);
 		SendPacketToServer(packet);
-		WorldPacket packet2 = new WorldPacket(Opcode.CMSG_GUILD_GET_ROSTER);
+		var packet2 = new WorldPacket(Opcode.CMSG_GUILD_GET_ROSTER);
 		SendPacketToServer(packet2);
 	}
 
 	[PacketHandler(Opcode.CMSG_GUILD_UPDATE_MOTD_TEXT)]
 	private void HandleGuildUpdateMotdText(GuildUpdateMotdText text)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_UPDATE_MOTD_TEXT);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_UPDATE_MOTD_TEXT);
 		packet.WriteCString(text.MotdText);
 		SendPacketToServer(packet);
 	}
@@ -1466,7 +1482,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_UPDATE_INFO_TEXT)]
 	private void HandleGuildUpdateInfoText(GuildUpdateInfoText text)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_UPDATE_INFO_TEXT);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_UPDATE_INFO_TEXT);
 		packet.WriteCString(text.InfoText);
 		SendPacketToServer(packet);
 	}
@@ -1474,7 +1490,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_SET_MEMBER_NOTE)]
 	private void HandleGuildSetMemberNote(GuildSetMemberNote note)
 	{
-		WorldPacket packet = new WorldPacket(note.IsPublic ? Opcode.CMSG_GUILD_SET_PUBLIC_NOTE : Opcode.CMSG_GUILD_SET_OFFICER_NOTE);
+		var packet = new WorldPacket(note.IsPublic ? Opcode.CMSG_GUILD_SET_PUBLIC_NOTE : Opcode.CMSG_GUILD_SET_OFFICER_NOTE);
 		packet.WriteCString(GetSession().GameState.GetPlayerName(note.NoteeGUID));
 		packet.WriteCString(note.Note);
 		SendPacketToServer(packet);
@@ -1483,7 +1499,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_PROMOTE_MEMBER)]
 	private void HandleGuildPromoteMember(GuildPromoteMember promote)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_PROMOTE_MEMBER);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_PROMOTE_MEMBER);
 		packet.WriteCString(GetSession().GameState.GetPlayerName(promote.Promotee));
 		SendPacketToServer(packet);
 	}
@@ -1491,7 +1507,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_DEMOTE_MEMBER)]
 	private void HandleGuildDemoteMember(GuildDemoteMember demote)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_DEMOTE_MEMBER);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_DEMOTE_MEMBER);
 		packet.WriteCString(GetSession().GameState.GetPlayerName(demote.Demotee));
 		SendPacketToServer(packet);
 	}
@@ -1499,7 +1515,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_OFFICER_REMOVE_MEMBER)]
 	private void HandleGuildOfficerRemoveMember(GuildOfficerRemoveMember remove)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_OFFICER_REMOVE_MEMBER);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_OFFICER_REMOVE_MEMBER);
 		packet.WriteCString(GetSession().GameState.GetPlayerName(remove.Removee));
 		SendPacketToServer(packet);
 	}
@@ -1509,13 +1525,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (invite.ArenaTeamId == 0)
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_INVITE_BY_NAME);
+			var packet = new WorldPacket(Opcode.CMSG_GUILD_INVITE_BY_NAME);
 			packet.WriteCString(invite.Name);
 			SendPacketToServer(packet);
 		}
 		else
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_ARENA_TEAM_INVITE);
+			var packet2 = new WorldPacket(Opcode.CMSG_ARENA_TEAM_INVITE);
 			packet2.WriteUInt32(invite.ArenaTeamId);
 			packet2.WriteCString(invite.Name);
 			SendPacketToServer(packet2);
@@ -1525,14 +1541,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_SET_RANK_PERMISSIONS)]
 	private void HandleGuildSetRankPermissions(GuildSetRankPermissions rank)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_SET_RANK_PERMISSIONS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_SET_RANK_PERMISSIONS);
 		packet.WriteUInt32(rank.RankID);
 		packet.WriteUInt32(rank.Flags);
 		packet.WriteCString(rank.RankName);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteInt32(rank.WithdrawGoldLimit);
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 			{
 				packet.WriteUInt32(rank.TabFlags[i]);
 				packet.WriteUInt32(rank.TabWithdrawItemLimit[i]);
@@ -1544,7 +1560,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_ADD_RANK)]
 	private void HandleGuildAddRank(GuildAddRank rank)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_ADD_RANK);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_ADD_RANK);
 		packet.WriteCString(rank.Name);
 		SendPacketToServer(packet);
 	}
@@ -1552,14 +1568,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_DELETE_RANK)]
 	private void HandleGuildDeleteRank(GuildDeleteRank rank)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_DELETE_RANK);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_DELETE_RANK);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_GUILD_SET_GUILD_MASTER)]
 	private void HandleGuildSetGuildMaster(GuildSetGuildMaster master)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_SET_GUILD_MASTER);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_SET_GUILD_MASTER);
 		packet.WriteCString(master.NewMasterName);
 		SendPacketToServer(packet);
 	}
@@ -1567,35 +1583,35 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_LEAVE)]
 	private void HandleGuildLeave(GuildLeave leave)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_LEAVE);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_LEAVE);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_ACCEPT_GUILD_INVITE)]
 	private void HandleGuildAccept(AcceptGuildInvite accept)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ACCEPT_GUILD_INVITE);
+		var packet = new WorldPacket(Opcode.CMSG_ACCEPT_GUILD_INVITE);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_GUILD_DECLINE_INVITATION)]
 	private void HandleGuildDecline(DeclineGuildInvite decline)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_DECLINE_INVITATION);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_DECLINE_INVITATION);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_GUILD_DELETE)]
 	private void HandleGuildDelete(GuildDelete delete)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_DELETE);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_DELETE);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_SAVE_GUILD_EMBLEM)]
 	private void HandleSaveGuildEmblem(SaveGuildEmblem emblem)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_SAVE_GUILD_EMBLEM);
+		var packet = new WorldPacket(Opcode.MSG_SAVE_GUILD_EMBLEM);
 		packet.WriteGuid(emblem.DesignerGUID.To64());
 		packet.WriteUInt32(emblem.EmblemStyle);
 		packet.WriteUInt32(emblem.EmblemColor);
@@ -1609,10 +1625,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleDeclineGuildInvites(SetAutoDeclineGuildInvites packet)
 	{
 		GetSession().GameState.CurrentPlayerStorage.Settings.SetAutoBlockGuildInvites(packet.GuildInvitesShouldGetBlocked);
-		ObjectUpdate updateData = new ObjectUpdate(GetSession().GameState.CurrentPlayerGuid, UpdateTypeModern.Values, GetSession());
-		PlayerFlags flags = GetSession().GameState.CurrentPlayerStorage.Settings.CreateNewFlags();
+		var updateData = new ObjectUpdate(GetSession().GameState.CurrentPlayerGuid, UpdateTypeModern.Values, GetSession());
+		var flags = GetSession().GameState.CurrentPlayerStorage.Settings.CreateNewFlags();
 		updateData.PlayerData.PlayerFlags = (uint)flags;
-		UpdateObject updatePacket = new UpdateObject(GetSession().GameState);
+		var updatePacket = new UpdateObject(GetSession().GameState);
 		updatePacket.ObjectUpdates.Add(updateData);
 		GetSession().WorldClient.SendPacketToClient(updatePacket);
 	}
@@ -1620,14 +1636,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_AUTO_DECLINE_INVITATION)]
 	private void HandleGuildAutoDeclineInvitation(AutoDeclineGuildInvite autoDecline)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_DECLINE_INVITATION);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_DECLINE_INVITATION);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_ACTIVATE)]
 	private void HandleGuildBankActivate(GuildBankAtivate activate)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_ACTIVATE);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_ACTIVATE);
 		packet.WriteGuid(activate.BankGuid.To64());
 		packet.WriteBool(activate.FullUpdate);
 		SendPacketToServer(packet);
@@ -1636,7 +1652,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_QUERY_TAB)]
 	private void HandleGuildBankQueryTab(GuildBankQueryTab query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_QUERY_TAB);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_QUERY_TAB);
 		packet.WriteGuid(query.BankGuid.To64());
 		packet.WriteUInt8(query.Tab);
 		packet.WriteBool(query.FullUpdate);
@@ -1646,7 +1662,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_DEPOSIT_MONEY)]
 	private void HandleGuildBankDepositMoney(GuildBankDepositMoney deposit)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_DEPOSIT_MONEY);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_DEPOSIT_MONEY);
 		packet.WriteGuid(deposit.BankGuid.To64());
 		packet.WriteUInt32((uint)deposit.Money);
 		SendPacketToServer(packet);
@@ -1655,7 +1671,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_TEXT_QUERY)]
 	private void HandleGuildBankTextQuery(GuildBankTextQuery query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_QUERY_GUILD_BANK_TEXT);
+		var packet = new WorldPacket(Opcode.MSG_QUERY_GUILD_BANK_TEXT);
 		packet.WriteUInt8((byte)query.Tab);
 		SendPacketToServer(packet);
 	}
@@ -1663,7 +1679,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_UPDATE_TAB)]
 	private void HandleGuildBankUpdateTab(GuildBankUpdateTab update)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_UPDATE_TAB);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_UPDATE_TAB);
 		packet.WriteGuid(update.BankGuid.To64());
 		packet.WriteUInt8(update.BankTab);
 		packet.WriteCString(update.Name);
@@ -1674,7 +1690,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_LOG_QUERY)]
 	private void HandleGuildBankLogQuery(GuildBankLogQuery query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_GUILD_BANK_LOG_QUERY);
+		var packet = new WorldPacket(Opcode.MSG_GUILD_BANK_LOG_QUERY);
 		packet.WriteUInt8((byte)query.Tab);
 		SendPacketToServer(packet);
 	}
@@ -1682,7 +1698,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_SET_TAB_TEXT)]
 	private void HandleGuildBankSetTabText(GuildBankSetTabText query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SET_TAB_TEXT);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SET_TAB_TEXT);
 		packet.WriteUInt8((byte)query.Tab);
 		packet.WriteCString(query.TabText);
 		SendPacketToServer(packet);
@@ -1691,7 +1707,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_BUY_TAB)]
 	private void HandleGuildBankBuyTab(GuildBankBuyTab buy)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_BUY_TAB);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_BUY_TAB);
 		packet.WriteGuid(buy.BankGuid.To64());
 		packet.WriteUInt8(buy.BankTab);
 		SendPacketToServer(packet);
@@ -1700,7 +1716,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GUILD_BANK_WITHDRAW_MONEY)]
 	private void HandleGuildBankBuyTab(GuildBankWithdrawMoney withdraw)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_WITHDRAW_MONEY);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_WITHDRAW_MONEY);
 		packet.WriteGuid(withdraw.BankGuid.To64());
 		packet.WriteUInt32((uint)withdraw.Money);
 		SendPacketToServer(packet);
@@ -1709,7 +1725,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUTO_GUILD_BANK_ITEM)]
 	private void HandleGuildBankItem(AutoGuildBankItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
 		packet.WriteGuid(item.BankGuid.To64());
 		packet.WriteBool(data: false);
 		packet.WriteUInt8(item.BankTab);
@@ -1742,7 +1758,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MERGE_ITEM_WITH_GUILD_BANK_ITEM)]
 	private void HandleSplitItemToGuildBank(SplitItemToGuildBank item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
 		packet.WriteGuid(item.BankGuid.To64());
 		packet.WriteBool(data: false);
 		packet.WriteUInt8(item.BankTab);
@@ -1774,7 +1790,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUTO_STORE_GUILD_BANK_ITEM)]
 	private void HandleAutoStoreGuildBankItem(AutoStoreGuildBankItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
 		packet.WriteGuid(item.BankGuid.To64());
 		packet.WriteBool(data: false);
 		packet.WriteUInt8(item.BankTab);
@@ -1797,7 +1813,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_STORE_GUILD_BANK_ITEM)]
 	private void HandleStoreGuildBankItem(AutoGuildBankItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
 		packet.WriteGuid(item.BankGuid.To64());
 		packet.WriteBool(data: false);
 		packet.WriteUInt8(item.BankTab);
@@ -1830,7 +1846,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SPLIT_GUILD_BANK_ITEM_TO_INVENTORY)]
 	private void HandleMergeGuildBankItemWithItem(SplitItemToGuildBank item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
 		packet.WriteGuid(item.BankGuid.To64());
 		packet.WriteBool(data: false);
 		packet.WriteUInt8(item.BankTab);
@@ -1862,7 +1878,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_GUILD_BANK_ITEM)]
 	private void HandleMoveGuildBankItem(MoveGuildBankItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
 		packet.WriteGuid(item.BankGuid.To64());
 		packet.WriteBool(data: true);
 		packet.WriteUInt8(item.BankTab2);
@@ -1887,7 +1903,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MERGE_GUILD_BANK_ITEM_WITH_GUILD_BANK_ITEM)]
 	private void HandleMoveGuildBankItem(SplitGuildBankItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
+		var packet = new WorldPacket(Opcode.CMSG_GUILD_BANK_SWAP_ITEMS);
 		packet.WriteGuid(item.BankGuid.To64());
 		packet.WriteBool(data: true);
 		packet.WriteUInt8(item.BankTab2);
@@ -1911,23 +1927,27 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_DB_QUERY_BULK)]
 	private void HandleDbQueryBulk(DBQueryBulk query)
 	{
-		foreach (uint id in query.Queries)
+		foreach (var id in query.Queries)
 		{
-			DBReply reply = new DBReply();
-			reply.RecordID = id;
-			reply.TableHash = query.TableHash;
-			reply.Status = HotfixStatus.Invalid;
-			reply.Timestamp = (uint)Time.UnixTime;
+			var reply = new DBReply
+			{
+				RecordID = id,
+				TableHash = query.TableHash,
+				Status = HotfixStatus.Invalid,
+				Timestamp = (uint)Time.UnixTime
+			};
 			Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"DB_QUERY_BULK requested ({query.TableHash}) #{id}", "HotfixHandler.cs");
 			if (query.TableHash == DB2Hash.BroadcastText)
 			{
-				BroadcastText bct = GameData.GetBroadcastText(id);
+				var bct = GameData.GetBroadcastText(id);
 				if (bct == null)
 				{
-					bct = new BroadcastText();
-					bct.Entry = id;
-					bct.MaleText = "Clear your cache!";
-					bct.FemaleText = "Clear your cache!";
+					bct = new BroadcastText
+					{
+						Entry = id,
+						MaleText = "Clear your cache!",
+						FemaleText = "Clear your cache!"
+					};
 				}
 				reply.Status = HotfixStatus.Valid;
 				reply.Data.WriteCString(bct.MaleText);
@@ -1942,22 +1962,22 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				{
 					reply.Data.WriteUInt32(0u);
 				}
-				for (int i = 0; i < 2; i++)
+				for (var i = 0; i < 2; i++)
 				{
 					reply.Data.WriteUInt32(0u);
 				}
-				for (int j = 0; j < 3; j++)
+				for (var j = 0; j < 3; j++)
 				{
 					reply.Data.WriteUInt16(bct.Emotes[j]);
 				}
-				for (int k = 0; k < 3; k++)
+				for (var k = 0; k < 3; k++)
 				{
 					reply.Data.WriteUInt16(bct.EmoteDelays[k]);
 				}
 			}
 			else if (query.TableHash == DB2Hash.Item)
 			{
-				ItemTemplate item = GameData.GetItemTemplate(id);
+				var item = GameData.GetItemTemplate(id);
 				if (item != null)
 				{
 					reply.Status = HotfixStatus.Valid;
@@ -1968,7 +1988,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 					if (!GetSession().GameState.RequestedItemHotfixes.Contains(id))
 					{
 						GetSession().GameState.RequestedItemHotfixes.Add(id);
-						WorldPacket packet2 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
+						var packet2 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
 						packet2.WriteUInt32(id);
 						if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 						{
@@ -1981,7 +2001,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			}
 			else if (query.TableHash == DB2Hash.ItemSparse)
 			{
-				ItemTemplate item2 = GameData.GetItemTemplate(id);
+				var item2 = GameData.GetItemTemplate(id);
 				if (item2 != null)
 				{
 					reply.Status = HotfixStatus.Valid;
@@ -1992,7 +2012,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 					if (!GetSession().GameState.RequestedItemSparseHotfixes.Contains(id))
 					{
 						GetSession().GameState.RequestedItemSparseHotfixes.Add(id);
-						WorldPacket packet3 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
+						var packet3 = new WorldPacket(Opcode.CMSG_ITEM_QUERY_SINGLE);
 						packet3.WriteUInt32(id);
 						if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 						{
@@ -2010,8 +2030,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_HOTFIX_REQUEST)]
 	private void HandleHotfixRequest(HotfixRequest request)
 	{
-		HotfixConnect connect = new HotfixConnect();
-		foreach (uint id in request.Hotfixes)
+		var connect = new HotfixConnect();
+		foreach (var id in request.Hotfixes)
 		{
 			if (GameData.Hotfixes.TryGetValue(id, out var record))
 			{
@@ -2025,24 +2045,24 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_RESET_INSTANCES)]
 	private void HandleResetInstances(EmptyClientPacket reset)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_RESET_INSTANCES);
+		var packet = new WorldPacket(Opcode.CMSG_RESET_INSTANCES);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_REQUEST_RAID_INFO)]
 	private void HandleRequestRaidInfo(EmptyClientPacket reset)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REQUEST_RAID_INFO);
+		var packet = new WorldPacket(Opcode.CMSG_REQUEST_RAID_INFO);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_BUY_ITEM)]
 	private void HandleBuyItem(BuyItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BUY_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_BUY_ITEM);
 		packet.WriteGuid(item.VendorGUID.To64());
 		packet.WriteUInt32(item.Item.ItemID);
-		uint quantity = item.Quantity / GetSession().GameState.GetItemBuyCount(item.Item.ItemID);
+		var quantity = item.Quantity / GetSession().GameState.GetItemBuyCount(item.Item.ItemID);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
 			packet.WriteUInt32((ModernVersion.ExpansionVersion >= 3) ? item.Muid : item.Slot);
@@ -2059,10 +2079,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SELL_ITEM)]
 	private void HandleSellItem(SellItem item)
 	{
-		WowGuid64 vendorGuid64 = item.VendorGUID.To64();
-		WowGuid64 itemGuid64 = item.ItemGUID.To64();
+		var vendorGuid64 = item.VendorGUID.To64();
+		var itemGuid64 = item.ItemGUID.To64();
 		Log.Print(LogType.Debug, $"[SellItem] Item128={item.ItemGUID} → Item64={itemGuid64} Vendor128={item.VendorGUID} → Vendor64={vendorGuid64}", "");
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SELL_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_SELL_ITEM);
 		packet.WriteGuid(vendorGuid64);
 		packet.WriteGuid(itemGuid64);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
@@ -2079,11 +2099,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SPLIT_ITEM)]
 	private void HandleSplitItem(SplitItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SPLIT_ITEM);
-		byte containerSlot1 = ((item.FromPackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.FromPackSlot) : item.FromPackSlot);
-		byte slot1 = ((item.FromPackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.FromSlot) : item.FromSlot);
-		byte containerSlot2 = ((item.ToPackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ToPackSlot) : item.ToPackSlot);
-		byte slot2 = ((item.ToPackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ToSlot) : item.ToSlot);
+		var packet = new WorldPacket(Opcode.CMSG_SPLIT_ITEM);
+		var containerSlot1 = ((item.FromPackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.FromPackSlot) : item.FromPackSlot);
+		var slot1 = ((item.FromPackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.FromSlot) : item.FromSlot);
+		var containerSlot2 = ((item.ToPackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ToPackSlot) : item.ToPackSlot);
+		var slot2 = ((item.ToPackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ToSlot) : item.ToSlot);
 		packet.WriteUInt8(containerSlot1);
 		packet.WriteUInt8(slot1);
 		packet.WriteUInt8(containerSlot2);
@@ -2102,9 +2122,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SWAP_INV_ITEM)]
 	private void HandleSwapInvItem(SwapInvItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SWAP_INV_ITEM);
-		byte slot1 = ModernVersion.AdjustInventorySlot(item.Slot1);
-		byte slot2 = ModernVersion.AdjustInventorySlot(item.Slot2);
+		var packet = new WorldPacket(Opcode.CMSG_SWAP_INV_ITEM);
+		var slot1 = ModernVersion.AdjustInventorySlot(item.Slot1);
+		var slot2 = ModernVersion.AdjustInventorySlot(item.Slot2);
 		// Modern client: Slot2=source, Slot1=destination (reversed from field names)
 		// Legacy server expects: srcSlot first, dstSlot second
 		packet.WriteUInt8(slot2);
@@ -2115,11 +2135,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SWAP_ITEM)]
 	private void HandleSwapItem(SwapItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SWAP_ITEM);
-		byte containerSlotB = ((item.ContainerSlotB != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB);
-		byte slotB = ((item.ContainerSlotB == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotB) : item.SlotB);
-		byte containerSlotA = ((item.ContainerSlotA != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA);
-		byte slotA = ((item.ContainerSlotA == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotA) : item.SlotA);
+		var packet = new WorldPacket(Opcode.CMSG_SWAP_ITEM);
+		var containerSlotB = ((item.ContainerSlotB != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB);
+		var slotB = ((item.ContainerSlotB == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotB) : item.SlotB);
+		var containerSlotA = ((item.ContainerSlotA != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA);
+		var slotA = ((item.ContainerSlotA == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotA) : item.SlotA);
 		packet.WriteUInt8(containerSlotB);
 		packet.WriteUInt8(slotB);
 		packet.WriteUInt8(containerSlotA);
@@ -2130,9 +2150,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_DESTROY_ITEM)]
 	private void HandleDestroyItem(DestroyItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_DESTROY_ITEM);
-		byte containerSlot = ((item.ContainerId != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerId) : item.ContainerId);
-		byte slot = ((item.ContainerId == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotNum) : item.SlotNum);
+		var packet = new WorldPacket(Opcode.CMSG_DESTROY_ITEM);
+		var containerSlot = ((item.ContainerId != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerId) : item.ContainerId);
+		var slot = ((item.ContainerId == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.SlotNum) : item.SlotNum);
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		packet.WriteUInt32(item.Count);
@@ -2142,7 +2162,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SPELL_CLICK)]
 	private void HandleSpellClick(SpellClick click)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SPELL_CLICK);
+		var packet = new WorldPacket(Opcode.CMSG_SPELL_CLICK);
 		packet.WriteGuid(click.SpellClickUnitGuid.To64());
 		SendPacketToServer(packet);
 	}
@@ -2150,11 +2170,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUTO_STORE_BAG_ITEM)]
 	private void HandleAutoStoreBagItem(AutoStoreBagItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUTO_STORE_BAG_ITEM);
-		byte srcBag = ((item.ContainerSlotA != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA);
+		var packet = new WorldPacket(Opcode.CMSG_AUTO_STORE_BAG_ITEM);
+		var srcBag = ((item.ContainerSlotA != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotA) : item.ContainerSlotA);
 		packet.WriteUInt8(srcBag);
 		packet.WriteUInt8(item.SlotA);
-		byte dstBag = ((item.ContainerSlotB != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB);
+		var dstBag = ((item.ContainerSlotB != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ContainerSlotB) : item.ContainerSlotB);
 		packet.WriteUInt8(dstBag);
 		SendPacketToServer(packet);
 	}
@@ -2164,9 +2184,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUTOBANK_ITEM)]
 	private void HandleAutoEquipItem(AutoEquipItem item)
 	{
-		WorldPacket packet = new WorldPacket(item.GetUniversalOpcode());
-		byte containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
-		byte slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
+		var packet = new WorldPacket(item.GetUniversalOpcode());
+		var containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
+		var slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -2175,9 +2195,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUTO_EQUIP_ITEM_SLOT)]
 	private void HandleAutoEquipItemSlot(AutoEquipItemSlot item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUTO_EQUIP_ITEM_SLOT);
+		var packet = new WorldPacket(Opcode.CMSG_AUTO_EQUIP_ITEM_SLOT);
 		packet.WriteGuid(item.Item.To64());
-		byte slot = ModernVersion.AdjustInventorySlot(item.ItemDstSlot);
+		var slot = ModernVersion.AdjustInventorySlot(item.ItemDstSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
 	}
@@ -2185,9 +2205,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_READ_ITEM)]
 	private void HandleReadItem(ReadItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_READ_ITEM);
-		byte containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
-		byte slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
+		var packet = new WorldPacket(Opcode.CMSG_READ_ITEM);
+		var containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
+		var slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -2196,7 +2216,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REMOVE_GLYPH)]
 	private void HandleRemoveGlyph(RemoveGlyph glyph)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REMOVE_GLYPH);
+		var packet = new WorldPacket(Opcode.CMSG_REMOVE_GLYPH);
 		packet.WriteUInt32(glyph.GlyphSlot);
 		SendPacketToServer(packet);
 	}
@@ -2204,7 +2224,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_INSTANCE_LOCK_RESPONSE)]
 	private void HandleInstanceLockResponse(InstanceLockResponse lockResponse)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_INSTANCE_LOCK_RESPONSE);
+		var packet = new WorldPacket(Opcode.CMSG_INSTANCE_LOCK_RESPONSE);
 		packet.WriteUInt8(lockResponse.AcceptLock ? (byte)1 : (byte)0);
 		SendPacketToServer(packet);
 	}
@@ -2212,10 +2232,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_POI_QUERY)]
 	private void HandleQuestPOIQuery(QuestPOIQuery query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_POI_QUERY);
-		int count = Math.Min(query.MissingQuestCount, 25);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_POI_QUERY);
+		var count = Math.Min(query.MissingQuestCount, 25);
 		packet.WriteUInt32((uint)count);
-		for (int i = 0; i < count; i++)
+		for (var i = 0; i < count; i++)
 		{
 			packet.WriteUInt32((uint)query.MissingQuestPOIs[i]);
 		}
@@ -2225,9 +2245,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BUY_BACK_ITEM)]
 	private void HandleBuyBackItem(BuyBackItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BUY_BACK_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_BUY_BACK_ITEM);
 		packet.WriteGuid(item.VendorGUID.To64());
-		byte slot = ModernVersion.AdjustInventorySlot((byte)item.Slot);
+		var slot = ModernVersion.AdjustInventorySlot((byte)item.Slot);
 		packet.WriteUInt32(slot);
 		SendPacketToServer(packet);
 	}
@@ -2235,7 +2255,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REPAIR_ITEM)]
 	private void HandleRepairItem(RepairItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REPAIR_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_REPAIR_ITEM);
 		packet.WriteGuid(item.VendorGUID.To64());
 		packet.WriteGuid(item.ItemGUID.To64());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -2248,24 +2268,26 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SOCKET_GEMS)]
 	private void HandleSocketGems(SocketGems gems)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SOCKET_GEMS);
+		var packet = new WorldPacket(Opcode.CMSG_SOCKET_GEMS);
 		packet.WriteGuid(gems.ItemGuid.To64());
-		for (int i = 0; i < 3; i++)
+		for (var i = 0; i < 3; i++)
 		{
 			packet.WriteGuid(gems.Gems[i].To64());
 		}
 		SendPacketToServer(packet);
-		SocketGemsSuccess success = new SocketGemsSuccess();
-		success.ItemGuid = gems.ItemGuid;
+		var success = new SocketGemsSuccess
+		{
+			ItemGuid = gems.ItemGuid
+		};
 		SendPacket(success);
 	}
 
 	[PacketHandler(Opcode.CMSG_OPEN_ITEM)]
 	private void HandleOpenItem(OpenItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_OPEN_ITEM);
-		byte containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
-		byte slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
+		var packet = new WorldPacket(Opcode.CMSG_OPEN_ITEM);
+		var containerSlot = ((item.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.PackSlot) : item.PackSlot);
+		var slot = ((item.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.Slot) : item.Slot);
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -2274,7 +2296,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_AMMO)]
 	private void HandleSetAmmo(SetAmmo ammo)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_AMMO);
+		var packet = new WorldPacket(Opcode.CMSG_SET_AMMO);
 		packet.WriteUInt32(ammo.ItemId);
 		SendPacketToServer(packet);
 	}
@@ -2284,7 +2306,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_CANCEL_TEMP_ENCHANTMENT);
+			var packet = new WorldPacket(Opcode.CMSG_CANCEL_TEMP_ENCHANTMENT);
 			packet.WriteUInt32(cancel.EnchantmentSlot);
 			SendPacketToServer(packet);
 		}
@@ -2293,11 +2315,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_WRAP_ITEM)]
 	private void HandleWrapItem(WrapItem item)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_WRAP_ITEM);
-		byte giftBag = ((item.GiftBag != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.GiftBag) : item.GiftBag);
-		byte giftSlot = ((item.GiftBag == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.GiftSlot) : item.GiftSlot);
-		byte itemBag = ((item.ItemBag != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ItemBag) : item.ItemBag);
-		byte itemSlot = ((item.ItemBag == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ItemSlot) : item.ItemSlot);
+		var packet = new WorldPacket(Opcode.CMSG_WRAP_ITEM);
+		var giftBag = ((item.GiftBag != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.GiftBag) : item.GiftBag);
+		var giftSlot = ((item.GiftBag == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.GiftSlot) : item.GiftSlot);
+		var itemBag = ((item.ItemBag != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ItemBag) : item.ItemBag);
+		var itemSlot = ((item.ItemBag == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(item.ItemSlot) : item.ItemSlot);
 		packet.WriteUInt8(giftBag);
 		packet.WriteUInt8(giftSlot);
 		packet.WriteUInt8(itemBag);
@@ -2308,7 +2330,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LOOT_RELEASE)]
 	private void HandleLootRelease(LootRelease loot)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_LOOT_RELEASE);
+		var packet = new WorldPacket(Opcode.CMSG_LOOT_RELEASE);
 		packet.WriteGuid(loot.Owner.To64());
 		SendPacketToServer(packet);
 	}
@@ -2317,9 +2339,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AUTOSTORE_LOOT_ITEM)]
 	private void HandleLootItem(LootItemPkt loot)
 	{
-		foreach (LootRequest item in loot.Loot)
+		foreach (var item in loot.Loot)
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_AUTOSTORE_LOOT_ITEM);
+			var packet = new WorldPacket(Opcode.CMSG_AUTOSTORE_LOOT_ITEM);
 			packet.WriteUInt8(item.LootListID);
 			SendPacketToServer(packet);
 		}
@@ -2328,7 +2350,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LOOT_UNIT)]
 	private void HandleLootUnit(LootUnit loot)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_LOOT_UNIT);
+		var packet = new WorldPacket(Opcode.CMSG_LOOT_UNIT);
 		packet.WriteGuid(loot.Unit.To64());
 		SendPacketToServer(packet);
 		GetSession().GameState.LastLootTargetGuid = loot.Unit.To64();
@@ -2337,14 +2359,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LOOT_MONEY)]
 	private void HandleLootMoney(LootMoney loot)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_LOOT_MONEY);
+		var packet = new WorldPacket(Opcode.CMSG_LOOT_MONEY);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_SET_LOOT_METHOD)]
 	private void HandleSetLootMethod(SetLootMethod loot)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_LOOT_METHOD);
+		var packet = new WorldPacket(Opcode.CMSG_SET_LOOT_METHOD);
 		packet.WriteUInt32((uint)loot.LootMethod);
 		packet.WriteGuid(loot.LootMasterGUID.To64());
 		packet.WriteUInt32(loot.LootThreshold);
@@ -2356,7 +2378,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_OPT_OUT_OF_LOOT);
+			var packet = new WorldPacket(Opcode.CMSG_OPT_OUT_OF_LOOT);
 			packet.WriteInt32(loot.PassOnLoot ? 1 : 0);
 			SendPacketToServer(packet);
 		}
@@ -2369,7 +2391,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LOOT_ROLL)]
 	private void HandleLootRoll(LootRoll loot)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_LOOT_ROLL);
+		var packet = new WorldPacket(Opcode.CMSG_LOOT_ROLL);
 		packet.WriteGuid(loot.LootObj.To64());
 		packet.WriteUInt32(loot.LootListID);
 		packet.WriteUInt8((byte)loot.RollType);
@@ -2379,9 +2401,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LOOT_MASTER_GIVE)]
 	private void HandleLootMasterGive(LootMasterGive loot)
 	{
-		foreach (LootRequest item in loot.Loot)
+		foreach (var item in loot.Loot)
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_LOOT_MASTER_GIVE);
+			var packet = new WorldPacket(Opcode.CMSG_LOOT_MASTER_GIVE);
 			packet.WriteGuid(item.LootObj.To64());
 			packet.WriteUInt8(item.LootListID);
 			packet.WriteGuid(loot.TargetGUID.To64());
@@ -2392,14 +2414,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_NEXT_MAIL_TIME)]
 	private void HandleMailGetList(EmptyClientPacket mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_QUERY_NEXT_MAIL_TIME);
+		var packet = new WorldPacket(Opcode.MSG_QUERY_NEXT_MAIL_TIME);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_MAIL_GET_LIST)]
 	private void HandleMailGetList(MailGetList mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MAIL_GET_LIST);
+		var packet = new WorldPacket(Opcode.CMSG_MAIL_GET_LIST);
 		packet.WriteGuid(mail.Mailbox.To64());
 		SendPacketToServer(packet);
 	}
@@ -2407,7 +2429,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MAIL_CREATE_TEXT_ITEM)]
 	private void HandleMailCreateTextItem(MailCreateTextItem mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MAIL_CREATE_TEXT_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_MAIL_CREATE_TEXT_ITEM);
 		packet.WriteGuid(mail.Mailbox.To64());
 		packet.WriteUInt32(mail.MailID);
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
@@ -2420,7 +2442,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MAIL_DELETE)]
 	private void HandleMailDelete(MailDelete mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MAIL_DELETE);
+		var packet = new WorldPacket(Opcode.CMSG_MAIL_DELETE);
 		packet.WriteGuid(GetSession().GameState.CurrentInteractedWithGO.To64());
 		packet.WriteUInt32(mail.MailID);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -2433,7 +2455,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MAIL_MARK_AS_READ)]
 	private void HandleMailMarkAsRead(MailMarkAsRead mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MAIL_MARK_AS_READ);
+		var packet = new WorldPacket(Opcode.CMSG_MAIL_MARK_AS_READ);
 		packet.WriteGuid(mail.Mailbox.To64());
 		packet.WriteUInt32(mail.MailID);
 		SendPacketToServer(packet);
@@ -2442,7 +2464,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MAIL_RETURN_TO_SENDER)]
 	private void HandleMailReturnToSender(MailReturnToSender mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MAIL_RETURN_TO_SENDER);
+		var packet = new WorldPacket(Opcode.CMSG_MAIL_RETURN_TO_SENDER);
 		packet.WriteGuid(GetSession().GameState.CurrentInteractedWithGO.To64());
 		packet.WriteUInt32(mail.MailID);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -2455,7 +2477,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MAIL_TAKE_ITEM)]
 	private void HandleMailTakeItem(MailTakeItem mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MAIL_TAKE_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_MAIL_TAKE_ITEM);
 		packet.WriteGuid(mail.Mailbox.To64());
 		packet.WriteUInt32(mail.MailID);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -2468,7 +2490,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MAIL_TAKE_MONEY)]
 	private void HandleMailTakeMoney(MailTakeMoney mail)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MAIL_TAKE_MONEY);
+		var packet = new WorldPacket(Opcode.CMSG_MAIL_TAKE_MONEY);
 		packet.WriteGuid(mail.Mailbox.To64());
 		packet.WriteUInt32(mail.MailID);
 		SendPacketToServer(packet);
@@ -2476,7 +2498,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private void BuildSendMail(SendMail mail, List<SendMail.MailAttachment> attachments)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SEND_MAIL);
+		var packet = new WorldPacket(Opcode.CMSG_SEND_MAIL);
 		packet.WriteGuid(mail.Mailbox.To64());
 		packet.WriteCString(mail.Target);
 		packet.WriteCString(mail.Subject);
@@ -2486,7 +2508,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteUInt8((byte)attachments.Count);
-			foreach (SendMail.MailAttachment item in attachments)
+			foreach (var item in attachments)
 			{
 				packet.WriteUInt8(item.AttachPosition);
 				packet.WriteGuid(item.ItemGUID.To64());
@@ -2517,9 +2539,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		mail.SendMoney /= mail.Attachments.Count;
 		mail.Cod /= mail.Attachments.Count;
-		foreach (SendMail.MailAttachment item in mail.Attachments)
+		foreach (var item in mail.Attachments)
 		{
-			List<SendMail.MailAttachment> attachments = new List<SendMail.MailAttachment>();
+			var attachments = new List<SendMail.MailAttachment>();
 			attachments.Add(item);
 			BuildSendMail(mail, attachments);
 			Thread.Sleep(500);
@@ -2531,7 +2553,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_TIME_SYNC_RESPONSE);
+			var packet = new WorldPacket(Opcode.CMSG_TIME_SYNC_RESPONSE);
 			packet.WriteUInt32(response.SequenceIndex);
 			packet.WriteUInt32(response.ClientTime);
 			SendPacketToServer(packet);
@@ -2544,7 +2566,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		if (at.Entered)
 		{
 			GetSession().GameState.LastEnteredAreaTrigger = at.AreaTriggerID;
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_AREA_TRIGGER);
+			var packet = new WorldPacket(Opcode.CMSG_AREA_TRIGGER);
 			packet.WriteUInt32(at.AreaTriggerID);
 			SendPacketToServer(packet);
 		}
@@ -2553,7 +2575,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_SELECTION)]
 	private void HandleSetSelection(SetSelection selection)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_SELECTION);
+		var packet = new WorldPacket(Opcode.CMSG_SET_SELECTION);
 		packet.WriteGuid(selection.TargetGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -2561,7 +2583,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REPOP_REQUEST)]
 	private void HandleRepopRequest(RepopRequest repop)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REPOP_REQUEST);
+		var packet = new WorldPacket(Opcode.CMSG_REPOP_REQUEST);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteBool(repop.CheckInstance);
@@ -2572,14 +2594,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_CORPSE_LOCATION_FROM_CLIENT)]
 	private void HandleQueryCorpseLocationFromClient(QueryCorpseLocationFromClient query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_CORPSE_QUERY);
+		var packet = new WorldPacket(Opcode.MSG_CORPSE_QUERY);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_RECLAIM_CORPSE)]
 	private void HandleReclaimCorpse(ReclaimCorpse corpse)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_RECLAIM_CORPSE);
+		var packet = new WorldPacket(Opcode.CMSG_RECLAIM_CORPSE);
 		packet.WriteGuid(corpse.CorpseGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -2587,7 +2609,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_STAND_STATE_CHANGE)]
 	private void HandleStandStateChange(StandStateChange state)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_STAND_STATE_CHANGE);
+		var packet = new WorldPacket(Opcode.CMSG_STAND_STATE_CHANGE);
 		packet.WriteUInt32(state.StandState);
 		SendPacketToServer(packet);
 	}
@@ -2597,14 +2619,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_COMPLETE_CINEMATIC)]
 	private void HandleCinematicPacket(ClientCinematicPkt cinematic)
 	{
-		WorldPacket packet = new WorldPacket(cinematic.GetUniversalOpcode());
+		var packet = new WorldPacket(cinematic.GetUniversalOpcode());
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_FAR_SIGHT)]
 	private void HandleFarSight(FarSight sight)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_FAR_SIGHT);
+		var packet = new WorldPacket(Opcode.CMSG_FAR_SIGHT);
 		packet.WriteBool(sight.Enable);
 		SendPacketToServer(packet);
 		GetSession().GameState.IsInFarSight = sight.Enable;
@@ -2613,7 +2635,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOUNT_SPECIAL_ANIM)]
 	private void HandleMountSpecialAnim(MountSpecial mount)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MOUNT_SPECIAL_ANIM);
+		var packet = new WorldPacket(Opcode.CMSG_MOUNT_SPECIAL_ANIM);
 		SendPacketToServer(packet);
 	}
 
@@ -2624,19 +2646,19 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 		case TutorialAction.Clear:
 		{
-			WorldPacket packet3 = new WorldPacket(Opcode.CMSG_TUTORIAL_CLEAR);
+			var packet3 = new WorldPacket(Opcode.CMSG_TUTORIAL_CLEAR);
 			SendPacketToServer(packet3);
 			break;
 		}
 		case TutorialAction.Reset:
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_TUTORIAL_RESET);
+			var packet2 = new WorldPacket(Opcode.CMSG_TUTORIAL_RESET);
 			SendPacketToServer(packet2);
 			break;
 		}
 		case TutorialAction.Update:
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_TUTORIAL_FLAG);
+			var packet = new WorldPacket(Opcode.CMSG_TUTORIAL_FLAG);
 			packet.WriteUInt32(tutorial.TutorialBit);
 			SendPacketToServer(packet);
 			break;
@@ -2647,7 +2669,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REQUEST_LFG_LIST_BLACKLIST)]
 	private void HandleRequestLFGListBlacklist(EmptyClientPacket request)
 	{
-		LFGListUpdateBlacklist blacklist = new LFGListUpdateBlacklist();
+		var blacklist = new LFGListUpdateBlacklist();
 		if (ModernVersion.ExpansionVersion > 1)
 		{
 			blacklist.AddBlacklist(796, 3);
@@ -2750,12 +2772,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REQUEST_CONQUEST_FORMULA_CONSTANTS)]
 	private void HandleRequestConquestFormulaConstants(EmptyClientPacket request)
 	{
-		ConquestFormulaConstants response = new ConquestFormulaConstants();
-		response.PvpMinCPPerWeek = 1500;
-		response.PvpMaxCPPerWeek = 3000;
-		response.PvpCPBaseCoefficient = 1511.26f;
-		response.PvpCPExpCoefficient = 1639.28f;
-		response.PvpCPNumerator = 0.00412f;
+		var response = new ConquestFormulaConstants
+		{
+			PvpMinCPPerWeek = 1500,
+			PvpMaxCPPerWeek = 3000,
+			PvpCPBaseCoefficient = 1511.26f,
+			PvpCPExpCoefficient = 1639.28f,
+			PvpCPNumerator = 0.00412f
+		};
 		SendPacket(response);
 	}
 
@@ -2768,12 +2792,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_DUNGEON_DIFFICULTY)]
 	private void HandleSetDungeonDifficulty(SetDungeonDifficulty difficulty)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_SET_DUNGEON_DIFFICULTY);
+		var packet = new WorldPacket(Opcode.MSG_SET_DUNGEON_DIFFICULTY);
 		uint dificultyId = (byte)Enum.Parse(typeof(DifficultyLegacy), ((DifficultyModern)difficulty.DifficultyID/*cast due to .constrained prefix*/).ToString());
 		packet.WriteUInt32(dificultyId);
 		SendPacketToServer(packet);
-		DungeonDifficultySet difficultySet = new DungeonDifficultySet();
-		difficultySet.DifficultyID = (int)difficulty.DifficultyID;
+		var difficultySet = new DungeonDifficultySet
+		{
+			DifficultyID = (int)difficulty.DifficultyID
+		};
 		SendPacket(difficultySet);
 	}
 
@@ -2790,14 +2816,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GET_ITEM_PURCHASE_DATA)]
 	private void HandleGetItemPurchaseData(EmptyClientPacket packet)
 	{
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_GET_ITEM_PURCHASE_DATA);
+		var legacyPacket = new WorldPacket(Opcode.CMSG_GET_ITEM_PURCHASE_DATA);
 		SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_ITEM_PURCHASE_REFUND)]
 	private void HandleItemPurchaseRefund(EmptyClientPacket packet)
 	{
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_ITEM_PURCHASE_REFUND);
+		var legacyPacket = new WorldPacket(Opcode.CMSG_ITEM_PURCHASE_REFUND);
 		SendPacketToServer(legacyPacket);
 	}
 
@@ -2841,12 +2867,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (packet.Player)
 		{
-			WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PLAYER_LOCK_INFO_REQUEST);
+			var legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PLAYER_LOCK_INFO_REQUEST);
 			SendPacketToServer(legacyPacket);
 		}
 		else
 		{
-			WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PARTY_LOCK_INFO_REQUEST);
+			var legacyPacket = new WorldPacket(Opcode.CMSG_LFG_PARTY_LOCK_INFO_REQUEST);
 			SendPacketToServer(legacyPacket);
 		}
 	}
@@ -2855,12 +2881,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleDfJoin(DfJoinPkt packet)
 	{
 		// Legacy 3.3.5a format: uint32 Roles, bool NoPartialClear, bool Achievements, uint8 slotCount, uint32[] Slots, uint8 needsCount(3), uint8[3] Needs, string Comment
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_JOIN);
+		var legacyPacket = new WorldPacket(Opcode.CMSG_LFG_JOIN);
 		legacyPacket.WriteUInt32(packet.Roles);
 		legacyPacket.WriteUInt8(0); // NoPartialClear
 		legacyPacket.WriteUInt8(0); // Achievements
 		legacyPacket.WriteUInt8((byte)packet.Slots.Length);
-		for (int i = 0; i < packet.Slots.Length; i++)
+		for (var i = 0; i < packet.Slots.Length; i++)
 			legacyPacket.WriteUInt32(packet.Slots[i]);
 		legacyPacket.WriteUInt8(3); // Needs count
 		legacyPacket.WriteUInt8(0); // Need 1
@@ -2873,21 +2899,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_DF_LEAVE)]
 	private void HandleDfLeave(DfLeavePkt packet)
 	{
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_LFG_LEAVE);
+		var legacyPacket = new WorldPacket(Opcode.CMSG_LFG_LEAVE);
 		SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_DF_GET_JOIN_STATUS)]
 	private void HandleDfGetJoinStatus(DfGetJoinStatusPkt packet)
 	{
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_DF_GET_JOIN_STATUS);
+		var legacyPacket = new WorldPacket(Opcode.CMSG_DF_GET_JOIN_STATUS);
 		SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_CALENDAR_GET_NUM_PENDING)]
 	private void HandleCalendarGetNumPending(CalendarGetNumPendingPkt packet)
 	{
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_CALENDAR_GET_NUM_PENDING);
+		var legacyPacket = new WorldPacket(Opcode.CMSG_CALENDAR_GET_NUM_PENDING);
 		SendPacketToServer(legacyPacket);
 	}
 
@@ -2984,14 +3010,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_DOUBLE_JUMP)]
 	private void HandlePlayerMove(ClientPlayerMovement movement)
 	{
-		string opcodeName = movement.GetUniversalOpcode().ToString();
+		var opcodeName = movement.GetUniversalOpcode().ToString();
 		opcodeName = opcodeName.Replace("CMSG", "MSG");
-		uint opcode = Opcodes.GetOpcodeValueForVersion(opcodeName, Settings.ServerBuild);
+		var opcode = Opcodes.GetOpcodeValueForVersion(opcodeName, Settings.ServerBuild);
 		if (opcode == 0)
 		{
 			opcode = Opcodes.GetOpcodeValueForVersion("MSG_MOVE_SET_FACING", Settings.ServerBuild);
 		}
-		WorldPacket packet = new WorldPacket(opcode);
+		var packet = new WorldPacket(opcode);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 		{
 			packet.WritePackedGuid(movement.Guid.To64());
@@ -3003,7 +3029,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_TELEPORT_ACK)]
 	private void HandleMoveTeleportAck(MoveTeleportAck teleport)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_MOVE_TELEPORT_ACK);
+		var packet = new WorldPacket(Opcode.MSG_MOVE_TELEPORT_ACK);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 		{
 			packet.WritePackedGuid(teleport.MoverGUID.To64());
@@ -3021,7 +3047,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	private void HandleWorldPortResponse(WorldPortResponse teleport)
 	{
 		GetSession().GameState.IsWaitingForWorldPortAck = false;
-		WorldPacket packet = new WorldPacket(Opcode.MSG_MOVE_WORLDPORT_ACK);
+		var packet = new WorldPacket(Opcode.MSG_MOVE_WORLDPORT_ACK);
 		SendPacketToServer(packet);
 	}
 
@@ -3036,17 +3062,17 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_FORCE_WALK_SPEED_CHANGE_ACK)]
 	private void HandleMoveForceSpeedChangeAck(MovementSpeedAck speed)
 	{
-		Opcode opcode = speed.GetUniversalOpcode();
-		bool flag = LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180);
-		bool flag2 = flag;
+		var opcode = speed.GetUniversalOpcode();
+		var flag = LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180);
+		var flag2 = flag;
 		if (flag2)
 		{
-			bool flag3 = opcode - 743 <= Opcode.CMSG_ABANDON_NPE_RESPONSE;
+			var flag3 = opcode - 743 <= Opcode.CMSG_ABANDON_NPE_RESPONSE;
 			flag2 = flag3;
 		}
 		if (!flag2)
 		{
-			WorldPacket packet = new WorldPacket(opcode);
+			var packet = new WorldPacket(opcode);
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 			{
 				packet.WritePackedGuid(speed.MoverGUID.To64());
@@ -3080,7 +3106,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_WATER_WALK_ACK)]
 	private void HandleMoveForceAck1(MovementAckMessage movementAck)
 	{
-		WorldPacket packet = new WorldPacket(movementAck.GetUniversalOpcode());
+		var packet = new WorldPacket(movementAck.GetUniversalOpcode());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 		{
 			packet.WritePackedGuid(movementAck.MoverGUID.To64());
@@ -3102,7 +3128,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_GRAVITY_ENABLE_ACK)]
 	private void HandleMoveForceAck2(MovementAckMessage movementAck)
 	{
-		WorldPacket packet = new WorldPacket(movementAck.GetUniversalOpcode());
+		var packet = new WorldPacket(movementAck.GetUniversalOpcode());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 		{
 			packet.WritePackedGuid(movementAck.MoverGUID.To64());
@@ -3119,7 +3145,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_ACTIVE_MOVER)]
 	private void HandleMoveSetActiveMover(SetActiveMover move)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_ACTIVE_MOVER);
+		var packet = new WorldPacket(Opcode.CMSG_SET_ACTIVE_MOVER);
 		packet.WriteGuid(move.MoverGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -3127,7 +3153,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_INIT_ACTIVE_MOVER_COMPLETE)]
 	private void HandleMoveInitActiveMoverComplete(InitActiveMoverComplete move)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_ACTIVE_MOVER);
+		var packet = new WorldPacket(Opcode.CMSG_SET_ACTIVE_MOVER);
 		packet.WriteGuid(GetSession().GameState.CurrentPlayerGuid.To64());
 		SendPacketToServer(packet);
 	}
@@ -3135,7 +3161,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_SPLINE_DONE)]
 	private void HandleMoveSplineDone(MoveSplineDone movement)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MOVE_SPLINE_DONE);
+		var packet = new WorldPacket(Opcode.CMSG_MOVE_SPLINE_DONE);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 		{
 			packet.WritePackedGuid(movement.Guid.To64());
@@ -3152,7 +3178,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_MOVE_TIME_SKIPPED)]
 	private void HandleMoveSplineDone(MoveTimeSkipped movement)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_MOVE_TIME_SKIPPED);
+		var packet = new WorldPacket(Opcode.CMSG_MOVE_TIME_SKIPPED);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 		{
 			packet.WritePackedGuid(movement.MoverGUID.To64());
@@ -3170,14 +3196,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REQUEST_VEHICLE_NEXT_SEAT)]
 	private void HandleRequestVehicleAction(EmptyClientPacket packet)
 	{
-		WorldPacket legacyPacket = new WorldPacket(packet.GetUniversalOpcode());
+		var legacyPacket = new WorldPacket(packet.GetUniversalOpcode());
 		SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_REQUEST_VEHICLE_SWITCH_SEAT)]
 	private void HandleRequestVehicleSwitchSeat(RequestVehicleSwitchSeat switchSeat)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REQUEST_VEHICLE_SWITCH_SEAT);
+		var packet = new WorldPacket(Opcode.CMSG_REQUEST_VEHICLE_SWITCH_SEAT);
 		packet.WritePackedGuid(switchSeat.Vehicle.To64());
 		packet.WriteUInt8(switchSeat.SeatIndex);
 		SendPacketToServer(packet);
@@ -3186,7 +3212,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GM_TICKET_GET_CASE_STATUS)]
 	private void HandleGMTicketGetCaseStatus(EmptyClientPacket packet)
 	{
-		GMTicketCaseStatus response = new GMTicketCaseStatus();
+		var response = new GMTicketCaseStatus();
 		SendPacket(response);
 	}
 
@@ -3199,15 +3225,15 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GM_TICKET_GET_SYSTEM_STATUS)]
 	private void HandleSimpleEmptyPacket(EmptyClientPacket packet)
 	{
-		WorldPacket legacyPacket = new WorldPacket(packet.GetUniversalOpcode());
+		var legacyPacket = new WorldPacket(packet.GetUniversalOpcode());
 		SendPacketToServer(legacyPacket);
 	}
 
 	[PacketHandler(Opcode.CMSG_ZONEUPDATE)]
 	private void HandleZoneUpdate(ZoneUpdatePkt packet)
 	{
-		uint zoneId = packet.ZoneId;
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_ZONEUPDATE);
+		var zoneId = packet.ZoneId;
+		var legacyPacket = new WorldPacket(Opcode.CMSG_ZONEUPDATE);
 		legacyPacket.WriteUInt32(zoneId);
 		SendPacketToServer(legacyPacket);
 	}
@@ -3215,8 +3241,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GM_TICKET_UPDATE_TEXT)]
 	private void HandleGMTicketUpdateText(GMTicketUpdateTextPkt packet)
 	{
-		string message = packet.Message;
-		WorldPacket legacyPacket = new WorldPacket(Opcode.CMSG_GM_TICKET_UPDATE_TEXT);
+		var message = packet.Message;
+		var legacyPacket = new WorldPacket(Opcode.CMSG_GM_TICKET_UPDATE_TEXT);
 		legacyPacket.WriteCString(message);
 		SendPacketToServer(legacyPacket);
 	}
@@ -3232,7 +3258,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_AREA_SPIRIT_HEALER_QUEUE)]
 	private void HandleInteractWithNPC(InteractWithNPC interact)
 	{
-		WorldPacket packet = new WorldPacket(interact.GetUniversalOpcode());
+		var packet = new WorldPacket(interact.GetUniversalOpcode());
 		packet.WriteGuid(interact.CreatureGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -3240,7 +3266,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_GOSSIP_SELECT_OPTION)]
 	private void HandleGossipSelectOption(GossipSelectOption gossip)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GOSSIP_SELECT_OPTION);
+		var packet = new WorldPacket(Opcode.CMSG_GOSSIP_SELECT_OPTION);
 		packet.WriteGuid(gossip.GossipUnit.To64());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
@@ -3257,7 +3283,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BUY_BANK_SLOT)]
 	private void HandleBuyBankSlot(BuyBankSlot bank)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BUY_BANK_SLOT);
+		var packet = new WorldPacket(Opcode.CMSG_BUY_BANK_SLOT);
 		packet.WriteGuid(bank.Guid.To64());
 		SendPacketToServer(packet);
 	}
@@ -3265,7 +3291,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_TRAINER_BUY_SPELL)]
 	private void HandleTrainerBuySpell(TrainerBuySpell buy)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_TRAINER_BUY_SPELL);
+		var packet = new WorldPacket(Opcode.CMSG_TRAINER_BUY_SPELL);
 		packet.WriteGuid(buy.TrainerGUID.To64());
 		if (ModernVersion.ExpansionVersion > 1 && LegacyVersion.ExpansionVersion <= 1)
 		{
@@ -3282,14 +3308,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 		case SpecResetType.Talents:
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.MSG_TALENT_WIPE_CONFIRM);
+			var packet2 = new WorldPacket(Opcode.MSG_TALENT_WIPE_CONFIRM);
 			packet2.WriteGuid(respec.TrainerGUID.To64());
 			SendPacketToServer(packet2);
 			break;
 		}
 		case SpecResetType.PetTalents:
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_UNLEARN);
+			var packet = new WorldPacket(Opcode.CMSG_PET_UNLEARN);
 			packet.WriteGuid(respec.TrainerGUID.To64());
 			SendPacketToServer(packet);
 			break;
@@ -3303,7 +3329,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PET_ACTION)]
 	private void HandlePetAction(PetAction act)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_ACTION);
+		var packet = new WorldPacket(Opcode.CMSG_PET_ACTION);
 		packet.WriteGuid(act.PetGUID.To64());
 		packet.WriteUInt32(act.Action);
 		packet.WriteGuid(act.TargetGUID.To64());
@@ -3313,7 +3339,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PET_STOP_ATTACK)]
 	private void HandlePetStopAttack(PetStopAttack stop)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_STOP_ATTACK);
+		var packet = new WorldPacket(Opcode.CMSG_PET_STOP_ATTACK);
 		packet.WriteGuid(stop.PetGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -3321,7 +3347,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PET_SET_ACTION)]
 	private void HandlePetStopAttack(PetSetAction action)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_SET_ACTION);
+		var packet = new WorldPacket(Opcode.CMSG_PET_SET_ACTION);
 		packet.WriteGuid(action.PetGUID.To64());
 		packet.WriteUInt32(action.Index);
 		packet.WriteUInt32(action.Action);
@@ -3331,7 +3357,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PET_RENAME)]
 	private void HandlePetRename(PetRename pet)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_RENAME);
+		var packet = new WorldPacket(Opcode.CMSG_PET_RENAME);
 		packet.WriteGuid(pet.RenameData.PetGUID.To64());
 		packet.WriteCString(pet.RenameData.NewName);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -3339,7 +3365,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			packet.WriteBool(pet.RenameData.HasDeclinedNames);
 			if (pet.RenameData.HasDeclinedNames)
 			{
-				for (int i = 0; i < 5; i++)
+				for (var i = 0; i < 5; i++)
 				{
 					packet.WriteCString(pet.RenameData.DeclinedNames.name[i]);
 				}
@@ -3351,7 +3377,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REQUEST_STABLED_PETS)]
 	private void HandleRequestStabledPets(RequestStabledPets stable)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_LIST_STABLED_PETS);
+		var packet = new WorldPacket(Opcode.MSG_LIST_STABLED_PETS);
 		packet.WriteGuid(stable.StableMaster.To64());
 		SendPacketToServer(packet);
 	}
@@ -3359,7 +3385,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_BUY_STABLE_SLOT)]
 	private void HandleBuyStableSlot(BuyStableSlot stable)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_BUY_STABLE_SLOT);
+		var packet = new WorldPacket(Opcode.CMSG_BUY_STABLE_SLOT);
 		packet.WriteGuid(stable.StableMaster.To64());
 		SendPacketToServer(packet);
 	}
@@ -3367,7 +3393,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PET_ABANDON)]
 	private void HandlePetAbandon(PetAbandon pet)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_ABANDON);
+		var packet = new WorldPacket(Opcode.CMSG_PET_ABANDON);
 		packet.WriteGuid(pet.PetGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -3375,7 +3401,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_STABLE_PET)]
 	private void HandleStablePet(StablePet pet)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_STABLE_PET);
+		var packet = new WorldPacket(Opcode.CMSG_STABLE_PET);
 		packet.WriteGuid(pet.StableMaster.To64());
 		SendPacketToServer(packet);
 	}
@@ -3383,7 +3409,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_UNSTABLE_PET)]
 	private void HandleUnstablePet(UnstablePet pet)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_UNSTABLE_PET);
+		var packet = new WorldPacket(Opcode.CMSG_UNSTABLE_PET);
 		packet.WriteGuid(pet.StableMaster.To64());
 		packet.WriteUInt32(pet.PetNumber);
 		SendPacketToServer(packet);
@@ -3392,7 +3418,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_STABLE_SWAP_PET)]
 	private void HandleStableSwapPet(StableSwapPet pet)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_STABLE_SWAP_PET);
+		var packet = new WorldPacket(Opcode.CMSG_STABLE_SWAP_PET);
 		packet.WriteGuid(pet.StableMaster.To64());
 		packet.WriteUInt32(pet.PetNumber);
 		SendPacketToServer(packet);
@@ -3401,7 +3427,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PET_CANCEL_AURA)]
 	private void HandlePetCancelAura(PetCancelAura cancel)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_CANCEL_AURA);
+		var packet = new WorldPacket(Opcode.CMSG_PET_CANCEL_AURA);
 		packet.WriteGuid(cancel.PetGUID.To64());
 		packet.WriteUInt32(cancel.SpellID);
 		SendPacketToServer(packet);
@@ -3410,14 +3436,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_REQUEST_PET_INFO)]
 	private void HandleRequestPetInfo(PetInfoRequest r)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_REQUEST_PET_INFO);
+		var packet = new WorldPacket(Opcode.CMSG_REQUEST_PET_INFO);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_PETITION_BUY)]
 	private void HandlePetitionBuy(PetitionBuy petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PETITION_BUY);
+		var packet = new WorldPacket(Opcode.CMSG_PETITION_BUY);
 		packet.WriteGuid(petition.Unit.To64());
 		packet.WriteUInt32(0u);
 		packet.WriteUInt64(0uL);
@@ -3442,7 +3468,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		packet.WriteUInt32(0u);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			for (int i = 0; i < 10; i++)
+			for (var i = 0; i < 10; i++)
 			{
 				packet.WriteCString("");
 			}
@@ -3460,7 +3486,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PETITION_SHOW_SIGNATURES)]
 	private void HandlePetitionShowSignatures(PetitionShowSignatures petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PETITION_SHOW_SIGNATURES);
+		var packet = new WorldPacket(Opcode.CMSG_PETITION_SHOW_SIGNATURES);
 		packet.WriteGuid(petition.Item.To64());
 		SendPacketToServer(packet);
 	}
@@ -3468,7 +3494,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_PETITION)]
 	private void HandleQueryPetition(QueryPetition petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_PETITION);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_PETITION);
 		packet.WriteUInt32(petition.PetitionID);
 		packet.WriteGuid(petition.ItemGUID.To64());
 		SendPacketToServer(packet);
@@ -3477,7 +3503,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PETITION_RENAME_GUILD)]
 	private void HandlePetitionRenameGuild(PetitionRenameGuild petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_PETITION_RENAME);
+		var packet = new WorldPacket(Opcode.MSG_PETITION_RENAME);
 		packet.WriteGuid(petition.PetitionGuid.To64());
 		packet.WriteCString(petition.NewGuildName);
 		SendPacketToServer(packet);
@@ -3486,7 +3512,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_OFFER_PETITION)]
 	private void HandleOfferPetition(OfferPetition petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_OFFER_PETITION);
+		var packet = new WorldPacket(Opcode.CMSG_OFFER_PETITION);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteUInt32(petition.UnkInt);
@@ -3499,7 +3525,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_DECLINE_PETITION)]
 	private void HandleDeclinePetition(DeclinePetition petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_PETITION_DECLINE);
+		var packet = new WorldPacket(Opcode.MSG_PETITION_DECLINE);
 		packet.WriteGuid(petition.PetitionGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -3507,7 +3533,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SIGN_PETITION)]
 	private void HandleSignPetition(SignPetition petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SIGN_PETITION);
+		var packet = new WorldPacket(Opcode.CMSG_SIGN_PETITION);
 		packet.WriteGuid(petition.PetitionGUID.To64());
 		packet.WriteUInt8(petition.Choice);
 		SendPacketToServer(packet);
@@ -3516,7 +3542,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_TURN_IN_PETITION)]
 	private void HandleTurnInPetition(TurnInPetition petition)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_TURN_IN_PETITION);
+		var packet = new WorldPacket(Opcode.CMSG_TURN_IN_PETITION);
 		packet.WriteGuid(petition.Item.To64());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
@@ -3532,14 +3558,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_TIME)]
 	private void HandleQueryTime(EmptyClientPacket queryTime)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_TIME);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_TIME);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_QUERY_QUEST_INFO)]
 	private void HandleQueryQuestInfo(QueryQuestInfo queryQuest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_QUEST_INFO);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_QUEST_INFO);
 		packet.WriteUInt32(queryQuest.QuestID);
 		SendPacketToServer(packet);
 	}
@@ -3547,7 +3573,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_CREATURE)]
 	private void HandleQueryCreature(QueryCreature queryCreature)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_CREATURE);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_CREATURE);
 		packet.WriteUInt32(queryCreature.CreatureID);
 		packet.WriteGuid(queryCreature.Guid.To64());
 		SendPacketToServer(packet);
@@ -3559,15 +3585,17 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		// Respond from cache immediately if available (avoids round-trip for transports)
 		if (GetSession().GameState.GameObjectQueryCache.TryGetValue(queryGo.GameObjectID, out var cached))
 		{
-			var response = new QueryGameObjectResponse();
-			response.GameObjectID = cached.GameObjectID;
-			response.Guid = WowGuid128.Empty;
-			response.Allow = cached.Allow;
-			response.Stats = cached.Stats;
+			var response = new QueryGameObjectResponse
+			{
+				GameObjectID = cached.GameObjectID,
+				Guid = WowGuid128.Empty,
+				Allow = cached.Allow,
+				Stats = cached.Stats
+			};
 			SendPacket(response);
 			return;
 		}
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_GAME_OBJECT);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_GAME_OBJECT);
 		packet.WriteUInt32(queryGo.GameObjectID);
 		packet.WriteGuid(queryGo.Guid.To64());
 		SendPacketToServer(packet);
@@ -3576,7 +3604,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_PAGE_TEXT)]
 	private void HandleQueryPageText(QueryPageText queryText)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_PAGE_TEXT);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_PAGE_TEXT);
 		packet.WriteUInt32(queryText.PageTextID);
 		packet.WriteGuid(queryText.ItemGUID.To64());
 		SendPacketToServer(packet);
@@ -3585,7 +3613,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_NPC_TEXT)]
 	private void HandleQueryNpcText(QueryNPCText queryText)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_NPC_TEXT);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_NPC_TEXT);
 		packet.WriteUInt32(queryText.TextID);
 		packet.WriteGuid(queryText.Guid.To64());
 		SendPacketToServer(packet);
@@ -3594,7 +3622,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUERY_PET_NAME)]
 	private void HandleQueryPetName(QueryPetName queryName)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUERY_PET_NAME);
+		var packet = new WorldPacket(Opcode.CMSG_QUERY_PET_NAME);
 		packet.WriteUInt32(queryName.UnitGUID.GetEntry());
 		packet.WriteGuid(queryName.UnitGUID.To64());
 		SendPacketToServer(packet);
@@ -3603,7 +3631,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_WHO)]
 	private void HandleWhoRequest(WhoRequestPkt who)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_WHO);
+		var packet = new WorldPacket(Opcode.CMSG_WHO);
 		packet.WriteInt32(who.Request.MinLevel);
 		packet.WriteInt32(who.Request.MaxLevel);
 		packet.WriteCString(who.Request.Name);
@@ -3611,12 +3639,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		packet.WriteInt32((int)who.Request.RaceFilter);
 		packet.WriteInt32(who.Request.ClassFilter);
 		packet.WriteInt32(who.Areas.Count);
-		foreach (int area in who.Areas)
+		foreach (var area in who.Areas)
 		{
 			packet.WriteInt32(area);
 		}
 		packet.WriteInt32(who.Request.Words.Count);
-		foreach (string word in who.Request.Words)
+		foreach (var word in who.Request.Words)
 		{
 			packet.WriteCString(word);
 		}
@@ -3627,7 +3655,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_GIVER_QUERY_QUEST)]
 	private void HandleQuestGiverQueryQuest(QuestGiverQueryQuest quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_QUERY_QUEST);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_QUERY_QUEST);
 		packet.WriteGuid(quest.QuestGiverGUID.To64());
 		packet.WriteUInt32(quest.QuestID);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -3640,7 +3668,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_GIVER_ACCEPT_QUEST)]
 	private void HandleQuestGiverAcceptQuest(QuestGiverAcceptQuest quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_ACCEPT_QUEST);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_ACCEPT_QUEST);
 		packet.WriteGuid(quest.QuestGiverGUID.To64());
 		packet.WriteUInt32(quest.QuestID);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_2_9901))
@@ -3653,7 +3681,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_LOG_REMOVE_QUEST)]
 	private void HandleQuestLogRemoveQuest(QuestLogRemoveQuest quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_LOG_REMOVE_QUEST);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_LOG_REMOVE_QUEST);
 		packet.WriteUInt8(quest.Slot);
 		SendPacketToServer(packet);
 	}
@@ -3661,7 +3689,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_GIVER_STATUS_QUERY)]
 	private void HandleQuestGiverStatusQuery(QuestGiverStatusQuery query)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_STATUS_QUERY);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_STATUS_QUERY);
 		packet.WriteGuid(query.QuestGiverGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -3671,18 +3699,18 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_STATUS_MULTIPLE_QUERY);
+			var packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_STATUS_MULTIPLE_QUERY);
 			SendPacketToServer(packet);
 			return;
 		}
-		int UNIT_NPC_FLAGS = ModernVersion.GetUpdateField(UnitField.UNIT_NPC_FLAGS);
+		var UNIT_NPC_FLAGS = ModernVersion.GetUpdateField(UnitField.UNIT_NPC_FLAGS);
 		if (UNIT_NPC_FLAGS < 0)
 		{
 			return;
 		}
-		List<WowGuid128> npcGuids = new List<WowGuid128>();
+		var npcGuids = new List<WowGuid128>();
 		GetSession().GameState.ObjectCacheMutex.WaitOne();
-		foreach (KeyValuePair<WowGuid128, UpdateFieldsArray> obj in GetSession().GameState.ObjectCacheModern)
+		foreach (var obj in GetSession().GameState.ObjectCacheModern)
 		{
 			if (obj.Key.GetObjectType() == ObjectType.Unit && obj.Value.GetUpdateField<uint>(UNIT_NPC_FLAGS).HasAnyFlag(NPCFlags.QuestGiver))
 			{
@@ -3690,9 +3718,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			}
 		}
 		GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
-		foreach (WowGuid128 guid in npcGuids)
+		foreach (var guid in npcGuids)
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_QUEST_GIVER_STATUS_QUERY);
+			var packet2 = new WorldPacket(Opcode.CMSG_QUEST_GIVER_STATUS_QUERY);
 			packet2.WriteGuid(guid.To64());
 			SendPacketToServer(packet2);
 		}
@@ -3701,7 +3729,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_GIVER_HELLO)]
 	private void HandleQuestGiverHello(QuestGiverHello hello)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_HELLO);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_HELLO);
 		packet.WriteGuid(hello.QuestGiverGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -3709,7 +3737,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_GIVER_REQUEST_REWARD)]
 	private void HandleQuestGiverRequestReward(QuestGiverRequestReward quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_REQUEST_REWARD);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_REQUEST_REWARD);
 		packet.WriteGuid(quest.QuestGiverGUID.To64());
 		packet.WriteUInt32(quest.QuestID);
 		SendPacketToServer(packet);
@@ -3718,23 +3746,25 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_GIVER_CHOOSE_REWARD)]
 	private void HandleQuestGiverChooseReward(QuestGiverChooseReward quest)
 	{
-		int choiceIndex = 0;
+		var choiceIndex = 0;
 		if (quest.Choice.Item.ItemID != 0)
 		{
-			QuestTemplate questTemplate = GameData.GetQuestTemplate(quest.QuestID);
+			var questTemplate = GameData.GetQuestTemplate(quest.QuestID);
 			if (questTemplate == null)
 			{
 				Log.Print(LogType.Error, "Unable to select quest reward because quest template is missing. Try again.", "QuestHandler.cs");
-				WorldPacket packet2 = new WorldPacket(Opcode.CMSG_QUERY_QUEST_INFO);
+				var packet2 = new WorldPacket(Opcode.CMSG_QUERY_QUEST_INFO);
 				packet2.WriteUInt32(quest.QuestID);
 				SendPacketToServer(packet2);
-				QuestGiverQuestFailed fail = new QuestGiverQuestFailed();
-				fail.QuestID = quest.QuestID;
-				fail.Reason = InventoryResult.ItemNotFound;
+				var fail = new QuestGiverQuestFailed
+				{
+					QuestID = quest.QuestID,
+					Reason = InventoryResult.ItemNotFound
+				};
 				SendPacket(fail);
 				return;
 			}
-			for (int i = 0; i < questTemplate.UnfilteredChoiceItems.Length; i++)
+			for (var i = 0; i < questTemplate.UnfilteredChoiceItems.Length; i++)
 			{
 				if (questTemplate.UnfilteredChoiceItems[i].ItemID == quest.Choice.Item.ItemID)
 				{
@@ -3743,7 +3773,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				}
 			}
 		}
-		WorldPacket packet3 = new WorldPacket(Opcode.CMSG_QUEST_GIVER_CHOOSE_REWARD);
+		var packet3 = new WorldPacket(Opcode.CMSG_QUEST_GIVER_CHOOSE_REWARD);
 		packet3.WriteGuid(quest.QuestGiverGUID.To64());
 		packet3.WriteUInt32(quest.QuestID);
 		packet3.WriteInt32(choiceIndex);
@@ -3753,7 +3783,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_GIVER_COMPLETE_QUEST)]
 	private void HandleQuestGiverCompleteQuest(QuestGiverCompleteQuest quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_COMPLETE_QUEST);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_GIVER_COMPLETE_QUEST);
 		packet.WriteGuid(quest.QuestGiverGUID.To64());
 		packet.WriteUInt32(quest.QuestID);
 		SendPacketToServer(packet);
@@ -3762,7 +3792,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_CONFIRM_ACCEPT)]
 	private void HandleQuestConfirmAcceptResponse(QuestConfirmAcceptResponse quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_QUEST_CONFIRM_ACCEPT);
+		var packet = new WorldPacket(Opcode.CMSG_QUEST_CONFIRM_ACCEPT);
 		packet.WriteUInt32(quest.QuestID);
 		SendPacketToServer(packet);
 	}
@@ -3770,7 +3800,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_PUSH_QUEST_TO_PARTY)]
 	private void HandlePushQuestToParty(PushQuestToParty quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_PUSH_QUEST_TO_PARTY);
+		var packet = new WorldPacket(Opcode.CMSG_PUSH_QUEST_TO_PARTY);
 		packet.WriteUInt32(quest.QuestID);
 		SendPacketToServer(packet);
 	}
@@ -3778,7 +3808,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_QUEST_PUSH_RESULT)]
 	private void HandleQuestPushResult(QuestPushResultResponse quest)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.MSG_QUEST_PUSH_RESULT);
+		var packet = new WorldPacket(Opcode.MSG_QUEST_PUSH_RESULT);
 		packet.WriteGuid(quest.SenderGUID.To64());
 		packet.WriteUInt8((byte)quest.Result);
 		SendPacketToServer(packet);
@@ -3787,7 +3817,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_FACTION_AT_WAR)]
 	private void HandleSetFactionAtWar(SetFactionAtWar faction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_FACTION_AT_WAR);
+		var packet = new WorldPacket(Opcode.CMSG_SET_FACTION_AT_WAR);
 		packet.WriteUInt32(faction.FactionIndex);
 		packet.WriteBool(data: true);
 		SendPacketToServer(packet);
@@ -3796,7 +3826,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_FACTION_NOT_AT_WAR)]
 	private void HandleSetFactionNotAtWar(SetFactionNotAtWar faction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_FACTION_AT_WAR);
+		var packet = new WorldPacket(Opcode.CMSG_SET_FACTION_AT_WAR);
 		packet.WriteUInt32(faction.FactionIndex);
 		packet.WriteBool(data: false);
 		SendPacketToServer(packet);
@@ -3805,7 +3835,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_FACTION_INACTIVE)]
 	private void HandleSetFactionInactive(SetFactionInactive faction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_FACTION_INACTIVE);
+		var packet = new WorldPacket(Opcode.CMSG_SET_FACTION_INACTIVE);
 		packet.WriteUInt32(faction.FactionIndex);
 		packet.WriteBool(faction.State);
 		SendPacketToServer(packet);
@@ -3814,7 +3844,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_WATCHED_FACTION)]
 	private void HandleSetFactionInactive(SetWatchedFaction faction)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_WATCHED_FACTION);
+		var packet = new WorldPacket(Opcode.CMSG_SET_WATCHED_FACTION);
 		packet.WriteUInt32(faction.FactionIndex);
 		SendPacketToServer(packet);
 	}
@@ -3822,8 +3852,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_CHANGE_REALM_TICKET)]
 	private void HandleChangeRealmTicket(ChangeRealmTicket request)
 	{
-		ChangeRealmTicketResponse response = new ChangeRealmTicketResponse();
-		response.Token = request.Token;
+		var response = new ChangeRealmTicketResponse
+		{
+			Token = request.Token
+		};
 		if (!GetSession().AuthClient.IsConnected() && GetSession().AuthClient.Reconnect() != AuthResult.SUCCESS)
 		{
 			Log.Print(LogType.Error, "Failed to reconnect to auth server.", "SessionHandler.cs");
@@ -3857,12 +3889,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_FRIEND_LIST);
+			var packet = new WorldPacket(Opcode.CMSG_FRIEND_LIST);
 			SendPacketToServer(packet);
 		}
 		else
 		{
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_CONTACT_LIST);
+			var packet2 = new WorldPacket(Opcode.CMSG_CONTACT_LIST);
 			packet2.WriteUInt32((uint)contacts.Flags);
 			SendPacketToServer(packet2);
 		}
@@ -3871,7 +3903,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ADD_FRIEND)]
 	private void HandleAddFriend(AddFriend friend)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ADD_FRIEND);
+		var packet = new WorldPacket(Opcode.CMSG_ADD_FRIEND);
 		packet.WriteCString(friend.Name);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
@@ -3883,7 +3915,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ADD_IGNORE)]
 	private void HandleAddIgnore(AddIgnore ignore)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ADD_IGNORE);
+		var packet = new WorldPacket(Opcode.CMSG_ADD_IGNORE);
 		packet.WriteCString(ignore.Name);
 		SendPacketToServer(packet);
 	}
@@ -3892,7 +3924,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_DEL_IGNORE)]
 	private void HandleDelFriend(DelFriend friend)
 	{
-		WorldPacket packet = new WorldPacket(friend.GetUniversalOpcode());
+		var packet = new WorldPacket(friend.GetUniversalOpcode());
 		packet.WriteGuid(friend.Guid.To64());
 		SendPacketToServer(packet);
 	}
@@ -3902,7 +3934,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_CONTACT_NOTES);
+			var packet = new WorldPacket(Opcode.CMSG_SET_CONTACT_NOTES);
 			packet.WriteGuid(friend.Guid.To64());
 			packet.WriteCString(friend.Notes);
 			SendPacketToServer(packet);
@@ -3911,7 +3943,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private SpellCastTargetFlags ConvertSpellTargetFlags(SpellTargetData target)
 	{
-		SpellCastTargetFlags targetFlags = SpellCastTargetFlags.None;
+		var targetFlags = SpellCastTargetFlags.None;
 		if (target.Unit != null && !target.Unit.IsEmpty())
 		{
 			if (target.Flags.HasFlag(SpellCastTargetFlags.Unit))
@@ -4009,26 +4041,32 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!castRequest.HasStarted)
 		{
-			SpellPrepare prepare2 = new SpellPrepare();
-			prepare2.ClientCastID = castRequest.ClientGUID;
-			prepare2.ServerCastID = castRequest.ServerGUID;
+			var prepare2 = new SpellPrepare
+			{
+				ClientCastID = castRequest.ClientGUID,
+				ServerCastID = castRequest.ServerGUID
+			};
 			SendPacket(prepare2);
 		}
 		if (isPet)
 		{
-			PetCastFailed failed = new PetCastFailed();
-			failed.SpellID = castRequest.SpellId;
-			failed.Reason = 123u;
-			failed.CastID = castRequest.ServerGUID;
+			var failed = new PetCastFailed
+			{
+				SpellID = castRequest.SpellId,
+				Reason = 123u,
+				CastID = castRequest.ServerGUID
+			};
 			SendPacket(failed);
 		}
 		else
 		{
-			CastFailed failed2 = new CastFailed();
-			failed2.SpellID = castRequest.SpellId;
-			failed2.SpellXSpellVisualID = castRequest.SpellXSpellVisualId;
-			failed2.Reason = 123u;
-			failed2.CastID = castRequest.ServerGUID;
+			var failed2 = new CastFailed
+			{
+				SpellID = castRequest.SpellId,
+				SpellXSpellVisualID = castRequest.SpellXSpellVisualId,
+				Reason = 123u,
+				CastID = castRequest.ServerGUID
+			};
 			SendPacket(failed2);
 		}
 	}
@@ -4056,7 +4094,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			if (!GetSession().GameState.GameObjectQueryCache.ContainsKey(35591))
 			{
-				WorldPacket goQuery = new WorldPacket(Opcode.CMSG_QUERY_GAME_OBJECT);
+				var goQuery = new WorldPacket(Opcode.CMSG_QUERY_GAME_OBJECT);
 				goQuery.WriteUInt32(35591);
 				goQuery.WriteUInt64(0);
 				SendPacketToServer(goQuery);
@@ -4081,11 +4119,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		if (GameData.NextMeleeSpells.Contains(cast.Cast.SpellID) || GameData.AutoRepeatSpells.Contains(cast.Cast.SpellID))
 		{
-			ClientCastRequest castRequest = new ClientCastRequest();
-			castRequest.Timestamp = Environment.TickCount;
-			castRequest.SpellId = cast.Cast.SpellID;
-			castRequest.SpellXSpellVisualId = cast.Cast.SpellXSpellVisualID;
-			castRequest.ClientGUID = cast.Cast.CastID;
+			var castRequest = new ClientCastRequest
+			{
+				Timestamp = Environment.TickCount,
+				SpellId = cast.Cast.SpellID,
+				SpellXSpellVisualId = cast.Cast.SpellXSpellVisualID,
+				ClientGUID = cast.Cast.CastID
+			};
 			if (GetSession().GameState.CurrentClientSpecialCast != null)
 			{
 				castRequest.ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, cast.Cast.SpellID, 10000 + cast.Cast.CastID.GetCounter());
@@ -4093,20 +4133,24 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				return;
 			}
 			castRequest.ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, cast.Cast.SpellID, cast.Cast.SpellID + GetSession().GameState.CurrentPlayerGuid.GetCounter());
-			SpellPrepare prepare = new SpellPrepare();
-			prepare.ClientCastID = cast.Cast.CastID;
-			prepare.ServerCastID = castRequest.ServerGUID;
+			var prepare = new SpellPrepare
+			{
+				ClientCastID = cast.Cast.CastID,
+				ServerCastID = castRequest.ServerGUID
+			};
 			SendPacket(prepare);
 			GetSession().GameState.CurrentClientSpecialCast = castRequest;
 		}
 		else
 		{
-			ClientCastRequest castRequest2 = new ClientCastRequest();
-			castRequest2.Timestamp = Environment.TickCount;
-			castRequest2.SpellId = cast.Cast.SpellID;
-			castRequest2.SpellXSpellVisualId = cast.Cast.SpellXSpellVisualID;
-			castRequest2.ClientGUID = cast.Cast.CastID;
-			castRequest2.ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, cast.Cast.SpellID, 10000 + cast.Cast.CastID.GetCounter());
+			var castRequest2 = new ClientCastRequest
+			{
+				Timestamp = Environment.TickCount,
+				SpellId = cast.Cast.SpellID,
+				SpellXSpellVisualId = cast.Cast.SpellXSpellVisualID,
+				ClientGUID = cast.Cast.CastID,
+				ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, cast.Cast.SpellID, 10000 + cast.Cast.CastID.GetCounter())
+			};
 			if (GetSession().GameState.CurrentClientNormalCast != null)
 			{
 				if (GetSession().GameState.CurrentClientNormalCast.HasStarted)
@@ -4119,7 +4163,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 					Log.Print(LogType.Warn, "Are you playing on a server with another patch?", "SpellHandler.cs");
 					SendCastRequestFailed(GetSession().GameState.CurrentClientNormalCast, isPet: false);
 					GetSession().GameState.CurrentClientNormalCast = null;
-					foreach (ClientCastRequest pending in GetSession().GameState.PendingClientCasts)
+					foreach (var pending in GetSession().GameState.PendingClientCasts)
 					{
 						SendCastRequestFailed(pending, isPet: false);
 					}
@@ -4141,9 +4185,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			cast.Cast.Target.Unit = GetSession().GameState.CurrentInteractedWithGO;
 			cast.Cast.Target.Flags |= SpellCastTargetFlags.GameObject;
 		}
-		SpellCastTargetFlags targetFlags = ConvertSpellTargetFlags(cast.Cast.Target);
+		var targetFlags = ConvertSpellTargetFlags(cast.Cast.Target);
 		Log.Print(LogType.Debug, $"[CastSpell] SpellID={cast.Cast.SpellID} TargetFlags=0x{(uint)targetFlags:X} ModernFlags=0x{(uint)cast.Cast.Target.Flags:X} Unit={cast.Cast.Target.Unit} Item={cast.Cast.Target.Item}", "");
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CAST_SPELL);
+		var packet = new WorldPacket(Opcode.CMSG_CAST_SPELL);
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteUInt32(cast.Cast.SpellID);
@@ -4170,12 +4214,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			Thread.Sleep(Settings.ServerSpellDelay);
 		}
-		ClientCastRequest castRequest = new ClientCastRequest();
-		castRequest.Timestamp = Environment.TickCount;
-		castRequest.SpellId = cast.Cast.SpellID;
-		castRequest.SpellXSpellVisualId = cast.Cast.SpellXSpellVisualID;
-		castRequest.ClientGUID = cast.Cast.CastID;
-		castRequest.ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, cast.Cast.SpellID, 10000 + cast.Cast.CastID.GetCounter());
+		var castRequest = new ClientCastRequest
+		{
+			Timestamp = Environment.TickCount,
+			SpellId = cast.Cast.SpellID,
+			SpellXSpellVisualId = cast.Cast.SpellXSpellVisualID,
+			ClientGUID = cast.Cast.CastID,
+			ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, cast.Cast.SpellID, 10000 + cast.Cast.CastID.GetCounter())
+		};
 		if (GetSession().GameState.CurrentClientPetCast != null)
 		{
 			if (GetSession().GameState.CurrentClientPetCast.HasStarted)
@@ -4187,7 +4233,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				Log.Print(LogType.Warn, $"Clearing CurrentClientPetCast because of 10 sec timeout! (oldSpell:{GetSession().GameState.CurrentClientPetCast.SpellId} newSpell:{castRequest.SpellId})", "SpellHandler.cs");
 				SendCastRequestFailed(GetSession().GameState.CurrentClientPetCast, isPet: true);
 				GetSession().GameState.CurrentClientPetCast = null;
-				foreach (ClientCastRequest pending in GetSession().GameState.PendingClientPetCasts)
+				foreach (var pending in GetSession().GameState.PendingClientPetCasts)
 				{
 					SendCastRequestFailed(pending, isPet: true);
 				}
@@ -4202,8 +4248,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		else
 		{
 			GetSession().GameState.CurrentClientPetCast = castRequest;
-			SpellCastTargetFlags targetFlags = ConvertSpellTargetFlags(cast.Cast.Target);
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_PET_CAST_SPELL);
+			var targetFlags = ConvertSpellTargetFlags(cast.Cast.Target);
+			var packet = new WorldPacket(Opcode.CMSG_PET_CAST_SPELL);
 			packet.WriteGuid(cast.PetGUID.To64());
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 			{
@@ -4226,13 +4272,15 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			Thread.Sleep(Settings.ServerSpellDelay);
 		}
-		ClientCastRequest castRequest = new ClientCastRequest();
-		castRequest.Timestamp = Environment.TickCount;
-		castRequest.SpellId = use.Cast.SpellID;
-		castRequest.SpellXSpellVisualId = use.Cast.SpellXSpellVisualID;
-		castRequest.ClientGUID = use.Cast.CastID;
-		castRequest.ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, use.Cast.SpellID, 10000 + use.Cast.CastID.GetCounter());
-		castRequest.ItemGUID = use.CastItem;
+		var castRequest = new ClientCastRequest
+		{
+			Timestamp = Environment.TickCount,
+			SpellId = use.Cast.SpellID,
+			SpellXSpellVisualId = use.Cast.SpellXSpellVisualID,
+			ClientGUID = use.Cast.CastID,
+			ServerGUID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, use.Cast.SpellID, 10000 + use.Cast.CastID.GetCounter()),
+			ItemGUID = use.CastItem
+		};
 		Log.Print(LogType.Debug, $"[UseItem] SpellID={use.Cast.SpellID} PackSlot={use.PackSlot} Slot={use.Slot} ItemGUID={use.CastItem} PendingCast={GetSession().GameState.CurrentClientNormalCast != null}", "");
 		if (GetSession().GameState.CurrentClientNormalCast != null)
 		{
@@ -4245,7 +4293,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				Log.Print(LogType.Warn, $"Clearing CurrentClientNormalCast because of 10 sec timeout! (oldSpell:{GetSession().GameState.CurrentClientNormalCast.SpellId} newSpell:{castRequest.SpellId})", "SpellHandler.cs");
 				SendCastRequestFailed(GetSession().GameState.CurrentClientNormalCast, isPet: false);
 				GetSession().GameState.CurrentClientNormalCast = null;
-				foreach (ClientCastRequest pending in GetSession().GameState.PendingClientCasts)
+				foreach (var pending in GetSession().GameState.PendingClientCasts)
 				{
 					SendCastRequestFailed(pending, isPet: false);
 				}
@@ -4260,9 +4308,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		else
 		{
 			GetSession().GameState.CurrentClientNormalCast = castRequest;
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_USE_ITEM);
-			byte containerSlot = ((use.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.PackSlot) : use.PackSlot);
-			byte slot = ((use.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.Slot) : use.Slot);
+			var packet = new WorldPacket(Opcode.CMSG_USE_ITEM);
+			var containerSlot = ((use.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.PackSlot) : use.PackSlot);
+			var slot = ((use.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(use.Slot) : use.Slot);
 			packet.WriteUInt8(containerSlot); // bagIndex
 			packet.WriteUInt8(slot); // slot
 			packet.WriteUInt8(GetSession().GameState.GetItemSpellSlot(use.CastItem, use.Cast.SpellID)); // castCount
@@ -4270,7 +4318,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			packet.WriteGuid(use.CastItem.To64()); // itemGUID
 			packet.WriteUInt32(0u); // glyphIndex
 			packet.WriteUInt8(0); // castFlags
-			SpellCastTargetFlags targetFlags = ConvertSpellTargetFlags(use.Cast.Target);
+			var targetFlags = ConvertSpellTargetFlags(use.Cast.Target);
 			WriteSpellTargets(use.Cast.Target, targetFlags, packet);
 			SendPacketToServer(packet);
 		}
@@ -4283,7 +4331,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			Thread.Sleep(Settings.ServerSpellDelay);
 		}
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CANCEL_CAST);
+		var packet = new WorldPacket(Opcode.CMSG_CANCEL_CAST);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			packet.WriteUInt8(0);
@@ -4297,7 +4345,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		// Modern 3.4.3 client sends CMSG_CANCEL_CHANNELLING for every ESC press.
 		// Use the stored channeled spell ID from CHANNEL_START when available.
-		uint spellId = GetSession().GameState.CurrentChanneledSpellId;
+		var spellId = GetSession().GameState.CurrentChanneledSpellId;
 		if (spellId == 0)
 			return;
 		Log.Print(LogType.Debug, $"[CancelChannel] Cancelling channeled spell {spellId}", "");
@@ -4306,7 +4354,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			Thread.Sleep(Settings.ServerSpellDelay);
 		}
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CANCEL_CHANNELLING);
+		var packet = new WorldPacket(Opcode.CMSG_CANCEL_CHANNELLING);
 		packet.WriteInt32((int)spellId);
 		SendPacketToServer(packet);
 	}
@@ -4318,14 +4366,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			Thread.Sleep(Settings.ServerSpellDelay);
 		}
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CANCEL_AUTO_REPEAT_SPELL);
+		var packet = new WorldPacket(Opcode.CMSG_CANCEL_AUTO_REPEAT_SPELL);
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_CANCEL_AURA)]
 	private void HandleCancelAura(CancelAura aura)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_CANCEL_AURA);
+		var packet = new WorldPacket(Opcode.CMSG_CANCEL_AURA);
 		packet.WriteUInt32(aura.SpellID);
 		SendPacketToServer(packet);
 	}
@@ -4335,22 +4383,22 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_CANCEL_MOUNT_AURA);
+			var packet = new WorldPacket(Opcode.CMSG_CANCEL_MOUNT_AURA);
 			SendPacketToServer(packet);
 			return;
 		}
-		WowGuid128 guid = GetSession().GameState.CurrentPlayerGuid;
-		Dictionary<int, UpdateField> updateFields = GetSession().GameState.GetCachedObjectFieldsLegacy(guid);
+		var guid = GetSession().GameState.CurrentPlayerGuid;
+		var updateFields = GetSession().GameState.GetCachedObjectFieldsLegacy(guid);
 		if (updateFields == null)
 		{
 			return;
 		}
 		for (byte i = 0; i < 32; i++)
 		{
-			AuraDataInfo aura = GetSession().WorldClient.ReadAuraSlot(i, guid, updateFields);
+			var aura = GetSession().WorldClient.ReadAuraSlot(i, guid, updateFields);
 			if (aura != null && GameData.MountAuras.Contains(aura.SpellID))
 			{
-				WorldPacket packet2 = new WorldPacket(Opcode.CMSG_CANCEL_AURA);
+				var packet2 = new WorldPacket(Opcode.CMSG_CANCEL_AURA);
 				packet2.WriteUInt32(aura.SpellID);
 				SendPacketToServer(packet2);
 			}
@@ -4360,7 +4408,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_LEARN_TALENT)]
 	private void HandleLearnTalent(LearnTalent talent)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_LEARN_TALENT);
+		var packet = new WorldPacket(Opcode.CMSG_LEARN_TALENT);
 		packet.WriteUInt32(talent.TalentID);
 		packet.WriteUInt32(talent.Rank);
 		SendPacketToServer(packet);
@@ -4369,7 +4417,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_RESURRECT_RESPONSE)]
 	private void HandleResurrectResponse(ResurrectResponse revive)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_RESURRECT_RESPONSE);
+		var packet = new WorldPacket(Opcode.CMSG_RESURRECT_RESPONSE);
 		packet.WriteGuid(revive.CasterGUID.To64());
 		packet.WriteUInt8((revive.Response == 0) ? ((byte)1) : ((byte)0));
 		SendPacketToServer(packet);
@@ -4378,7 +4426,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SELF_RES)]
 	private void HandleSelfRes(SelfRes revive)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SELF_RES);
+		var packet = new WorldPacket(Opcode.CMSG_SELF_RES);
 		SendPacketToServer(packet);
 	}
 
@@ -4387,7 +4435,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (!LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_TOTEM_DESTROYED);
+			var packet = new WorldPacket(Opcode.CMSG_TOTEM_DESTROYED);
 			packet.WriteUInt8(totem.Slot);
 			SendPacketToServer(packet);
 		}
@@ -4396,13 +4444,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SUPPORT_TICKET_SUBMIT_COMPLAINT)]
 	private void HandleSupportTicketSubmitComplaint(SupportTicketSubmitComplaint complaint)
 	{
-		string targetPlayerName = Session.GameState.GetPlayerName(complaint.TargetCharacterGuid);
+		var targetPlayerName = Session.GameState.GetPlayerName(complaint.TargetCharacterGuid);
 		if (string.IsNullOrWhiteSpace(targetPlayerName))
 		{
 			Session.SendHermesTextMessage("Unable to report player because CharacterName was not resolved (can be fixed by restarting the client)", isError: true);
 			return;
 		}
-		string ticketText = "[REPORTED VIA QUICKMENU]\r\nI would like to report player '" + targetPlayerName + "'";
+		var ticketText = "[REPORTED VIA QUICKMENU]\r\nI would like to report player '" + targetPlayerName + "'";
 		if (!WowGuid128.IsUnknownPlayerGuid(complaint.TargetCharacterGuid))
 		{
 			ticketText += $"  (id: {complaint.TargetCharacterGuid.GetCounter()})";
@@ -4420,7 +4468,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			ticketText += "\r\n-------------";
 			ticketText = ticketText + "\r\n" + complaint.TextNote;
 		}
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_GM_TICKET_CREATE);
+		var packet = new WorldPacket(Opcode.CMSG_GM_TICKET_CREATE);
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			packet.WriteUInt8(2);
@@ -4446,7 +4494,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_TAXI_QUERY_AVAILABLE_NODES)]
 	private void HandleTaxiNodesQuery(InteractWithNPC interact)
 	{
-		WorldPacket packet = new WorldPacket(interact.GetUniversalOpcode());
+		var packet = new WorldPacket(interact.GetUniversalOpcode());
 		packet.WriteGuid(interact.CreatureGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -4454,7 +4502,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ENABLE_TAXI_NODE)]
 	private void HandleEnableTaxiNode(InteractWithNPC interact)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_TALK_TO_GOSSIP);
+		var packet = new WorldPacket(Opcode.CMSG_TALK_TO_GOSSIP);
 		packet.WriteGuid(interact.CreatureGUID.To64());
 		SendPacketToServer(packet);
 	}
@@ -4464,7 +4512,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (TaxiPathExist(GetSession().GameState.CurrentTaxiNode, taxi.Node))
 		{
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_ACTIVATE_TAXI);
+			var packet = new WorldPacket(Opcode.CMSG_ACTIVATE_TAXI);
 			packet.WriteGuid(taxi.FlightMaster.To64());
 			packet.WriteUInt32(GetSession().GameState.CurrentTaxiNode);
 			packet.WriteUInt32(taxi.Node);
@@ -4472,16 +4520,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		else
 		{
-			HashSet<uint> path = GetTaxiPath(GetSession().GameState.CurrentTaxiNode, taxi.Node, GetSession().GameState.UsableTaxiNodes);
+			var path = GetTaxiPath(GetSession().GameState.CurrentTaxiNode, taxi.Node, GetSession().GameState.UsableTaxiNodes);
 			if (path.Count <= 1)
 			{
 				return;
 			}
-			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_ACTIVATE_TAXI_EXPRESS);
+			var packet2 = new WorldPacket(Opcode.CMSG_ACTIVATE_TAXI_EXPRESS);
 			packet2.WriteGuid(taxi.FlightMaster.To64());
 			packet2.WriteUInt32(0u);
 			packet2.WriteUInt32((uint)path.Count);
-			foreach (uint itr in path)
+			foreach (var itr in path)
 			{
 				packet2.WriteUInt32(itr);
 			}
@@ -4492,7 +4540,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private bool TaxiPathExist(uint from, uint to)
 	{
-		foreach (KeyValuePair<uint, TaxiPath> itr in GameData.TaxiPaths)
+		foreach (var itr in GameData.TaxiPaths)
 		{
 			if ((itr.Value.From == from && itr.Value.To == to) || (itr.Value.From == to && itr.Value.To == from))
 			{
@@ -4504,39 +4552,39 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private bool IsTaxiNodeKnown(uint node, List<byte> usableNodes)
 	{
-		byte field = (byte)((node - 1) / 8);
-		uint submask = (uint)(1 << (byte)((node - 1) % 8));
+		var field = (byte)((node - 1) / 8);
+		var submask = (uint)(1 << (byte)((node - 1) % 8));
 		return (usableNodes[field] & submask) == submask;
 	}
 
 	private HashSet<uint> GetTaxiPath(uint from, uint to, List<byte> usableNodes)
 	{
-		HashSet<uint> nodes = new HashSet<uint> { from };
-		int[,] graphCopy = new int[GameData.TaxiNodesGraph.GetLength(0), GameData.TaxiNodesGraph.GetLength(1)];
+		var nodes = new HashSet<uint> { from };
+		var graphCopy = new int[GameData.TaxiNodesGraph.GetLength(0), GameData.TaxiNodesGraph.GetLength(1)];
 		Buffer.BlockCopy(GameData.TaxiNodesGraph, 0, graphCopy, 0, GameData.TaxiNodesGraph.Length * 4);
-		for (uint i = 1u; i < graphCopy.GetLength(0); i++)
+		for (var i = 1u; i < graphCopy.GetLength(0); i++)
 		{
 			if (!IsTaxiNodeKnown(i, usableNodes))
 			{
-				for (uint itr = 0u; itr < graphCopy.GetLength(1); itr++)
+				for (var itr = 0u; itr < graphCopy.GetLength(1); itr++)
 				{
 					graphCopy[i, itr] = 0;
 				}
-				for (uint itr2 = 0u; itr2 < graphCopy.GetLength(0); itr2++)
+				for (var itr2 = 0u; itr2 < graphCopy.GetLength(0); itr2++)
 				{
 					graphCopy[itr2, i] = 0;
 				}
 			}
 		}
-		int minDist = Dijkstra(graphCopy, (int)from, (int)to, graphCopy.GetLength(0), nodes);
+		var minDist = Dijkstra(graphCopy, (int)from, (int)to, graphCopy.GetLength(0), nodes);
 		return nodes;
 	}
 
 	private int MinDistance(int[] dist, bool[] sptSet, int vCnt)
 	{
-		int min = int.MaxValue;
-		int min_index = -1;
-		for (int v = 0; v < vCnt; v++)
+		var min = int.MaxValue;
+		var min_index = -1;
+		for (var v = 0; v < vCnt; v++)
 		{
 			if (!sptSet[v] && dist[v] <= min)
 			{
@@ -4558,21 +4606,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private int Dijkstra(int[,] graph, int src, int dest, int vCnt, HashSet<uint> nodes)
 	{
-		int[] dist = new int[vCnt];
-		int[] parent = new int[vCnt];
-		bool[] sptSet = new bool[vCnt];
-		for (int i = 0; i < vCnt; i++)
+		var dist = new int[vCnt];
+		var parent = new int[vCnt];
+		var sptSet = new bool[vCnt];
+		for (var i = 0; i < vCnt; i++)
 		{
 			dist[i] = int.MaxValue;
 			sptSet[i] = false;
 			parent[i] = -1;
 		}
 		dist[src] = 0;
-		for (int count = 0; count < vCnt - 1; count++)
+		for (var count = 0; count < vCnt - 1; count++)
 		{
-			int u = MinDistance(dist, sptSet, vCnt);
+			var u = MinDistance(dist, sptSet, vCnt);
 			sptSet[u] = true;
-			for (int v = 0; v < vCnt; v++)
+			for (var v = 0; v < vCnt; v++)
 			{
 				if (!sptSet[v] && graph[u, v] != 0 && dist[u] != int.MaxValue && dist[u] + graph[u, v] < dist[v])
 				{
@@ -4588,7 +4636,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_INITIATE_TRADE)]
 	private void HandleInitiateTrade(InitiateTrade trade)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_INITIATE_TRADE);
+		var packet = new WorldPacket(Opcode.CMSG_INITIATE_TRADE);
 		packet.WriteGuid(trade.Guid.To64());
 		SendPacketToServer(packet);
 	}
@@ -4596,7 +4644,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_TRADE_GOLD)]
 	private void HandleSetTradeGold(SetTradeGold trade)
 	{
-		TradeSession tradeSession = GetSession().GameState.CurrentTrade;
+		var tradeSession = GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
 			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "TradeHandler.cs");
@@ -4604,7 +4652,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		else
 		{
 			tradeSession.ClientStateIndex++;
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_TRADE_GOLD);
+			var packet = new WorldPacket(Opcode.CMSG_SET_TRADE_GOLD);
 			packet.WriteInt32((int)trade.Coinage);
 			SendPacketToServer(packet);
 		}
@@ -4613,7 +4661,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_ACCEPT_TRADE)]
 	private void HandleAcceptTrade(AcceptTrade trade)
 	{
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_ACCEPT_TRADE);
+		var packet = new WorldPacket(Opcode.CMSG_ACCEPT_TRADE);
 		packet.WriteUInt32(trade.StateIndex);
 		SendPacketToServer(packet);
 	}
@@ -4629,14 +4677,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		// on NPC interaction as a safety measure, which spams server errors
 		if (trade.GetUniversalOpcode() == Opcode.CMSG_CANCEL_TRADE && GetSession().GameState.CurrentTrade == null)
 			return;
-		WorldPacket packet = new WorldPacket(trade.GetUniversalOpcode());
+		var packet = new WorldPacket(trade.GetUniversalOpcode());
 		SendPacketToServer(packet);
 	}
 
 	[PacketHandler(Opcode.CMSG_CLEAR_TRADE_ITEM)]
 	private void HandleClearTradeItem(ClearTradeItem trade)
 	{
-		TradeSession tradeSession = GetSession().GameState.CurrentTrade;
+		var tradeSession = GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
 			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "TradeHandler.cs");
@@ -4644,7 +4692,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		else
 		{
 			tradeSession.ClientStateIndex++;
-			WorldPacket packet = new WorldPacket(Opcode.CMSG_CLEAR_TRADE_ITEM);
+			var packet = new WorldPacket(Opcode.CMSG_CLEAR_TRADE_ITEM);
 			packet.WriteUInt8(trade.TradeSlot);
 			SendPacketToServer(packet);
 		}
@@ -4653,17 +4701,17 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	[PacketHandler(Opcode.CMSG_SET_TRADE_ITEM)]
 	private void HandleSetTradeItem(SetTradeItem trade)
 	{
-		TradeSession tradeSession = GetSession().GameState.CurrentTrade;
+		var tradeSession = GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
 			Log.Print(LogType.Error, $"Got {trade.GetUniversalOpcode()} without trade session", "TradeHandler.cs");
 			return;
 		}
 		tradeSession.ClientStateIndex++;
-		WorldPacket packet = new WorldPacket(Opcode.CMSG_SET_TRADE_ITEM);
+		var packet = new WorldPacket(Opcode.CMSG_SET_TRADE_ITEM);
 		packet.WriteUInt8(trade.TradeSlot);
-		byte containerSlot = ((trade.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(trade.PackSlot) : trade.PackSlot);
-		byte slot = ((trade.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(trade.ItemSlotInPack) : trade.ItemSlotInPack);
+		var containerSlot = ((trade.PackSlot != byte.MaxValue) ? ModernVersion.AdjustInventorySlot(trade.PackSlot) : trade.PackSlot);
+		var slot = ((trade.PackSlot == byte.MaxValue) ? ModernVersion.AdjustInventorySlot(trade.ItemSlotInPack) : trade.ItemSlotInPack);
 		packet.WriteUInt8(containerSlot);
 		packet.WriteUInt8(slot);
 		SendPacketToServer(packet);
@@ -4696,10 +4744,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public override void Accept()
 	{
-		string ip_address = GetRemoteIpAddress().ToString();
+		var ip_address = GetRemoteIpAddress().ToString();
 		_packetBuffer.Resize(ClientConnectionInitialize.Length + 1);
 		AsyncReadWithCallback(InitializeHandler);
-		ByteBuffer packet = new ByteBuffer();
+		var packet = new ByteBuffer();
 		packet.WriteString(ServerConnectionInitialize);
 		packet.WriteString("\n");
 		AsyncWrite(packet.GetData());
@@ -4717,28 +4765,28 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			{
 				return;
 			}
-			int readHeaderSize = Math.Min(args.BytesTransferred, _packetBuffer.GetRemainingSpace());
+			var readHeaderSize = Math.Min(args.BytesTransferred, _packetBuffer.GetRemainingSpace());
 			_packetBuffer.Write(args.Buffer, 0, readHeaderSize);
 			if (_packetBuffer.GetRemainingSpace() > 0)
 			{
 				AsyncReadWithCallback(InitializeHandler);
 				return;
 			}
-			ByteBuffer buffer = new ByteBuffer(_packetBuffer.GetData());
-			string initializer = buffer.ReadString((uint)ClientConnectionInitialize.Length);
+			var buffer = new ByteBuffer(_packetBuffer.GetData());
+			var initializer = buffer.ReadString((uint)ClientConnectionInitialize.Length);
 			if (initializer != ClientConnectionInitialize)
 			{
 				CloseSocket();
 				return;
 			}
-			byte terminator = buffer.ReadUInt8();
+			var terminator = buffer.ReadUInt8();
 			if (terminator != 10)
 			{
 				CloseSocket();
 				return;
 			}
 			_compressionStream = new ZLib.z_stream();
-			int z_res1 = ZLib.deflateInit2(_compressionStream, 1, 8, -15, 8, 0);
+			var z_res1 = ZLib.deflateInit2(_compressionStream, 1, 8, -15, 8, 0);
 			if (z_res1 != 0)
 			{
 				CloseSocket();
@@ -4760,12 +4808,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			return;
 		}
-		int currentReadIndex = 0;
+		var currentReadIndex = 0;
 		while (currentReadIndex < args.BytesTransferred)
 		{
 			if (_headerBuffer.GetRemainingSpace() > 0)
 			{
-				int readHeaderSize = Math.Min(args.BytesTransferred - currentReadIndex, _headerBuffer.GetRemainingSpace());
+				var readHeaderSize = Math.Min(args.BytesTransferred - currentReadIndex, _headerBuffer.GetRemainingSpace());
 				_headerBuffer.Write(args.Buffer, currentReadIndex, readHeaderSize);
 				currentReadIndex += readHeaderSize;
 				if (_headerBuffer.GetRemainingSpace() > 0)
@@ -4780,7 +4828,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			}
 			if (_packetBuffer.GetRemainingSpace() > 0)
 			{
-				int readDataSize = Math.Min(args.BytesTransferred - currentReadIndex, _packetBuffer.GetRemainingSpace());
+				var readDataSize = Math.Min(args.BytesTransferred - currentReadIndex, _packetBuffer.GetRemainingSpace());
 				_packetBuffer.Write(args.Buffer, currentReadIndex, readDataSize);
 				currentReadIndex += readDataSize;
 				if (_packetBuffer.GetRemainingSpace() > 0)
@@ -4788,7 +4836,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 					break;
 				}
 			}
-			ReadDataHandlerResult result = ReadData();
+			var result = ReadData();
 			_headerBuffer.Reset();
 			switch (result)
 			{
@@ -4805,7 +4853,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private bool ReadHeader()
 	{
-		PacketHeader header = new PacketHeader();
+		var header = new PacketHeader();
 		header.Read(_headerBuffer.GetData());
 		_packetBuffer.Resize(header.Size);
 		return true;
@@ -4819,16 +4867,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private ReadDataHandlerResult ReadData()
 	{
-		PacketHeader header = new PacketHeader();
+		var header = new PacketHeader();
 		header.Read(_headerBuffer.GetData());
 		if (!_worldCrypt.Decrypt(_packetBuffer.GetData(), header.Tag))
 		{
 			Log.Print(LogType.Error, $"WorldSocket.ReadData(): client {GetRemoteIpAddress()} failed to decrypt packet (size: {header.Size})", "WorldSocket.cs");
 			return ReadDataHandlerResult.Error;
 		}
-		WorldPacket packet = new WorldPacket(_packetBuffer.GetData());
+		var packet = new WorldPacket(_packetBuffer.GetData());
 		_packetBuffer.Reset();
-		Opcode opcode = packet.GetUniversalOpcode(isModern: true);
+		var opcode = packet.GetUniversalOpcode(isModern: true);
 		Log.PrintNet(LogType.Debug, LogNetDir.C2P, $"Received opcode {opcode.ToString()} ({packet.GetOpcode()}).", "WorldSocket.cs");
 		if (!_suppressedLogOpcodes.Contains(opcode) && !header.IsValidSize())
 		{
@@ -4839,7 +4887,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 		case Opcode.CMSG_PING:
 		{
-			Ping ping = new Ping(packet);
+			var ping = new Ping(packet);
 			ping.Read();
 			if (_connectType == ConnectionType.Realm && GetSession().WorldClient != null && GetSession().WorldClient.IsConnected() && GetSession().WorldClient.IsAuthenticated())
 			{
@@ -4853,21 +4901,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		case Opcode.CMSG_AUTH_SESSION:
 		{
-			AuthSession authSession = new AuthSession(packet);
+			var authSession = new AuthSession(packet);
 			authSession.Read();
 			HandleAuthSession(authSession);
 			return ReadDataHandlerResult.WaitingForQuery;
 		}
 		case Opcode.CMSG_AUTH_CONTINUED_SESSION:
 		{
-			AuthContinuedSession authContinuedSession = new AuthContinuedSession(packet);
+			var authContinuedSession = new AuthContinuedSession(packet);
 			authContinuedSession.Read();
 			HandleAuthContinuedSession(authContinuedSession);
 			return ReadDataHandlerResult.WaitingForQuery;
 		}
 		case Opcode.CMSG_LOG_DISCONNECT:
 		{
-			uint reason = packet.ReadUInt32();
+			var reason = packet.ReadUInt32();
 			Log.Print(LogType.Server, $"Client disconnected with reason {reason}.", "WorldSocket.cs");
 			if (_connectType == ConnectionType.Realm)
 			{
@@ -4892,7 +4940,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			break;
 		case Opcode.CMSG_CONNECT_TO_FAILED:
 		{
-			ConnectToFailed connectToFailed = new ConnectToFailed(packet);
+			var connectToFailed = new ConnectToFailed(packet);
 			connectToFailed.Read();
 			HandleConnectToFailed(connectToFailed);
 			break;
@@ -4917,8 +4965,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void HandlePacket(WorldPacket packet)
 	{
-		Opcode universalOpcode = packet.GetUniversalOpcode(isModern: true);
-		PacketHandler handler = GetHandler(universalOpcode);
+		var universalOpcode = packet.GetUniversalOpcode(isModern: true);
+		var handler = GetHandler(universalOpcode);
 		if (handler != null)
 		{
 			handler.Invoke(this, packet);
@@ -4972,9 +5020,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			packet.LogPacket(ref GetSession().ModernSniff);
 		}
 		_sendMutex.WaitOne();
-		byte[] data = packet.GetData();
-		Opcode universalOpcode = packet.GetUniversalOpcode();
-		ushort opcode = (ushort)packet.GetOpcode();
+		var data = packet.GetData();
+		var universalOpcode = packet.GetUniversalOpcode();
+		var opcode = (ushort)packet.GetOpcode();
 		if (opcode == 0 && universalOpcode != Opcode.MSG_NULL_ACTION)
 		{
 			Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Dropping packet {universalOpcode} - missing modern opcode mapping! (size={data.Length})", "WorldSocket.cs");
@@ -4984,14 +5032,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		if (universalOpcode != Opcode.SMSG_ON_MONSTER_MOVE)
 			Log.PrintNet(LogType.Debug, LogNetDir.P2C, $"Sending opcode {universalOpcode} ({opcode}), size={data.Length}.", "WorldSocket.cs");
-		ByteBuffer buffer = new ByteBuffer();
-		int packetSize = data.Length;
+		var buffer = new ByteBuffer();
+		var packetSize = data.Length;
 		if (packetSize > 1024 && _worldCrypt.IsInitialized && ModernVersion.ExpansionVersion < 3)
 		{
 			buffer.WriteInt32(packetSize + 2);
 			buffer.WriteUInt32(ZLib.adler32(ZLib.adler32(2552748273u, BitConverter.GetBytes(opcode), 2u), data, (uint)packetSize));
 			byte[] compressedData;
-			uint compressedSize = CompressPacket(data, opcode, out compressedData);
+			var compressedSize = CompressPacket(data, opcode, out compressedData);
 			buffer.WriteUInt32(ZLib.adler32(2552748273u, compressedData, compressedSize));
 			buffer.WriteBytes(compressedData, compressedSize);
 			packetSize = (int)(compressedSize + 12);
@@ -5003,10 +5051,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		buffer.WriteBytes(data);
 		packetSize += 2;
 		data = buffer.GetData();
-		PacketHeader header = new PacketHeader();
-		header.Size = packetSize;
+		var header = new PacketHeader
+		{
+			Size = packetSize
+		};
 		_worldCrypt.Encrypt(ref data, ref header.Tag);
-		ByteBuffer byteBuffer = new ByteBuffer();
+		var byteBuffer = new ByteBuffer();
 		header.Write(byteBuffer);
 		byteBuffer.WriteBytes(data);
 		AsyncWrite(byteBuffer.GetData());
@@ -5015,8 +5065,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public uint CompressPacket(byte[] data, ushort opcode, out byte[] outData)
 	{
-		byte[] uncompressedData = BitConverter.GetBytes(opcode).Combine(data);
-		uint bufferSize = ZLib.deflateBound(_compressionStream, (uint)data.Length);
+		var uncompressedData = BitConverter.GetBytes(opcode).Combine(data);
+		var bufferSize = ZLib.deflateBound(_compressionStream, (uint)data.Length);
 		outData = new byte[bufferSize];
 		_compressionStream.next_out = 0;
 		_compressionStream.avail_out = bufferSize;
@@ -5024,7 +5074,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		_compressionStream.next_in = 0u;
 		_compressionStream.avail_in = (uint)uncompressedData.Length;
 		_compressionStream.in_buf = uncompressedData;
-		int z_res = ZLib.deflate(_compressionStream, 2);
+		var z_res = ZLib.deflate(_compressionStream, 2);
 		if (z_res != 0)
 		{
 			Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't compress packet data (zlib: deflate) Error code: {z_res} msg: {_compressionStream.msg}", "WorldSocket.cs");
@@ -5044,10 +5094,12 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private void HandleSendAuthSession()
 	{
-		AuthChallenge challenge = new AuthChallenge();
-		challenge.Challenge = _serverChallenge;
-		challenge.DosChallenge = new byte[32].GenerateRandomKey(32);
-		challenge.DosZeroBits = 1;
+		var challenge = new AuthChallenge
+		{
+			Challenge = _serverChallenge,
+			DosChallenge = new byte[32].GenerateRandomKey(32),
+			DosZeroBits = 1
+		};
 		SendPacket(challenge);
 	}
 
@@ -5060,7 +5112,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private void HandleAuthSessionCallback(AuthSession authSession)
 	{
-		RealmBuildInfo buildInfo = GetSession().RealmManager.GetBuildInfo(GetSession().Build);
+		var buildInfo = GetSession().RealmManager.GetBuildInfo(GetSession().Build);
 		if (buildInfo == null)
 		{
 			SendAuthResponseError(BattlenetRpcErrorCode.BadVersion);
@@ -5069,7 +5121,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			GetSession().OnDisconnect();
 			return;
 		}
-		IPEndPoint address = GetRemoteIpAddress();
+		var address = GetRemoteIpAddress();
 		if (GetSession().OS != "Wn64" && GetSession().OS != "Mc64" && GetSession().OS != "MacA")
 		{
 			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSession: Unknown OS for account: {GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') address: {address}", "WorldSocket.cs");
@@ -5077,7 +5129,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			GetSession().OnDisconnect();
 			return;
 		}
-		byte[] platformSeed = buildInfo.BuildSeeds.GetValueOrDefault(GetSession().OS);
+		var platformSeed = buildInfo.BuildSeeds.GetValueOrDefault(GetSession().OS);
 		if (platformSeed == null || !TrySeed(platformSeed))
 		{
 			Log.Print(LogType.Debug, "WorldSocket.HandleAuthSession: Fallback to static seed", "WorldSocket.cs");
@@ -5086,16 +5138,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				Log.Print(LogType.Warn, $"WorldSocket.HandleAuthSession: Seed mismatch for account: {GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') - BYPASSING for testing", "WorldSocket.cs");
 			}
 		}
-		Sha256 keyData = new Sha256();
+		var keyData = new Sha256();
 		keyData.Finish(GetSession().SessionKey);
-		HmacSha256 sessionKeyHmac = new HmacSha256(keyData.Digest);
+		var sessionKeyHmac = new HmacSha256(keyData.Digest);
 		sessionKeyHmac.Process(_serverChallenge, 16);
 		sessionKeyHmac.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
 		sessionKeyHmac.Finish(SessionKeySeed, 16);
 		_sessionKey = new byte[40];
-		SessionKeyGenerator sessionKeyGenerator = new SessionKeyGenerator(sessionKeyHmac.Digest, 32);
+		var sessionKeyGenerator = new SessionKeyGenerator(sessionKeyHmac.Digest, 32);
 		sessionKeyGenerator.Generate(_sessionKey, 40u);
-		HmacSha256 encryptKeyGen = new HmacSha256(_sessionKey);
+		var encryptKeyGen = new HmacSha256(_sessionKey);
 		encryptKeyGen.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
 		encryptKeyGen.Process(_serverChallenge, 16);
 		encryptKeyGen.Finish(EncryptionKeySeed, 16);
@@ -5119,10 +5171,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		bool TrySeed(byte[] seed)
 		{
-			Sha256 digestKeyHash = new Sha256();
+			var digestKeyHash = new Sha256();
 			digestKeyHash.Process(GetSession().SessionKey, GetSession().SessionKey.Length);
 			digestKeyHash.Finish(seed);
-			HmacSha256 hmac = new HmacSha256(digestKeyHash.Digest);
+			var hmac = new HmacSha256(digestKeyHash.Digest);
 			hmac.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
 			hmac.Process(_serverChallenge, 16);
 			hmac.Finish(AuthCheckSeed, 16);
@@ -5132,8 +5184,8 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private void HandleAuthContinuedSession(AuthContinuedSession authSession)
 	{
-		ConnectToKey key = default(ConnectToKey);
-		ulong key2 = (key.Raw = authSession.Key);
+		var key = default(ConnectToKey);
+		var key2 = (key.Raw = authSession.Key);
 		_key = key2;
 		_connectType = key.connectionType;
 		if (_connectType != ConnectionType.Instance)
@@ -5149,14 +5201,14 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private void HandleAuthContinuedSessionCallback(AuthContinuedSession authSession)
 	{
-		ConnectToKey key = default(ConnectToKey);
-		ulong key2 = (key.Raw = authSession.Key);
+		var key = default(ConnectToKey);
+		var key2 = (key.Raw = authSession.Key);
 		_key = key2;
 		_globalSession = BnetSessionTicketStorage.SessionsByKey[_key];
-		uint accountId = key.AccountId;
-		string login = GetSession().AccountInfo.Login;
+		var accountId = key.AccountId;
+		var login = GetSession().AccountInfo.Login;
 		_sessionKey = GetSession().SessionKey;
-		HmacSha256 hmac = new HmacSha256(_sessionKey);
+		var hmac = new HmacSha256(_sessionKey);
 		hmac.Process(BitConverter.GetBytes(authSession.Key), 8);
 		hmac.Process(authSession.LocalChallenge, authSession.LocalChallenge.Length);
 		hmac.Process(_serverChallenge, 16);
@@ -5168,7 +5220,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		else
 		{
-			HmacSha256 encryptKeyGen = new HmacSha256(_sessionKey);
+			var encryptKeyGen = new HmacSha256(_sessionKey);
 			encryptKeyGen.Process(authSession.LocalChallenge, authSession.LocalChallenge.Length);
 			encryptKeyGen.Process(_serverChallenge, 16);
 			encryptKeyGen.Finish(EncryptionKeySeed, 16);
@@ -5180,7 +5232,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendConnectToInstance(ConnectToSerial serial)
 	{
-		IPAddress externalIp = IPAddress.Parse(Settings.ExternalAddress);
+		var externalIp = IPAddress.Parse(Settings.ExternalAddress);
 		if (IPAddress.IsLoopback(GetRemoteIpAddress().Address))
 		{
 			externalIp = IPAddress.Loopback;
@@ -5189,16 +5241,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			externalIp = GetLocalIpAddress().Address;
 		}
-		IPEndPoint instanceAddress = new IPEndPoint(externalIp, Settings.InstancePort);
+		var instanceAddress = new IPEndPoint(externalIp, Settings.InstancePort);
 		_instanceConnectKey.AccountId = GetSession().AccountInfo.Id;
 		_instanceConnectKey.connectionType = ConnectionType.Instance;
 		_instanceConnectKey.Key = RandomHelper.URand(0, int.MaxValue);
 		BnetSessionTicketStorage.AddNewSessionByKey(_instanceConnectKey.Raw, GetSession());
-		ConnectTo connectTo = new ConnectTo();
-		connectTo.Key = _instanceConnectKey.Raw;
-		connectTo.Serial = serial;
-		connectTo.Payload.Port = (ushort)Settings.InstancePort;
-		connectTo.Con = 1;
+		var connectTo = new ConnectTo
+		{
+			Key = _instanceConnectKey.Raw,
+			Serial = serial,
+			Payload =
+			{
+				Port = (ushort)Settings.InstancePort
+			},
+			Con = 1
+		};
 		if (instanceAddress.AddressFamily == AddressFamily.InterNetwork)
 		{
 			connectTo.Payload.Where.IPv4 = instanceAddress.Address.GetAddressBytes();
@@ -5276,29 +5333,37 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendAuthResponseError(BattlenetRpcErrorCode code)
 	{
-		AuthResponse response = new AuthResponse();
-		response.SuccessInfo = null;
-		response.WaitInfo = null;
-		response.Result = code;
+		var response = new AuthResponse
+		{
+			SuccessInfo = null,
+			WaitInfo = null,
+			Result = code
+		};
 		SendPacket(response);
 	}
 
 	public void SendAuthResponse(BattlenetRpcErrorCode code, uint queuePos = 0u)
 	{
-		AuthResponse response = new AuthResponse();
-		response.Result = code;
+		var response = new AuthResponse
+		{
+			Result = code
+		};
 		if (code == BattlenetRpcErrorCode.Ok)
 		{
-			response.SuccessInfo = new AuthResponse.AuthSuccessInfo();
-			response.SuccessInfo.ActiveExpansionLevel = LegacyVersion.ExpansionVersion;
-			response.SuccessInfo.AccountExpansionLevel = LegacyVersion.ExpansionVersion;
-			response.SuccessInfo.VirtualRealmAddress = _realmId.GetAddress();
-			response.SuccessInfo.Time = (uint)Time.UnixTime;
-			Realm realm = GetSession().RealmManager.GetRealm(_realmId);
+			response.SuccessInfo = new AuthResponse.AuthSuccessInfo
+			{
+				ActiveExpansionLevel = LegacyVersion.ExpansionVersion,
+				AccountExpansionLevel = LegacyVersion.ExpansionVersion,
+				VirtualRealmAddress = _realmId.GetAddress(),
+				Time = (uint)Time.UnixTime
+			};
+			var realm = GetSession().RealmManager.GetRealm(_realmId);
 			response.SuccessInfo.VirtualRealms.Add(new VirtualRealmInfo(realm.Id.GetAddress(), isHomeRealm: true, isInternalRealm: false, realm.Name, realm.NormalizedName));
-			List<AuthResponse.RaceClassAvailability> availableRaces = new List<AuthResponse.RaceClassAvailability>();
-			AuthResponse.RaceClassAvailability race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 1;
+			var availableRaces = new List<AuthResponse.RaceClassAvailability>();
+			var race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 1
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(2, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
@@ -5306,54 +5371,68 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			race.Classes.Add(new AuthResponse.ClassAvailability(8, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(9, 0, 0));
 			availableRaces.Add(race);
-			race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 2;
+			race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 2
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(3, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(7, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(9, 0, 0));
 			availableRaces.Add(race);
-			race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 3;
+			race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 3
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(2, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(3, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(5, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
 			availableRaces.Add(race);
-			race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 4;
+			race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 4
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(3, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(5, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(11, 0, 0));
 			availableRaces.Add(race);
-			race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 5;
+			race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 5
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(5, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(8, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(9, 0, 0));
 			availableRaces.Add(race);
-			race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 6;
+			race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 6
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(3, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(7, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(11, 0, 0));
 			availableRaces.Add(race);
-			race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 7;
+			race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 7
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(8, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(9, 0, 0));
 			availableRaces.Add(race);
-			race = new AuthResponse.RaceClassAvailability();
-			race.RaceID = 8;
+			race = new AuthResponse.RaceClassAvailability
+			{
+				RaceID = 8
+			};
 			race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
 			race.Classes.Add(new AuthResponse.ClassAvailability(3, 0, 0));
@@ -5363,8 +5442,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			availableRaces.Add(race);
 			if (ModernVersion.ExpansionVersion >= 2 && LegacyVersion.ExpansionVersion >= 2)
 			{
-				race = new AuthResponse.RaceClassAvailability();
-				race.RaceID = 10;
+				race = new AuthResponse.RaceClassAvailability
+				{
+					RaceID = 10
+				};
 				race.Classes.Add(new AuthResponse.ClassAvailability(3, 0, 0));
 				race.Classes.Add(new AuthResponse.ClassAvailability(4, 0, 0));
 				race.Classes.Add(new AuthResponse.ClassAvailability(5, 0, 0));
@@ -5372,8 +5453,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				race.Classes.Add(new AuthResponse.ClassAvailability(9, 0, 0));
 				race.Classes.Add(new AuthResponse.ClassAvailability(2, 0, 0));
 				availableRaces.Add(race);
-				race = new AuthResponse.RaceClassAvailability();
-				race.RaceID = 11;
+				race = new AuthResponse.RaceClassAvailability
+				{
+					RaceID = 11
+				};
 				race.Classes.Add(new AuthResponse.ClassAvailability(1, 0, 0));
 				race.Classes.Add(new AuthResponse.ClassAvailability(2, 0, 0));
 				race.Classes.Add(new AuthResponse.ClassAvailability(3, 0, 0));
@@ -5386,8 +5469,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 		if (queuePos != 0)
 		{
-			response.WaitInfo = new AuthWaitInfo();
-			response.WaitInfo.WaitCount = queuePos;
+			response.WaitInfo = new AuthWaitInfo
+			{
+				WaitCount = queuePos
+			};
 		}
 		SendPacket(response);
 	}
@@ -5396,10 +5481,15 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 	{
 		if (position != 0)
 		{
-			WaitQueueUpdate waitQueueUpdate = new WaitQueueUpdate();
-			waitQueueUpdate.WaitInfo.WaitCount = position;
-			waitQueueUpdate.WaitInfo.WaitTime = 0u;
-			waitQueueUpdate.WaitInfo.HasFCM = false;
+			var waitQueueUpdate = new WaitQueueUpdate
+			{
+				WaitInfo =
+				{
+					WaitCount = position,
+					WaitTime = 0u,
+					HasFCM = false
+				}
+			};
 			SendPacket(waitQueueUpdate);
 		}
 		else
@@ -5410,25 +5500,29 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendSetTimeZoneInformation()
 	{
-		SetTimeZoneInformation packet = new SetTimeZoneInformation();
-		packet.ServerTimeTZ = "Europe/Paris";
-		packet.GameTimeTZ = "Europe/Paris";
+		var packet = new SetTimeZoneInformation
+		{
+			ServerTimeTZ = "Europe/Paris",
+			GameTimeTZ = "Europe/Paris"
+		};
 		SendPacket(packet);
 	}
 
 	public void SendFeatureSystemStatusGlueScreen()
 	{
-		FeatureSystemStatusGlueScreen features = new FeatureSystemStatusGlueScreen();
-		features.BpayStoreAvailable = false;
-		features.BpayStoreDisabledByParentalControls = false;
-		features.CharUndeleteEnabled = false;
-		features.BpayStoreEnabled = false;
-		features.MaxCharactersPerRealm = 10;
-		features.MinimumExpansionLevel = 0;
-		features.MaximumExpansionLevel = LegacyVersion.ExpansionVersion;
-		features.ActiveSeason = 2;
-		features.Unk14 = true;
-		EuropaTicketConfig europaTicketConfig = new EuropaTicketConfig();
+		var features = new FeatureSystemStatusGlueScreen
+		{
+			BpayStoreAvailable = false,
+			BpayStoreDisabledByParentalControls = false,
+			CharUndeleteEnabled = false,
+			BpayStoreEnabled = false,
+			MaxCharactersPerRealm = 10,
+			MinimumExpansionLevel = 0,
+			MaximumExpansionLevel = LegacyVersion.ExpansionVersion,
+			ActiveSeason = 2,
+			Unk14 = true
+		};
+		var europaTicketConfig = new EuropaTicketConfig();
 		europaTicketConfig.ThrottleState.MaxTries = 10u;
 		europaTicketConfig.ThrottleState.PerMilliseconds = 60000u;
 		europaTicketConfig.ThrottleState.TryCount = 1u;
@@ -5443,21 +5537,23 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendFeatureSystemStatus()
 	{
-		FeatureSystemStatus features = new FeatureSystemStatus();
-		features.ComplaintStatus = 2;
-		features.ScrollOfResurrectionRequestsRemaining = 1u;
-		features.ScrollOfResurrectionMaxRequestsPerDay = 1u;
-		features.CfgRealmID = 1u;
-		features.CfgRealmRecID = 1;
-		features.TwitterPostThrottleLimit = 60u;
-		features.TwitterPostThrottleCooldown = 20u;
-		features.TokenPollTimeSeconds = 300u;
-		features.KioskSessionMinutes = 30u;
-		features.BpayStoreProductDeliveryDelay = 180u;
-		features.HiddenUIClubsPresenceUpdateTimer = 60000u;
-		features.VoiceEnabled = false;
-		features.BrowserEnabled = false;
-		features.EuropaTicketSystemStatus = new EuropaTicketConfig();
+		var features = new FeatureSystemStatus
+		{
+			ComplaintStatus = 2,
+			ScrollOfResurrectionRequestsRemaining = 1u,
+			ScrollOfResurrectionMaxRequestsPerDay = 1u,
+			CfgRealmID = 1u,
+			CfgRealmRecID = 1,
+			TwitterPostThrottleLimit = 60u,
+			TwitterPostThrottleCooldown = 20u,
+			TokenPollTimeSeconds = 300u,
+			KioskSessionMinutes = 30u,
+			BpayStoreProductDeliveryDelay = 180u,
+			HiddenUIClubsPresenceUpdateTimer = 60000u,
+			VoiceEnabled = false,
+			BrowserEnabled = false,
+			EuropaTicketSystemStatus = new EuropaTicketConfig()
+		};
 		features.EuropaTicketSystemStatus.ThrottleState.MaxTries = 10u;
 		features.EuropaTicketSystemStatus.ThrottleState.PerMilliseconds = 60000u;
 		features.EuropaTicketSystemStatus.ThrottleState.TryCount = 1u;
@@ -5502,54 +5598,62 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendSeasonInfo()
 	{
-		SeasonInfo seasonInfo = new SeasonInfo();
+		var seasonInfo = new SeasonInfo();
 		if (LegacyVersion.ExpansionVersion > 1 && ModernVersion.ExpansionVersion > 1)
 		{
 			seasonInfo.CurrentSeason = 2;
 			seasonInfo.PreviousSeason = 1;
 		}
-		uint resolved = ModernVersion.GetCurrentOpcode(Opcode.SMSG_SEASON_INFO);
+		var resolved = ModernVersion.GetCurrentOpcode(Opcode.SMSG_SEASON_INFO);
 		Log.Print(LogType.Debug, $"SeasonInfo opcode resolved to: {resolved} (0x{resolved:X4})", "WorldSocket.cs");
 		SendPacket(seasonInfo);
 	}
 
 	public void SendMotd()
 	{
-		MOTD motd = new MOTD();
+		var motd = new MOTD();
 		SendPacket(motd);
 	}
 
 	public void SendClientCacheVersion(uint version)
 	{
-		ClientCacheVersion cache = new ClientCacheVersion();
-		cache.CacheVersion = version;
+		var cache = new ClientCacheVersion
+		{
+			CacheVersion = version
+		};
 		SendPacket(cache);
 	}
 
 	public void SendAvailableHotfixes()
 	{
-		AvailableHotfixes hotfixes = new AvailableHotfixes();
-		hotfixes.VirtualRealmAddress = GetSession().RealmId.GetAddress();
+		var hotfixes = new AvailableHotfixes
+		{
+			VirtualRealmAddress = GetSession().RealmId.GetAddress()
+		};
 		SendPacket(hotfixes);
 	}
 
 	public void SendBnetConnectionState(byte state)
 	{
-		ConnectionStatus bnetConnected = new ConnectionStatus();
-		bnetConnected.State = state;
+		var bnetConnected = new ConnectionStatus
+		{
+			State = state
+		};
 		SendPacket(bnetConnected);
 	}
 
 	public void SendServerTimeOffset()
 	{
-		ServerTimeOffset response = new ServerTimeOffset();
-		response.Time = Time.UnixTime;
+		var response = new ServerTimeOffset
+		{
+			Time = Time.UnixTime
+		};
 		SendPacket(response);
 	}
 
 	public void SendSocialContractRequestResponse()
 	{
-		SocialContractRequestResponse response = new SocialContractRequestResponse();
+		var response = new SocialContractRequestResponse();
 		SendPacket(response);
 	}
 
@@ -5560,14 +5664,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendAccountDataTimes()
 	{
-		WowGuid128 guid = GetSession().GameState.CurrentPlayerGuid;
+		var guid = GetSession().GameState.CurrentPlayerGuid;
 		GetSession().AccountDataMgr.LoadAllData(guid);
-		AccountDataTimes accountData = new AccountDataTimes();
-		accountData.PlayerGuid = guid;
-		accountData.ServerTime = Time.UnixTime;
-		int count = ModernVersion.GetAccountDataCount();
+		var accountData = new AccountDataTimes
+		{
+			PlayerGuid = guid,
+			ServerTime = Time.UnixTime
+		};
+		var count = ModernVersion.GetAccountDataCount();
 		accountData.AccountTimes = new long[count];
-		for (int i = 0; i < count; i++)
+		for (var i = 0; i < count; i++)
 		{
 			accountData.AccountTimes[i] = ((GetSession().AccountDataMgr.Data[i] != null) ? GetSession().AccountDataMgr.Data[i].Timestamp : 0);
 		}
@@ -5576,13 +5682,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendRpcMessage(uint serviceId, OriginalHash service, uint methodId, uint token, BattlenetRpcErrorCode status, IMessage? message)
 	{
-		MethodCall methodInfo = default(MethodCall);
+		var methodInfo = default(MethodCall);
 		methodInfo.SetServiceHash((uint)service);
 		methodInfo.SetMethodId(methodId);
 		methodInfo.Token = token;
 		methodInfo.ObjectId = serviceId;
-		byte[] bytes = ((message == null) ? Array.Empty<byte>() : message.ToByteArray());
-		BattlenetResponse response = new BattlenetResponse
+		var bytes = ((message == null) ? Array.Empty<byte>() : message.ToByteArray());
+		var response = new BattlenetResponse
 		{
 			Method = methodInfo,
 			Status = status,
@@ -5598,10 +5704,10 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void InitializePacketHandlers()
 	{
-		MethodInfo[] methods = typeof(WorldSocket).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
-		foreach (MethodInfo methodInfo in methods)
+		var methods = typeof(WorldSocket).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
+		foreach (var methodInfo in methods)
 		{
-			foreach (PacketHandlerAttribute msgAttr in methodInfo.GetCustomAttributes<PacketHandlerAttribute>())
+			foreach (var msgAttr in methodInfo.GetCustomAttributes<PacketHandlerAttribute>())
 			{
 				if (msgAttr == null || msgAttr.Opcode == Opcode.MSG_NULL_ACTION)
 				{
@@ -5613,7 +5719,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 				}
 				else
 				{
-					ParameterInfo[] parameters = methodInfo.GetParameters();
+					var parameters = methodInfo.GetParameters();
 					if (parameters.Length == 0)
 					{
 						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " Has no paramters", "WorldSocket.cs");

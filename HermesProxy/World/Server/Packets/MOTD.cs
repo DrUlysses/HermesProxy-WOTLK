@@ -17,7 +17,7 @@ public class MOTD : ServerPacket
 	{
 		_worldPacket.WriteBits(Text.Count, 4);
 		_worldPacket.FlushBits();
-		foreach (string line in Text)
+		foreach (var line in Text)
 		{
 			_worldPacket.WriteBits(line.GetByteCount(), 7);
 			_worldPacket.FlushBits();

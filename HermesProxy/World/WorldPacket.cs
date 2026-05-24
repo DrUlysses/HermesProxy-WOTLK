@@ -36,8 +36,8 @@ public class WorldPacket : ByteBuffer
 
 	public KeyValuePair<int, bool> ReadEntry()
 	{
-		uint entry = ReadUInt32();
-		uint realEntry = entry & 0x7FFFFFFF;
+		var entry = ReadUInt32();
+		var realEntry = entry & 0x7FFFFFFF;
 		return new KeyValuePair<int, bool>((int)realEntry, realEntry != entry);
 	}
 
@@ -53,9 +53,9 @@ public class WorldPacket : ByteBuffer
 
 	public WowGuid128 ReadPackedGuid128()
 	{
-		byte loLength = ReadUInt8();
-		byte hiLength = ReadUInt8();
-		ulong low = ReadPackedUInt64(loLength);
+		var loLength = ReadUInt8();
+		var hiLength = ReadUInt8();
+		var low = ReadPackedUInt64(loLength);
 		return new WowGuid128(ReadPackedUInt64(hiLength), low);
 	}
 
@@ -65,8 +65,8 @@ public class WorldPacket : ByteBuffer
 		{
 			return 0uL;
 		}
-		ulong guid = 0uL;
-		for (int i = 0; i < 8; i++)
+		var guid = 0uL;
+		for (var i = 0; i < 8; i++)
 		{
 			if (((1 << i) & length) != 0)
 			{
@@ -78,15 +78,15 @@ public class WorldPacket : ByteBuffer
 
 	public UpdateField ReadUpdateField()
 	{
-		uint val = ReadUInt32();
+		var val = ReadUInt32();
 		return new UpdateField(val);
 	}
 
 	public WorldPacket Inflate(int inflatedSize)
 	{
-		byte[] arr = ReadToEnd();
-		byte[] newarr = new byte[inflatedSize];
-		ZlibCodec stream = new ZlibCodec(CompressionMode.Decompress)
+		var arr = ReadToEnd();
+		var newarr = new byte[inflatedSize];
+		var stream = new ZlibCodec(CompressionMode.Decompress)
 		{
 			InputBuffer = arr,
 			NextIn = 0,
@@ -98,7 +98,7 @@ public class WorldPacket : ByteBuffer
 		stream.Inflate(FlushType.None);
 		stream.Inflate(FlushType.Finish);
 		stream.EndInflate();
-		WorldPacket pkt = new WorldPacket(GetOpcode(), newarr);
+		var pkt = new WorldPacket(GetOpcode(), newarr);
 		pkt.SetReceiveTime(GetReceivedTime());
 		return pkt;
 	}
@@ -123,10 +123,10 @@ public class WorldPacket : ByteBuffer
 		}
 		byte lowMask;
 		byte[] lowPacked;
-		uint loSize = PackUInt64(guid.GetLowValue(), out lowMask, out lowPacked);
+		var loSize = PackUInt64(guid.GetLowValue(), out lowMask, out lowPacked);
 		byte highMask;
 		byte[] highPacked;
-		uint hiSize = PackUInt64(guid.GetHighValue(), out highMask, out highPacked);
+		var hiSize = PackUInt64(guid.GetHighValue(), out highMask, out highPacked);
 		WriteUInt8(lowMask);
 		WriteUInt8(highMask);
 		base.WriteBytes(lowPacked, loSize);
@@ -137,14 +137,14 @@ public class WorldPacket : ByteBuffer
 	{
 		byte mask;
 		byte[] packed;
-		uint packedSize = PackUInt64(guid, out mask, out packed);
+		var packedSize = PackUInt64(guid, out mask, out packed);
 		WriteUInt8(mask);
 		base.WriteBytes(packed, packedSize);
 	}
 
 	private uint PackUInt64(ulong value, out byte mask, out byte[] result)
 	{
-		uint resultSize = 0u;
+		var resultSize = 0u;
 		mask = 0;
 		result = new byte[8];
 		byte i = 0;

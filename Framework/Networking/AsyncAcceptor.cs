@@ -80,7 +80,7 @@ namespace Framework.Networking
                 var socket = await _listener.AcceptSocketAsync();
                 if (socket != null)
                 {
-                    T newSocket = (T)Activator.CreateInstance(typeof(T), socket);
+                    var newSocket = (T)Activator.CreateInstance(typeof(T), socket);
                     newSocket.Accept();
 
                     if (!_closed)

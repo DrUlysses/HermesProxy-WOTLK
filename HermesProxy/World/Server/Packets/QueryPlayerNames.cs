@@ -13,8 +13,8 @@ public class QueryPlayerNames : ClientPacket
 
 	public override void Read()
 	{
-		uint count = _worldPacket.ReadUInt32();
-		for (uint i = 0u; i < count; i++)
+		var count = _worldPacket.ReadUInt32();
+		for (var i = 0u; i < count; i++)
 		{
 			Players.Add(_worldPacket.ReadPackedGuid128());
 		}

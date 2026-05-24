@@ -48,12 +48,12 @@ public class QuestPOIQueryResponse : ServerPacket
 		_worldPacket.WriteInt32(QuestPOIDataStats.Count);
 		_worldPacket.WriteInt32(QuestPOIDataStats.Count);
 
-		foreach (QuestPOIData questData in QuestPOIDataStats)
+		foreach (var questData in QuestPOIDataStats)
 		{
 			_worldPacket.WriteInt32(questData.QuestID);
 			_worldPacket.WriteInt32(questData.Blobs.Count);
 
-			foreach (QuestPOIBlobData blob in questData.Blobs)
+			foreach (var blob in questData.Blobs)
 			{
 				_worldPacket.WriteInt32(blob.BlobIndex);
 				_worldPacket.WriteInt32(blob.ObjectiveIndex);
@@ -69,7 +69,7 @@ public class QuestPOIQueryResponse : ServerPacket
 				_worldPacket.WriteInt32(blob.SpawnTrackingID);
 				_worldPacket.WriteInt32(blob.Points.Count);
 
-				foreach (QuestPOIBlobPoint point in blob.Points)
+				foreach (var point in blob.Points)
 				{
 					_worldPacket.WriteInt16(point.X);
 					_worldPacket.WriteInt16(point.Y);

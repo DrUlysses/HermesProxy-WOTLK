@@ -30,7 +30,7 @@ public class UserClientUpdateAccountData : ClientPacket
 		{
 			DataType = _worldPacket.ReadBits<uint>(4);
 		}
-		uint compressedSize = _worldPacket.ReadUInt32();
+		var compressedSize = _worldPacket.ReadUInt32();
 		if (compressedSize != 0)
 		{
 			CompressedData = _worldPacket.ReadBytes(compressedSize);

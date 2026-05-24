@@ -99,7 +99,7 @@ public static class Opcodes
 
 	public static uint GetOpcodeValueForVersion(string opcodeName, ClientVersionBuild version)
 	{
-		if (Enum.TryParse(GetOpcodesEnumForVersion(version), opcodeName, out object opcode))
+		if (Enum.TryParse(GetOpcodesEnumForVersion(version), opcodeName, out var opcode))
 		{
 			return (uint)opcode;
 		}
@@ -108,19 +108,19 @@ public static class Opcodes
 
 	public static string GetOpcodeNameForVersion(uint opcode, ClientVersionBuild version)
 	{
-		Type enumType = GetOpcodesEnumForVersion(version);
+		var enumType = GetOpcodesEnumForVersion(version);
 		return Enum.ToObject(enumType, opcode).ToString();
 	}
 
 	public static Opcode GetUniversalOpcode(uint opcode, ClientVersionBuild version)
 	{
-		string name = GetOpcodeNameForVersion(opcode, version);
+		var name = GetOpcodeNameForVersion(opcode, version);
 		return GetUniversalOpcode(name);
 	}
 
 	public static Opcode GetUniversalOpcode(string name)
 	{
-		if (Enum.TryParse(typeof(Opcode), name, out object opcode))
+		if (Enum.TryParse(typeof(Opcode), name, out var opcode))
 		{
 			return (Opcode)opcode;
 		}
@@ -129,7 +129,7 @@ public static class Opcodes
 
 	private static uint FindOpcodeValueInEnum<T>(string name) where T : Enum
 	{
-		foreach (object item in Enum.GetValues(typeof(T)))
+		foreach (var item in Enum.GetValues(typeof(T)))
 		{
 			if (Enum.GetName(typeof(T), item) == name)
 			{
@@ -141,7 +141,7 @@ public static class Opcodes
 
 	private static string FindOpcodeNameInEnum<T>(uint value) where T : Enum
 	{
-		foreach (object item in Enum.GetValues(typeof(T)))
+		foreach (var item in Enum.GetValues(typeof(T)))
 		{
 			if ((uint)item == value)
 			{

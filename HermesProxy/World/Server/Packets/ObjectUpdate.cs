@@ -152,15 +152,15 @@ public class ObjectUpdate
 				// 3.4.3:  24=GO_STATE_TRANSPORT_ACTIVE, 25=GO_STATE_TRANSPORT_STOPPED
 				if (GameObjectData.TypeID.HasValue && GameObjectData.TypeID.Value == 11)
 				{
-					sbyte legacyState = GameObjectData.State.GetValueOrDefault();
+					var legacyState = GameObjectData.State.GetValueOrDefault();
 					if (legacyState == 0)
 						GameObjectData.State = 24; // GO_STATE_TRANSPORT_ACTIVE
 					else if (legacyState == 1)
 						GameObjectData.State = 25; // GO_STATE_TRANSPORT_STOPPED
 				}
 
-				uint entry = ObjectData.EntryID.HasValue ? (uint)ObjectData.EntryID.Value : 0;
-				uint period = GameData.GetTransportPeriod(entry);
+				var entry = ObjectData.EntryID.HasValue ? (uint)ObjectData.EntryID.Value : 0;
+				var period = GameData.GetTransportPeriod(entry);
 				Log.Print(LogType.Debug, $"[TransportFixup] Entry={entry} Period={period} DynFlagsSet={ObjectData.DynamicFlags.HasValue} DynFlags=0x{ObjectData.DynamicFlags.GetValueOrDefault():X8} Level={GameObjectData.Level} State={GameObjectData.State} TypeID={GameObjectData.TypeID} HasCreateData={CreateData != null} HasMoveInfo={CreateData?.MoveInfo != null}");
 				if (period != 0)
 				{
@@ -170,9 +170,9 @@ public class ObjectUpdate
 					}
 					if (!ObjectData.DynamicFlags.HasValue)
 					{
-						uint pathTimer = CreateData.MoveInfo.TransportPathTimer;
-						uint progress = pathTimer % period;
-						uint dynFlags = (uint)(progress / (float)period * 65535f) << 16;
+						var pathTimer = CreateData.MoveInfo.TransportPathTimer;
+						var progress = pathTimer % period;
+						var dynFlags = (uint)(progress / (float)period * 65535f) << 16;
 						ObjectData.DynamicFlags = dynFlags;
 					}
 					GameObjectData.Flags = 1048616u;
@@ -198,7 +198,7 @@ public class ObjectUpdate
 			}
 			if (!CorpseData.FactionTemplate.HasValue && CorpseData.Owner != null)
 			{
-				int ownerFaction = GlobalSession.GameState.GetLegacyFieldValueInt32(CorpseData.Owner, UnitField.UNIT_FIELD_FACTIONTEMPLATE);
+				var ownerFaction = GlobalSession.GameState.GetLegacyFieldValueInt32(CorpseData.Owner, UnitField.UNIT_FIELD_FACTIONTEMPLATE);
 				if (ownerFaction != 0)
 				{
 					CorpseData.FactionTemplate = ownerFaction;
@@ -211,7 +211,7 @@ public class ObjectUpdate
 		}
 		if (UnitData != null)
 		{
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 			{
 				if (!UnitData.ModPowerRegen[i].HasValue)
 				{
@@ -309,7 +309,7 @@ public class ObjectUpdate
 		{
 			ActivePlayerData.RestInfo[0].StateID = 0u;
 		}
-		for (int j = 0; j < 7; j++)
+		for (var j = 0; j < 7; j++)
 		{
 			if (!ActivePlayerData.ModDamageDonePercent[j].HasValue)
 			{
@@ -328,7 +328,7 @@ public class ObjectUpdate
 		{
 			ActivePlayerData.ModPeriodicHealingDonePercent = 1f;
 		}
-		for (int k = 0; k < 3; k++)
+		for (var k = 0; k < 3; k++)
 		{
 			if (!ActivePlayerData.WeaponDmgMultipliers[k].HasValue)
 			{

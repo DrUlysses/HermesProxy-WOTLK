@@ -34,7 +34,7 @@ public class GuildBankQueryResults : ServerPacket
 		_worldPacket.WriteInt32(ItemInfo.Count);
 		_worldPacket.WriteBit(FullUpdate);
 		_worldPacket.FlushBits();
-		foreach (GuildBankTabInfo tab in TabInfo)
+		foreach (var tab in TabInfo)
 		{
 			_worldPacket.WriteInt32(tab.TabIndex);
 			_worldPacket.WriteBits(tab.Name.GetByteCount(), 7);
@@ -42,7 +42,7 @@ public class GuildBankQueryResults : ServerPacket
 			_worldPacket.WriteString(tab.Name);
 			_worldPacket.WriteString(tab.Icon);
 		}
-		foreach (GuildBankItemInfo item in ItemInfo)
+		foreach (var item in ItemInfo)
 		{
 			_worldPacket.WriteInt32(item.Slot);
 			_worldPacket.WriteInt32(item.Count);
@@ -54,7 +54,7 @@ public class GuildBankQueryResults : ServerPacket
 			_worldPacket.WriteBits(item.SocketEnchant.Count, 2);
 			_worldPacket.WriteBit(item.Locked);
 			_worldPacket.FlushBits();
-			foreach (ItemGemData socketEnchant in item.SocketEnchant)
+			foreach (var socketEnchant in item.SocketEnchant)
 			{
 				socketEnchant.Write(_worldPacket);
 			}

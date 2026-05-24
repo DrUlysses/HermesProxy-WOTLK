@@ -19,8 +19,8 @@ internal class HotfixRequest : ClientPacket
 	{
 		ClientBuild = _worldPacket.ReadUInt32();
 		DataBuild = _worldPacket.ReadUInt32();
-		uint hotfixCount = _worldPacket.ReadUInt32();
-		for (int i = 0; i < hotfixCount; i++)
+		var hotfixCount = _worldPacket.ReadUInt32();
+		for (var i = 0; i < hotfixCount; i++)
 		{
 			Hotfixes.Add(_worldPacket.ReadUInt32());
 		}

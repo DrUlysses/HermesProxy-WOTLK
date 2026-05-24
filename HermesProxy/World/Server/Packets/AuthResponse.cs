@@ -139,11 +139,11 @@ internal class AuthResponse : ServerPacket
 			_worldPacket.WriteInt32(SuccessInfo.Templates.Count);
 			_worldPacket.WriteUInt32(SuccessInfo.CurrencyID);
 			_worldPacket.WriteInt64(SuccessInfo.Time);
-			foreach (RaceClassAvailability raceClassAvailability in SuccessInfo.AvailableClasses)
+			foreach (var raceClassAvailability in SuccessInfo.AvailableClasses)
 			{
 				_worldPacket.WriteUInt8(raceClassAvailability.RaceID);
 				_worldPacket.WriteInt32(raceClassAvailability.Classes.Count);
-				foreach (ClassAvailability classAvailability in raceClassAvailability.Classes)
+				foreach (var classAvailability in raceClassAvailability.Classes)
 				{
 					_worldPacket.WriteUInt8(classAvailability.ClassID);
 					_worldPacket.WriteUInt8(classAvailability.ActiveExpansionLevel);
@@ -183,15 +183,15 @@ internal class AuthResponse : ServerPacket
 			{
 				_worldPacket.WriteInt32(SuccessInfo.ExpansionTrialExpiration.Value);
 			}
-			foreach (VirtualRealmInfo virtualRealm2 in SuccessInfo.VirtualRealms)
+			foreach (var virtualRealm2 in SuccessInfo.VirtualRealms)
 			{
 				virtualRealm2.Write(_worldPacket);
 			}
-			foreach (CharacterTemplate templat in SuccessInfo.Templates)
+			foreach (var templat in SuccessInfo.Templates)
 			{
 				_worldPacket.WriteUInt32(templat.TemplateSetId);
 				_worldPacket.WriteInt32(templat.Classes.Count);
-				foreach (CharacterTemplateClass templateClass in templat.Classes)
+				foreach (var templateClass in templat.Classes)
 				{
 					_worldPacket.WriteUInt8(templateClass.ClassID);
 					_worldPacket.WriteUInt8((byte)templateClass.FactionGroup);

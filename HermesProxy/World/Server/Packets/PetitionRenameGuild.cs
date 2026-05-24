@@ -15,7 +15,7 @@ public class PetitionRenameGuild : ClientPacket
 	{
 		PetitionGuid = _worldPacket.ReadPackedGuid128();
 		_worldPacket.ResetBitPos();
-		uint nameLen = _worldPacket.ReadBits<uint>(7);
+		var nameLen = _worldPacket.ReadBits<uint>(7);
 		NewGuildName = _worldPacket.ReadString(nameLen);
 	}
 }

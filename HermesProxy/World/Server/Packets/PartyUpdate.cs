@@ -52,7 +52,7 @@ public class PartyUpdate : ServerPacket
 		_worldPacket.WriteBit(LootSettings != null);
 		_worldPacket.WriteBit(DifficultySettings != null);
 		_worldPacket.FlushBits();
-		foreach (PartyPlayerInfo player in PlayerList)
+		foreach (var player in PlayerList)
 		{
 			player.Write(_worldPacket);
 		}

@@ -34,7 +34,7 @@ public class AccountDataManager
 
 	public string GetAccountDataDirectory()
 	{
-		string path = Path.GetFullPath(Path.Combine("AccountData", _accountName, _realmName));
+		var path = Path.GetFullPath(Path.Combine("AccountData", _accountName, _realmName));
 		if (!Directory.Exists(path))
 		{
 			Directory.CreateDirectory(path);
@@ -44,15 +44,15 @@ public class AccountDataManager
 
 	public string GetFullFileName(WowGuid128 guid, uint type)
 	{
-		string file = ((!IsGlobalDataType(type)) ? $"data-{type}-{guid.GetLowValue()}-{guid.GetHighValue()}.bin" : $"data-{type}.bin");
-		string path = GetAccountDataDirectory();
+		var file = ((!IsGlobalDataType(type)) ? $"data-{type}-{guid.GetLowValue()}-{guid.GetHighValue()}.bin" : $"data-{type}.bin");
+		var path = GetAccountDataDirectory();
 		return Path.Combine(path, file);
 	}
 
 	public void LoadAllData(WowGuid128 guid)
 	{
 		Data = new AccountData[ModernVersion.GetAccountDataCount()];
-		for (uint i = 0u; i < ModernVersion.GetAccountDataCount(); i++)
+		for (var i = 0u; i < ModernVersion.GetAccountDataCount(); i++)
 		{
 			Data[i] = LoadData(guid, i);
 		}
@@ -61,15 +61,15 @@ public class AccountDataManager
 	public AccountData LoadData(WowGuid128 guid, uint type)
 	{
 		AccountData data = null;
-		string fileName = GetFullFileName(guid, type);
+		var fileName = GetFullFileName(guid, type);
 		if (File.Exists(fileName))
 		{
 			using (File.OpenRead(GetFullFileName(guid, type)))
 			{
-				using BinaryReader reader = new BinaryReader(File.OpenRead(GetFullFileName(guid, type)));
+				using var reader = new BinaryReader(File.OpenRead(GetFullFileName(guid, type)));
 				data = new AccountData();
-				ulong guidLow = reader.ReadUInt64();
-				ulong guidHigh = reader.ReadUInt64();
+				var guidLow = reader.ReadUInt64();
+				var guidHigh = reader.ReadUInt64();
 				data.Guid = new WowGuid128(guidHigh, guidLow);
 				if (!IsGlobalDataType(type))
 				{
@@ -77,7 +77,7 @@ public class AccountDataManager
 				data.Timestamp = reader.ReadInt64();
 				data.Type = reader.ReadUInt32();
 				data.UncompressedSize = reader.ReadUInt32();
-				int compressedSize = reader.ReadInt32();
+				var compressedSize = reader.ReadInt32();
 				data.CompressedData = reader.ReadBytes(compressedSize);
 			}
 		}
@@ -99,7 +99,7 @@ public class AccountDataManager
 		Data[type].Type = type;
 		Data[type].UncompressedSize = uncompressedSize;
 		Data[type].CompressedData = compressedData;
-		using BinaryWriter writer = new BinaryWriter(File.Open(GetFullFileName(guid, type), FileMode.Create));
+		using var writer = new BinaryWriter(File.Open(GetFullFileName(guid, type), FileMode.Create));
 		writer.Write(guid.GetLowValue());
 		writer.Write(guid.GetHighValue());
 		writer.Write(timestamp);
@@ -111,10 +111,10 @@ public class AccountDataManager
 
 	public byte[] LoadCUFProfiles()
 	{
-		string fileName = Path.Combine(GetAccountDataDirectory(), "cuf.bin");
+		var fileName = Path.Combine(GetAccountDataDirectory(), "cuf.bin");
 		if (File.Exists(fileName))
 		{
-			using (FileStream file = File.OpenRead(fileName))
+			using (var file = File.OpenRead(fileName))
 			{
 				using (new BinaryReader(file))
 				{
@@ -127,8 +127,8 @@ public class AccountDataManager
 
 	public void SaveCUFProfiles(byte[] data)
 	{
-		string fileName = Path.Combine(GetAccountDataDirectory(), "cuf.bin");
-		using BinaryWriter writer = new BinaryWriter(File.Open(fileName, FileMode.Create));
+		var fileName = Path.Combine(GetAccountDataDirectory(), "cuf.bin");
+		using var writer = new BinaryWriter(File.Open(fileName, FileMode.Create));
 		writer.Write(data);
 	}
 }

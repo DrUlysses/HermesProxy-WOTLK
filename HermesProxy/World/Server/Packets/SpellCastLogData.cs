@@ -22,7 +22,7 @@ public class SpellCastLogData
 		data.WriteUInt32(Armor);
 		data.WriteBits(PowerData.Count, 9);
 		data.FlushBits();
-		foreach (SpellLogPowerData powerData in PowerData)
+		foreach (var powerData in PowerData)
 		{
 			data.WriteInt32(powerData.PowerType);
 			data.WriteInt32(powerData.Amount);

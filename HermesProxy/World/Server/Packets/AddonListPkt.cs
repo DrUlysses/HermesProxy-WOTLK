@@ -10,16 +10,16 @@ public class AddonListPkt : ClientPacket
     public override void Read()
     {
         try {
-            uint compressedSize = _worldPacket.ReadUInt32();
+            var compressedSize = _worldPacket.ReadUInt32();
             if (compressedSize > 0)
             {
-                byte[] compressed = _worldPacket.ReadBytes(compressedSize);
+                var compressed = _worldPacket.ReadBytes(compressedSize);
                 using (var ms = new MemoryStream(compressed))
                 using (var zlib = new ZlibStream(ms, CompressionMode.Decompress))
                 using (var outMs = new MemoryStream())
                 {
                     zlib.CopyTo(outMs);
-                    byte[] decompressed = outMs.ToArray();
+                    var decompressed = outMs.ToArray();
                     using (var reader = new WorldPacket(decompressed))
                     {
                         AddonCount = reader.ReadUInt32();

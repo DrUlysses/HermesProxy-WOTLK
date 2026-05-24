@@ -18,7 +18,7 @@ public class ServerPetitionShowList : ServerPacket
 	{
 		_worldPacket.WritePackedGuid128(Unit);
 		_worldPacket.WriteInt32(Petitions.Count);
-		foreach (PetitionEntry petition2 in Petitions)
+		foreach (var petition2 in Petitions)
 		{
 			petition2.Write(_worldPacket);
 		}

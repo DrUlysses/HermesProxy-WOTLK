@@ -33,12 +33,12 @@ public class PlayerModelDisplayInfo
 		data.WriteUInt8((byte)ClassId);
 		data.WriteInt32(Customizations.Count);
 		data.WriteString(Name);
-		foreach (ChrCustomizationChoice customization in Customizations)
+		foreach (var customization in Customizations)
 		{
 			data.WriteUInt32(customization.ChrCustomizationOptionID);
 			data.WriteUInt32(customization.ChrCustomizationChoiceID);
 		}
-		foreach (InspectItemData item in Items)
+		foreach (var item in Items)
 		{
 			item.Write(data);
 		}

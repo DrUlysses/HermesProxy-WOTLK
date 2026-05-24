@@ -14,7 +14,7 @@ public class ChatMessage : ClientPacket
 	public override void Read()
 	{
 		Language = _worldPacket.ReadUInt32();
-		uint len = _worldPacket.ReadBits<uint>(11);
+		var len = _worldPacket.ReadBits<uint>(11);
 		Text = _worldPacket.ReadString(len);
 	}
 }

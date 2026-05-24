@@ -32,12 +32,12 @@ public class QueryCreatureResponse : ServerPacket
 		_worldPacket.WriteBits((!Stats.CursorName.IsEmpty()) ? (Stats.CursorName.GetByteCount() + 1) : 0, 6);
 		_worldPacket.WriteBit(Stats.Civilian);
 		_worldPacket.WriteBit(Stats.Leader);
-		for (int i = 0; i < 4; i++)
+		for (var i = 0; i < 4; i++)
 		{
 			_worldPacket.WriteBits(Stats.Name[i].GetByteCount() + 1, 11);
 			_worldPacket.WriteBits(Stats.NameAlt[i].GetByteCount() + 1, 11);
 		}
-		for (int j = 0; j < 4; j++)
+		for (var j = 0; j < 4; j++)
 		{
 			if (!string.IsNullOrEmpty(Stats.Name[j]))
 			{
@@ -48,7 +48,7 @@ public class QueryCreatureResponse : ServerPacket
 				_worldPacket.WriteCString(Stats.NameAlt[j]);
 			}
 		}
-		for (int k = 0; k < 2; k++)
+		for (var k = 0; k < 2; k++)
 		{
 			_worldPacket.WriteUInt32(Stats.Flags[k]);
 		}
@@ -56,13 +56,13 @@ public class QueryCreatureResponse : ServerPacket
 		_worldPacket.WriteInt32(Stats.Family);
 		_worldPacket.WriteInt32(Stats.Classification);
 		_worldPacket.WriteUInt32(Stats.PetSpellDataId);
-		for (int l = 0; l < 2; l++)
+		for (var l = 0; l < 2; l++)
 		{
 			_worldPacket.WriteUInt32(Stats.ProxyCreatureID[l]);
 		}
 		_worldPacket.WriteInt32(Stats.Display.CreatureDisplay.Count);
 		_worldPacket.WriteFloat(Stats.Display.TotalProbability);
-		foreach (CreatureXDisplay display in Stats.Display.CreatureDisplay)
+		foreach (var display in Stats.Display.CreatureDisplay)
 		{
 			_worldPacket.WriteUInt32(display.CreatureDisplayID);
 			_worldPacket.WriteFloat(display.Scale);
@@ -91,7 +91,7 @@ public class QueryCreatureResponse : ServerPacket
 		{
 			_worldPacket.WriteCString(Stats.CursorName);
 		}
-		foreach (uint questItem in Stats.QuestItems)
+		foreach (var questItem in Stats.QuestItems)
 		{
 			_worldPacket.WriteUInt32(questItem);
 		}

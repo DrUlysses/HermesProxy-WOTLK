@@ -217,14 +217,16 @@ public class GameSessionData
 
 	public static GameSessionData CreateNewGameSessionData(GlobalSessionData globalSession)
 	{
-		GameSessionData self = new GameSessionData();
-		self.CurrentPlayerStorage = new CurrentPlayerStorage(globalSession);
+		var self = new GameSessionData
+		{
+			CurrentPlayerStorage = new CurrentPlayerStorage(globalSession)
+		};
 		return self;
 	}
 
 	public uint GetCurrentGroupSize()
 	{
-		PartyUpdate group = GetCurrentGroup();
+		var group = GetCurrentGroup();
 		if (group == null)
 		{
 			return 0u;
@@ -234,7 +236,7 @@ public class GameSessionData
 
 	public WowGuid128 GetCurrentGroupLeader()
 	{
-		PartyUpdate group = GetCurrentGroup();
+		var group = GetCurrentGroup();
 		if (group == null)
 		{
 			return WowGuid128.Empty;
@@ -249,7 +251,7 @@ public class GameSessionData
 
 	public WowGuid128 GetCurrentGroupGuid()
 	{
-		PartyUpdate group = GetCurrentGroup();
+		var group = GetCurrentGroup();
 		if (group == null)
 		{
 			return WowGuid128.Empty;
@@ -269,23 +271,23 @@ public class GameSessionData
 
 	public byte GetItemSpellSlot(WowGuid128 guid, uint spellId)
 	{
-		int OBJECT_FIELD_ENTRY = LegacyVersion.GetUpdateField(ObjectField.OBJECT_FIELD_ENTRY);
+		var OBJECT_FIELD_ENTRY = LegacyVersion.GetUpdateField(ObjectField.OBJECT_FIELD_ENTRY);
 		if (OBJECT_FIELD_ENTRY < 0)
 		{
 			return 0;
 		}
-		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
+		var updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0;
 		}
-		uint itemId = updates[OBJECT_FIELD_ENTRY].UInt32Value;
+		var itemId = updates[OBJECT_FIELD_ENTRY].UInt32Value;
 		return GameData.GetItemEffectSlot(itemId, spellId);
 	}
 
 	public uint GetItemId(WowGuid128 guid)
 	{
-		int OBJECT_FIELD_ENTRY = LegacyVersion.GetUpdateField(ObjectField.OBJECT_FIELD_ENTRY);
+		var OBJECT_FIELD_ENTRY = LegacyVersion.GetUpdateField(ObjectField.OBJECT_FIELD_ENTRY);
 		if (OBJECT_FIELD_ENTRY < 0)
 		{
 			return 0u;
@@ -308,7 +310,7 @@ public class GameSessionData
 		}
 		else
 		{
-			Dictionary<byte, int> dict = new Dictionary<byte, int>();
+			var dict = new Dictionary<byte, int>();
 			dict.Add(spellMask, amount);
 			FlatSpellMods.Add(spellMod, dict);
 		}
@@ -329,7 +331,7 @@ public class GameSessionData
 		}
 		else
 		{
-			Dictionary<byte, int> dict = new Dictionary<byte, int>();
+			var dict = new Dictionary<byte, int>();
 			dict.Add(spellMask, amount);
 			PctSpellMods.Add(spellMod, dict);
 		}
@@ -355,10 +357,10 @@ public class GameSessionData
 
 	public WowGuid64 GetInventorySlotItem(int slot)
 	{
-		int PLAYER_FIELD_INV_SLOT_HEAD = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_INV_SLOT_HEAD);
+		var PLAYER_FIELD_INV_SLOT_HEAD = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_INV_SLOT_HEAD);
 		if (PLAYER_FIELD_INV_SLOT_HEAD >= 0)
 		{
-			Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(CurrentPlayerGuid);
+			var updates = GetCachedObjectFieldsLegacy(CurrentPlayerGuid);
 			if (updates != null)
 			{
 				return updates.GetGuidValue(PLAYER_FIELD_INV_SLOT_HEAD + slot * 2).To64();
@@ -422,10 +424,10 @@ public class GameSessionData
 		{
 			return false;
 		}
-		uint bgId = GameData.GetBattlegroundIdFromMapId(CurrentMapId.Value);
+		var bgId = GameData.GetBattlegroundIdFromMapId(CurrentMapId.Value);
 		if (bgId != 0)
 		{
-			foreach (KeyValuePair<uint, uint> queue in BattleFieldQueueTypes)
+			foreach (var queue in BattleFieldQueueTypes)
 			{
 				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 				{
@@ -449,7 +451,7 @@ public class GameSessionData
 		{
 			return BattleFieldQueueTimes[queueSlot];
 		}
-		long time = Time.UnixTime;
+		var time = Time.UnixTime;
 		BattleFieldQueueTimes.Add(queueSlot, time);
 		return time;
 	}
@@ -490,7 +492,7 @@ public class GameSessionData
 		}
 		else
 		{
-			Dictionary<byte, int> dict = new Dictionary<byte, int>();
+			var dict = new Dictionary<byte, int>();
 			dict.Add(slot, duration);
 			UnitAuraDurationLeft.Add(guid, dict);
 		}
@@ -507,7 +509,7 @@ public class GameSessionData
 		}
 		else
 		{
-			Dictionary<byte, int> dict2 = new Dictionary<byte, int>();
+			var dict2 = new Dictionary<byte, int>();
 			dict2.Add(slot, currentTime);
 			UnitAuraDurationUpdateTime.Add(guid, dict2);
 		}
@@ -528,7 +530,7 @@ public class GameSessionData
 		}
 		else
 		{
-			Dictionary<byte, int> dict = new Dictionary<byte, int>();
+			var dict = new Dictionary<byte, int>();
 			dict.Add(slot, duration);
 			UnitAuraDurationFull.Add(guid, dict);
 		}
@@ -589,7 +591,7 @@ public class GameSessionData
 		}
 		else
 		{
-			Dictionary<byte, WowGuid128> dict = new Dictionary<byte, WowGuid128>();
+			var dict = new Dictionary<byte, WowGuid128>();
 			dict.Add(slot, caster);
 			UnitAuraCaster.Add(target, dict);
 		}
@@ -614,7 +616,7 @@ public class GameSessionData
 
 	public WowGuid128 GetAuraCaster(WowGuid128 target, byte slot, uint spellId)
 	{
-		WowGuid128 caster = GetAuraCaster(target, slot);
+		var caster = GetAuraCaster(target, slot);
 		if (caster == null)
 		{
 			caster = GetLastAuraCasterOnTarget(target, spellId);
@@ -641,7 +643,7 @@ public class GameSessionData
 		}
 		else
 		{
-			Dictionary<uint, WowGuid128> casterDict = new Dictionary<uint, WowGuid128>();
+			var casterDict = new Dictionary<uint, WowGuid128>();
 			casterDict.Add(spellId, caster);
 			LastAuraCasterOnTarget.Add(target, casterDict);
 		}
@@ -699,7 +701,7 @@ public class GameSessionData
 			existing = new uint[3];
 			ItemGems.Add(guid, existing);
 		}
-		for (int i = 0; i < 3; i++)
+		for (var i = 0; i < 3; i++)
 		{
 			if (gems[i].HasValue)
 			{
@@ -711,7 +713,7 @@ public class GameSessionData
 	public WowGuid128 GetPetGuidByNumber(uint petNumber)
 	{
 		ObjectCacheMutex.WaitOne();
-		foreach (KeyValuePair<WowGuid128, UpdateFieldsArray> itr in ObjectCacheModern)
+		foreach (var itr in ObjectCacheModern)
 		{
 			if (itr.Key.GetHighType() == HighGuidType.Pet && itr.Key.GetEntry() == petNumber)
 			{
@@ -812,7 +814,7 @@ public class GameSessionData
 
 	public string GetChannelName(int id)
 	{
-		foreach (KeyValuePair<string, int> itr in ChannelIds)
+		foreach (var itr in ChannelIds)
 		{
 			if (itr.Value == id)
 			{
@@ -834,7 +836,7 @@ public class GameSessionData
 	public WowGuid128? GetPlayerGuidByName(string name)
 	{
 		name = name.Trim().Replace("\0", "");
-		foreach (KeyValuePair<WowGuid128, PlayerCache> player in CachedPlayers)
+		foreach (var player in CachedPlayers)
 		{
 			if (player.Value.Name == name && !WowGuid128.IsUnknownPlayerGuid(player.Key))
 			{
@@ -894,12 +896,12 @@ public class GameSessionData
 
 	public int GetLegacyFieldValueInt32<T>(WowGuid128 guid, T field)
 	{
-		int fieldIndex = LegacyVersion.GetUpdateField(field);
+		var fieldIndex = LegacyVersion.GetUpdateField(field);
 		if (fieldIndex < 0)
 		{
 			return 0;
 		}
-		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
+		var updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0;
@@ -913,12 +915,12 @@ public class GameSessionData
 
 	public uint GetLegacyFieldValueUInt32<T>(WowGuid128 guid, T field)
 	{
-		int fieldIndex = LegacyVersion.GetUpdateField(field);
+		var fieldIndex = LegacyVersion.GetUpdateField(field);
 		if (fieldIndex < 0)
 		{
 			return 0u;
 		}
-		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
+		var updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0u;
@@ -932,12 +934,12 @@ public class GameSessionData
 
 	public float GetLegacyFieldValueFloat<T>(WowGuid128 guid, T field)
 	{
-		int fieldIndex = LegacyVersion.GetUpdateField(field);
+		var fieldIndex = LegacyVersion.GetUpdateField(field);
 		if (fieldIndex < 0)
 		{
 			return 0f;
 		}
-		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
+		var updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0f;
@@ -954,10 +956,10 @@ public class GameSessionData
 		if (CurrentPlayerGuid == null) return false;
 		var updates = GetCachedObjectFieldsLegacy(CurrentPlayerGuid);
 		if (updates == null) return false;
-		int PLAYER_VISIBLE_ITEM_1_ENTRYID = LegacyVersion.GetUpdateField(PlayerField.PLAYER_VISIBLE_ITEM_1_ENTRYID);
+		var PLAYER_VISIBLE_ITEM_1_ENTRYID = LegacyVersion.GetUpdateField(PlayerField.PLAYER_VISIBLE_ITEM_1_ENTRYID);
 		if (PLAYER_VISIBLE_ITEM_1_ENTRYID < 0) return false;
-		int offset = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 2 : (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 16 : 12);
-		int rangedIdx = PLAYER_VISIBLE_ITEM_1_ENTRYID + 17 * offset;
+		var offset = LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? 2 : (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 16 : 12);
+		var rangedIdx = PLAYER_VISIBLE_ITEM_1_ENTRYID + 17 * offset;
 		return updates.ContainsKey(rangedIdx) && updates[rangedIdx].UInt32Value != 0;
 	}
 

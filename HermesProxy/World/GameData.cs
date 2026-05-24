@@ -154,7 +154,7 @@ public static class GameData
 		{
 			return data;
 		}
-		ItemTemplate template = GetItemTemplate(entry);
+		var template = GetItemTemplate(entry);
 		if (template != null)
 		{
 			return template.Name[0];
@@ -206,9 +206,9 @@ public static class GameData
 
 	public static QuestObjective GetQuestObjectiveForItem(uint entry)
 	{
-		foreach (KeyValuePair<uint, QuestTemplate> questTemplate in QuestTemplates)
+		foreach (var questTemplate in QuestTemplates)
 		{
-			foreach (QuestObjective objective in questTemplate.Value.Objectives)
+			foreach (var objective in questTemplate.Value.Objectives)
 			{
 				if (objective.ObjectID == entry && objective.Type == QuestObjectiveType.Item)
 				{
@@ -260,7 +260,7 @@ public static class GameData
 
 	public static uint GetItemIdWithDisplayId(uint displayId)
 	{
-		foreach (KeyValuePair<uint, uint> item in ItemDisplayIdStore)
+		foreach (var item in ItemDisplayIdStore)
 		{
 			if (item.Value == displayId)
 			{
@@ -272,7 +272,7 @@ public static class GameData
 
 	public static ItemAppearance GetItemAppearanceByDisplayId(uint displayId)
 	{
-		foreach (KeyValuePair<uint, ItemAppearance> item in ItemAppearanceStore)
+		foreach (var item in ItemAppearanceStore)
 		{
 			if (item.Value.ItemDisplayInfoID == (int)displayId)
 			{
@@ -284,7 +284,7 @@ public static class GameData
 
 	public static ItemAppearance GetItemAppearanceByItemId(uint itemId)
 	{
-		ItemModifiedAppearance modAppearance = GetItemModifiedAppearanceByItemId(itemId);
+		var modAppearance = GetItemModifiedAppearanceByItemId(itemId);
 		if (modAppearance == null)
 		{
 			return null;
@@ -307,10 +307,10 @@ public static class GameData
 
 	public static ItemModifiedAppearance GetItemModifiedAppearanceByDisplayId(uint displayId)
 	{
-		ItemAppearance appearance = GetItemAppearanceByDisplayId(displayId);
+		var appearance = GetItemAppearanceByDisplayId(displayId);
 		if (appearance != null)
 		{
-			foreach (KeyValuePair<uint, ItemModifiedAppearance> item in ItemModifiedAppearanceStore)
+			foreach (var item in ItemModifiedAppearanceStore)
 			{
 				if (item.Value.ItemAppearanceID == appearance.Id)
 				{
@@ -323,7 +323,7 @@ public static class GameData
 
 	public static ItemModifiedAppearance GetItemModifiedAppearanceByItemId(uint itemId)
 	{
-		foreach (KeyValuePair<uint, ItemModifiedAppearance> item in ItemModifiedAppearanceStore)
+		foreach (var item in ItemModifiedAppearanceStore)
 		{
 			if (item.Value.ItemID == (int)itemId)
 			{
@@ -335,7 +335,7 @@ public static class GameData
 
 	public static ItemEffect GetItemEffectByItemId(uint itemId, byte slot)
 	{
-		foreach (KeyValuePair<uint, ItemEffect> item in ItemEffectStore)
+		foreach (var item in ItemEffectStore)
 		{
 			if (item.Value.ParentItemID == itemId && item.Value.LegacySlotIndex == slot)
 			{
@@ -347,12 +347,12 @@ public static class GameData
 
 	public static uint GetFirstFreeId(IDictionary dict, uint after = 0u)
 	{
-		uint firstEntry = 0u;
-		foreach (object item in dict)
+		var firstEntry = 0u;
+		foreach (var item in dict)
 		{
-			Type type = item.GetType();
-			PropertyInfo key = type.GetProperty("Key");
-			object keyObj = key.GetValue(item, null);
+			var type = item.GetType();
+			var key = type.GetProperty("Key");
+			var keyObj = key.GetValue(item, null);
 			if (after != 0 && (uint)keyObj <= after)
 			{
 				continue;
@@ -381,7 +381,7 @@ public static class GameData
 		}
 		else
 		{
-			Dictionary<uint, byte> dict = new Dictionary<uint, byte>();
+			var dict = new Dictionary<uint, byte>();
 			dict.Add(spellId, slot);
 			ItemEffects.Add(itemId, dict);
 		}
@@ -453,7 +453,7 @@ public static class GameData
 
 	public static uint GetEnchantIdFromGem(uint itemId)
 	{
-		foreach (KeyValuePair<uint, uint> itr in Gems)
+		foreach (var itr in Gems)
 		{
 			if (itr.Value == itemId)
 			{
@@ -465,12 +465,12 @@ public static class GameData
 
 	public static float GetUnitCompleteDisplayScale(uint displayId)
 	{
-		CreatureDisplayInfo displayData = GetDisplayInfo(displayId);
+		var displayData = GetDisplayInfo(displayId);
 		if (displayData.ModelId == 0)
 		{
 			return 1f;
 		}
-		CreatureModelCollisionHeight modelData = GetModelData(displayId);
+		var modelData = GetModelData(displayId);
 		return displayData.DisplayScale * modelData.ModelScale;
 	}
 
@@ -521,7 +521,7 @@ public static class GameData
 
 	public static uint GetBattlegroundIdFromMapId(uint mapId)
 	{
-		foreach (KeyValuePair<uint, Battleground> bg in Battlegrounds)
+		foreach (var bg in Battlegrounds)
 		{
 			if (bg.Value.MapIds.Contains(mapId))
 			{
@@ -542,7 +542,7 @@ public static class GameData
 
 	public static uint GetChatChannelIdFromName(string name)
 	{
-		foreach (KeyValuePair<uint, ChatChannel> channel in ChatChannels)
+		foreach (var channel in ChatChannels)
 		{
 			if (name.Contains(channel.Value.Name))
 			{
@@ -554,8 +554,8 @@ public static class GameData
 
 	public static List<ChatChannel> GetChatChannelsWithFlags(ChannelFlags flags)
 	{
-		List<ChatChannel> channels = new List<ChatChannel>();
-		foreach (KeyValuePair<uint, ChatChannel> channel in ChatChannels)
+		var channels = new List<ChatChannel>();
+		foreach (var channel in ChatChannels)
 		{
 			if ((channel.Value.Flags & flags) == flags)
 			{
@@ -621,20 +621,22 @@ public static class GameData
 
 	public static uint GetBroadcastTextId(string maleText, string femaleText, uint language, ushort[] emoteDelays, ushort[] emotes)
 	{
-		foreach (KeyValuePair<uint, BroadcastText> itr in BroadcastTextStore)
+		foreach (var itr in BroadcastTextStore)
 		{
 			if (((!string.IsNullOrEmpty(maleText) && itr.Value.MaleText == maleText) || (!string.IsNullOrEmpty(femaleText) && itr.Value.FemaleText == femaleText)) && itr.Value.Language == language && itr.Value.EmoteDelays.SequenceEqual(emoteDelays) && itr.Value.Emotes.SequenceEqual(emotes))
 			{
 				return itr.Key;
 			}
 		}
-		BroadcastText broadcastText = new BroadcastText();
-		broadcastText.Entry = BroadcastTextStore.Keys.Last() + 1;
-		broadcastText.MaleText = maleText;
-		broadcastText.FemaleText = femaleText;
-		broadcastText.Language = language;
-		broadcastText.EmoteDelays = emoteDelays;
-		broadcastText.Emotes = emotes;
+		var broadcastText = new BroadcastText
+		{
+			Entry = BroadcastTextStore.Keys.Last() + 1,
+			MaleText = maleText,
+			FemaleText = femaleText,
+			Language = language,
+			EmoteDelays = emoteDelays,
+			Emotes = emotes
+		};
 		BroadcastTextStore.Add(broadcastText.Entry, broadcastText);
 		return broadcastText.Entry;
 	}
@@ -681,18 +683,18 @@ public static class GameData
 
 	public static void LoadBuildAuthSeeds()
 	{
-		string path = Path.Combine("CSV", "BuildAuthSeeds.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "BuildAuthSeeds.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint build = uint.Parse(fields[0]);
-			string platform = fields[1];
-			byte[] seed = fields[2].ParseAsByteArray();
+			var fields = csvParser.ReadFields();
+			var build = uint.Parse(fields[0]);
+			var platform = fields[1];
+			var seed = fields[2].ParseAsByteArray();
 			if (!BuildAuthSeeds.TryGetValue(build, out var seeds))
 			{
 				seeds = new Dictionary<string, byte[]>();
@@ -704,371 +706,433 @@ public static class GameData
 
 	public static void LoadBroadcastTexts()
 	{
-		string path = Path.Combine("CSV", $"BroadcastTexts{LegacyVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"BroadcastTexts{LegacyVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			BroadcastText broadcastText = new BroadcastText();
-			broadcastText.Entry = uint.Parse(fields[0]);
-			broadcastText.MaleText = fields[1].TrimEnd().Replace("\0", "").Replace("~", "\n");
-			broadcastText.FemaleText = fields[2].TrimEnd().Replace("\0", "").Replace("~", "\n");
-			broadcastText.Language = uint.Parse(fields[3]);
-			broadcastText.Emotes[0] = ushort.Parse(fields[4]);
-			broadcastText.Emotes[1] = ushort.Parse(fields[5]);
-			broadcastText.Emotes[2] = ushort.Parse(fields[6]);
-			broadcastText.EmoteDelays[0] = ushort.Parse(fields[7]);
-			broadcastText.EmoteDelays[1] = ushort.Parse(fields[8]);
-			broadcastText.EmoteDelays[2] = ushort.Parse(fields[9]);
+			var fields = csvParser.ReadFields();
+			var broadcastText = new BroadcastText
+			{
+				Entry = uint.Parse(fields[0]),
+				MaleText = fields[1].TrimEnd().Replace("\0", "").Replace("~", "\n"),
+				FemaleText = fields[2].TrimEnd().Replace("\0", "").Replace("~", "\n"),
+				Language = uint.Parse(fields[3]),
+				Emotes =
+				{
+					[0] = ushort.Parse(fields[4]),
+					[1] = ushort.Parse(fields[5]),
+					[2] = ushort.Parse(fields[6])
+				},
+				EmoteDelays =
+				{
+					[0] = ushort.Parse(fields[7]),
+					[1] = ushort.Parse(fields[8]),
+					[2] = ushort.Parse(fields[9])
+				}
+			};
 			BroadcastTextStore.Add(broadcastText.Entry, broadcastText);
 		}
 	}
 
 	public static void LoadItemDisplayIds()
 	{
-		string path = Path.Combine("CSV", $"ItemIdToDisplayId{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemIdToDisplayId{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint entry = uint.Parse(fields[0]);
-			uint displayId = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var entry = uint.Parse(fields[0]);
+			var displayId = uint.Parse(fields[1]);
 			ItemDisplayIdStore.Add(entry, displayId);
 		}
 	}
 
 	public static void LoadItemRecords()
 	{
-		string path = Path.Combine("CSV", $"Item{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"Item{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			ItemRecord row = new ItemRecord();
-			row.Id = int.Parse(fields[0]);
-			row.ClassId = byte.Parse(fields[1]);
-			row.SubclassId = byte.Parse(fields[2]);
-			row.Material = byte.Parse(fields[3]);
-			row.InventoryType = sbyte.Parse(fields[4]);
-			row.RequiredLevel = int.Parse(fields[5]);
-			row.SheatheType = byte.Parse(fields[6]);
-			row.RandomProperty = ushort.Parse(fields[7]);
-			row.ItemRandomSuffixGroupId = ushort.Parse(fields[8]);
-			row.SoundOverrideSubclassId = sbyte.Parse(fields[9]);
-			row.ScalingStatDistributionId = ushort.Parse(fields[10]);
-			row.IconFileDataId = int.Parse(fields[11]);
-			row.ItemGroupSoundsId = byte.Parse(fields[12]);
-			row.ContentTuningId = int.Parse(fields[13]);
-			row.MaxDurability = uint.Parse(fields[14]);
-			row.AmmoType = byte.Parse(fields[15]);
-			row.DamageType[0] = byte.Parse(fields[16]);
-			row.DamageType[1] = byte.Parse(fields[17]);
-			row.DamageType[2] = byte.Parse(fields[18]);
-			row.DamageType[3] = byte.Parse(fields[19]);
-			row.DamageType[4] = byte.Parse(fields[20]);
-			row.Resistances[0] = short.Parse(fields[21]);
-			row.Resistances[1] = short.Parse(fields[22]);
-			row.Resistances[2] = short.Parse(fields[23]);
-			row.Resistances[3] = short.Parse(fields[24]);
-			row.Resistances[4] = short.Parse(fields[25]);
-			row.Resistances[5] = short.Parse(fields[26]);
-			row.Resistances[6] = short.Parse(fields[27]);
-			row.MinDamage[0] = ushort.Parse(fields[28]);
-			row.MinDamage[1] = ushort.Parse(fields[29]);
-			row.MinDamage[2] = ushort.Parse(fields[30]);
-			row.MinDamage[3] = ushort.Parse(fields[31]);
-			row.MinDamage[4] = ushort.Parse(fields[32]);
-			row.MaxDamage[0] = ushort.Parse(fields[33]);
-			row.MaxDamage[1] = ushort.Parse(fields[34]);
-			row.MaxDamage[2] = ushort.Parse(fields[35]);
-			row.MaxDamage[3] = ushort.Parse(fields[36]);
-			row.MaxDamage[4] = ushort.Parse(fields[37]);
+			var fields = csvParser.ReadFields();
+			var row = new ItemRecord
+			{
+				Id = int.Parse(fields[0]),
+				ClassId = byte.Parse(fields[1]),
+				SubclassId = byte.Parse(fields[2]),
+				Material = byte.Parse(fields[3]),
+				InventoryType = sbyte.Parse(fields[4]),
+				RequiredLevel = int.Parse(fields[5]),
+				SheatheType = byte.Parse(fields[6]),
+				RandomProperty = ushort.Parse(fields[7]),
+				ItemRandomSuffixGroupId = ushort.Parse(fields[8]),
+				SoundOverrideSubclassId = sbyte.Parse(fields[9]),
+				ScalingStatDistributionId = ushort.Parse(fields[10]),
+				IconFileDataId = int.Parse(fields[11]),
+				ItemGroupSoundsId = byte.Parse(fields[12]),
+				ContentTuningId = int.Parse(fields[13]),
+				MaxDurability = uint.Parse(fields[14]),
+				AmmoType = byte.Parse(fields[15]),
+				DamageType =
+				{
+					[0] = byte.Parse(fields[16]),
+					[1] = byte.Parse(fields[17]),
+					[2] = byte.Parse(fields[18]),
+					[3] = byte.Parse(fields[19]),
+					[4] = byte.Parse(fields[20])
+				},
+				Resistances =
+				{
+					[0] = short.Parse(fields[21]),
+					[1] = short.Parse(fields[22]),
+					[2] = short.Parse(fields[23]),
+					[3] = short.Parse(fields[24]),
+					[4] = short.Parse(fields[25]),
+					[5] = short.Parse(fields[26]),
+					[6] = short.Parse(fields[27])
+				},
+				MinDamage =
+				{
+					[0] = ushort.Parse(fields[28]),
+					[1] = ushort.Parse(fields[29]),
+					[2] = ushort.Parse(fields[30]),
+					[3] = ushort.Parse(fields[31]),
+					[4] = ushort.Parse(fields[32])
+				},
+				MaxDamage =
+				{
+					[0] = ushort.Parse(fields[33]),
+					[1] = ushort.Parse(fields[34]),
+					[2] = ushort.Parse(fields[35]),
+					[3] = ushort.Parse(fields[36]),
+					[4] = ushort.Parse(fields[37])
+				}
+			};
 			ItemRecordsStore.Add((uint)row.Id, row);
 		}
 	}
 
 	public static void LoadItemSparseRecords()
 	{
-		string path = Path.Combine("CSV", $"ItemSparse{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemSparse{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			ItemSparseRecord row = new ItemSparseRecord();
-			row.Id = int.Parse(fields[0]);
-			row.AllowableRace = long.Parse(fields[1]);
-			row.Description = fields[2];
-			row.Name4 = fields[3];
-			row.Name3 = fields[4];
-			row.Name2 = fields[5];
-			row.Name1 = fields[6];
-			row.DmgVariance = float.Parse(fields[7]);
-			row.DurationInInventory = uint.Parse(fields[8]);
-			row.QualityModifier = float.Parse(fields[9]);
-			row.BagFamily = uint.Parse(fields[10]);
-			row.RangeMod = float.Parse(fields[11]);
-			row.StatPercentageOfSocket[0] = float.Parse(fields[12]);
-			row.StatPercentageOfSocket[1] = float.Parse(fields[13]);
-			row.StatPercentageOfSocket[2] = float.Parse(fields[14]);
-			row.StatPercentageOfSocket[3] = float.Parse(fields[15]);
-			row.StatPercentageOfSocket[4] = float.Parse(fields[16]);
-			row.StatPercentageOfSocket[5] = float.Parse(fields[17]);
-			row.StatPercentageOfSocket[6] = float.Parse(fields[18]);
-			row.StatPercentageOfSocket[7] = float.Parse(fields[19]);
-			row.StatPercentageOfSocket[8] = float.Parse(fields[20]);
-			row.StatPercentageOfSocket[9] = float.Parse(fields[21]);
-			row.StatPercentEditor[0] = int.Parse(fields[22]);
-			row.StatPercentEditor[1] = int.Parse(fields[23]);
-			row.StatPercentEditor[2] = int.Parse(fields[24]);
-			row.StatPercentEditor[3] = int.Parse(fields[25]);
-			row.StatPercentEditor[4] = int.Parse(fields[26]);
-			row.StatPercentEditor[5] = int.Parse(fields[27]);
-			row.StatPercentEditor[6] = int.Parse(fields[28]);
-			row.StatPercentEditor[7] = int.Parse(fields[29]);
-			row.StatPercentEditor[8] = int.Parse(fields[30]);
-			row.StatPercentEditor[9] = int.Parse(fields[31]);
-			row.Stackable = int.Parse(fields[32]);
-			row.MaxCount = int.Parse(fields[33]);
-			row.RequiredAbility = uint.Parse(fields[34]);
-			row.SellPrice = uint.Parse(fields[35]);
-			row.BuyPrice = uint.Parse(fields[36]);
-			row.VendorStackCount = uint.Parse(fields[37]);
-			row.PriceVariance = float.Parse(fields[38]);
-			row.PriceRandomValue = float.Parse(fields[39]);
-			row.Flags[0] = uint.Parse(fields[40]);
-			row.Flags[1] = uint.Parse(fields[41]);
-			row.Flags[2] = uint.Parse(fields[42]);
-			row.Flags[3] = uint.Parse(fields[43]);
-			row.OppositeFactionItemId = int.Parse(fields[44]);
-			row.MaxDurability = uint.Parse(fields[45]);
-			row.ItemNameDescriptionId = ushort.Parse(fields[46]);
-			row.RequiredTransmogHoliday = ushort.Parse(fields[47]);
-			row.RequiredHoliday = ushort.Parse(fields[48]);
-			row.LimitCategory = ushort.Parse(fields[49]);
-			row.GemProperties = ushort.Parse(fields[50]);
-			row.SocketMatchEnchantmentId = ushort.Parse(fields[51]);
-			row.TotemCategoryId = ushort.Parse(fields[52]);
-			row.InstanceBound = ushort.Parse(fields[53]);
-			row.ZoneBound[0] = ushort.Parse(fields[54]);
-			row.ZoneBound[1] = ushort.Parse(fields[55]);
-			row.ItemSet = ushort.Parse(fields[56]);
-			row.LockId = ushort.Parse(fields[57]);
-			row.StartQuestId = ushort.Parse(fields[58]);
-			row.PageText = ushort.Parse(fields[59]);
-			row.Delay = ushort.Parse(fields[60]);
-			row.RequiredReputationId = ushort.Parse(fields[61]);
-			row.RequiredSkillRank = ushort.Parse(fields[62]);
-			row.RequiredSkill = ushort.Parse(fields[63]);
-			row.ItemLevel = ushort.Parse(fields[64]);
-			row.AllowableClass = short.Parse(fields[65]);
-			row.ItemRandomSuffixGroupId = ushort.Parse(fields[66]);
-			row.RandomProperty = ushort.Parse(fields[67]);
-			row.MinDamage[0] = ushort.Parse(fields[68]);
-			row.MinDamage[1] = ushort.Parse(fields[69]);
-			row.MinDamage[2] = ushort.Parse(fields[70]);
-			row.MinDamage[3] = ushort.Parse(fields[71]);
-			row.MinDamage[4] = ushort.Parse(fields[72]);
-			row.MaxDamage[0] = ushort.Parse(fields[73]);
-			row.MaxDamage[1] = ushort.Parse(fields[74]);
-			row.MaxDamage[2] = ushort.Parse(fields[75]);
-			row.MaxDamage[3] = ushort.Parse(fields[76]);
-			row.MaxDamage[4] = ushort.Parse(fields[77]);
-			row.Resistances[0] = short.Parse(fields[78]);
-			row.Resistances[1] = short.Parse(fields[79]);
-			row.Resistances[2] = short.Parse(fields[80]);
-			row.Resistances[3] = short.Parse(fields[81]);
-			row.Resistances[4] = short.Parse(fields[82]);
-			row.Resistances[5] = short.Parse(fields[83]);
-			row.Resistances[6] = short.Parse(fields[84]);
-			row.ScalingStatDistributionId = ushort.Parse(fields[85]);
-			row.ExpansionId = byte.Parse(fields[86]);
-			row.ArtifactId = byte.Parse(fields[87]);
-			row.SpellWeight = byte.Parse(fields[88]);
-			row.SpellWeightCategory = byte.Parse(fields[89]);
-			row.SocketType[0] = byte.Parse(fields[90]);
-			row.SocketType[1] = byte.Parse(fields[91]);
-			row.SocketType[2] = byte.Parse(fields[92]);
-			row.SheatheType = byte.Parse(fields[93]);
-			row.Material = byte.Parse(fields[94]);
-			row.PageMaterial = byte.Parse(fields[95]);
-			row.PageLanguage = byte.Parse(fields[96]);
-			row.Bonding = byte.Parse(fields[97]);
-			row.DamageType = byte.Parse(fields[98]);
-			row.StatType[0] = sbyte.Parse(fields[99]);
-			row.StatType[1] = sbyte.Parse(fields[100]);
-			row.StatType[2] = sbyte.Parse(fields[101]);
-			row.StatType[3] = sbyte.Parse(fields[102]);
-			row.StatType[4] = sbyte.Parse(fields[103]);
-			row.StatType[5] = sbyte.Parse(fields[104]);
-			row.StatType[6] = sbyte.Parse(fields[105]);
-			row.StatType[7] = sbyte.Parse(fields[106]);
-			row.StatType[8] = sbyte.Parse(fields[107]);
-			row.StatType[9] = sbyte.Parse(fields[108]);
-			row.ContainerSlots = byte.Parse(fields[109]);
-			row.RequiredReputationRank = byte.Parse(fields[110]);
-			row.RequiredCityRank = byte.Parse(fields[111]);
-			row.RequiredHonorRank = byte.Parse(fields[112]);
-			row.InventoryType = byte.Parse(fields[113]);
-			row.OverallQualityId = byte.Parse(fields[114]);
-			row.AmmoType = byte.Parse(fields[115]);
-			row.StatModifierBonusAmount[0] = sbyte.Parse(fields[116]);
-			row.StatModifierBonusAmount[1] = sbyte.Parse(fields[117]);
-			row.StatModifierBonusAmount[2] = sbyte.Parse(fields[118]);
-			row.StatModifierBonusAmount[3] = sbyte.Parse(fields[119]);
-			row.StatModifierBonusAmount[4] = sbyte.Parse(fields[120]);
-			row.StatModifierBonusAmount[5] = sbyte.Parse(fields[121]);
-			row.StatModifierBonusAmount[6] = sbyte.Parse(fields[122]);
-			row.StatModifierBonusAmount[7] = sbyte.Parse(fields[123]);
-			row.StatModifierBonusAmount[8] = sbyte.Parse(fields[124]);
-			row.StatModifierBonusAmount[9] = sbyte.Parse(fields[125]);
-			row.RequiredLevel = sbyte.Parse(fields[126]);
+			var fields = csvParser.ReadFields();
+			var row = new ItemSparseRecord
+			{
+				Id = int.Parse(fields[0]),
+				AllowableRace = long.Parse(fields[1]),
+				Description = fields[2],
+				Name4 = fields[3],
+				Name3 = fields[4],
+				Name2 = fields[5],
+				Name1 = fields[6],
+				DmgVariance = float.Parse(fields[7]),
+				DurationInInventory = uint.Parse(fields[8]),
+				QualityModifier = float.Parse(fields[9]),
+				BagFamily = uint.Parse(fields[10]),
+				RangeMod = float.Parse(fields[11]),
+				StatPercentageOfSocket =
+				{
+					[0] = float.Parse(fields[12]),
+					[1] = float.Parse(fields[13]),
+					[2] = float.Parse(fields[14]),
+					[3] = float.Parse(fields[15]),
+					[4] = float.Parse(fields[16]),
+					[5] = float.Parse(fields[17]),
+					[6] = float.Parse(fields[18]),
+					[7] = float.Parse(fields[19]),
+					[8] = float.Parse(fields[20]),
+					[9] = float.Parse(fields[21])
+				},
+				StatPercentEditor =
+				{
+					[0] = int.Parse(fields[22]),
+					[1] = int.Parse(fields[23]),
+					[2] = int.Parse(fields[24]),
+					[3] = int.Parse(fields[25]),
+					[4] = int.Parse(fields[26]),
+					[5] = int.Parse(fields[27]),
+					[6] = int.Parse(fields[28]),
+					[7] = int.Parse(fields[29]),
+					[8] = int.Parse(fields[30]),
+					[9] = int.Parse(fields[31])
+				},
+				Stackable = int.Parse(fields[32]),
+				MaxCount = int.Parse(fields[33]),
+				RequiredAbility = uint.Parse(fields[34]),
+				SellPrice = uint.Parse(fields[35]),
+				BuyPrice = uint.Parse(fields[36]),
+				VendorStackCount = uint.Parse(fields[37]),
+				PriceVariance = float.Parse(fields[38]),
+				PriceRandomValue = float.Parse(fields[39]),
+				Flags =
+				{
+					[0] = uint.Parse(fields[40]),
+					[1] = uint.Parse(fields[41]),
+					[2] = uint.Parse(fields[42]),
+					[3] = uint.Parse(fields[43])
+				},
+				OppositeFactionItemId = int.Parse(fields[44]),
+				MaxDurability = uint.Parse(fields[45]),
+				ItemNameDescriptionId = ushort.Parse(fields[46]),
+				RequiredTransmogHoliday = ushort.Parse(fields[47]),
+				RequiredHoliday = ushort.Parse(fields[48]),
+				LimitCategory = ushort.Parse(fields[49]),
+				GemProperties = ushort.Parse(fields[50]),
+				SocketMatchEnchantmentId = ushort.Parse(fields[51]),
+				TotemCategoryId = ushort.Parse(fields[52]),
+				InstanceBound = ushort.Parse(fields[53]),
+				ZoneBound =
+				{
+					[0] = ushort.Parse(fields[54]),
+					[1] = ushort.Parse(fields[55])
+				},
+				ItemSet = ushort.Parse(fields[56]),
+				LockId = ushort.Parse(fields[57]),
+				StartQuestId = ushort.Parse(fields[58]),
+				PageText = ushort.Parse(fields[59]),
+				Delay = ushort.Parse(fields[60]),
+				RequiredReputationId = ushort.Parse(fields[61]),
+				RequiredSkillRank = ushort.Parse(fields[62]),
+				RequiredSkill = ushort.Parse(fields[63]),
+				ItemLevel = ushort.Parse(fields[64]),
+				AllowableClass = short.Parse(fields[65]),
+				ItemRandomSuffixGroupId = ushort.Parse(fields[66]),
+				RandomProperty = ushort.Parse(fields[67]),
+				MinDamage =
+				{
+					[0] = ushort.Parse(fields[68]),
+					[1] = ushort.Parse(fields[69]),
+					[2] = ushort.Parse(fields[70]),
+					[3] = ushort.Parse(fields[71]),
+					[4] = ushort.Parse(fields[72])
+				},
+				MaxDamage =
+				{
+					[0] = ushort.Parse(fields[73]),
+					[1] = ushort.Parse(fields[74]),
+					[2] = ushort.Parse(fields[75]),
+					[3] = ushort.Parse(fields[76]),
+					[4] = ushort.Parse(fields[77])
+				},
+				Resistances =
+				{
+					[0] = short.Parse(fields[78]),
+					[1] = short.Parse(fields[79]),
+					[2] = short.Parse(fields[80]),
+					[3] = short.Parse(fields[81]),
+					[4] = short.Parse(fields[82]),
+					[5] = short.Parse(fields[83]),
+					[6] = short.Parse(fields[84])
+				},
+				ScalingStatDistributionId = ushort.Parse(fields[85]),
+				ExpansionId = byte.Parse(fields[86]),
+				ArtifactId = byte.Parse(fields[87]),
+				SpellWeight = byte.Parse(fields[88]),
+				SpellWeightCategory = byte.Parse(fields[89]),
+				SocketType =
+				{
+					[0] = byte.Parse(fields[90]),
+					[1] = byte.Parse(fields[91]),
+					[2] = byte.Parse(fields[92])
+				},
+				SheatheType = byte.Parse(fields[93]),
+				Material = byte.Parse(fields[94]),
+				PageMaterial = byte.Parse(fields[95]),
+				PageLanguage = byte.Parse(fields[96]),
+				Bonding = byte.Parse(fields[97]),
+				DamageType = byte.Parse(fields[98]),
+				StatType =
+				{
+					[0] = sbyte.Parse(fields[99]),
+					[1] = sbyte.Parse(fields[100]),
+					[2] = sbyte.Parse(fields[101]),
+					[3] = sbyte.Parse(fields[102]),
+					[4] = sbyte.Parse(fields[103]),
+					[5] = sbyte.Parse(fields[104]),
+					[6] = sbyte.Parse(fields[105]),
+					[7] = sbyte.Parse(fields[106]),
+					[8] = sbyte.Parse(fields[107]),
+					[9] = sbyte.Parse(fields[108])
+				},
+				ContainerSlots = byte.Parse(fields[109]),
+				RequiredReputationRank = byte.Parse(fields[110]),
+				RequiredCityRank = byte.Parse(fields[111]),
+				RequiredHonorRank = byte.Parse(fields[112]),
+				InventoryType = byte.Parse(fields[113]),
+				OverallQualityId = byte.Parse(fields[114]),
+				AmmoType = byte.Parse(fields[115]),
+				StatModifierBonusAmount =
+				{
+					[0] = sbyte.Parse(fields[116]),
+					[1] = sbyte.Parse(fields[117]),
+					[2] = sbyte.Parse(fields[118]),
+					[3] = sbyte.Parse(fields[119]),
+					[4] = sbyte.Parse(fields[120]),
+					[5] = sbyte.Parse(fields[121]),
+					[6] = sbyte.Parse(fields[122]),
+					[7] = sbyte.Parse(fields[123]),
+					[8] = sbyte.Parse(fields[124]),
+					[9] = sbyte.Parse(fields[125])
+				},
+				RequiredLevel = sbyte.Parse(fields[126])
+			};
 			ItemSparseRecordsStore.Add((uint)row.Id, row);
 		}
 	}
 
 	public static void LoadItemAppearance()
 	{
-		string path = Path.Combine("CSV", $"ItemAppearance{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemAppearance{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			ItemAppearance appearance = new ItemAppearance();
-			appearance.Id = int.Parse(fields[0]);
-			appearance.DisplayType = byte.Parse(fields[1]);
-			appearance.ItemDisplayInfoID = int.Parse(fields[2]);
-			appearance.DefaultIconFileDataID = int.Parse(fields[3]);
-			appearance.UiOrder = int.Parse(fields[4]);
+			var fields = csvParser.ReadFields();
+			var appearance = new ItemAppearance
+			{
+				Id = int.Parse(fields[0]),
+				DisplayType = byte.Parse(fields[1]),
+				ItemDisplayInfoID = int.Parse(fields[2]),
+				DefaultIconFileDataID = int.Parse(fields[3]),
+				UiOrder = int.Parse(fields[4])
+			};
 			ItemAppearanceStore.Add((uint)appearance.Id, appearance);
 		}
 	}
 
 	public static void LoadItemModifiedAppearance()
 	{
-		string path = Path.Combine("CSV", $"ItemModifiedAppearance{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemModifiedAppearance{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			ItemModifiedAppearance modifiedAppearance = new ItemModifiedAppearance();
-			modifiedAppearance.Id = int.Parse(fields[0]);
-			modifiedAppearance.ItemID = int.Parse(fields[1]);
-			modifiedAppearance.ItemAppearanceModifierID = int.Parse(fields[2]);
-			modifiedAppearance.ItemAppearanceID = int.Parse(fields[3]);
-			modifiedAppearance.OrderIndex = int.Parse(fields[4]);
-			modifiedAppearance.TransmogSourceTypeEnum = int.Parse(fields[5]);
+			var fields = csvParser.ReadFields();
+			var modifiedAppearance = new ItemModifiedAppearance
+			{
+				Id = int.Parse(fields[0]),
+				ItemID = int.Parse(fields[1]),
+				ItemAppearanceModifierID = int.Parse(fields[2]),
+				ItemAppearanceID = int.Parse(fields[3]),
+				OrderIndex = int.Parse(fields[4]),
+				TransmogSourceTypeEnum = int.Parse(fields[5])
+			};
 			ItemModifiedAppearanceStore.Add((uint)modifiedAppearance.Id, modifiedAppearance);
 		}
 	}
 
 	public static void LoadItemEffect()
 	{
-		string path = Path.Combine("CSV", $"ItemEffect{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemEffect{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			ItemEffect effect = new ItemEffect();
-			effect.Id = int.Parse(fields[0]);
-			effect.LegacySlotIndex = byte.Parse(fields[1]);
-			effect.TriggerType = sbyte.Parse(fields[2]);
-			effect.Charges = short.Parse(fields[3]);
-			effect.CoolDownMSec = int.Parse(fields[4]);
-			effect.CategoryCoolDownMSec = int.Parse(fields[5]);
-			effect.SpellCategoryID = ushort.Parse(fields[6]);
-			effect.SpellID = int.Parse(fields[7]);
-			effect.ChrSpecializationID = ushort.Parse(fields[8]);
-			effect.ParentItemID = int.Parse(fields[9]);
+			var fields = csvParser.ReadFields();
+			var effect = new ItemEffect
+			{
+				Id = int.Parse(fields[0]),
+				LegacySlotIndex = byte.Parse(fields[1]),
+				TriggerType = sbyte.Parse(fields[2]),
+				Charges = short.Parse(fields[3]),
+				CoolDownMSec = int.Parse(fields[4]),
+				CategoryCoolDownMSec = int.Parse(fields[5]),
+				SpellCategoryID = ushort.Parse(fields[6]),
+				SpellID = int.Parse(fields[7]),
+				ChrSpecializationID = ushort.Parse(fields[8]),
+				ParentItemID = int.Parse(fields[9])
+			};
 			ItemEffectStore.Add((uint)effect.Id, effect);
 		}
 	}
 
 	public static void LoadItemSpellsData()
 	{
-		string path = Path.Combine("CSV", $"ItemSpellsData{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemSpellsData{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			ItemSpellsData data = new ItemSpellsData();
-			data.Id = int.Parse(fields[0]);
-			data.Category = int.Parse(fields[1]);
-			data.RecoveryTime = int.Parse(fields[2]);
-			data.CategoryRecoveryTime = int.Parse(fields[3]);
+			var fields = csvParser.ReadFields();
+			var data = new ItemSpellsData
+			{
+				Id = int.Parse(fields[0]),
+				Category = int.Parse(fields[1]),
+				RecoveryTime = int.Parse(fields[2]),
+				CategoryRecoveryTime = int.Parse(fields[3])
+			};
 			ItemSpellsDataStore.Add((uint)data.Id, data);
 		}
 	}
 
 	public static void LoadItemDisplayIdToFileDataId()
 	{
-		string path = Path.Combine("CSV", $"ItemDisplayIdToFileDataId{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemDisplayIdToFileDataId{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint displayId = uint.Parse(fields[0]);
-			uint fileDataId = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var displayId = uint.Parse(fields[0]);
+			var fileDataId = uint.Parse(fields[1]);
 			ItemDisplayIdToFileDataIdStore.Add(displayId, fileDataId);
 		}
 	}
 
 	public static void LoadBattlegrounds()
 	{
-		string path = Path.Combine("CSV", "Battlegrounds.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Battlegrounds.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			Battleground bg = new Battleground();
-			uint bgId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var bg = new Battleground();
+			var bgId = uint.Parse(fields[0]);
 			bg.IsArena = byte.Parse(fields[1]) != 0;
-			for (int i = 0; i < 6; i++)
+			for (var i = 0; i < 6; i++)
 			{
-				uint mapId = uint.Parse(fields[2 + i]);
+				var mapId = uint.Parse(fields[2 + i]);
 				if (mapId != 0)
 				{
 					bg.MapIds.Add(mapId);
@@ -1080,70 +1144,72 @@ public static class GameData
 
 	public static void LoadChatChannels()
 	{
-		string path = Path.Combine("CSV", "ChatChannels.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "ChatChannels.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			ChatChannel channel = new ChatChannel();
-			channel.Id = uint.Parse(fields[0]);
-			channel.Flags = (ChannelFlags)uint.Parse(fields[1]);
-			channel.Name = fields[2];
+			var fields = csvParser.ReadFields();
+			var channel = new ChatChannel
+			{
+				Id = uint.Parse(fields[0]),
+				Flags = (ChannelFlags)uint.Parse(fields[1]),
+				Name = fields[2]
+			};
 			ChatChannels.Add(channel.Id, channel);
 		}
 	}
 
 	public static void LoadItemEnchantVisuals()
 	{
-		string path = Path.Combine("CSV", $"ItemEnchantVisuals{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"ItemEnchantVisuals{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint enchantId = uint.Parse(fields[0]);
-			uint visualId = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var enchantId = uint.Parse(fields[0]);
+			var visualId = uint.Parse(fields[1]);
 			ItemEnchantVisuals.Add(enchantId, visualId);
 		}
 	}
 
 	public static void LoadSpellVisuals()
 	{
-		string path = Path.Combine("CSV", $"SpellVisuals{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"SpellVisuals{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
-			uint visualId = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
+			var visualId = uint.Parse(fields[1]);
 			SpellVisuals.Add(spellId, visualId);
 		}
 	}
 
 	public static void LoadLearnSpells()
 	{
-		string path = Path.Combine("CSV", "LearnSpells.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "LearnSpells.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint learnSpellId = uint.Parse(fields[0]);
-			uint realSpellId = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var learnSpellId = uint.Parse(fields[0]);
+			var realSpellId = uint.Parse(fields[1]);
 			if (!LearnSpells.ContainsKey(learnSpellId))
 			{
 				LearnSpells.Add(learnSpellId, realSpellId);
@@ -1157,17 +1223,17 @@ public static class GameData
 		{
 			return;
 		}
-		string path = Path.Combine("CSV", "TotemSpells.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "TotemSpells.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
-			uint totemSlot = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
+			var totemSlot = uint.Parse(fields[1]);
 			TotemSpells.Add(spellId, totemSlot);
 		}
 	}
@@ -1178,87 +1244,87 @@ public static class GameData
 		{
 			return;
 		}
-		string path = Path.Combine("CSV", $"Gems{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"Gems{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint enchantId = uint.Parse(fields[0]);
-			uint itemId = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var enchantId = uint.Parse(fields[0]);
+			var itemId = uint.Parse(fields[1]);
 			Gems.Add(enchantId, itemId);
 		}
 	}
 
 	public static void LoadCreatureDisplayInfo()
 	{
-		string path = Path.Combine("CSV", "CreatureDisplayInfo.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "CreatureDisplayInfo.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint displayId = uint.Parse(fields[0]);
-			uint modelId = uint.Parse(fields[1]);
-			float scale = float.Parse(fields[2]);
+			var fields = csvParser.ReadFields();
+			var displayId = uint.Parse(fields[0]);
+			var modelId = uint.Parse(fields[1]);
+			var scale = float.Parse(fields[2]);
 			CreatureDisplayInfos.Add(displayId, new CreatureDisplayInfo(modelId, scale));
 		}
 	}
 
 	public static void LoadCreatureModelCollisionHeights()
 	{
-		string path = Path.Combine("CSV", $"CreatureModelCollisionHeightsModern{LegacyVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"CreatureModelCollisionHeightsModern{LegacyVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint modelId = uint.Parse(fields[0]);
-			float modelScale = float.Parse(fields[1]);
-			float collisionHeight = float.Parse(fields[2]);
-			float collisionHeightMounted = float.Parse(fields[3]);
+			var fields = csvParser.ReadFields();
+			var modelId = uint.Parse(fields[0]);
+			var modelScale = float.Parse(fields[1]);
+			var collisionHeight = float.Parse(fields[2]);
+			var collisionHeightMounted = float.Parse(fields[3]);
 			CreatureModelCollisionHeights.Add(modelId, new CreatureModelCollisionHeight(modelScale, collisionHeight, collisionHeightMounted));
 		}
 	}
 
 	public static void LoadTransports()
 	{
-		string path = Path.Combine("CSV", $"Transports{LegacyVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"Transports{LegacyVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint entry = uint.Parse(fields[0]);
-			uint period = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var entry = uint.Parse(fields[0]);
+			var period = uint.Parse(fields[1]);
 			TransportPeriods.Add(entry, period);
 		}
 
 		// Load TransportAnimation DB2 entries (elevators the client knows about)
-		string animPath = Path.Combine("CSV", "TransportAnimation.3.4.3.54261.csv");
+		var animPath = Path.Combine("CSV", "TransportAnimation.3.4.3.54261.csv");
 		if (File.Exists(animPath))
 		{
-			using TextFieldParser animParser = new TextFieldParser(animPath);
+			using var animParser = new TextFieldParser(animPath);
 			animParser.CommentTokens = new string[1] { "#" };
 			animParser.SetDelimiters(",");
 			animParser.HasFieldsEnclosedInQuotes = false;
 			animParser.ReadLine();
 			while (!animParser.EndOfData)
 			{
-				string[] fields = animParser.ReadFields();
-				uint transportId = uint.Parse(fields[6]); // TransportID column
+				var fields = animParser.ReadFields();
+				var transportId = uint.Parse(fields[6]); // TransportID column
 				TransportAnimationEntries.Add(transportId);
 			}
 			Log.Print(LogType.Network, $"Loaded {TransportAnimationEntries.Count} TransportAnimation entries");
@@ -1267,34 +1333,34 @@ public static class GameData
 
 	public static void LoadAreaNames()
 	{
-		string path = Path.Combine("CSV", "AreaNames.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "AreaNames.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			string name = fields[1];
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var name = fields[1];
 			AreaNames.Add(id, name);
 		}
 	}
 
 	public static void LoadRaceFaction()
 	{
-		string path = Path.Combine("CSV", "RaceFaction.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "RaceFaction.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			uint faction = uint.Parse(fields[1]);
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var faction = uint.Parse(fields[1]);
 			RaceFaction.Add(id, faction);
 		}
 	}
@@ -1305,43 +1371,43 @@ public static class GameData
 		{
 			return;
 		}
-		string path = Path.Combine("CSV", "DispellSpells.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "DispellSpells.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
 			DispellSpells.Add(spellId);
 		}
 	}
 
 	public static void LoadSpellEffectPoints()
 	{
-		string path = Path.Combine("CSV", $"SpellEffectPoints{LegacyVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"SpellEffectPoints{LegacyVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
-			int basePointsEff1 = int.Parse(fields[2]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
+			var basePointsEff1 = int.Parse(fields[2]);
 			if (basePointsEff1 != 0)
 			{
 				basePointsEff1++;
 			}
-			int basePointsEff2 = int.Parse(fields[3]);
+			var basePointsEff2 = int.Parse(fields[3]);
 			if (basePointsEff2 != 0)
 			{
 				basePointsEff2++;
 			}
-			int basePointsEff3 = int.Parse(fields[4]);
+			var basePointsEff3 = int.Parse(fields[4]);
 			if (basePointsEff3 != 0)
 			{
 				basePointsEff3++;
@@ -1356,16 +1422,16 @@ public static class GameData
 		{
 			return;
 		}
-		string path = Path.Combine("CSV", $"StackableAuras{LegacyVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"StackableAuras{LegacyVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
 			StackableAuras.Add(spellId);
 		}
 	}
@@ -1376,34 +1442,34 @@ public static class GameData
 		{
 			return;
 		}
-		string path = Path.Combine("CSV", "MountAuras.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "MountAuras.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
 			MountAuras.Add(spellId);
 		}
 	}
 
 	public static void LoadMountSpells()
 	{
-		string path = Path.Combine("CSV", $"MountSpells{ModernVersion.ExpansionVersion}.csv");
+		var path = Path.Combine("CSV", $"MountSpells{ModernVersion.ExpansionVersion}.csv");
 		if (!File.Exists(path))
 			return;
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0].Trim());
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0].Trim());
 			MountSpells.Add(spellId);
 		}
 		Log.Print(LogType.Storage, $"Loaded {MountSpells.Count} mount spells.", "");
@@ -1411,69 +1477,71 @@ public static class GameData
 
 	public static void LoadMeleeSpells()
 	{
-		string path = Path.Combine("CSV", $"MeleeSpells{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"MeleeSpells{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
 			NextMeleeSpells.Add(spellId);
 		}
 	}
 
 	public static void LoadAutoRepeatSpells()
 	{
-		string path = Path.Combine("CSV", $"AutoRepeatSpells{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"AutoRepeatSpells{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
 			AutoRepeatSpells.Add(spellId);
 		}
 	}
 
 	public static void LoadAuraSpells()
 	{
-		string path = Path.Combine("CSV", $"AuraSpells{LegacyVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"AuraSpells{LegacyVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint spellId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var spellId = uint.Parse(fields[0]);
 			AuraSpells.Add(spellId);
 		}
 	}
 
 	public static void LoadTaxiPaths()
 	{
-		string path = Path.Combine("CSV", $"TaxiPath{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"TaxiPath{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			TaxiPath taxiPath = new TaxiPath();
-			taxiPath.Id = uint.Parse(fields[0]);
-			taxiPath.From = uint.Parse(fields[1]);
-			taxiPath.To = uint.Parse(fields[2]);
-			taxiPath.Cost = int.Parse(fields[3]);
+			var fields = csvParser.ReadFields();
+			var taxiPath = new TaxiPath
+			{
+				Id = uint.Parse(fields[0]),
+				From = uint.Parse(fields[1]),
+				To = uint.Parse(fields[2]),
+				Cost = int.Parse(fields[3])
+			};
 			TaxiPaths.Add(counter, taxiPath);
 			counter++;
 		}
@@ -1481,9 +1549,9 @@ public static class GameData
 
 	public static void LoadTaxiPathNodesGraph()
 	{
-		Dictionary<uint, TaxiNode> TaxiNodes = new Dictionary<uint, TaxiNode>();
-		string pathNodes = Path.Combine("CSV", $"TaxiNodes{ModernVersion.ExpansionVersion}.csv");
-		using (TextFieldParser csvParser = new TextFieldParser(pathNodes))
+		var TaxiNodes = new Dictionary<uint, TaxiNode>();
+		var pathNodes = Path.Combine("CSV", $"TaxiNodes{ModernVersion.ExpansionVersion}.csv");
+		using (var csvParser = new TextFieldParser(pathNodes))
 		{
 			csvParser.CommentTokens = new string[1] { "#" };
 			csvParser.SetDelimiters(",");
@@ -1491,19 +1559,21 @@ public static class GameData
 			csvParser.ReadLine();
 			while (!csvParser.EndOfData)
 			{
-				string[] fields = csvParser.ReadFields();
-				TaxiNode taxiNode = new TaxiNode();
-				taxiNode.Id = uint.Parse(fields[0]);
-				taxiNode.mapId = uint.Parse(fields[1]);
-				taxiNode.x = float.Parse(fields[2]);
-				taxiNode.y = float.Parse(fields[3]);
-				taxiNode.z = float.Parse(fields[4]);
+				var fields = csvParser.ReadFields();
+				var taxiNode = new TaxiNode
+				{
+					Id = uint.Parse(fields[0]),
+					mapId = uint.Parse(fields[1]),
+					x = float.Parse(fields[2]),
+					y = float.Parse(fields[3]),
+					z = float.Parse(fields[4])
+				};
 				TaxiNodes.Add(taxiNode.Id, taxiNode);
 			}
 		}
-		Dictionary<uint, TaxiPathNode> TaxiPathNodes = new Dictionary<uint, TaxiPathNode>();
-		string pathPathNodes = Path.Combine("CSV", $"TaxiPathNode{ModernVersion.ExpansionVersion}.csv");
-		using (TextFieldParser csvParser2 = new TextFieldParser(pathPathNodes))
+		var TaxiPathNodes = new Dictionary<uint, TaxiPathNode>();
+		var pathPathNodes = Path.Combine("CSV", $"TaxiPathNode{ModernVersion.ExpansionVersion}.csv");
+		using (var csvParser2 = new TextFieldParser(pathPathNodes))
 		{
 			csvParser2.CommentTokens = new string[1] { "#" };
 			csvParser2.SetDelimiters(",");
@@ -1511,48 +1581,50 @@ public static class GameData
 			csvParser2.ReadLine();
 			while (!csvParser2.EndOfData)
 			{
-				string[] fields2 = csvParser2.ReadFields();
-				TaxiPathNode taxiPathNode = new TaxiPathNode();
-				taxiPathNode.Id = uint.Parse(fields2[0]);
-				taxiPathNode.pathId = uint.Parse(fields2[1]);
-				taxiPathNode.nodeIndex = uint.Parse(fields2[2]);
-				taxiPathNode.mapId = uint.Parse(fields2[3]);
-				taxiPathNode.x = float.Parse(fields2[4]);
-				taxiPathNode.y = float.Parse(fields2[5]);
-				taxiPathNode.z = float.Parse(fields2[6]);
-				taxiPathNode.flags = uint.Parse(fields2[7]);
-				taxiPathNode.delay = uint.Parse(fields2[8]);
+				var fields2 = csvParser2.ReadFields();
+				var taxiPathNode = new TaxiPathNode
+				{
+					Id = uint.Parse(fields2[0]),
+					pathId = uint.Parse(fields2[1]),
+					nodeIndex = uint.Parse(fields2[2]),
+					mapId = uint.Parse(fields2[3]),
+					x = float.Parse(fields2[4]),
+					y = float.Parse(fields2[5]),
+					z = float.Parse(fields2[6]),
+					flags = uint.Parse(fields2[7]),
+					delay = uint.Parse(fields2[8])
+				};
 				TaxiPathNodes.Add(taxiPathNode.Id, taxiPathNode);
 			}
 		}
-		for (uint i = 0u; i < TaxiPaths.Count; i++)
+		for (var i = 0u; i < TaxiPaths.Count; i++)
 		{
 			if (!TaxiPaths.ContainsKey(i))
 			{
 				continue;
 			}
-			float dist = 0f;
-			TaxiPath taxiPath = TaxiPaths[i];
-			TaxiNode nodeFrom = TaxiNodes[TaxiPaths[i].From];
-			TaxiNode nodeTo = TaxiNodes[TaxiPaths[i].To];
+			var dist = 0f;
+			var taxiPath = TaxiPaths[i];
+			var nodeFrom = TaxiNodes[TaxiPaths[i].From];
+			var nodeTo = TaxiNodes[TaxiPaths[i].To];
 			if ((nodeFrom.x == 0f && nodeFrom.x == 0f && nodeFrom.z == 0f) || (nodeTo.x == 0f && nodeTo.x == 0f && nodeTo.z == 0f))
 			{
 				continue;
 			}
-			HashSet<uint> pathNodeList = new HashSet<uint>();
-			foreach (KeyValuePair<uint, TaxiPathNode> item in TaxiPathNodes)
+			var pathNodeList = new HashSet<uint>();
+			foreach (var item in TaxiPathNodes)
 			{
-				TaxiPathNode pNode = item.Value;
+				var pNode = item.Value;
 				if (pNode.pathId == taxiPath.Id)
 				{
 					pathNodeList.Add(pNode.Id);
 				}
 			}
 			IEnumerable<uint> query = pathNodeList.OrderBy(node => TaxiPathNodes[node].nodeIndex);
-			uint curNode = 0u;
-			foreach (uint itr in query)
+			var curNode = 0u;
+			foreach (var itr in query)
 			{
-				TaxiPathNode pNode2 = TaxiPathNodes[itr];
+				var pNode2 = TaxiPathNodes[itr];
 				if (pNode2.nodeIndex == 0)
 				{
 					dist += (float)Math.Sqrt(Math.Pow(nodeFrom.x - pNode2.x, 2.0) + Math.Pow(nodeFrom.y - pNode2.y, 2.0));
@@ -1563,7 +1635,7 @@ public static class GameData
 				}
 				else if (curNode != 0)
 				{
-					TaxiPathNode prevNode = TaxiPathNodes[curNode];
+					var prevNode = TaxiPathNodes[curNode];
 					curNode = pNode2.Id;
 					if (prevNode.mapId == pNode2.mapId)
 					{
@@ -1573,7 +1645,7 @@ public static class GameData
 			}
 			if (curNode != 0)
 			{
-				TaxiPathNode lastNode = TaxiPathNodes[curNode];
+				var lastNode = TaxiPathNodes[curNode];
 				dist += (float)Math.Sqrt(Math.Pow(nodeTo.x - lastNode.x, 2.0) + Math.Pow(nodeTo.y - lastNode.y, 2.0));
 			}
 			TaxiNodesGraph[TaxiPaths[i].From, TaxiPaths[i].To] = ((dist > 0f) ? ((int)dist) : 0);
@@ -1582,19 +1654,19 @@ public static class GameData
 
 	public static void LoadQuestBits()
 	{
-		string path = Path.Combine("CSV", $"QuestV2_{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", $"QuestV2_{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
 		while (!csvParser.EndOfData)
 		{
-			string[] fields = csvParser.ReadFields();
-			uint questId = uint.Parse(fields[0]);
+			var fields = csvParser.ReadFields();
+			var questId = uint.Parse(fields[0]);
 			if (!fields[1].StartsWith("-"))
 			{
-				uint uniqueBitFlag = uint.Parse(fields[1]);
+				var uniqueBitFlag = uint.Parse(fields[1]);
 				QuestBits.Add(questId, uniqueBitFlag);
 			}
 		}
@@ -1624,39 +1696,43 @@ public static class GameData
 
 	public static void LoadAreaTriggerHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"AreaTrigger{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"AreaTrigger{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			AreaTrigger at = new AreaTrigger();
-			at.Message = fields[0];
-			at.PositionX = float.Parse(fields[1]);
-			at.PositionY = float.Parse(fields[2]);
-			at.PositionZ = float.Parse(fields[3]);
-			at.Id = uint.Parse(fields[4]);
-			at.MapId = ushort.Parse(fields[5]);
-			at.PhaseUseFlags = byte.Parse(fields[6]);
-			at.PhaseId = ushort.Parse(fields[7]);
-			at.PhaseGroupId = ushort.Parse(fields[8]);
-			at.Radius = float.Parse(fields[9]);
-			at.BoxLength = float.Parse(fields[10]);
-			at.BoxWidth = float.Parse(fields[11]);
-			at.BoxHeight = float.Parse(fields[12]);
-			at.BoxYaw = float.Parse(fields[13]);
-			at.ShapeType = byte.Parse(fields[14]);
-			at.ShapeId = ushort.Parse(fields[15]);
-			at.ActionSetId = ushort.Parse(fields[16]);
-			at.Flags = byte.Parse(fields[17]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.AreaTrigger;
-			record.HotfixId = 100000 + counter;
+			var fields = csvParser.ReadFields();
+			var at = new AreaTrigger
+			{
+				Message = fields[0],
+				PositionX = float.Parse(fields[1]),
+				PositionY = float.Parse(fields[2]),
+				PositionZ = float.Parse(fields[3]),
+				Id = uint.Parse(fields[4]),
+				MapId = ushort.Parse(fields[5]),
+				PhaseUseFlags = byte.Parse(fields[6]),
+				PhaseId = ushort.Parse(fields[7]),
+				PhaseGroupId = ushort.Parse(fields[8]),
+				Radius = float.Parse(fields[9]),
+				BoxLength = float.Parse(fields[10]),
+				BoxWidth = float.Parse(fields[11]),
+				BoxHeight = float.Parse(fields[12]),
+				BoxYaw = float.Parse(fields[13]),
+				ShapeType = byte.Parse(fields[14]),
+				ShapeId = ushort.Parse(fields[15]),
+				ActionSetId = ushort.Parse(fields[16]),
+				Flags = byte.Parse(fields[17])
+			};
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.AreaTrigger,
+				HotfixId = 100000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = at.Id;
 			record.Status = HotfixStatus.Valid;
@@ -1684,33 +1760,35 @@ public static class GameData
 
 	public static void LoadSkillLineHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SkillLine{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SkillLine{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			string displayName = fields[0];
-			string alternateVerb = fields[1];
-			string description = fields[2];
-			string hordeDisplayName = fields[3];
-			string neutralDisplayName = fields[4];
-			uint id = uint.Parse(fields[5]);
-			byte categoryID = byte.Parse(fields[6]);
-			uint spellIconFileID = uint.Parse(fields[7]);
-			byte canLink = byte.Parse(fields[8]);
-			uint parentSkillLineID = uint.Parse(fields[9]);
-			uint parentTierIndex = uint.Parse(fields[10]);
-			ushort flags = ushort.Parse(fields[11]);
-			uint spellBookSpellID = uint.Parse(fields[12]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SkillLine;
-			record.HotfixId = 110000 + counter;
+			var fields = csvParser.ReadFields();
+			var displayName = fields[0];
+			var alternateVerb = fields[1];
+			var description = fields[2];
+			var hordeDisplayName = fields[3];
+			var neutralDisplayName = fields[4];
+			var id = uint.Parse(fields[5]);
+			var categoryID = byte.Parse(fields[6]);
+			var spellIconFileID = uint.Parse(fields[7]);
+			var canLink = byte.Parse(fields[8]);
+			var parentSkillLineID = uint.Parse(fields[9]);
+			var parentTierIndex = uint.Parse(fields[10]);
+			var flags = ushort.Parse(fields[11]);
+			var spellBookSpellID = uint.Parse(fields[12]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SkillLine,
+				HotfixId = 110000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -1733,28 +1811,30 @@ public static class GameData
 
 	public static void LoadSkillRaceClassInfoHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SkillRaceClassInfo{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SkillRaceClassInfo{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			ulong raceMask = ulong.Parse(fields[1]);
-			ushort skillId = ushort.Parse(fields[2]);
-			uint classMask = uint.Parse(fields[3]);
-			ushort flags = ushort.Parse(fields[4]);
-			byte availability = byte.Parse(fields[5]);
-			byte minLevel = byte.Parse(fields[6]);
-			ushort skillTierId = ushort.Parse(fields[7]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SkillRaceClassInfo;
-			record.HotfixId = 120000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var raceMask = ulong.Parse(fields[1]);
+			var skillId = ushort.Parse(fields[2]);
+			var classMask = uint.Parse(fields[3]);
+			var flags = ushort.Parse(fields[4]);
+			var availability = byte.Parse(fields[5]);
+			var minLevel = byte.Parse(fields[6]);
+			var skillTierId = ushort.Parse(fields[7]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SkillRaceClassInfo,
+				HotfixId = 120000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -1771,37 +1851,39 @@ public static class GameData
 
 	public static void LoadSkillLineAbilityHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SkillLineAbility{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SkillLineAbility{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			ulong raceMask = ulong.Parse(fields[0]);
-			uint id = uint.Parse(fields[1]);
-			ushort skillId = ushort.Parse(fields[2]);
-			uint spellId = uint.Parse(fields[3]);
-			ushort minSkillLineRank = ushort.Parse(fields[4]);
-			uint classMask = uint.Parse(fields[5]);
-			uint supercedesSpellId = uint.Parse(fields[6]);
-			byte acquireMethod = byte.Parse(fields[7]);
-			ushort trivialSkillLineRankHigh = ushort.Parse(fields[8]);
-			ushort trivialSkillLineRankLow = ushort.Parse(fields[9]);
-			byte flags = byte.Parse(fields[10]);
-			byte numSkillUps = byte.Parse(fields[11]);
-			ushort uniqueBit = ushort.Parse(fields[12]);
-			ushort tradeSkillCategoryId = ushort.Parse(fields[13]);
-			ushort skillUpSkillLineId = ushort.Parse(fields[14]);
-			uint characterPoints1 = uint.Parse(fields[15]);
-			uint characterPoints2 = uint.Parse(fields[16]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SkillLineAbility;
-			record.HotfixId = 130000 + counter;
+			var fields = csvParser.ReadFields();
+			var raceMask = ulong.Parse(fields[0]);
+			var id = uint.Parse(fields[1]);
+			var skillId = ushort.Parse(fields[2]);
+			var spellId = uint.Parse(fields[3]);
+			var minSkillLineRank = ushort.Parse(fields[4]);
+			var classMask = uint.Parse(fields[5]);
+			var supercedesSpellId = uint.Parse(fields[6]);
+			var acquireMethod = byte.Parse(fields[7]);
+			var trivialSkillLineRankHigh = ushort.Parse(fields[8]);
+			var trivialSkillLineRankLow = ushort.Parse(fields[9]);
+			var flags = byte.Parse(fields[10]);
+			var numSkillUps = byte.Parse(fields[11]);
+			var uniqueBit = ushort.Parse(fields[12]);
+			var tradeSkillCategoryId = ushort.Parse(fields[13]);
+			var skillUpSkillLineId = ushort.Parse(fields[14]);
+			var characterPoints1 = uint.Parse(fields[15]);
+			var characterPoints2 = uint.Parse(fields[16]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SkillLineAbility,
+				HotfixId = 130000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -1828,24 +1910,26 @@ public static class GameData
 
 	public static void LoadSpellHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"Spell{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"Spell{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			string nameSubText = fields[1];
-			string description = fields[2];
-			string auraDescription = fields[3];
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.Spell;
-			record.HotfixId = 140000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var nameSubText = fields[1];
+			var description = fields[2];
+			var auraDescription = fields[3];
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.Spell,
+				HotfixId = 140000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -1858,22 +1942,24 @@ public static class GameData
 
 	public static void LoadSpellNameHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SpellName{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SpellName{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			string name = fields[1];
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SpellName;
-			record.HotfixId = 150000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var name = fields[1];
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SpellName,
+				HotfixId = 150000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -1884,27 +1970,29 @@ public static class GameData
 
 	public static void LoadSpellLevelsHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SpellLevels{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SpellLevels{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			byte difficultyId = byte.Parse(fields[1]);
-			ushort baseLevel = ushort.Parse(fields[2]);
-			ushort maxLevel = ushort.Parse(fields[3]);
-			ushort spellLevel = ushort.Parse(fields[4]);
-			byte maxPassiveAuraLevel = byte.Parse(fields[5]);
-			uint spellId = uint.Parse(fields[6]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SpellLevels;
-			record.HotfixId = 160000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var difficultyId = byte.Parse(fields[1]);
+			var baseLevel = ushort.Parse(fields[2]);
+			var maxLevel = ushort.Parse(fields[3]);
+			var spellLevel = ushort.Parse(fields[4]);
+			var maxPassiveAuraLevel = byte.Parse(fields[5]);
+			var spellId = uint.Parse(fields[6]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SpellLevels,
+				HotfixId = 160000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -1920,30 +2008,32 @@ public static class GameData
 
 	public static void LoadSpellAuraOptionsHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SpellAuraOptions{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SpellAuraOptions{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			byte difficultyId = byte.Parse(fields[1]);
-			uint cumulatievAura = uint.Parse(fields[2]);
-			uint procCategoryRecovery = uint.Parse(fields[3]);
-			byte procChance = byte.Parse(fields[4]);
-			uint procCharges = uint.Parse(fields[5]);
-			ushort spellProcsPerMinuteId = ushort.Parse(fields[6]);
-			uint procTypeMask0 = uint.Parse(fields[7]);
-			uint procTypeMask1 = uint.Parse(fields[8]);
-			uint spellId = uint.Parse(fields[9]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SpellAuraOptions;
-			record.HotfixId = 170000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var difficultyId = byte.Parse(fields[1]);
+			var cumulatievAura = uint.Parse(fields[2]);
+			var procCategoryRecovery = uint.Parse(fields[3]);
+			var procChance = byte.Parse(fields[4]);
+			var procCharges = uint.Parse(fields[5]);
+			var spellProcsPerMinuteId = ushort.Parse(fields[6]);
+			var procTypeMask0 = uint.Parse(fields[7]);
+			var procTypeMask1 = uint.Parse(fields[8]);
+			var spellId = uint.Parse(fields[9]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SpellAuraOptions,
+				HotfixId = 170000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -1962,46 +2052,48 @@ public static class GameData
 
 	public static void LoadSpellMiscHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SpellMisc{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SpellMisc{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			byte difficultyId = byte.Parse(fields[1]);
-			ushort castingTimeIndex = ushort.Parse(fields[2]);
-			ushort durationIndex = ushort.Parse(fields[3]);
-			ushort rangeIndex = ushort.Parse(fields[4]);
-			byte schoolMask = byte.Parse(fields[5]);
-			float speed = float.Parse(fields[6]);
-			float launchDelay = float.Parse(fields[7]);
-			float minDuration = float.Parse(fields[8]);
-			uint spellIconFileDataId = uint.Parse(fields[9]);
-			uint activeIconFileDataId = uint.Parse(fields[10]);
-			uint attributes1 = uint.Parse(fields[11]);
-			uint attributes2 = uint.Parse(fields[12]);
-			uint attributes3 = uint.Parse(fields[13]);
-			uint attributes4 = uint.Parse(fields[14]);
-			uint attributes5 = uint.Parse(fields[15]);
-			uint attributes6 = uint.Parse(fields[16]);
-			uint attributes7 = uint.Parse(fields[17]);
-			uint attributes8 = uint.Parse(fields[18]);
-			uint attributes9 = uint.Parse(fields[19]);
-			uint attributes10 = uint.Parse(fields[20]);
-			uint attributes11 = uint.Parse(fields[21]);
-			uint attributes12 = uint.Parse(fields[22]);
-			uint attributes13 = uint.Parse(fields[23]);
-			uint attributes14 = uint.Parse(fields[24]);
-			uint spellId = uint.Parse(fields[25]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SpellMisc;
-			record.HotfixId = 180000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var difficultyId = byte.Parse(fields[1]);
+			var castingTimeIndex = ushort.Parse(fields[2]);
+			var durationIndex = ushort.Parse(fields[3]);
+			var rangeIndex = ushort.Parse(fields[4]);
+			var schoolMask = byte.Parse(fields[5]);
+			var speed = float.Parse(fields[6]);
+			var launchDelay = float.Parse(fields[7]);
+			var minDuration = float.Parse(fields[8]);
+			var spellIconFileDataId = uint.Parse(fields[9]);
+			var activeIconFileDataId = uint.Parse(fields[10]);
+			var attributes1 = uint.Parse(fields[11]);
+			var attributes2 = uint.Parse(fields[12]);
+			var attributes3 = uint.Parse(fields[13]);
+			var attributes4 = uint.Parse(fields[14]);
+			var attributes5 = uint.Parse(fields[15]);
+			var attributes6 = uint.Parse(fields[16]);
+			var attributes7 = uint.Parse(fields[17]);
+			var attributes8 = uint.Parse(fields[18]);
+			var attributes9 = uint.Parse(fields[19]);
+			var attributes10 = uint.Parse(fields[20]);
+			var attributes11 = uint.Parse(fields[21]);
+			var attributes12 = uint.Parse(fields[22]);
+			var attributes13 = uint.Parse(fields[23]);
+			var attributes14 = uint.Parse(fields[24]);
+			var spellId = uint.Parse(fields[25]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SpellMisc,
+				HotfixId = 180000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -2036,56 +2128,58 @@ public static class GameData
 
 	public static void LoadSpellEffectHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SpellEffect{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SpellEffect{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			uint difficultyId = uint.Parse(fields[1]);
-			uint effectIndex = uint.Parse(fields[2]);
-			uint effect = uint.Parse(fields[3]);
-			float effectAmplitude = float.Parse(fields[4]);
-			uint effectAttributes = uint.Parse(fields[5]);
-			short effectAura = short.Parse(fields[6]);
-			int effectAuraPeriod = int.Parse(fields[7]);
-			int effectBasePoints = int.Parse(fields[8]);
-			float effectBonusCoefficient = float.Parse(fields[9]);
-			float effectChainAmplitude = float.Parse(fields[10]);
-			int effectChainTargets = int.Parse(fields[11]);
-			int effectDieSides = int.Parse(fields[12]);
-			int effectItemType = int.Parse(fields[13]);
-			int effectMechanic = int.Parse(fields[14]);
-			float effectPointsPerResource = float.Parse(fields[15]);
-			float effectPosFacing = float.Parse(fields[16]);
-			float effectRealPointsPerLevel = float.Parse(fields[17]);
-			int EffectTriggerSpell = int.Parse(fields[18]);
-			float bonusCoefficientFromAP = float.Parse(fields[19]);
-			float pvpMultiplier = float.Parse(fields[20]);
-			float coefficient = float.Parse(fields[21]);
-			float variance = float.Parse(fields[22]);
-			float resourceCoefficient = float.Parse(fields[23]);
-			float groupSizeBasePointsCoefficient = float.Parse(fields[24]);
-			int effectMiscValue1 = int.Parse(fields[25]);
-			int effectMiscValue2 = int.Parse(fields[26]);
-			uint effectRadiusIndex1 = uint.Parse(fields[27]);
-			uint effectRadiusIndex2 = uint.Parse(fields[28]);
-			int effectSpellClassMask1 = int.Parse(fields[29]);
-			int effectSpellClassMask2 = int.Parse(fields[30]);
-			int effectSpellClassMask3 = int.Parse(fields[31]);
-			int effectSpellClassMask4 = int.Parse(fields[32]);
-			short implicitTarget1 = short.Parse(fields[33]);
-			short implicitTarget2 = short.Parse(fields[34]);
-			uint spellId = uint.Parse(fields[35]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SpellEffect;
-			record.HotfixId = 190000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var difficultyId = uint.Parse(fields[1]);
+			var effectIndex = uint.Parse(fields[2]);
+			var effect = uint.Parse(fields[3]);
+			var effectAmplitude = float.Parse(fields[4]);
+			var effectAttributes = uint.Parse(fields[5]);
+			var effectAura = short.Parse(fields[6]);
+			var effectAuraPeriod = int.Parse(fields[7]);
+			var effectBasePoints = int.Parse(fields[8]);
+			var effectBonusCoefficient = float.Parse(fields[9]);
+			var effectChainAmplitude = float.Parse(fields[10]);
+			var effectChainTargets = int.Parse(fields[11]);
+			var effectDieSides = int.Parse(fields[12]);
+			var effectItemType = int.Parse(fields[13]);
+			var effectMechanic = int.Parse(fields[14]);
+			var effectPointsPerResource = float.Parse(fields[15]);
+			var effectPosFacing = float.Parse(fields[16]);
+			var effectRealPointsPerLevel = float.Parse(fields[17]);
+			var EffectTriggerSpell = int.Parse(fields[18]);
+			var bonusCoefficientFromAP = float.Parse(fields[19]);
+			var pvpMultiplier = float.Parse(fields[20]);
+			var coefficient = float.Parse(fields[21]);
+			var variance = float.Parse(fields[22]);
+			var resourceCoefficient = float.Parse(fields[23]);
+			var groupSizeBasePointsCoefficient = float.Parse(fields[24]);
+			var effectMiscValue1 = int.Parse(fields[25]);
+			var effectMiscValue2 = int.Parse(fields[26]);
+			var effectRadiusIndex1 = uint.Parse(fields[27]);
+			var effectRadiusIndex2 = uint.Parse(fields[28]);
+			var effectSpellClassMask1 = int.Parse(fields[29]);
+			var effectSpellClassMask2 = int.Parse(fields[30]);
+			var effectSpellClassMask3 = int.Parse(fields[31]);
+			var effectSpellClassMask4 = int.Parse(fields[32]);
+			var implicitTarget1 = short.Parse(fields[33]);
+			var implicitTarget2 = short.Parse(fields[34]);
+			var spellId = uint.Parse(fields[35]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SpellEffect,
+				HotfixId = 190000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -2130,30 +2224,30 @@ public static class GameData
 
 	public static void LoadSpellXSpellVisualHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"SpellXSpellVisual{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"SpellXSpellVisual{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			byte difficultyId = byte.Parse(fields[1]);
-			uint spellVisualId = uint.Parse(fields[2]);
-			float probability = float.Parse(fields[3]);
-			byte flags = byte.Parse(fields[4]);
-			byte priority = byte.Parse(fields[5]);
-			int spellIconFileId = int.Parse(fields[6]);
-			int activeIconFileId = int.Parse(fields[7]);
-			ushort viewerUnitConditionId = ushort.Parse(fields[8]);
-			uint viewerPlayerConditionId = uint.Parse(fields[9]);
-			ushort casterUnitConditionId = ushort.Parse(fields[10]);
-			uint casterPlayerConditionId = uint.Parse(fields[11]);
-			uint spellId = uint.Parse(fields[12]);
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var difficultyId = byte.Parse(fields[1]);
+			var spellVisualId = uint.Parse(fields[2]);
+			var probability = float.Parse(fields[3]);
+			var flags = byte.Parse(fields[4]);
+			var priority = byte.Parse(fields[5]);
+			var spellIconFileId = int.Parse(fields[6]);
+			var activeIconFileId = int.Parse(fields[7]);
+			var viewerUnitConditionId = ushort.Parse(fields[8]);
+			var viewerPlayerConditionId = uint.Parse(fields[9]);
+			var casterUnitConditionId = ushort.Parse(fields[10]);
+			var casterPlayerConditionId = uint.Parse(fields[11]);
+			var spellId = uint.Parse(fields[12]);
 			if (SpellVisuals.ContainsKey(spellId))
 			{
 				SpellVisuals[spellId] = id;
@@ -2162,9 +2256,11 @@ public static class GameData
 			{
 				SpellVisuals.Add(spellId, id);
 			}
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.SpellXSpellVisual;
-			record.HotfixId = 200000 + counter;
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.SpellXSpellVisual,
+				HotfixId = 200000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -2187,148 +2283,150 @@ public static class GameData
 
 	public static void LoadItemSparseHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"ItemSparse{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"ItemSparse{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = true;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			long allowableRace = long.Parse(fields[1]);
-			string description = fields[2];
-			string name4 = fields[3];
-			string name5 = fields[4];
-			string name6 = fields[5];
-			string name7 = fields[6];
-			float dmgVariance = float.Parse(fields[7]);
-			uint durationInInventory = uint.Parse(fields[8]);
-			float qualityModifier = float.Parse(fields[9]);
-			uint bagFamily = uint.Parse(fields[10]);
-			float rangeMod = float.Parse(fields[11]);
-			float statPercentageOfSocket1 = float.Parse(fields[12]);
-			float statPercentageOfSocket2 = float.Parse(fields[13]);
-			float statPercentageOfSocket3 = float.Parse(fields[14]);
-			float statPercentageOfSocket4 = float.Parse(fields[15]);
-			float statPercentageOfSocket5 = float.Parse(fields[16]);
-			float statPercentageOfSocket6 = float.Parse(fields[17]);
-			float statPercentageOfSocket7 = float.Parse(fields[18]);
-			float statPercentageOfSocket8 = float.Parse(fields[19]);
-			float statPercentageOfSocket9 = float.Parse(fields[20]);
-			float statPercentageOfSocket10 = float.Parse(fields[21]);
-			int statPercentEditor1 = int.Parse(fields[22]);
-			int statPercentEditor2 = int.Parse(fields[23]);
-			int statPercentEditor3 = int.Parse(fields[24]);
-			int statPercentEditor4 = int.Parse(fields[25]);
-			int statPercentEditor5 = int.Parse(fields[26]);
-			int statPercentEditor6 = int.Parse(fields[27]);
-			int statPercentEditor7 = int.Parse(fields[28]);
-			int statPercentEditor8 = int.Parse(fields[29]);
-			int statPercentEditor9 = int.Parse(fields[30]);
-			int statPercentEditor10 = int.Parse(fields[31]);
-			int stackable = int.Parse(fields[32]);
-			int maxCount = int.Parse(fields[33]);
-			uint requiredAbility = uint.Parse(fields[34]);
-			uint sellPrice = uint.Parse(fields[35]);
-			uint buyPrice = uint.Parse(fields[36]);
-			uint vendorStackCount = uint.Parse(fields[37]);
-			float priceVariance = float.Parse(fields[38]);
-			float priceRandomValue = float.Parse(fields[39]);
-			int flags1 = int.Parse(fields[40]);
-			int flags2 = int.Parse(fields[41]);
-			int flags3 = int.Parse(fields[42]);
-			int flags4 = int.Parse(fields[43]);
-			int oppositeFactionItemId = int.Parse(fields[44]);
-			uint maxDurability = uint.Parse(fields[45]);
-			ushort itemNameDescriptionId = ushort.Parse(fields[46]);
-			ushort requiredTransmogHoliday = ushort.Parse(fields[47]);
-			ushort requiredHoliday = ushort.Parse(fields[48]);
-			ushort limitCategory = ushort.Parse(fields[49]);
-			ushort gemProperties = ushort.Parse(fields[50]);
-			ushort socketMatchEnchantmentId = ushort.Parse(fields[51]);
-			ushort totemCategoryId = ushort.Parse(fields[52]);
-			ushort instanceBound = ushort.Parse(fields[53]);
-			ushort zoneBound1 = ushort.Parse(fields[54]);
-			ushort zoneBound2 = ushort.Parse(fields[55]);
-			ushort itemSet = ushort.Parse(fields[56]);
-			ushort lockId = ushort.Parse(fields[57]);
-			ushort startQuestId = ushort.Parse(fields[58]);
-			ushort pageText = ushort.Parse(fields[59]);
-			ushort delay = ushort.Parse(fields[60]);
-			ushort requiredReputationId = ushort.Parse(fields[61]);
-			ushort requiredSkillRank = ushort.Parse(fields[62]);
-			ushort requiredSkill = ushort.Parse(fields[63]);
-			ushort itemLevel = ushort.Parse(fields[64]);
-			short allowableClass = short.Parse(fields[65]);
-			ushort itemRandomSuffixGroupId = ushort.Parse(fields[66]);
-			ushort randomProperty = ushort.Parse(fields[67]);
-			ushort damageMin1 = ushort.Parse(fields[68]);
-			ushort damageMin2 = ushort.Parse(fields[69]);
-			ushort damageMin3 = ushort.Parse(fields[70]);
-			ushort damageMin4 = ushort.Parse(fields[71]);
-			ushort damageMin5 = ushort.Parse(fields[72]);
-			ushort damageMax1 = ushort.Parse(fields[73]);
-			ushort damageMax2 = ushort.Parse(fields[74]);
-			ushort damageMax3 = ushort.Parse(fields[75]);
-			ushort damageMax4 = ushort.Parse(fields[76]);
-			ushort damageMax5 = ushort.Parse(fields[77]);
-			short armor = short.Parse(fields[78]);
-			short holyResistance = short.Parse(fields[79]);
-			short fireResistance = short.Parse(fields[80]);
-			short natureResistance = short.Parse(fields[81]);
-			short frostResistance = short.Parse(fields[82]);
-			short shadowResistance = short.Parse(fields[83]);
-			short arcaneResistance = short.Parse(fields[84]);
-			ushort scalingStatDistributionId = ushort.Parse(fields[85]);
-			byte expansionId = byte.Parse(fields[86]);
-			byte artifactId = byte.Parse(fields[87]);
-			byte spellWeight = byte.Parse(fields[88]);
-			byte spellWeightCategory = byte.Parse(fields[89]);
-			byte socketType1 = byte.Parse(fields[90]);
-			byte socketType2 = byte.Parse(fields[91]);
-			byte socketType3 = byte.Parse(fields[92]);
-			byte sheatheType = byte.Parse(fields[93]);
-			byte material = byte.Parse(fields[94]);
-			byte pageMaterial = byte.Parse(fields[95]);
-			byte pageLanguage = byte.Parse(fields[96]);
-			byte bonding = byte.Parse(fields[97]);
-			byte damageType = byte.Parse(fields[98]);
-			sbyte statType1 = sbyte.Parse(fields[99]);
-			sbyte statType2 = sbyte.Parse(fields[100]);
-			sbyte statType3 = sbyte.Parse(fields[101]);
-			sbyte statType4 = sbyte.Parse(fields[102]);
-			sbyte statType5 = sbyte.Parse(fields[103]);
-			sbyte statType6 = sbyte.Parse(fields[104]);
-			sbyte statType7 = sbyte.Parse(fields[105]);
-			sbyte statType8 = sbyte.Parse(fields[106]);
-			sbyte statType9 = sbyte.Parse(fields[107]);
-			sbyte statType10 = sbyte.Parse(fields[108]);
-			byte containerSlots = byte.Parse(fields[109]);
-			byte requiredReputationRank = byte.Parse(fields[110]);
-			byte requiredCityRank = byte.Parse(fields[111]);
-			byte requiredHonorRank = byte.Parse(fields[112]);
-			byte inventoryType = byte.Parse(fields[113]);
-			byte overallQualityId = byte.Parse(fields[114]);
-			byte ammoType = byte.Parse(fields[115]);
-			sbyte statValue1 = sbyte.Parse(fields[116]);
-			sbyte statValue2 = sbyte.Parse(fields[117]);
-			sbyte statValue3 = sbyte.Parse(fields[118]);
-			sbyte statValue4 = sbyte.Parse(fields[119]);
-			sbyte statValue5 = sbyte.Parse(fields[120]);
-			sbyte statValue6 = sbyte.Parse(fields[121]);
-			sbyte statValue7 = sbyte.Parse(fields[122]);
-			sbyte statValue8 = sbyte.Parse(fields[123]);
-			sbyte statValue9 = sbyte.Parse(fields[124]);
-			sbyte statValue10 = sbyte.Parse(fields[125]);
-			sbyte requiredLevel = sbyte.Parse(fields[126]);
-			HotfixRecord record = new HotfixRecord();
-			record.Status = HotfixStatus.Valid;
-			record.TableHash = DB2Hash.ItemSparse;
-			record.HotfixId = 220000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var allowableRace = long.Parse(fields[1]);
+			var description = fields[2];
+			var name4 = fields[3];
+			var name5 = fields[4];
+			var name6 = fields[5];
+			var name7 = fields[6];
+			var dmgVariance = float.Parse(fields[7]);
+			var durationInInventory = uint.Parse(fields[8]);
+			var qualityModifier = float.Parse(fields[9]);
+			var bagFamily = uint.Parse(fields[10]);
+			var rangeMod = float.Parse(fields[11]);
+			var statPercentageOfSocket1 = float.Parse(fields[12]);
+			var statPercentageOfSocket2 = float.Parse(fields[13]);
+			var statPercentageOfSocket3 = float.Parse(fields[14]);
+			var statPercentageOfSocket4 = float.Parse(fields[15]);
+			var statPercentageOfSocket5 = float.Parse(fields[16]);
+			var statPercentageOfSocket6 = float.Parse(fields[17]);
+			var statPercentageOfSocket7 = float.Parse(fields[18]);
+			var statPercentageOfSocket8 = float.Parse(fields[19]);
+			var statPercentageOfSocket9 = float.Parse(fields[20]);
+			var statPercentageOfSocket10 = float.Parse(fields[21]);
+			var statPercentEditor1 = int.Parse(fields[22]);
+			var statPercentEditor2 = int.Parse(fields[23]);
+			var statPercentEditor3 = int.Parse(fields[24]);
+			var statPercentEditor4 = int.Parse(fields[25]);
+			var statPercentEditor5 = int.Parse(fields[26]);
+			var statPercentEditor6 = int.Parse(fields[27]);
+			var statPercentEditor7 = int.Parse(fields[28]);
+			var statPercentEditor8 = int.Parse(fields[29]);
+			var statPercentEditor9 = int.Parse(fields[30]);
+			var statPercentEditor10 = int.Parse(fields[31]);
+			var stackable = int.Parse(fields[32]);
+			var maxCount = int.Parse(fields[33]);
+			var requiredAbility = uint.Parse(fields[34]);
+			var sellPrice = uint.Parse(fields[35]);
+			var buyPrice = uint.Parse(fields[36]);
+			var vendorStackCount = uint.Parse(fields[37]);
+			var priceVariance = float.Parse(fields[38]);
+			var priceRandomValue = float.Parse(fields[39]);
+			var flags1 = int.Parse(fields[40]);
+			var flags2 = int.Parse(fields[41]);
+			var flags3 = int.Parse(fields[42]);
+			var flags4 = int.Parse(fields[43]);
+			var oppositeFactionItemId = int.Parse(fields[44]);
+			var maxDurability = uint.Parse(fields[45]);
+			var itemNameDescriptionId = ushort.Parse(fields[46]);
+			var requiredTransmogHoliday = ushort.Parse(fields[47]);
+			var requiredHoliday = ushort.Parse(fields[48]);
+			var limitCategory = ushort.Parse(fields[49]);
+			var gemProperties = ushort.Parse(fields[50]);
+			var socketMatchEnchantmentId = ushort.Parse(fields[51]);
+			var totemCategoryId = ushort.Parse(fields[52]);
+			var instanceBound = ushort.Parse(fields[53]);
+			var zoneBound1 = ushort.Parse(fields[54]);
+			var zoneBound2 = ushort.Parse(fields[55]);
+			var itemSet = ushort.Parse(fields[56]);
+			var lockId = ushort.Parse(fields[57]);
+			var startQuestId = ushort.Parse(fields[58]);
+			var pageText = ushort.Parse(fields[59]);
+			var delay = ushort.Parse(fields[60]);
+			var requiredReputationId = ushort.Parse(fields[61]);
+			var requiredSkillRank = ushort.Parse(fields[62]);
+			var requiredSkill = ushort.Parse(fields[63]);
+			var itemLevel = ushort.Parse(fields[64]);
+			var allowableClass = short.Parse(fields[65]);
+			var itemRandomSuffixGroupId = ushort.Parse(fields[66]);
+			var randomProperty = ushort.Parse(fields[67]);
+			var damageMin1 = ushort.Parse(fields[68]);
+			var damageMin2 = ushort.Parse(fields[69]);
+			var damageMin3 = ushort.Parse(fields[70]);
+			var damageMin4 = ushort.Parse(fields[71]);
+			var damageMin5 = ushort.Parse(fields[72]);
+			var damageMax1 = ushort.Parse(fields[73]);
+			var damageMax2 = ushort.Parse(fields[74]);
+			var damageMax3 = ushort.Parse(fields[75]);
+			var damageMax4 = ushort.Parse(fields[76]);
+			var damageMax5 = ushort.Parse(fields[77]);
+			var armor = short.Parse(fields[78]);
+			var holyResistance = short.Parse(fields[79]);
+			var fireResistance = short.Parse(fields[80]);
+			var natureResistance = short.Parse(fields[81]);
+			var frostResistance = short.Parse(fields[82]);
+			var shadowResistance = short.Parse(fields[83]);
+			var arcaneResistance = short.Parse(fields[84]);
+			var scalingStatDistributionId = ushort.Parse(fields[85]);
+			var expansionId = byte.Parse(fields[86]);
+			var artifactId = byte.Parse(fields[87]);
+			var spellWeight = byte.Parse(fields[88]);
+			var spellWeightCategory = byte.Parse(fields[89]);
+			var socketType1 = byte.Parse(fields[90]);
+			var socketType2 = byte.Parse(fields[91]);
+			var socketType3 = byte.Parse(fields[92]);
+			var sheatheType = byte.Parse(fields[93]);
+			var material = byte.Parse(fields[94]);
+			var pageMaterial = byte.Parse(fields[95]);
+			var pageLanguage = byte.Parse(fields[96]);
+			var bonding = byte.Parse(fields[97]);
+			var damageType = byte.Parse(fields[98]);
+			var statType1 = sbyte.Parse(fields[99]);
+			var statType2 = sbyte.Parse(fields[100]);
+			var statType3 = sbyte.Parse(fields[101]);
+			var statType4 = sbyte.Parse(fields[102]);
+			var statType5 = sbyte.Parse(fields[103]);
+			var statType6 = sbyte.Parse(fields[104]);
+			var statType7 = sbyte.Parse(fields[105]);
+			var statType8 = sbyte.Parse(fields[106]);
+			var statType9 = sbyte.Parse(fields[107]);
+			var statType10 = sbyte.Parse(fields[108]);
+			var containerSlots = byte.Parse(fields[109]);
+			var requiredReputationRank = byte.Parse(fields[110]);
+			var requiredCityRank = byte.Parse(fields[111]);
+			var requiredHonorRank = byte.Parse(fields[112]);
+			var inventoryType = byte.Parse(fields[113]);
+			var overallQualityId = byte.Parse(fields[114]);
+			var ammoType = byte.Parse(fields[115]);
+			var statValue1 = sbyte.Parse(fields[116]);
+			var statValue2 = sbyte.Parse(fields[117]);
+			var statValue3 = sbyte.Parse(fields[118]);
+			var statValue4 = sbyte.Parse(fields[119]);
+			var statValue5 = sbyte.Parse(fields[120]);
+			var statValue6 = sbyte.Parse(fields[121]);
+			var statValue7 = sbyte.Parse(fields[122]);
+			var statValue8 = sbyte.Parse(fields[123]);
+			var statValue9 = sbyte.Parse(fields[124]);
+			var statValue10 = sbyte.Parse(fields[125]);
+			var requiredLevel = sbyte.Parse(fields[126]);
+			var record = new HotfixRecord
+			{
+				Status = HotfixStatus.Valid,
+				TableHash = DB2Hash.ItemSparse,
+				HotfixId = 220000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.HotfixContent.WriteInt64(allowableRace);
@@ -2468,8 +2566,8 @@ public static class GameData
 
 	public static void WriteItemSparseHotfix(ItemTemplate item, ByteBuffer buffer)
 	{
-		short[] StatValues = new short[10];
-		for (int i = 0; i < item.StatsCount; i++)
+		var StatValues = new short[10];
+		for (var i = 0; i < item.StatsCount; i++)
 		{
 			StatValues[i] = (short)Math.Clamp(item.StatValues[i], short.MinValue, short.MaxValue);
 		}
@@ -2485,9 +2583,9 @@ public static class GameData
 		buffer.WriteUInt32(item.BagFamily);                 // BagFamily
 		buffer.WriteInt32((int)item.StartQuestId);          // StartQuestID
 		buffer.WriteFloat(item.RangedMod);                  // ItemRange
-		for (int i = 0; i < 10; i++)
+		for (var i = 0; i < 10; i++)
 			buffer.WriteFloat(0f);                          // StatPercentageOfSocket[10]
-		for (int i = 0; i < 10; i++)
+		for (var i = 0; i < 10; i++)
 			buffer.WriteInt32(0);                           // StatPercentEditor[10]
 		buffer.WriteInt32(item.MaxStackSize);               // Stackable
 		buffer.WriteInt32(item.MaxCount);                   // MaxCount
@@ -2546,7 +2644,7 @@ public static class GameData
 		buffer.WriteInt16((short)item.ShadowResistance);
 		buffer.WriteInt16((short)item.ArcaneResistance);    // Resistances[6]
 		buffer.WriteUInt16((ushort)item.ScalingStatDistribution); // ScalingStatDistributionID
-		for (int i = 0; i < 10; i++)
+		for (var i = 0; i < 10; i++)
 			buffer.WriteInt16(StatValues[i]);               // StatModifierBonusAmount[10]
 		buffer.WriteUInt8(254);                             // ExpansionID
 		buffer.WriteUInt8(0);                               // ArtifactID
@@ -2672,7 +2770,7 @@ public static class GameData
 		buffer.WriteInt16(row.Resistances[5]);
 		buffer.WriteInt16(row.Resistances[6]);
 		buffer.WriteUInt16(row.ScalingStatDistributionId);
-		for (int i = 0; i < 10; i++)
+		for (var i = 0; i < 10; i++)
 			buffer.WriteInt16(row.StatModifierBonusAmount[i]);
 		buffer.WriteUInt8(row.ExpansionId);
 		buffer.WriteUInt8(row.ArtifactId);
@@ -2709,59 +2807,61 @@ public static class GameData
 
 	public static void LoadItemHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"Item{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"Item{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			byte ClassID = byte.Parse(fields[1]);
-			byte SubclassID = byte.Parse(fields[2]);
-			byte Material = byte.Parse(fields[3]);
-			sbyte InventoryType = sbyte.Parse(fields[4]);
-			uint RequiredLevel = uint.Parse(fields[5]);
-			byte SheatheType = byte.Parse(fields[6]);
-			ushort RandomSelect = ushort.Parse(fields[7]);
-			ushort ItemRandomSuffixGroupID = ushort.Parse(fields[8]);
-			sbyte Sound_override_subclassID = sbyte.Parse(fields[9]);
-			ushort ScalingStatDistributionID = ushort.Parse(fields[10]);
-			int IconFileDataID = int.Parse(fields[11]);
-			byte ItemGroupSoundsID = byte.Parse(fields[12]);
-			int ContentTuningID = int.Parse(fields[13]);
-			uint MaxDurability = uint.Parse(fields[14]);
-			byte AmmunitionType = byte.Parse(fields[15]);
-			byte DamageType1 = byte.Parse(fields[16]);
-			byte DamageType2 = byte.Parse(fields[17]);
-			byte DamageType3 = byte.Parse(fields[18]);
-			byte DamageType4 = byte.Parse(fields[19]);
-			byte DamageType5 = byte.Parse(fields[20]);
-			short Resistances1 = short.Parse(fields[21]);
-			short Resistances2 = short.Parse(fields[22]);
-			short Resistances3 = short.Parse(fields[23]);
-			short Resistances4 = short.Parse(fields[24]);
-			short Resistances5 = short.Parse(fields[25]);
-			short Resistances6 = short.Parse(fields[26]);
-			short Resistances7 = short.Parse(fields[27]);
-			ushort MinDamage1 = ushort.Parse(fields[28]);
-			ushort MinDamage2 = ushort.Parse(fields[29]);
-			ushort MinDamage3 = ushort.Parse(fields[30]);
-			ushort MinDamage4 = ushort.Parse(fields[31]);
-			ushort MinDamage5 = ushort.Parse(fields[32]);
-			ushort MaxDamage1 = ushort.Parse(fields[33]);
-			ushort MaxDamage2 = ushort.Parse(fields[34]);
-			ushort MaxDamage3 = ushort.Parse(fields[35]);
-			ushort MaxDamage4 = ushort.Parse(fields[36]);
-			ushort MaxDamage5 = ushort.Parse(fields[37]);
-			HotfixRecord record = new HotfixRecord();
-			record.Status = HotfixStatus.Valid;
-			record.TableHash = DB2Hash.Item;
-			record.HotfixId = 210000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var ClassID = byte.Parse(fields[1]);
+			var SubclassID = byte.Parse(fields[2]);
+			var Material = byte.Parse(fields[3]);
+			var InventoryType = sbyte.Parse(fields[4]);
+			var RequiredLevel = uint.Parse(fields[5]);
+			var SheatheType = byte.Parse(fields[6]);
+			var RandomSelect = ushort.Parse(fields[7]);
+			var ItemRandomSuffixGroupID = ushort.Parse(fields[8]);
+			var Sound_override_subclassID = sbyte.Parse(fields[9]);
+			var ScalingStatDistributionID = ushort.Parse(fields[10]);
+			var IconFileDataID = int.Parse(fields[11]);
+			var ItemGroupSoundsID = byte.Parse(fields[12]);
+			var ContentTuningID = int.Parse(fields[13]);
+			var MaxDurability = uint.Parse(fields[14]);
+			var AmmunitionType = byte.Parse(fields[15]);
+			var DamageType1 = byte.Parse(fields[16]);
+			var DamageType2 = byte.Parse(fields[17]);
+			var DamageType3 = byte.Parse(fields[18]);
+			var DamageType4 = byte.Parse(fields[19]);
+			var DamageType5 = byte.Parse(fields[20]);
+			var Resistances1 = short.Parse(fields[21]);
+			var Resistances2 = short.Parse(fields[22]);
+			var Resistances3 = short.Parse(fields[23]);
+			var Resistances4 = short.Parse(fields[24]);
+			var Resistances5 = short.Parse(fields[25]);
+			var Resistances6 = short.Parse(fields[26]);
+			var Resistances7 = short.Parse(fields[27]);
+			var MinDamage1 = ushort.Parse(fields[28]);
+			var MinDamage2 = ushort.Parse(fields[29]);
+			var MinDamage3 = ushort.Parse(fields[30]);
+			var MinDamage4 = ushort.Parse(fields[31]);
+			var MinDamage5 = ushort.Parse(fields[32]);
+			var MaxDamage1 = ushort.Parse(fields[33]);
+			var MaxDamage2 = ushort.Parse(fields[34]);
+			var MaxDamage3 = ushort.Parse(fields[35]);
+			var MaxDamage4 = ushort.Parse(fields[36]);
+			var MaxDamage5 = ushort.Parse(fields[37]);
+			var record = new HotfixRecord
+			{
+				Status = HotfixStatus.Valid,
+				TableHash = DB2Hash.Item,
+				HotfixId = 210000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.HotfixContent.WriteUInt8(ClassID);
@@ -2807,7 +2907,7 @@ public static class GameData
 
 	public static void WriteItemHotfix(ItemTemplate item, ByteBuffer buffer)
 	{
-		int fileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
+		var fileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
 		buffer.WriteUInt8((byte)item.Class);
 		buffer.WriteUInt8((byte)item.SubClass);
 		buffer.WriteUInt8((byte)item.Material);
@@ -2928,7 +3028,7 @@ public static class GameData
 	{
 		if (obj is ItemRecord)
 		{
-			ItemRecord item = (ItemRecord)obj;
+			var item = (ItemRecord)obj;
 			DoStuff((uint)item.Id, DB2Hash.Item, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
 				WriteItemHotfix(item, hotfixContentTargetBuffer);
@@ -2936,7 +3036,7 @@ public static class GameData
 		}
 		if (obj is ItemSparseRecord)
 		{
-			ItemSparseRecord itemSparse = (ItemSparseRecord)obj;
+			var itemSparse = (ItemSparseRecord)obj;
 			DoStuff((uint)itemSparse.Id, DB2Hash.ItemSparse, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
 				WriteItemSparseHotfix(itemSparse, hotfixContentTargetBuffer);
@@ -2944,7 +3044,7 @@ public static class GameData
 		}
 		if (obj is ItemEffect)
 		{
-			ItemEffect effect = (ItemEffect)obj;
+			var effect = (ItemEffect)obj;
 			DoStuff((uint)effect.Id, DB2Hash.ItemEffect, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
 				WriteItemEffectHotfix(effect, hotfixContentTargetBuffer);
@@ -2952,7 +3052,7 @@ public static class GameData
 		}
 		if (obj is ItemAppearance)
 		{
-			ItemAppearance appearance = (ItemAppearance)obj;
+			var appearance = (ItemAppearance)obj;
 			DoStuff((uint)appearance.Id, DB2Hash.ItemAppearance, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
 				WriteItemAppearanceHotfix(appearance, hotfixContentTargetBuffer);
@@ -2960,7 +3060,7 @@ public static class GameData
 		}
 		if (obj is ItemModifiedAppearance)
 		{
-			ItemModifiedAppearance modAppearance = (ItemModifiedAppearance)obj;
+			var modAppearance = (ItemModifiedAppearance)obj;
 			DoStuff((uint)modAppearance.Id, DB2Hash.ItemModifiedAppearance, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
 				WriteItemModifiedAppearanceHotfix(modAppearance, hotfixContentTargetBuffer);
@@ -2968,13 +3068,15 @@ public static class GameData
 		}
 		static void DoStuff(uint recordId, DB2Hash table, Action<ByteBuffer> writer)
 		{
-			List<HotfixRecord> oldRecords = FindHotfixesByRecordIdAndTable(recordId, table, 210000u);
+			var oldRecords = FindHotfixesByRecordIdAndTable(recordId, table, 210000u);
 			if (oldRecords.Count == 0)
 			{
-				HotfixRecord record = new HotfixRecord();
-				record.Status = HotfixStatus.Valid;
-				record.TableHash = table;
-				record.HotfixId = GetFirstFreeId(Hotfixes, 210000u);
+				var record = new HotfixRecord
+				{
+					Status = HotfixStatus.Valid,
+					TableHash = table,
+					HotfixId = GetFirstFreeId(Hotfixes, 210000u)
+				};
 				record.UniqueId = record.HotfixId;
 				record.RecordId = recordId;
 				writer(record.HotfixContent);
@@ -2982,14 +3084,14 @@ public static class GameData
 			}
 			else
 			{
-				IEnumerable<HotfixRecord> oldRecordsToBeInvalided = oldRecords.SkipLast(1);
-				foreach (HotfixRecord record2 in oldRecordsToBeInvalided)
+				var oldRecordsToBeInvalided = oldRecords.SkipLast(1);
+				foreach (var record2 in oldRecordsToBeInvalided)
 				{
 					record2.Status = HotfixStatus.Invalid;
 					record2.HotfixContent = new ByteBuffer();
 					Log.Print(LogType.Storage, $"Got duplicate record for record {record2.RecordId} in {record2.TableHash}", "GameData.cs");
 				}
-				HotfixRecord recordToOverwrite = oldRecords.Last();
+				var recordToOverwrite = oldRecords.Last();
 				recordToOverwrite.HotfixContent = new ByteBuffer();
 				writer(recordToOverwrite.HotfixContent);
 				Hotfixes[recordToOverwrite.HotfixId] = recordToOverwrite;
@@ -3002,7 +3104,7 @@ public static class GameData
 		ItemRecordsStore.TryGetValue(item.Entry, out var row);
 		if (row != null)
 		{
-			int iconFileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
+			var iconFileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
 			if (row.ClassId != (byte)item.Class || row.SubclassId != (byte)item.SubClass || row.Material != (byte)item.Material || row.InventoryType != (sbyte)item.InventoryType || row.RequiredLevel != (int)item.RequiredLevel || row.SheatheType != (byte)item.SheathType || row.RandomProperty != (ushort)item.RandomProperty || row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix || (row.IconFileDataId != iconFileDataId && iconFileDataId != 0) || row.MaxDurability != item.MaxDurability || row.AmmoType != (byte)item.AmmoType || row.DamageType[0] != (byte)item.DamageTypes[0] || row.DamageType[1] != (byte)item.DamageTypes[1] || row.DamageType[2] != (byte)item.DamageTypes[2] || row.DamageType[3] != (byte)item.DamageTypes[3] || row.DamageType[4] != (byte)item.DamageTypes[4] || row.Resistances[1] != (short)item.HolyResistance || row.Resistances[2] != (short)item.FireResistance || row.Resistances[3] != (short)item.NatureResistance || row.Resistances[4] != (short)item.FrostResistance || row.Resistances[5] != (short)item.ShadowResistance || row.Resistances[6] != (short)item.ArcaneResistance)
 			{
 				Log.Print(LogType.Storage, $"Item #{item.Entry} needs to be updated.", "GameData.cs");
@@ -3050,7 +3152,7 @@ public static class GameData
 				{
 					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GameData.cs");
 				}
-				for (int i = 0; i < 5; i++)
+				for (var i = 0; i < 5; i++)
 				{
 					if (row.DamageType[i] != (byte)item.DamageTypes[i])
 					{
@@ -3252,7 +3354,7 @@ public static class GameData
 				{
 					Log.Print(LogType.Storage, $"ScalingStatDistributionId {row.ScalingStatDistributionId} vs {item.ScalingStatDistribution}", "GameData.cs");
 				}
-				for (int i = 0; i < 3; i++)
+				for (var i = 0; i < 3; i++)
 				{
 					if (row.SocketType[i] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[i]))
 					{
@@ -3283,7 +3385,7 @@ public static class GameData
 				{
 					Log.Print(LogType.Storage, $"DamageType {row.DamageType} vs {item.DamageTypes[0]}", "GameData.cs");
 				}
-				for (int j = 0; j < 10; j++)
+				for (var j = 0; j < 10; j++)
 				{
 					if (row.StatType[j] != (sbyte)item.StatTypes[j] && (row.StatModifierBonusAmount[j] != 0 || item.StatValues[j] != 0))
 					{
@@ -3318,7 +3420,7 @@ public static class GameData
 				{
 					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GameData.cs");
 				}
-				for (int k = 0; k < 10; k++)
+				for (var k = 0; k < 10; k++)
 				{
 					if (row.StatModifierBonusAmount[0] != (sbyte)item.StatValues[0])
 					{
@@ -3346,12 +3448,12 @@ public static class GameData
 
 	public static HotFixMessage? GenerateItemEffectUpdateIfNeeded(ItemTemplate item, byte slot)
 	{
-		ItemEffect effect = GetItemEffectByItemId(item.Entry, slot);
+		var effect = GetItemEffectByItemId(item.Entry, slot);
 		if (effect != null)
 		{
-			bool wrongCategory = false;
-			bool wrongCooldown = false;
-			bool wrongCatCooldown = false;
+			var wrongCategory = false;
+			var wrongCooldown = false;
+			var wrongCatCooldown = false;
 			if (item.TriggeredSpellIds[slot] > 0)
 			{
 				ItemSpellsDataStore.TryGetValue((uint)item.TriggeredSpellIds[slot], out var data);
@@ -3430,7 +3532,7 @@ public static class GameData
 
 	public static HotFixMessage? GenerateItemAppearanceUpdateIfNeeded(ItemTemplate item)
 	{
-		ItemAppearance appearance = GetItemAppearanceByDisplayId(item.DisplayID);
+		var appearance = GetItemAppearanceByDisplayId(item.DisplayID);
 		if (appearance == null)
 		{
 			appearance = AddItemAppearanceRecord(item);
@@ -3446,7 +3548,7 @@ public static class GameData
 
 	public static HotFixMessage? GenerateItemModifiedAppearanceUpdateIfNeeded(ItemTemplate item)
 	{
-		ItemModifiedAppearance modAppearance = GetItemModifiedAppearanceByItemId(item.Entry);
+		var modAppearance = GetItemModifiedAppearanceByItemId(item.Entry);
 		if (modAppearance != null)
 		{
 			ItemAppearanceStore.TryGetValue((uint)modAppearance.ItemAppearanceID, out var appearance);
@@ -3478,31 +3580,31 @@ public static class GameData
 
 	public static HotFixMessage? GenerateHotFixMessage(object obj, bool remove = false)
 	{
-		HotFixMessage reply = new HotFixMessage();
+		var reply = new HotFixMessage();
 		if (obj == null)
 		{
 			Log.Print(LogType.Error, "DBReply for NULL object requested!", "GameData.cs");
 			return null;
 		}
-		Type type = obj.GetType();
+		var type = obj.GetType();
 		if (obj is ItemRecord)
 		{
-			List<HotfixRecord> records = FindHotfixesByRecordIdAndTable((uint)((ItemRecord)obj).Id, DB2Hash.Item);
+			var records = FindHotfixesByRecordIdAndTable((uint)((ItemRecord)obj).Id, DB2Hash.Item);
 			reply.Hotfixes.AddRange(records);
 		}
 		else if (obj is ItemSparseRecord)
 		{
-			List<HotfixRecord> records2 = FindHotfixesByRecordIdAndTable((uint)((ItemSparseRecord)obj).Id, DB2Hash.ItemSparse);
+			var records2 = FindHotfixesByRecordIdAndTable((uint)((ItemSparseRecord)obj).Id, DB2Hash.ItemSparse);
 			reply.Hotfixes.AddRange(records2);
 		}
 		else if (obj is ItemEffect)
 		{
-			List<HotfixRecord> records3 = FindHotfixesByRecordIdAndTable((uint)((ItemEffect)obj).Id, DB2Hash.ItemEffect);
+			var records3 = FindHotfixesByRecordIdAndTable((uint)((ItemEffect)obj).Id, DB2Hash.ItemEffect);
 			reply.Hotfixes.AddRange(records3);
 		}
 		else if (obj is ItemAppearance)
 		{
-			List<HotfixRecord> records4 = FindHotfixesByRecordIdAndTable((uint)((ItemAppearance)obj).Id, DB2Hash.ItemAppearance);
+			var records4 = FindHotfixesByRecordIdAndTable((uint)((ItemAppearance)obj).Id, DB2Hash.ItemAppearance);
 			reply.Hotfixes.AddRange(records4);
 		}
 		else
@@ -3512,7 +3614,7 @@ public static class GameData
 				Log.Print(LogType.Error, $"Unsupported DBReply requested! ({type})", "GameData.cs");
 				return null;
 			}
-			List<HotfixRecord> records5 = FindHotfixesByRecordIdAndTable((uint)((ItemModifiedAppearance)obj).Id, DB2Hash.ItemModifiedAppearance);
+			var records5 = FindHotfixesByRecordIdAndTable((uint)((ItemModifiedAppearance)obj).Id, DB2Hash.ItemModifiedAppearance);
 			reply.Hotfixes.AddRange(records5);
 		}
 		return reply;
@@ -3520,8 +3622,10 @@ public static class GameData
 
 	public static ItemRecord AddItemRecord(ItemTemplate item)
 	{
-		ItemRecord record = new ItemRecord();
-		record.Id = (int)item.Entry;
+		var record = new ItemRecord
+		{
+			Id = (int)item.Entry
+		};
 		UpdateItemRecord(record, item);
 		ItemRecordsStore.Add((uint)record.Id, record);
 		Log.Print(LogType.Storage, $"Item #{record.Id} created.", "GameData.cs");
@@ -3575,8 +3679,10 @@ public static class GameData
 
 	public static ItemSparseRecord AddItemSparseRecord(ItemTemplate item)
 	{
-		ItemSparseRecord record = new ItemSparseRecord();
-		record.Id = (int)item.Entry;
+		var record = new ItemSparseRecord
+		{
+			Id = (int)item.Entry
+		};
 		UpdateItemSparseRecord(record, item);
 		ItemSparseRecordsStore.Add((uint)record.Id, record);
 		Log.Print(LogType.Storage, $"ItemSparse #{record.Id} created.", "GameData.cs");
@@ -3667,7 +3773,7 @@ public static class GameData
 		row.InventoryType = (byte)item.InventoryType;
 		row.OverallQualityId = (byte)item.Quality;
 		row.AmmoType = (byte)item.AmmoType;
-		for (int i = 0; i < item.StatsCount && i < 10; i++)
+		for (var i = 0; i < item.StatsCount && i < 10; i++)
 			row.StatModifierBonusAmount[i] = (short)Math.Clamp(item.StatValues[i], short.MinValue, short.MaxValue);
 		row.RequiredLevel = (sbyte)item.RequiredLevel;
 		if (ItemSparseRecordsStore.ContainsKey(item.Entry))
@@ -3678,9 +3784,11 @@ public static class GameData
 
 	public static ItemEffect AddItemEffectRecord(ItemTemplate item, byte slot)
 	{
-		ItemEffect record = new ItemEffect();
-		record.Id = (int)GetFirstFreeId(ItemEffectStore);
-		record.LegacySlotIndex = slot;
+		var record = new ItemEffect
+		{
+			Id = (int)GetFirstFreeId(ItemEffectStore),
+			LegacySlotIndex = slot
+		};
 		UpdateItemEffectRecord(record, item);
 		ItemEffectStore.Add((uint)record.Id, record);
 		Log.Print(LogType.Storage, $"ItemEffect #{record.Id} created for item #{item.Entry} slot #{slot}.", "GameData.cs");
@@ -3689,7 +3797,7 @@ public static class GameData
 
 	public static void UpdateItemEffectRecord(ItemEffect effect, ItemTemplate item)
 	{
-		byte i = effect.LegacySlotIndex;
+		var i = effect.LegacySlotIndex;
 		effect.TriggerType = (sbyte)item.TriggeredSpellTypes[i];
 		effect.Charges = (short)item.TriggeredSpellCharges[i];
 		effect.CoolDownMSec = item.TriggeredSpellCooldowns[i];
@@ -3712,8 +3820,10 @@ public static class GameData
 
 	public static ItemAppearance AddItemAppearanceRecord(ItemTemplate item)
 	{
-		ItemAppearance record = new ItemAppearance();
-		record.Id = (int)GetFirstFreeId(ItemAppearanceStore);
+		var record = new ItemAppearance
+		{
+			Id = (int)GetFirstFreeId(ItemAppearanceStore)
+		};
 		UpdateItemAppearanceRecord(record, item);
 		ItemAppearanceStore.Add((uint)record.Id, record);
 		Log.Print(LogType.Storage, $"ItemAppearance #{record.Id} created for DisplayID #{item.DisplayID}.", "GameData.cs");
@@ -3722,7 +3832,7 @@ public static class GameData
 
 	public static void UpdateItemAppearanceRecord(ItemAppearance appearance, ItemTemplate item)
 	{
-		int fileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
+		var fileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
 		appearance.DisplayType = 11;
 		appearance.ItemDisplayInfoID = (int)item.DisplayID;
 		appearance.DefaultIconFileDataID = fileDataId;
@@ -3735,8 +3845,10 @@ public static class GameData
 
 	public static ItemModifiedAppearance AddItemModifiedAppearanceRecord(ItemTemplate item)
 	{
-		ItemModifiedAppearance record = new ItemModifiedAppearance();
-		record.Id = (int)GetFirstFreeId(ItemModifiedAppearanceStore);
+		var record = new ItemModifiedAppearance
+		{
+			Id = (int)GetFirstFreeId(ItemModifiedAppearanceStore)
+		};
 		UpdateItemModifiedAppearanceRecord(record, item);
 		if (record.ItemID != item.Entry)
 		{
@@ -3750,7 +3862,7 @@ public static class GameData
 
 	public static void UpdateItemModifiedAppearanceRecord(ItemModifiedAppearance modAppearance, ItemTemplate item)
 	{
-		ItemAppearance appearance = GetItemAppearanceByDisplayId(item.DisplayID);
+		var appearance = GetItemAppearanceByDisplayId(item.DisplayID);
 		if (appearance == null)
 		{
 			Log.Print(LogType.Error, $"ItemModifiedAppearance #{modAppearance.Id} update failed: no ItemAppearance for DisplayID #{item.DisplayID}", "GameData.cs");
@@ -3786,47 +3898,49 @@ public static class GameData
 
 	public static void LoadCreatureDisplayInfoHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"CreatureDisplayInfo{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"CreatureDisplayInfo{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			ushort modelId = ushort.Parse(fields[1]);
-			ushort soundId = ushort.Parse(fields[2]);
-			sbyte sizeClass = sbyte.Parse(fields[3]);
-			float creatureModelScale = float.Parse(fields[4]);
-			byte creatureModelAlpha = byte.Parse(fields[5]);
-			byte bloodId = byte.Parse(fields[6]);
-			int extendedDisplayInfoId = int.Parse(fields[7]);
-			ushort nPCSoundId = ushort.Parse(fields[8]);
-			ushort particleColorId = ushort.Parse(fields[9]);
-			int portraitCreatureDisplayInfoId = int.Parse(fields[10]);
-			int portraitTextureFileDataId = int.Parse(fields[11]);
-			ushort objectEffectPackageId = ushort.Parse(fields[12]);
-			ushort animReplacementSetId = ushort.Parse(fields[13]);
-			byte flags = byte.Parse(fields[14]);
-			int stateSpellVisualKitId = int.Parse(fields[15]);
-			float playerOverrideScale = float.Parse(fields[16]);
-			float petInstanceScale = float.Parse(fields[17]);
-			sbyte unarmedWeaponType = sbyte.Parse(fields[18]);
-			int mountPoofSpellVisualKitId = int.Parse(fields[19]);
-			int dissolveEffectId = int.Parse(fields[20]);
-			sbyte gender = sbyte.Parse(fields[21]);
-			int dissolveOutEffectId = int.Parse(fields[22]);
-			sbyte creatureModelMinLod = sbyte.Parse(fields[23]);
-			int textureVariationFileDataId1 = int.Parse(fields[24]);
-			int textureVariationFileDataId2 = int.Parse(fields[25]);
-			int textureVariationFileDataId3 = int.Parse(fields[26]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.CreatureDisplayInfo;
-			record.HotfixId = 270000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var modelId = ushort.Parse(fields[1]);
+			var soundId = ushort.Parse(fields[2]);
+			var sizeClass = sbyte.Parse(fields[3]);
+			var creatureModelScale = float.Parse(fields[4]);
+			var creatureModelAlpha = byte.Parse(fields[5]);
+			var bloodId = byte.Parse(fields[6]);
+			var extendedDisplayInfoId = int.Parse(fields[7]);
+			var nPCSoundId = ushort.Parse(fields[8]);
+			var particleColorId = ushort.Parse(fields[9]);
+			var portraitCreatureDisplayInfoId = int.Parse(fields[10]);
+			var portraitTextureFileDataId = int.Parse(fields[11]);
+			var objectEffectPackageId = ushort.Parse(fields[12]);
+			var animReplacementSetId = ushort.Parse(fields[13]);
+			var flags = byte.Parse(fields[14]);
+			var stateSpellVisualKitId = int.Parse(fields[15]);
+			var playerOverrideScale = float.Parse(fields[16]);
+			var petInstanceScale = float.Parse(fields[17]);
+			var unarmedWeaponType = sbyte.Parse(fields[18]);
+			var mountPoofSpellVisualKitId = int.Parse(fields[19]);
+			var dissolveEffectId = int.Parse(fields[20]);
+			var gender = sbyte.Parse(fields[21]);
+			var dissolveOutEffectId = int.Parse(fields[22]);
+			var creatureModelMinLod = sbyte.Parse(fields[23]);
+			var textureVariationFileDataId1 = int.Parse(fields[24]);
+			var textureVariationFileDataId2 = int.Parse(fields[25]);
+			var textureVariationFileDataId3 = int.Parse(fields[26]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.CreatureDisplayInfo,
+				HotfixId = 270000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -3863,35 +3977,37 @@ public static class GameData
 
 	public static void LoadCreatureDisplayInfoExtraHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"CreatureDisplayInfoExtra{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"CreatureDisplayInfoExtra{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			sbyte displayRaceId = sbyte.Parse(fields[1]);
-			sbyte displaySexId = sbyte.Parse(fields[2]);
-			sbyte displayClassId = sbyte.Parse(fields[3]);
-			sbyte skinId = sbyte.Parse(fields[4]);
-			sbyte faceId = sbyte.Parse(fields[5]);
-			sbyte hairStyleId = sbyte.Parse(fields[6]);
-			sbyte hairColorId = sbyte.Parse(fields[7]);
-			sbyte facialHairId = sbyte.Parse(fields[8]);
-			sbyte flags = sbyte.Parse(fields[9]);
-			int bakeMaterialResourcesId = int.Parse(fields[10]);
-			int hDBakeMaterialResourcesId = int.Parse(fields[11]);
-			byte customDisplayOption1 = byte.Parse(fields[12]);
-			byte customDisplayOption2 = byte.Parse(fields[13]);
-			byte customDisplayOption3 = byte.Parse(fields[14]);
-			HotfixRecord record = new HotfixRecord();
-			record.TableHash = DB2Hash.CreatureDisplayInfoExtra;
-			record.HotfixId = 280000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var displayRaceId = sbyte.Parse(fields[1]);
+			var displaySexId = sbyte.Parse(fields[2]);
+			var displayClassId = sbyte.Parse(fields[3]);
+			var skinId = sbyte.Parse(fields[4]);
+			var faceId = sbyte.Parse(fields[5]);
+			var hairStyleId = sbyte.Parse(fields[6]);
+			var hairColorId = sbyte.Parse(fields[7]);
+			var facialHairId = sbyte.Parse(fields[8]);
+			var flags = sbyte.Parse(fields[9]);
+			var bakeMaterialResourcesId = int.Parse(fields[10]);
+			var hDBakeMaterialResourcesId = int.Parse(fields[11]);
+			var customDisplayOption1 = byte.Parse(fields[12]);
+			var customDisplayOption2 = byte.Parse(fields[13]);
+			var customDisplayOption3 = byte.Parse(fields[14]);
+			var record = new HotfixRecord
+			{
+				TableHash = DB2Hash.CreatureDisplayInfoExtra,
+				HotfixId = 280000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
@@ -3916,25 +4032,27 @@ public static class GameData
 
 	public static void LoadCreatureDisplayInfoOptionHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"CreatureDisplayInfoOption{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"CreatureDisplayInfoOption{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			int chrCustomizationOptionId = int.Parse(fields[1]);
-			int chrCustomizationChoiceId = int.Parse(fields[2]);
-			int creatureDisplayInfoExtraId = int.Parse(fields[3]);
-			HotfixRecord record = new HotfixRecord();
-			record.Status = HotfixStatus.Valid;
-			record.TableHash = DB2Hash.CreatureDisplayInfoOption;
-			record.HotfixId = 290000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var chrCustomizationOptionId = int.Parse(fields[1]);
+			var chrCustomizationChoiceId = int.Parse(fields[2]);
+			var creatureDisplayInfoExtraId = int.Parse(fields[3]);
+			var record = new HotfixRecord
+			{
+				Status = HotfixStatus.Valid,
+				TableHash = DB2Hash.CreatureDisplayInfoOption,
+				HotfixId = 290000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.HotfixContent.WriteInt32(chrCustomizationOptionId);
@@ -3946,31 +4064,33 @@ public static class GameData
 
 	public static void LoadItemEffectHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"ItemEffect{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"ItemEffect{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			byte legacySlotIndex = byte.Parse(fields[1]);
-			byte triggerType = byte.Parse(fields[2]);
-			short charges = short.Parse(fields[3]);
-			int coolDownMSec = int.Parse(fields[4]);
-			int categoryCoolDownMSec = int.Parse(fields[5]);
-			short spellCategoryId = short.Parse(fields[6]);
-			int spellId = int.Parse(fields[7]);
-			short chrSpecializationId = short.Parse(fields[8]);
-			int parentItemId = int.Parse(fields[9]);
-			HotfixRecord record = new HotfixRecord();
-			record.Status = HotfixStatus.Valid;
-			record.TableHash = DB2Hash.ItemEffect;
-			record.HotfixId = 250000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var legacySlotIndex = byte.Parse(fields[1]);
+			var triggerType = byte.Parse(fields[2]);
+			var charges = short.Parse(fields[3]);
+			var coolDownMSec = int.Parse(fields[4]);
+			var categoryCoolDownMSec = int.Parse(fields[5]);
+			var spellCategoryId = short.Parse(fields[6]);
+			var spellId = int.Parse(fields[7]);
+			var chrSpecializationId = short.Parse(fields[8]);
+			var parentItemId = int.Parse(fields[9]);
+			var record = new HotfixRecord
+			{
+				Status = HotfixStatus.Valid,
+				TableHash = DB2Hash.ItemEffect,
+				HotfixId = 250000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.HotfixContent.WriteUInt8(legacySlotIndex);
@@ -3988,51 +4108,53 @@ public static class GameData
 
 	public static void LoadItemDisplayInfoHotfixes()
 	{
-		string path = Path.Combine("CSV", "Hotfix", $"ItemDisplayInfo{ModernVersion.ExpansionVersion}.csv");
-		using TextFieldParser csvParser = new TextFieldParser(path);
+		var path = Path.Combine("CSV", "Hotfix", $"ItemDisplayInfo{ModernVersion.ExpansionVersion}.csv");
+		using var csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
 		csvParser.SetDelimiters(",");
 		csvParser.HasFieldsEnclosedInQuotes = false;
 		csvParser.ReadLine();
-		uint counter = 0u;
+		var counter = 0u;
 		while (!csvParser.EndOfData)
 		{
 			counter++;
-			string[] fields = csvParser.ReadFields();
-			uint id = uint.Parse(fields[0]);
-			int itemVisual = int.Parse(fields[1]);
-			int particleColorID = int.Parse(fields[2]);
-			uint itemRangedDisplayInfoID = uint.Parse(fields[3]);
-			uint overrideSwooshSoundKitID = uint.Parse(fields[4]);
-			int sheatheTransformMatrixID = int.Parse(fields[5]);
-			int stateSpellVisualKitID = int.Parse(fields[6]);
-			int sheathedSpellVisualKitID = int.Parse(fields[7]);
-			uint unsheathedSpellVisualKitID = uint.Parse(fields[8]);
-			int flags = int.Parse(fields[9]);
-			uint modelResourcesID1 = uint.Parse(fields[10]);
-			uint modelResourcesID2 = uint.Parse(fields[11]);
-			int modelMaterialResourcesID1 = int.Parse(fields[12]);
-			int modelMaterialResourcesID2 = int.Parse(fields[13]);
-			int modelType1 = int.Parse(fields[14]);
-			int modelType2 = int.Parse(fields[15]);
-			int geosetGroup1 = int.Parse(fields[16]);
-			int geosetGroup2 = int.Parse(fields[17]);
-			int geosetGroup3 = int.Parse(fields[18]);
-			int geosetGroup4 = int.Parse(fields[19]);
-			int geosetGroup5 = int.Parse(fields[20]);
-			int geosetGroup6 = int.Parse(fields[21]);
-			int attachmentGeosetGroup1 = int.Parse(fields[22]);
-			int attachmentGeosetGroup2 = int.Parse(fields[23]);
-			int attachmentGeosetGroup3 = int.Parse(fields[24]);
-			int attachmentGeosetGroup4 = int.Parse(fields[25]);
-			int attachmentGeosetGroup5 = int.Parse(fields[26]);
-			int attachmentGeosetGroup6 = int.Parse(fields[27]);
-			int helmetGeosetVis1 = int.Parse(fields[28]);
-			int helmetGeosetVis2 = int.Parse(fields[29]);
-			HotfixRecord record = new HotfixRecord();
-			record.Status = HotfixStatus.Valid;
-			record.TableHash = DB2Hash.ItemDisplayInfo;
-			record.HotfixId = 260000 + counter;
+			var fields = csvParser.ReadFields();
+			var id = uint.Parse(fields[0]);
+			var itemVisual = int.Parse(fields[1]);
+			var particleColorID = int.Parse(fields[2]);
+			var itemRangedDisplayInfoID = uint.Parse(fields[3]);
+			var overrideSwooshSoundKitID = uint.Parse(fields[4]);
+			var sheatheTransformMatrixID = int.Parse(fields[5]);
+			var stateSpellVisualKitID = int.Parse(fields[6]);
+			var sheathedSpellVisualKitID = int.Parse(fields[7]);
+			var unsheathedSpellVisualKitID = uint.Parse(fields[8]);
+			var flags = int.Parse(fields[9]);
+			var modelResourcesID1 = uint.Parse(fields[10]);
+			var modelResourcesID2 = uint.Parse(fields[11]);
+			var modelMaterialResourcesID1 = int.Parse(fields[12]);
+			var modelMaterialResourcesID2 = int.Parse(fields[13]);
+			var modelType1 = int.Parse(fields[14]);
+			var modelType2 = int.Parse(fields[15]);
+			var geosetGroup1 = int.Parse(fields[16]);
+			var geosetGroup2 = int.Parse(fields[17]);
+			var geosetGroup3 = int.Parse(fields[18]);
+			var geosetGroup4 = int.Parse(fields[19]);
+			var geosetGroup5 = int.Parse(fields[20]);
+			var geosetGroup6 = int.Parse(fields[21]);
+			var attachmentGeosetGroup1 = int.Parse(fields[22]);
+			var attachmentGeosetGroup2 = int.Parse(fields[23]);
+			var attachmentGeosetGroup3 = int.Parse(fields[24]);
+			var attachmentGeosetGroup4 = int.Parse(fields[25]);
+			var attachmentGeosetGroup5 = int.Parse(fields[26]);
+			var attachmentGeosetGroup6 = int.Parse(fields[27]);
+			var helmetGeosetVis1 = int.Parse(fields[28]);
+			var helmetGeosetVis2 = int.Parse(fields[29]);
+			var record = new HotfixRecord
+			{
+				Status = HotfixStatus.Valid,
+				TableHash = DB2Hash.ItemDisplayInfo,
+				HotfixId = 260000 + counter
+			};
 			record.UniqueId = record.HotfixId;
 			record.RecordId = id;
 			record.HotfixContent.WriteInt32(itemVisual);

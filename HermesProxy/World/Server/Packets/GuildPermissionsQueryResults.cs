@@ -24,7 +24,7 @@ public class GuildPermissionsQueryResults : ServerPacket
         _worldPacket.WriteUInt32(Flags);
         _worldPacket.WriteUInt32(WithdrawGoldLimit);
         _worldPacket.WriteUInt32(RemainingWithdrawGoldLimit);
-        for (int i = 0; i < 6; i++)
+        for (var i = 0; i < 6; i++)
         {
             _worldPacket.WriteUInt32(TabPermissions[i]);
         }

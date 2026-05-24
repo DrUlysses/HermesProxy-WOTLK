@@ -32,7 +32,7 @@ public class AccountMountUpdate : ServerPacket
 	{
 		_worldPacket.WriteBit(true); // IsFullUpdate
 		_worldPacket.WriteUInt32((uint)MountSpellIDs.Count);
-		foreach (uint spellId in MountSpellIDs)
+		foreach (var spellId in MountSpellIDs)
 		{
 			_worldPacket.WriteInt32((int)spellId);
 			_worldPacket.WriteBits(0u, 4); // flags: none

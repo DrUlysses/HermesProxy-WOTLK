@@ -16,7 +16,7 @@ public class AlterAppearance : ClientPacket
 
 	public override void Read()
 	{
-		uint customizationCount = _worldPacket.ReadUInt32();
+		var customizationCount = _worldPacket.ReadUInt32();
 		NewSex = _worldPacket.ReadUInt8();
 		CustomizedRace = _worldPacket.ReadInt32();
 		CustomizedChrModelID = _worldPacket.ReadInt32();

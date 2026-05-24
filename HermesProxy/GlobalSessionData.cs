@@ -77,7 +77,7 @@ public class GlobalSessionData
 	{
 		if (GuildRanks.ContainsKey(guildId))
 		{
-			for (int i = 0; i < GuildRanks[guildId].Count; i++)
+			for (var i = 0; i < GuildRanks[guildId].Count; i++)
 			{
 				if (GuildRanks[guildId][i] == name)
 				{
@@ -115,7 +115,7 @@ public class GlobalSessionData
 		{
 			return GuildsByName[name];
 		}
-		WowGuid128 guid = WowGuid128.Create(HighGuidType703.Guild, (ulong)(GuildsByName.Count + 1));
+		var guid = WowGuid128.Create(HighGuidType703.Guild, (ulong)(GuildsByName.Count + 1));
 		GuildsByName.Add(name, guid);
 		return guid;
 	}
@@ -170,17 +170,17 @@ public class GlobalSessionData
 
 	public void SendHermesTextMessage(string message, bool isError = false)
 	{
-		WorldSocket socket = InstanceSocket;
+		var socket = InstanceSocket;
 		if (socket != null)
 		{
-			StringBuilder wholeMessage = new StringBuilder();
+			var wholeMessage = new StringBuilder();
 			wholeMessage.Append("|cFF111111[|r|cFF33DD22HermesProxy|r|cFF111111]|r ");
 			if (isError)
 			{
 				wholeMessage.Append("|cFFFF0000");
 			}
 			wholeMessage.Append(message);
-			ChatPkt chatPkt = new ChatPkt(this, ChatMessageTypeModern.System, wholeMessage.ToString());
+			var chatPkt = new ChatPkt(this, ChatMessageTypeModern.System, wholeMessage.ToString());
 			socket.SendPacket(chatPkt);
 		}
 	}

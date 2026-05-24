@@ -22,7 +22,7 @@ public class BattlefieldStatusFailed : ServerPacket
 	protected override void Write()
 	{
 		Ticket.Write(_worldPacket);
-		ulong queueID = BattlefieldListId | 0x1F10000000000000L;
+		var queueID = BattlefieldListId | 0x1F10000000000000L;
 		_worldPacket.WriteUInt64(queueID);
 		_worldPacket.WriteInt32(Reason);
 		_worldPacket.WritePackedGuid128(ClientID);

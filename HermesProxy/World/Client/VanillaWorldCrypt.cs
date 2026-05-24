@@ -35,7 +35,7 @@ public class VanillaWorldCrypt : LegacyWorldCrypt
 			while (t < 4u)
 			{
 				m_recv_i %= (byte)m_key.Count();
-				byte x = (byte)((data[t] - m_recv_j) ^ m_key[m_recv_i]);
+				var x = (byte)((data[t] - m_recv_j) ^ m_key[m_recv_i]);
 				m_recv_i++;
 				m_recv_j = data[t];
 				data[t] = x;
@@ -52,7 +52,7 @@ public class VanillaWorldCrypt : LegacyWorldCrypt
 			while (t < 6u)
 			{
 				m_send_i %= (byte)m_key.Count();
-				byte x = (byte)((data[t] ^ m_key[m_send_i]) + m_send_j);
+				var x = (byte)((data[t] ^ m_key[m_send_i]) + m_send_j);
 				m_send_i++;
 				data[t] = (m_send_j = x);
 				t++;

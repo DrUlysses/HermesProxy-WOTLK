@@ -16,7 +16,7 @@ public class LFGListUpdateBlacklist : ServerPacket
 	protected override void Write()
 	{
 		_worldPacket.WriteInt32(Blacklist.Count);
-		foreach (LFGListBlacklistEntry item in Blacklist)
+		foreach (var item in Blacklist)
 		{
 			item.Write(_worldPacket);
 		}
@@ -24,7 +24,7 @@ public class LFGListUpdateBlacklist : ServerPacket
 
 	public void AddBlacklist(int activity, int reason)
 	{
-		LFGListBlacklistEntry entry = new LFGListBlacklistEntry
+		var entry = new LFGListBlacklistEntry
 		{
 			ActivityID = activity,
 			Reason = reason

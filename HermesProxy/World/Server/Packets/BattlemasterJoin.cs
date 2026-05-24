@@ -23,7 +23,7 @@ internal class BattlemasterJoin : ClientPacket
 
 	public override void Read()
 	{
-		long queueId = _worldPacket.ReadInt64();
+		var queueId = _worldPacket.ReadInt64();
 		BattlefieldListId = (uint)(queueId & -2238289014803136513L);
 		Roles = _worldPacket.ReadUInt8();
 		BlacklistMap[0] = _worldPacket.ReadInt32();

@@ -22,7 +22,7 @@ public class VendorInventory : ServerPacket
 		_worldPacket.WritePackedGuid128(VendorGUID);
 		_worldPacket.WriteUInt8(Reason);
 		_worldPacket.WriteInt32(Items.Count);
-		foreach (VendorItem item in Items)
+		foreach (var item in Items)
 		{
 			item.Write(_worldPacket);
 		}

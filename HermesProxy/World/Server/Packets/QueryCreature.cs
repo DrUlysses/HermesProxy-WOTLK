@@ -24,7 +24,7 @@ public class QueryCreature : ClientPacket
 		}
 		try
 		{
-			WowGuid128 packedGuid = _worldPacket.ReadPackedGuid128();
+			var packedGuid = _worldPacket.ReadPackedGuid128();
 			if (!packedGuid.IsEmpty())
 			{
 				Guid = packedGuid;

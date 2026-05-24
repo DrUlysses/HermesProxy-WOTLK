@@ -22,15 +22,15 @@ public class SupercededSpells : ServerPacket
 		_worldPacket.WriteInt32(SpellID.Count);
 		_worldPacket.WriteInt32(Superceded.Count);
 		_worldPacket.WriteInt32(FavoriteSpellID.Count);
-		foreach (uint spellId in SpellID)
+		foreach (var spellId in SpellID)
 		{
 			_worldPacket.WriteUInt32(spellId);
 		}
-		foreach (uint spellId2 in Superceded)
+		foreach (var spellId2 in Superceded)
 		{
 			_worldPacket.WriteUInt32(spellId2);
 		}
-		foreach (int spellId3 in FavoriteSpellID)
+		foreach (var spellId3 in FavoriteSpellID)
 		{
 			_worldPacket.WriteInt32(spellId3);
 		}

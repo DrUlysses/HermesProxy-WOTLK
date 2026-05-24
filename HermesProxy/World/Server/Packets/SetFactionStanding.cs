@@ -24,7 +24,7 @@ internal class SetFactionStanding : ServerPacket
 		_worldPacket.WriteFloat(ReferAFriendBonus);
 		_worldPacket.WriteFloat(BonusFromAchievementSystem);
 		_worldPacket.WriteInt32(Factions.Count);
-		foreach (FactionStandingData faction in Factions)
+		foreach (var faction in Factions)
 		{
 			faction.Write(_worldPacket);
 		}

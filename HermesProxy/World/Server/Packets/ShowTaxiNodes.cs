@@ -20,10 +20,10 @@ public class ShowTaxiNodes : ServerPacket
 	{
 		_worldPacket.WriteBit(WindowInfo != null);
 		_worldPacket.FlushBits();
-		List<byte> canLandNodes = new List<byte>(CanLandNodes);
+		var canLandNodes = new List<byte>(CanLandNodes);
 		PadToUInt64Alignment(canLandNodes);
 		_worldPacket.WriteInt32(canLandNodes.Count / 8);
-		List<byte> canUseNodes = new List<byte>(CanUseNodes);
+		var canUseNodes = new List<byte>(CanUseNodes);
 		PadToUInt64Alignment(canUseNodes);
 		_worldPacket.WriteInt32(canUseNodes.Count / 8);
 		if (WindowInfo != null)
@@ -31,11 +31,11 @@ public class ShowTaxiNodes : ServerPacket
 			_worldPacket.WritePackedGuid128(WindowInfo.UnitGUID);
 			_worldPacket.WriteUInt32(WindowInfo.CurrentNode);
 		}
-		foreach (byte node in canLandNodes)
+		foreach (var node in canLandNodes)
 		{
 			_worldPacket.WriteUInt8(node);
 		}
-		foreach (byte node2 in canUseNodes)
+		foreach (var node2 in canUseNodes)
 		{
 			_worldPacket.WriteUInt8(node2);
 		}
@@ -43,10 +43,10 @@ public class ShowTaxiNodes : ServerPacket
 
 	private void PadToUInt64Alignment(List<byte> nodes)
 	{
-		int remainder = nodes.Count % 8;
+		var remainder = nodes.Count % 8;
 		if (remainder != 0)
 		{
-			for (int i = 0; i < 8 - remainder; i++)
+			for (var i = 0; i < 8 - remainder; i++)
 			{
 				nodes.Add(0);
 			}

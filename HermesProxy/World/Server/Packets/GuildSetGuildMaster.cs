@@ -11,7 +11,7 @@ public class GuildSetGuildMaster : ClientPacket
 
 	public override void Read()
 	{
-		uint nameLen = _worldPacket.ReadBits<uint>(9);
+		var nameLen = _worldPacket.ReadBits<uint>(9);
 		NewMasterName = _worldPacket.ReadString(nameLen);
 	}
 }

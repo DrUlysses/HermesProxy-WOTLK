@@ -16,14 +16,14 @@ internal class HotfixConnect : ServerPacket
 	protected override void Write()
 	{
 		_worldPacket.WriteInt32(Hotfixes.Count);
-		uint totalDataSize = 0u;
-		foreach (HotfixRecord hotfix in Hotfixes)
+		var totalDataSize = 0u;
+		foreach (var hotfix in Hotfixes)
 		{
 			totalDataSize += hotfix.HotfixContent.GetSize();
 			hotfix.WriteHotFixMessageContent(_worldPacket);
 		}
 		_worldPacket.WriteUInt32(totalDataSize);
-		foreach (HotfixRecord hotfix2 in Hotfixes)
+		foreach (var hotfix2 in Hotfixes)
 		{
 			_worldPacket.WriteBytes(hotfix2.HotfixContent);
 		}

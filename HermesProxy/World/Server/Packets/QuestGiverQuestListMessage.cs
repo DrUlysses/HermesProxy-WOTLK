@@ -29,7 +29,7 @@ public class QuestGiverQuestListMessage : ServerPacket
 		_worldPacket.WriteInt32(QuestOptions.Count);
 		_worldPacket.WriteBits(Greeting.GetByteCount(), 11);
 		_worldPacket.FlushBits();
-		foreach (ClientGossipQuest quest in QuestOptions)
+		foreach (var quest in QuestOptions)
 		{
 			quest.Write(_worldPacket);
 		}

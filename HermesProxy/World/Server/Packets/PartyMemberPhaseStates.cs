@@ -28,7 +28,7 @@ public class PartyMemberPhaseStates
 		data.WriteUInt32(PhaseShiftFlags);
 		data.WriteInt32(Phases.Count);
 		data.WritePackedGuid128(PersonalGUID);
-		foreach (PartyMemberPhase phase2 in Phases)
+		foreach (var phase2 in Phases)
 		{
 			phase2.Write(data);
 		}

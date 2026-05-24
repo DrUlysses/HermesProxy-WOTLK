@@ -60,14 +60,14 @@ public class AuthClient
 		_response = new TaskCompletionSource<AuthResult>();
 		_hasRealmlist = new TaskCompletionSource();
 		_realmlistRequestIsPending = false;
-		string authstring = _username + ":" + password;
+		var authstring = _username + ":" + password;
 		_passwordHash = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(authstring.ToUpper()));
 		try
 		{
-			IPAddress serverIpAddress = NetworkUtils.ResolveOrDirectIPv4(Settings.ServerAddress);
+			var serverIpAddress = NetworkUtils.ResolveOrDirectIPv4(Settings.ServerAddress);
 			Log.PrintNet(LogType.Network, LogNetDir.P2S, $"Connecting to auth server... (realmlist addr: {Settings.ServerAddress}:{Settings.ServerPort}) (resolved as: {serverIpAddress}:{Settings.ServerPort})", "Auth\\AuthClient.cs");
 			_clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			IPEndPoint endPoint = new IPEndPoint(serverIpAddress, Settings.ServerPort);
+			var endPoint = new IPEndPoint(serverIpAddress, Settings.ServerPort);
 			_clientSocket.BeginConnect(endPoint, ConnectCallback, null);
 		}
 		catch (Exception ex)
@@ -86,10 +86,10 @@ public class AuthClient
 		_realmlistRequestIsPending = false;
 		try
 		{
-			IPAddress serverIpAddress = NetworkUtils.ResolveOrDirectIPv4(Settings.ServerAddress);
+			var serverIpAddress = NetworkUtils.ResolveOrDirectIPv4(Settings.ServerAddress);
 			Log.PrintNet(LogType.Network, LogNetDir.P2S, $"Reconnecting to auth server... (realmlist addr: {Settings.ServerAddress}:{Settings.ServerPort}) (resolved as: {serverIpAddress}:{Settings.ServerPort})", "Auth\\AuthClient.cs");
 			_clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-			IPEndPoint endPoint = new IPEndPoint(serverIpAddress, Settings.ServerPort);
+			var endPoint = new IPEndPoint(serverIpAddress, Settings.ServerPort);
 			_clientSocket.BeginConnect(endPoint, ConnectCallback, null);
 		}
 		catch (Exception ex)
@@ -131,7 +131,7 @@ public class AuthClient
 		{
 			_clientSocket.EndConnect(AR);
 			_clientSocket.ReceiveBufferSize = 65535;
-			byte[] buffer = new byte[_clientSocket.ReceiveBufferSize];
+			var buffer = new byte[_clientSocket.ReceiveBufferSize];
 			_clientSocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ReceiveCallback, buffer);
 			SendLogonChallenge(reconnect: false);
 		}
@@ -148,7 +148,7 @@ public class AuthClient
 		{
 			_clientSocket.EndConnect(AR);
 			_clientSocket.ReceiveBufferSize = 65535;
-			byte[] buffer = new byte[_clientSocket.ReceiveBufferSize];
+			var buffer = new byte[_clientSocket.ReceiveBufferSize];
 			_clientSocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ReceiveCallback, buffer);
 			SendLogonChallenge(reconnect: true);
 		}
@@ -163,16 +163,16 @@ public class AuthClient
 	{
 		try
 		{
-			int received = _clientSocket.EndReceive(AR);
+			var received = _clientSocket.EndReceive(AR);
 			if (received == 0)
 			{
 				SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
 				Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By Server", "Auth\\AuthClient.cs");
 				return;
 			}
-			byte[] oldBuffer = (byte[])AR.AsyncState;
+			var oldBuffer = (byte[])AR.AsyncState;
 			HandlePacket(oldBuffer, received);
-			byte[] newBuffer = new byte[_clientSocket.ReceiveBufferSize];
+			var newBuffer = new byte[_clientSocket.ReceiveBufferSize];
 			_clientSocket.BeginReceive(newBuffer, 0, newBuffer.Length, SocketFlags.None, ReceiveCallback, newBuffer);
 		}
 		catch (Exception ex)
@@ -210,8 +210,8 @@ public class AuthClient
 
 	private void HandlePacket(byte[] buffer, int size)
 	{
-		ByteBuffer packet = new ByteBuffer(buffer);
-		AuthCommand opcode = (AuthCommand)packet.ReadUInt8();
+		var packet = new ByteBuffer(buffer);
+		var opcode = (AuthCommand)packet.ReadUInt8();
 		Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Received opcode {opcode} size {size}.", "Auth\\AuthClient.cs");
 		switch (opcode)
 		{
@@ -237,7 +237,7 @@ public class AuthClient
 
 	private void SendLogonChallenge(bool reconnect)
 	{
-		ByteBuffer buffer = new ByteBuffer();
+		var buffer = new ByteBuffer();
 		buffer.WriteUInt8((byte)(reconnect ? 2 : 0));
 		buffer.WriteUInt8((byte)((LegacyVersion.ExpansionVersion > 1) ? 8u : 3u));
 		buffer.WriteUInt16((ushort)(_username.Length + 30));
@@ -261,90 +261,90 @@ public class AuthClient
 
 	private void HandleLogonChallenge(ByteBuffer packet)
 	{
-		byte unk2 = packet.ReadUInt8();
-		AuthResult error = (AuthResult)packet.ReadUInt8();
+		var unk2 = packet.ReadUInt8();
+		var error = (AuthResult)packet.ReadUInt8();
 		if (error != AuthResult.SUCCESS)
 		{
 			Log.Print(LogType.Error, $"Login failed. Reason: {error}", "Auth\\AuthClient.cs");
 			SetAuthResponse(error);
 			return;
 		}
-		byte[] challenge_B = packet.ReadBytes(32u);
-		byte challenge_gLen = packet.ReadUInt8();
-		byte[] challenge_g = packet.ReadBytes(1u);
-		byte challenge_nLen = packet.ReadUInt8();
-		byte[] challenge_N = packet.ReadBytes(32u);
-		byte[] challenge_salt = packet.ReadBytes(32u);
-		byte[] challenge_version = packet.ReadBytes(16u);
-		byte challenge_securityFlags = packet.ReadUInt8();
-		BigInteger k = new BigInteger(3);
-		BigInteger B = challenge_B.ToBigInteger();
-		BigInteger g = challenge_g.ToBigInteger();
-		BigInteger N = challenge_N.ToBigInteger();
-		BigInteger salt = challenge_salt.ToBigInteger();
-		BigInteger versionChallenge = challenge_version.ToBigInteger();
-		BigInteger x = HashAlgorithm.SHA1.Hash(challenge_salt, _passwordHash).ToBigInteger();
-		RandomNumberGenerator rand = RandomNumberGenerator.Create();
+		var challenge_B = packet.ReadBytes(32u);
+		var challenge_gLen = packet.ReadUInt8();
+		var challenge_g = packet.ReadBytes(1u);
+		var challenge_nLen = packet.ReadUInt8();
+		var challenge_N = packet.ReadBytes(32u);
+		var challenge_salt = packet.ReadBytes(32u);
+		var challenge_version = packet.ReadBytes(16u);
+		var challenge_securityFlags = packet.ReadUInt8();
+		var k = new BigInteger(3);
+		var B = challenge_B.ToBigInteger();
+		var g = challenge_g.ToBigInteger();
+		var N = challenge_N.ToBigInteger();
+		var salt = challenge_salt.ToBigInteger();
+		var versionChallenge = challenge_version.ToBigInteger();
+		var x = HashAlgorithm.SHA1.Hash(challenge_salt, _passwordHash).ToBigInteger();
+		var rand = RandomNumberGenerator.Create();
 		BigInteger a;
 		BigInteger A;
 		do
 		{
-			byte[] randBytes = new byte[19];
+			var randBytes = new byte[19];
 			rand.GetBytes(randBytes);
 			a = randBytes.ToBigInteger();
 			A = g.ModPow(a, N);
 		}
 		while (A.ModPow(1, N) == 0L);
-		BigInteger u = HashAlgorithm.SHA1.Hash(A.ToCleanByteArray(), B.ToCleanByteArray()).ToBigInteger();
-		BigInteger S = ((B + k * (N - g.ModPow(x, N))) % N).ModPow(a + u * x, N);
-		byte[] sData = S.ToCleanByteArray();
+		var u = HashAlgorithm.SHA1.Hash(A.ToCleanByteArray(), B.ToCleanByteArray()).ToBigInteger();
+		var S = ((B + k * (N - g.ModPow(x, N))) % N).ModPow(a + u * x, N);
+		var sData = S.ToCleanByteArray();
 		if (sData.Length < 32)
 		{
-			byte[] tmpBuffer = new byte[32];
+			var tmpBuffer = new byte[32];
 			Buffer.BlockCopy(sData, 0, tmpBuffer, 32 - sData.Length, sData.Length);
 			sData = tmpBuffer;
 		}
-		byte[] keyData = new byte[40];
-		byte[] temp = new byte[16];
-		for (int i = 0; i < 16; i++)
+		var keyData = new byte[40];
+		var temp = new byte[16];
+		for (var i = 0; i < 16; i++)
 		{
 			temp[i] = sData[i * 2];
 		}
-		byte[] keyHash = HashAlgorithm.SHA1.Hash(temp);
-		for (int j = 0; j < 20; j++)
+		var keyHash = HashAlgorithm.SHA1.Hash(temp);
+		for (var j = 0; j < 20; j++)
 		{
 			keyData[j * 2] = keyHash[j];
 		}
-		for (int l = 0; l < 16; l++)
+		for (var l = 0; l < 16; l++)
 		{
 			temp[l] = sData[l * 2 + 1];
 		}
 		keyHash = HashAlgorithm.SHA1.Hash(temp);
-		for (int m = 0; m < 20; m++)
+		for (var m = 0; m < 20; m++)
 		{
 			keyData[m * 2 + 1] = keyHash[m];
 		}
 		_key = keyData.ToBigInteger();
-		byte[] gNHash = new byte[20];
-		byte[] nHash = HashAlgorithm.SHA1.Hash(N.ToCleanByteArray());
-		for (int n = 0; n < 20; n++)
+		var gNHash = new byte[20];
+		var nHash = HashAlgorithm.SHA1.Hash(N.ToCleanByteArray());
+		for (var n = 0; n < 20; n++)
 		{
 			gNHash[n] = nHash[n];
 		}
-		byte[] gHash = HashAlgorithm.SHA1.Hash(g.ToCleanByteArray());
-		for (int num = 0; num < 20; num++)
+		var gHash = HashAlgorithm.SHA1.Hash(g.ToCleanByteArray());
+		for (var num = 0; num < 20; num++)
 		{
 			gNHash[num] ^= gHash[num];
 		}
-		byte[] userHash = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(_username.ToUpper()));
-		byte[] m1Hash = HashAlgorithm.SHA1.Hash(gNHash, userHash, challenge_salt, A.ToCleanByteArray(), B.ToCleanByteArray(), _key.ToCleanByteArray());
+		var userHash = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(_username.ToUpper()));
+		var m1Hash = HashAlgorithm.SHA1.Hash(gNHash, userHash, challenge_salt, A.ToCleanByteArray(), B.ToCleanByteArray(), _key.ToCleanByteArray());
 		_m2 = HashAlgorithm.SHA1.Hash(A.ToCleanByteArray(), m1Hash, keyData);
 		SendLogonProof(A.ToCleanByteArray(), m1Hash, new byte[20]);
 	}
 
 	private void SendLogonProof(byte[] A, byte[] M1, byte[] crc)
 	{
-		ByteBuffer buffer = new ByteBuffer();
+		var buffer = new ByteBuffer();
 		buffer.WriteUInt8(1);
 		buffer.WriteBytes(A);
 		buffer.WriteBytes(M1);
@@ -357,16 +357,16 @@ public class AuthClient
 
 	private void HandleLogonProof(ByteBuffer packet)
 	{
-		AuthResult error = (AuthResult)packet.ReadUInt8();
+		var error = (AuthResult)packet.ReadUInt8();
 		if (error != AuthResult.SUCCESS)
 		{
 			Log.Print(LogType.Error, $"Login failed. Reason: {error}", "Auth\\AuthClient.cs");
 			SetAuthResponse(error);
 			return;
 		}
-		byte[] M2 = packet.ReadBytes(20u);
-		uint accountFlags = 0u;
-		uint surveyId = 0u;
+		var M2 = packet.ReadBytes(20u);
+		var accountFlags = 0u;
+		var surveyId = 0u;
 		ushort loginFlags = 0;
 		if (Settings.ServerBuild < ClientVersionBuild.V2_0_3_6299)
 		{
@@ -383,8 +383,8 @@ public class AuthClient
 			surveyId = packet.ReadUInt32();
 			loginFlags = packet.ReadUInt16();
 		}
-		bool equal = _m2 != null && _m2.Length == 20;
-		int i = 0;
+		var equal = _m2 != null && _m2.Length == 20;
+		var i = 0;
 		while (equal && i < _m2.Length && (equal = _m2[i] == M2[i]))
 		{
 			i++;
@@ -404,19 +404,19 @@ public class AuthClient
 	public void HandleReconnectChallenge(ByteBuffer packet)
 	{
 		packet.ReadUInt8();
-		byte[] reconnectProof = packet.ReadBytes(16u);
+		var reconnectProof = packet.ReadBytes(16u);
 		packet.ReadBytes(16u);
-		RandomNumberGenerator rand = RandomNumberGenerator.Create();
-		byte[] R1 = new byte[16];
+		var rand = RandomNumberGenerator.Create();
+		var R1 = new byte[16];
 		rand.GetBytes(R1);
-		byte[] R2 = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(_username), R1, reconnectProof, GetSessionKey());
-		byte[] R3 = HashAlgorithm.SHA1.Hash(R1, new byte[20]);
+		var R2 = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(_username), R1, reconnectProof, GetSessionKey());
+		var R3 = HashAlgorithm.SHA1.Hash(R1, new byte[20]);
 		SendReconnectProof(R1, R2, R3);
 	}
 
 	private void SendReconnectProof(byte[] R1, byte[] R2, byte[] R3)
 	{
-		ByteBuffer buffer = new ByteBuffer();
+		var buffer = new ByteBuffer();
 		buffer.WriteUInt8(3);
 		buffer.WriteBytes(R1);
 		buffer.WriteBytes(R2);
@@ -427,7 +427,7 @@ public class AuthClient
 
 	public void HandleReconnectProof(ByteBuffer packet)
 	{
-		AuthResult error = (AuthResult)packet.ReadUInt8();
+		var error = (AuthResult)packet.ReadUInt8();
 		if (error != AuthResult.SUCCESS)
 		{
 			Log.Print(LogType.Error, $"Reconnect failed. Reason: {error}", "Auth\\AuthClient.cs");
@@ -442,9 +442,9 @@ public class AuthClient
 	public void SendRealmListUpdateRequest()
 	{
 		Log.Print(LogType.Server, "Requesting RealmList update for " + _username, "Auth\\AuthClient.cs");
-		ByteBuffer buffer = new ByteBuffer();
+		var buffer = new ByteBuffer();
 		buffer.WriteUInt8(16);
-		for (int i = 0; i < 4; i++)
+		for (var i = 0; i < 4; i++)
 		{
 			buffer.WriteUInt8(0);
 		}
@@ -459,10 +459,10 @@ public class AuthClient
 		ushort realmsCount = 0;
 		realmsCount = ((Settings.ServerBuild >= ClientVersionBuild.V2_0_3_6299) ? packet.ReadUInt16() : packet.ReadUInt8());
 		Log.Print(LogType.Network, $"Received {realmsCount} realms.", "AuthClient.cs");
-		List<RealmInfo> realmList = new List<RealmInfo>();
+		var realmList = new List<RealmInfo>();
 		for (ushort i = 0; i < realmsCount; i++)
 		{
-			RealmInfo realmInfo = new RealmInfo();
+			var realmInfo = new RealmInfo();
 			if (Settings.ServerBuild < ClientVersionBuild.V2_0_3_6299)
 			{
 				realmInfo.Type = (RealmType)packet.ReadUInt32();
@@ -474,8 +474,8 @@ public class AuthClient
 			}
 			realmInfo.Flags = (RealmFlags)packet.ReadUInt8();
 			realmInfo.Name = packet.ReadCString();
-			string addressAndPort = packet.ReadCString();
-			string[] strArr = addressAndPort.Split(':');
+			var addressAndPort = packet.ReadCString();
+			var strArr = addressAndPort.Split(':');
 			realmInfo.Address = strArr[0].Trim();
 			realmInfo.Port = ushort.Parse(strArr[1]);
 			realmInfo.Population = packet.ReadFloat();

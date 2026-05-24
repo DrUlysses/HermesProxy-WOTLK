@@ -25,11 +25,11 @@ public class ConfigurationParser
 			{
 				throw new FileNotFoundException("File '" + configFile + "' was not found.");
 			}
-			ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap
+			var fileMap = new ExeConfigurationFileMap
 			{
 				ExeConfigFilename = configFile
 			};
-			System.Configuration.Configuration config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+			var config = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
 			settings = ((AppSettingsSection)config.Sections.Get("appSettings")).Settings;
 		}
 		catch
@@ -37,7 +37,7 @@ public class ConfigurationParser
 			Log.Print(LogType.Error, "Fail to load config file '" + configFile + "'", "ConfigurationParser.cs");
 			throw;
 		}
-		foreach (KeyValuePair<string, string> pair in overwrittenValues)
+		foreach (var pair in overwrittenValues)
 		{
 			settings.Remove(pair.Key);
 			settings.Add(pair.Key, pair.Value);
@@ -52,13 +52,13 @@ public class ConfigurationParser
 
 	public string[] GetStringList(string key, string[] defValue)
 	{
-		KeyValueConfigurationElement s = _settingsCollection[key];
+		var s = _settingsCollection[key];
 		if (s?.Value == null)
 		{
 			return defValue;
 		}
-		string[] arr = s.Value.Split(new char[1] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-		for (int i = 0; i < arr.Length; i++)
+		var arr = s.Value.Split(new char[1] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+		for (var i = 0; i < arr.Length; i++)
 		{
 			arr[i] = arr[i].Trim();
 		}
@@ -67,7 +67,7 @@ public class ConfigurationParser
 
 	public bool GetBoolean(string key, bool defValue)
 	{
-		KeyValueConfigurationElement s = _settingsCollection[key];
+		var s = _settingsCollection[key];
 		if (s?.Value == null)
 		{
 			return defValue;
@@ -82,7 +82,7 @@ public class ConfigurationParser
 
 	public int GetInt(string key, int defValue)
 	{
-		KeyValueConfigurationElement s = _settingsCollection[key];
+		var s = _settingsCollection[key];
 		if (string.IsNullOrEmpty(s?.Value))
 		{
 			return defValue;
@@ -97,7 +97,7 @@ public class ConfigurationParser
 
 	public TEnum GetEnum<TEnum>(string key, TEnum defValue) where TEnum : struct
 	{
-		KeyValueConfigurationElement s = _settingsCollection[key];
+		var s = _settingsCollection[key];
 		if (string.IsNullOrEmpty(s?.Value))
 		{
 			return defValue;
@@ -121,7 +121,7 @@ public class ConfigurationParser
 
 	public byte[] GetByteArray(string key, byte[] defValue)
 	{
-		KeyValueConfigurationElement s = _settingsCollection[key];
+		var s = _settingsCollection[key];
 		if (string.IsNullOrWhiteSpace(s?.Value))
 		{
 			return defValue;

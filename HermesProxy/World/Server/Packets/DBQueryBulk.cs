@@ -17,8 +17,8 @@ internal class DBQueryBulk : ClientPacket
 	public override void Read()
 	{
 		TableHash = (DB2Hash)_worldPacket.ReadUInt32();
-		uint count = _worldPacket.ReadBits<uint>(13);
-		for (uint i = 0u; i < count; i++)
+		var count = _worldPacket.ReadBits<uint>(13);
+		for (var i = 0u; i < count; i++)
 		{
 			Queries.Add(_worldPacket.ReadUInt32());
 		}

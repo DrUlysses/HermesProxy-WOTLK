@@ -43,7 +43,7 @@ namespace Framework.Networking
             _threadCount = threadCount;
             _threads = new NetworkThread<TSocketType>[GetNetworkThreadCount()];
 
-            for (int i = 0; i < _threadCount; ++i)
+            for (var i = 0; i < _threadCount; ++i)
             {
                 _threads[i] = new NetworkThread<TSocketType>();
                 _threads[i].Start();
@@ -59,7 +59,7 @@ namespace Framework.Networking
             Acceptor.Close();
 
             if (_threadCount != 0)
-                for (int i = 0; i < _threadCount; ++i)
+                for (var i = 0; i < _threadCount; ++i)
                     _threads[i].Stop();
 
             Wait();
@@ -72,7 +72,7 @@ namespace Framework.Networking
         void Wait()
         {
             if (_threadCount != 0)
-                for (int i = 0; i < _threadCount; ++i)
+                for (var i = 0; i < _threadCount; ++i)
                     _threads[i].Wait();
         }
 
@@ -80,7 +80,7 @@ namespace Framework.Networking
         {
             try
             {
-                TSocketType newSocket = (TSocketType)Activator.CreateInstance(typeof(TSocketType), sock);
+                var newSocket = (TSocketType)Activator.CreateInstance(typeof(TSocketType), sock);
                 newSocket.Accept();
 
                 _threads[SelectThreadWithMinConnections()].AddSocket(newSocket);

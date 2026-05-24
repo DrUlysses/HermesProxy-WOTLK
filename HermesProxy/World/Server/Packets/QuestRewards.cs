@@ -52,7 +52,7 @@ public class QuestRewards
 
 	public QuestRewards()
 	{
-		for (int i = 0; i < 6; i++)
+		for (var i = 0; i < 6; i++)
 		{
 			ChoiceItems[i] = new QuestChoiceItem();
 		}
@@ -62,7 +62,7 @@ public class QuestRewards
 	{
 		data.WriteUInt32(ChoiceItemCount);
 		data.WriteUInt32(ItemCount);
-		for (int i = 0; i < 4; i++)
+		for (var i = 0; i < 4; i++)
 		{
 			data.WriteUInt32(ItemID[i]);
 			data.WriteUInt32(ItemQty[i]);
@@ -74,20 +74,20 @@ public class QuestRewards
 		data.WriteUInt32(Honor);
 		data.WriteUInt32(Title);
 		data.WriteUInt32(FactionFlags);
-		for (int j = 0; j < 5; j++)
+		for (var j = 0; j < 5; j++)
 		{
 			data.WriteUInt32(FactionID[j]);
 			data.WriteInt32(FactionValue[j]);
 			data.WriteInt32(FactionOverride[j]);
 			data.WriteInt32(FactionCapIn[j]);
 		}
-		int[] spellCompletionDisplayID = SpellCompletionDisplayID;
-		foreach (int id in spellCompletionDisplayID)
+		var spellCompletionDisplayID = SpellCompletionDisplayID;
+		foreach (var id in spellCompletionDisplayID)
 		{
 			data.WriteInt32(id);
 		}
 		data.WriteUInt32(SpellCompletionID);
-		for (int l = 0; l < 4; l++)
+		for (var l = 0; l < 4; l++)
 		{
 			data.WriteUInt32(CurrencyID[l]);
 			data.WriteUInt32(CurrencyQty[l]);
@@ -95,8 +95,8 @@ public class QuestRewards
 		data.WriteUInt32(SkillLineID);
 		data.WriteUInt32(NumSkillUps);
 		data.WriteUInt32(TreasurePickerID);
-		QuestChoiceItem[] choiceItems = ChoiceItems;
-		foreach (QuestChoiceItem choice in choiceItems)
+		var choiceItems = ChoiceItems;
+		foreach (var choice in choiceItems)
 		{
 			choice.Write(data);
 		}

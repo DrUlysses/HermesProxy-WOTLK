@@ -20,7 +20,7 @@ public class GetAccountCharacterListResult : ServerPacket
 		_worldPacket.WriteUInt32((uint)CharacterList.Count);
 		_worldPacket.ResetBitPos();
 		_worldPacket.WriteBit(bit: false);
-		foreach (AccountCharacterListEntry entry in CharacterList)
+		foreach (var entry in CharacterList)
 		{
 			entry.Write(_worldPacket);
 		}

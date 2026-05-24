@@ -79,8 +79,8 @@ public abstract class WowGuid
 
 	public bool IsTransport()
 	{
-		HighGuidType highType = GetHighType();
-		HighGuidType highGuidType = highType;
+		var highType = GetHighType();
+		var highGuidType = highType;
 		if ((uint)(highGuidType - 6) <= 1u)
 		{
 			return true;
@@ -90,8 +90,8 @@ public abstract class WowGuid
 
 	public bool IsPlayer()
 	{
-		ObjectType objectType = GetObjectType();
-		ObjectType objectType2 = objectType;
+		var objectType = GetObjectType();
+		var objectType2 = objectType;
 		if ((uint)(objectType2 - 6) <= 1u)
 		{
 			return true;
@@ -106,8 +106,8 @@ public abstract class WowGuid
 
 	public bool IsItem()
 	{
-		ObjectType objectType = GetObjectType();
-		ObjectType objectType2 = objectType;
+		var objectType = GetObjectType();
+		var objectType2 = objectType;
 		if ((uint)(objectType2 - 1) <= 1u)
 		{
 			return true;
@@ -117,8 +117,8 @@ public abstract class WowGuid
 
 	public static WowGuid64 ConvertUniqGuid(WowGuid128 guid)
 	{
-		UniqGuid uniqGuid = (UniqGuid)guid.GetLowValue();
-		UniqGuid uniqGuid2 = uniqGuid;
+		var uniqGuid = (UniqGuid)guid.GetLowValue();
+		var uniqGuid2 = uniqGuid;
 		if (uniqGuid2 == UniqGuid.SpellTargetTradeItem)
 		{
 			return new WowGuid64(6uL);

@@ -53,7 +53,7 @@ internal class ConnectTo : ServerPacket
 
 	protected override void Write()
 	{
-		ByteBuffer whereBuffer = new ByteBuffer();
+		var whereBuffer = new ByteBuffer();
 		whereBuffer.WriteUInt8((byte)Payload.Where.Type);
 		switch (Payload.Where.Type)
 		{
@@ -67,7 +67,7 @@ internal class ConnectTo : ServerPacket
 			whereBuffer.WriteString(Payload.Where.NameSocket);
 			break;
 		}
-		Sha256 hash = new Sha256();
+		var hash = new Sha256();
 		hash.Process(whereBuffer.GetData(), (int)whereBuffer.GetSize());
 		hash.Process((uint)Payload.Where.Type);
 		hash.Finish(BitConverter.GetBytes(Payload.Port));

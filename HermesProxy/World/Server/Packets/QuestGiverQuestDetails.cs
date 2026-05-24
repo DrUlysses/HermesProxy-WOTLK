@@ -63,7 +63,7 @@ public class QuestGiverQuestDetails : ServerPacket
 	public QuestGiverQuestDetails()
 		: base(Opcode.SMSG_QUEST_GIVER_QUEST_DETAILS)
 	{
-		for (int i = 0; i < 5; i++)
+		for (var i = 0; i < 5; i++)
 		{
 			Rewards.FactionCapIn[i] = 7;
 		}
@@ -96,18 +96,18 @@ public class QuestGiverQuestDetails : ServerPacket
 			_worldPacket.WriteInt32(QuestGiverCreatureID);
 			_worldPacket.WriteUInt32(0u);
 		}
-		foreach (uint spell in LearnSpells)
+		foreach (var spell in LearnSpells)
 		{
 			_worldPacket.WriteInt32((int)spell);
 		}
-		QuestDescEmote[] descEmotes = DescEmotes;
-		for (int i = 0; i < descEmotes.Length; i++)
+		var descEmotes = DescEmotes;
+		for (var i = 0; i < descEmotes.Length; i++)
 		{
-			QuestDescEmote emote = descEmotes[i];
+			var emote = descEmotes[i];
 			_worldPacket.WriteInt32((int)emote.Type);
 			_worldPacket.WriteUInt32(emote.Delay);
 		}
-		foreach (QuestObjectiveSimple obj in Objectives)
+		foreach (var obj in Objectives)
 		{
 			_worldPacket.WriteInt32((int)obj.Id);
 			_worldPacket.WriteInt32(obj.ObjectID);

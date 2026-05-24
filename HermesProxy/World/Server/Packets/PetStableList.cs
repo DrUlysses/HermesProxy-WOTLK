@@ -23,7 +23,7 @@ internal class PetStableList : ServerPacket
 		_worldPacket.WritePackedGuid128(StableMaster);
 		_worldPacket.WriteInt32(Pets.Count);
 		_worldPacket.WriteUInt8(NumStableSlots);
-		foreach (PetStableInfo pet in Pets)
+		foreach (var pet in Pets)
 		{
 			_worldPacket.WriteUInt32(pet.PetNumber);
 			_worldPacket.WriteUInt32(pet.CreatureID);

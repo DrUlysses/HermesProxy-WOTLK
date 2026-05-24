@@ -23,7 +23,7 @@ public class MonsterMove : ServerPacket
 		{
 			if (!moveSpline.SplineFlags.HasFlag(SplineFlagModern.Cyclic))
 			{
-				foreach (Vector3 point in moveSpline.SplinePoints)
+				foreach (var point in moveSpline.SplinePoints)
 				{
 					Points.Add(point);
 				}
@@ -38,7 +38,7 @@ public class MonsterMove : ServerPacket
 				{
 					Points.Add(moveSpline.EndPosition);
 				}
-				foreach (Vector3 point2 in moveSpline.SplinePoints)
+				foreach (var point2 in moveSpline.SplinePoints)
 				{
 					Points.Add(point2);
 				}
@@ -49,8 +49,8 @@ public class MonsterMove : ServerPacket
 			Points.Add(moveSpline.EndPosition);
 			if (moveSpline.SplinePoints.Count > 0)
 			{
-				Vector3 middle = (moveSpline.StartPosition + moveSpline.EndPosition) / 2f;
-				for (int i = 0; i < moveSpline.SplinePoints.Count; i++)
+				var middle = (moveSpline.StartPosition + moveSpline.EndPosition) / 2f;
+				for (var i = 0; i < moveSpline.SplinePoints.Count; i++)
 				{
 					PackedDeltas.Add(middle - moveSpline.SplinePoints[i]);
 				}
@@ -97,11 +97,11 @@ public class MonsterMove : ServerPacket
 			_worldPacket.WriteFloat(MoveSpline.FinalOrientation);
 			break;
 		}
-		foreach (Vector3 pos in Points)
+		foreach (var pos in Points)
 		{
 			_worldPacket.WriteVector3(pos);
 		}
-		foreach (Vector3 pos2 in PackedDeltas)
+		foreach (var pos2 in PackedDeltas)
 		{
 			_worldPacket.WritePackXYZ(pos2);
 		}

@@ -17,7 +17,7 @@ public class AddonInfoPacket : ServerPacket
         if (ModernVersion.ExpansionVersion >= 3)
         {
             // SMSG_ADDON_INFO for 3.4.x
-            bool hasAddons = AddonCount > 0;
+            var hasAddons = AddonCount > 0;
             _worldPacket.WriteBit(hasAddons);
             _worldPacket.WriteBit(false); // Unk bit
             _worldPacket.FlushBits();
@@ -25,7 +25,7 @@ public class AddonInfoPacket : ServerPacket
             if (hasAddons)
             {
                 _worldPacket.WriteUInt32(AddonCount);
-                for (int i = 0; i < AddonCount; i++)
+                for (var i = 0; i < AddonCount; i++)
                 {
                     _worldPacket.WriteBits(2, 8); // State: Authenticated
                     _worldPacket.WriteBit(false); // Has public key

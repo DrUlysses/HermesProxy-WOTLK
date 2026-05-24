@@ -79,7 +79,7 @@ public class QueryGuildInfoResponse : ServerPacket
 		_worldPacket.WriteUInt32(Info.BackgroundColor);
 		_worldPacket.WriteBits(Info.GuildName.GetByteCount(), 7);
 		_worldPacket.FlushBits();
-		foreach (GuildInfo.RankInfo rank in Info.Ranks)
+		foreach (var rank in Info.Ranks)
 		{
 			_worldPacket.WriteUInt32(rank.RankID);
 			_worldPacket.WriteUInt32(rank.RankOrder);

@@ -47,11 +47,11 @@ public class LootResponse : ServerPacket
 		_worldPacket.WriteBit(Acquired);
 		_worldPacket.WriteBit(AELooting);
 		_worldPacket.FlushBits();
-		foreach (LootItemData item in Items)
+		foreach (var item in Items)
 		{
 			item.Write(_worldPacket);
 		}
-		foreach (LootCurrency currency in Currencies)
+		foreach (var currency in Currencies)
 		{
 			_worldPacket.WriteUInt32(currency.CurrencyID);
 			_worldPacket.WriteUInt32(currency.Quantity);

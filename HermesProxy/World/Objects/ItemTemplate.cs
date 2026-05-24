@@ -169,7 +169,7 @@ public class ItemTemplate
 		{
 			SoundOverrideSubclass = packet.ReadInt32();
 		}
-		for (int i = 0; i < 4; i++)
+		for (var i = 0; i < 4; i++)
 		{
 			Name[i] = packet.ReadCString();
 		}
@@ -203,7 +203,7 @@ public class ItemTemplate
 			StatTypes = new int[StatsCount];
 			StatValues = new int[StatsCount];
 		}
-		for (int j = 0; j < StatsCount; j++)
+		for (var j = 0; j < StatsCount; j++)
 		{
 			StatTypes[j] = packet.ReadInt32();
 			StatValues[j] = packet.ReadInt32();
@@ -213,8 +213,8 @@ public class ItemTemplate
 			ScalingStatDistribution = packet.ReadInt32();
 			ScalingStatValue = packet.ReadUInt32();
 		}
-		int dmgCount = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? 2 : 5);
-		for (int k = 0; k < dmgCount; k++)
+		var dmgCount = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? 2 : 5);
+		for (var k = 0; k < dmgCount; k++)
 		{
 			DamageMins[k] = packet.ReadFloat();
 			DamageMaxs[k] = packet.ReadFloat();
@@ -270,7 +270,7 @@ public class ItemTemplate
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			TotemCategory = packet.ReadInt32();
-			for (int l = 0; l < 3; l++)
+			for (var l = 0; l < 3; l++)
 			{
 				ItemSocketColors[l] = packet.ReadInt32();
 				SocketContent[l] = packet.ReadUInt32();

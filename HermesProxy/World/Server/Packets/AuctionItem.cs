@@ -80,7 +80,7 @@ public class AuctionItem
 		data.WritePackedGuid128(Owner);
 		data.WriteInt32(DurationLeft);
 		data.WriteUInt8(DeleteReason);
-		foreach (ItemEnchantData enchant in Enchantments)
+		foreach (var enchant in Enchantments)
 		{
 			enchant.Write(data);
 		}
@@ -121,7 +121,7 @@ public class AuctionItem
 				data.WriteUInt64(BidAmount.Value);
 			}
 		}
-		foreach (ItemGemData gem in Gems)
+		foreach (var gem in Gems)
 		{
 			gem.Write(data);
 		}

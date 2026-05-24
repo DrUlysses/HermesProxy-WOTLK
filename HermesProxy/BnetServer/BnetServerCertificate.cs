@@ -13,15 +13,15 @@ public static class BnetServerCertificate
 
 	static BnetServerCertificate()
 	{
-		Assembly currentAsm = Assembly.GetExecutingAssembly();
-		using Stream stream = currentAsm.GetManifestResourceStream("HermesProxy.BNetServer.pfx");
+		var currentAsm = Assembly.GetExecutingAssembly();
+		using var stream = currentAsm.GetManifestResourceStream("HermesProxy.BNetServer.pfx");
 		if (stream == null)
 		{
 			throw new Exception("Resource not found: 'HermesProxy.BNetServer.pfx'");
 		}
-		MemoryStream ms = new MemoryStream();
+		var ms = new MemoryStream();
 		stream.CopyTo(ms);
-		byte[] bytes = ms.ToArray();
+		var bytes = ms.ToArray();
 		Certificate = new X509Certificate2(bytes);
 	}
 }

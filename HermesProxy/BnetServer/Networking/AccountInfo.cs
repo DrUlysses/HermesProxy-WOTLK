@@ -28,7 +28,7 @@ public class AccountInfo
 		IsBanned = false;
 		IsPermanenetlyBanned = false;
 		GameAccounts = new Dictionary<uint, GameAccountInfo>();
-		GameAccountInfo account = new GameAccountInfo(name);
+		var account = new GameAccountInfo(name);
 		GameAccounts[1u] = account;
 	}
 }

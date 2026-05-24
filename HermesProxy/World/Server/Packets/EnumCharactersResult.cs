@@ -130,8 +130,8 @@ public class EnumCharactersResult : ServerPacket
 			data.WriteUInt32(PetCreatureFamilyId);
 			data.WriteUInt32(ProfessionIds[0]);
 			data.WriteUInt32(ProfessionIds[1]);
-			int visualItemCount = ((ModernVersion.ExpansionVersion >= 3) ? 34 : VisualItems.Length);
-			for (int vi = 0; vi < visualItemCount; vi++)
+			var visualItemCount = ((ModernVersion.ExpansionVersion >= 3) ? 34 : VisualItems.Length);
+			for (var vi = 0; vi < visualItemCount; vi++)
 			{
 				if (vi < VisualItems.Length)
 				{
@@ -158,12 +158,12 @@ public class EnumCharactersResult : ServerPacket
 			data.WriteInt32(MailSenders.Count);
 			data.WriteInt32(MailSenderTypes.Count);
 			data.WriteUInt32(OverrideSelectScreenFileDataID);
-			foreach (ChrCustomizationChoice customization in Customizations)
+			foreach (var customization in Customizations)
 			{
 				data.WriteUInt32(customization.ChrCustomizationOptionID);
 				data.WriteUInt32(customization.ChrCustomizationChoiceID);
 			}
-			foreach (uint mailSenderType in MailSenderTypes)
+			foreach (var mailSenderType in MailSenderTypes)
 			{
 				data.WriteUInt32(mailSenderType);
 			}
@@ -182,12 +182,12 @@ public class EnumCharactersResult : ServerPacket
 				data.WriteBit(bit: false);
 				data.WriteBit(ExpansionChosen);
 			}
-			foreach (string str in MailSenders)
+			foreach (var str in MailSenders)
 			{
 				data.WriteBits(str.GetByteCount() + 1, 6);
 			}
 			data.FlushBits();
-			foreach (string str2 in MailSenders)
+			foreach (var str2 in MailSenders)
 			{
 				if (!str2.IsEmpty())
 				{
@@ -195,13 +195,13 @@ public class EnumCharactersResult : ServerPacket
 				}
 			}
 			data.WriteString(Name);
-			long totalSize = data.GetSize() - startPos;
-			byte[] allData = data.GetData();
-			int dumpStart = (int)startPos;
-			int dumpLen = Math.Min(40, (int)totalSize);
-			string hex = BitConverter.ToString(allData, dumpStart, dumpLen);
-			int lastStart = Math.Max(0, (int)totalSize - 30);
-			string lastHex = BitConverter.ToString(allData, dumpStart + lastStart, (int)totalSize - lastStart);
+			var totalSize = data.GetSize() - startPos;
+			var allData = data.GetData();
+			var dumpStart = (int)startPos;
+			var dumpLen = Math.Min(40, (int)totalSize);
+			var hex = BitConverter.ToString(allData, dumpStart, dumpLen);
+			var lastStart = Math.Max(0, (int)totalSize - 30);
+			var lastHex = BitConverter.ToString(allData, dumpStart + lastStart, (int)totalSize - lastStart);
 			Log.Print(LogType.Debug, $"CharacterInfo: name={Name} race={RaceId} class={ClassId} level={ExperienceLevel} visItems={visualItemCount} totalBytes={totalSize}", "CharacterPackets.cs");
 			Log.Print(LogType.Debug, "CharacterInfo LAST 30 bytes: " + lastHex, "CharacterPackets.cs");
 		}
@@ -295,16 +295,16 @@ public class EnumCharactersResult : ServerPacket
 			{
 				_worldPacket.WriteUInt32(DisabledClassesMask.Value);
 			}
-			foreach (UnlockedConditionalAppearance unlockedConditionalAppearance2 in UnlockedConditionalAppearances)
+			foreach (var unlockedConditionalAppearance2 in UnlockedConditionalAppearances)
 			{
 				unlockedConditionalAppearance2.Write(_worldPacket);
 			}
-			foreach (CharacterInfo charInfo in Characters)
+			foreach (var charInfo in Characters)
 			{
 				charInfo.Write(_worldPacket);
 			}
 			{
-				foreach (RaceUnlock raceUnlockDatum in RaceUnlockData)
+				foreach (var raceUnlockDatum in RaceUnlockData)
 				{
 					raceUnlockDatum.Write(_worldPacket);
 				}
@@ -321,15 +321,15 @@ public class EnumCharactersResult : ServerPacket
 		{
 			_worldPacket.WriteUInt32(DisabledClassesMask.Value);
 		}
-		foreach (UnlockedConditionalAppearance unlockedConditionalAppearance3 in UnlockedConditionalAppearances)
+		foreach (var unlockedConditionalAppearance3 in UnlockedConditionalAppearances)
 		{
 			unlockedConditionalAppearance3.Write(_worldPacket);
 		}
-		foreach (CharacterInfo charInfo2 in Characters)
+		foreach (var charInfo2 in Characters)
 		{
 			charInfo2.Write(_worldPacket);
 		}
-		foreach (RaceUnlock raceUnlockDatum2 in RaceUnlockData)
+		foreach (var raceUnlockDatum2 in RaceUnlockData)
 		{
 			raceUnlockDatum2.Write(_worldPacket);
 		}

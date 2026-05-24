@@ -28,7 +28,7 @@ internal class Server
 	{
 		Log.Print(LogType.Server, "Starting Hermes Proxy...", "Server.cs");
 		Log.Print(LogType.Server, "Version " + GetVersionInformation(), "Server.cs");
-		String workingDirectory = args.WorkingDirectory ?? Path.GetDirectoryName(AppContext.BaseDirectory) ?? ".";
+		var workingDirectory = args.WorkingDirectory ?? Path.GetDirectoryName(AppContext.BaseDirectory) ?? ".";
 
 		if (Environment.CurrentDirectory != workingDirectory)
 		{
@@ -72,17 +72,17 @@ internal class Server
 		Log.Print(LogType.Server, $"Modern (Client) Build: {Settings.ClientBuild}", "Server.cs");
 		Log.Print(LogType.Server, $"Legacy (Server) Build: {Settings.ServerBuild}", "Server.cs");
 		GameData.LoadEverything();
-		IPAddress bindIp = NetworkUtils.ResolveOrDirectIPv64(Settings.ExternalAddress);
+		var bindIp = NetworkUtils.ResolveOrDirectIPv64(Settings.ExternalAddress);
 		if (!IPAddress.IsLoopback(bindIp))
 		{
 			bindIp = IPAddress.Any;
 		}
 		Log.Print(LogType.Network, "External IP: " + Settings.ExternalAddress, "Server.cs");
 		Singleton<LoginServiceManager>.Instance.Initialize();
-		SocketManager<BnetTcpSession> bnetSocketServer = StartServer<BnetTcpSession>(new IPEndPoint(bindIp, Settings.BNetPort));
-		SocketManager<BnetRestApiSession> restSocketServer = StartServer<BnetRestApiSession>(new IPEndPoint(bindIp, Settings.RestPort));
-		SocketManager<RealmSocket> realmSocketServer = StartServer<RealmSocket>(new IPEndPoint(bindIp, Settings.RealmPort));
-		SocketManager<WorldSocket> worldSocketServer = StartServer<WorldSocket>(new IPEndPoint(bindIp, Settings.InstancePort));
+		var bnetSocketServer = StartServer<BnetTcpSession>(new IPEndPoint(bindIp, Settings.BNetPort));
+		var restSocketServer = StartServer<BnetRestApiSession>(new IPEndPoint(bindIp, Settings.RestPort));
+		var realmSocketServer = StartServer<RealmSocket>(new IPEndPoint(bindIp, Settings.RealmPort));
+		var worldSocketServer = StartServer<WorldSocket>(new IPEndPoint(bindIp, Settings.InstancePort));
 		while (restSocketServer.IsListening || bnetSocketServer.IsListening || realmSocketServer.IsListening || worldSocketServer.IsListening)
 		{
 			Thread.Sleep(TimeSpan.FromSeconds(10.0));
@@ -95,7 +95,7 @@ internal class Server
 
 	private static SocketManager<TSocketType> StartServer<TSocketType>(IPEndPoint bindIp) where TSocketType : ISocket
 	{
-		SocketManager<TSocketType> socketManager = new SocketManager<TSocketType>();
+		var socketManager = new SocketManager<TSocketType>();
 		Log.Print(LogType.Server, $"Starting {typeof(TSocketType).Name} service on {bindIp}...", "Server.cs");
 		if (!socketManager.StartNetwork(bindIp.Address.ToString(), bindIp.Port))
 		{
@@ -113,16 +113,16 @@ internal class Server
 			{
 				return;
 			}
-			using HttpClient client = new HttpClient();
+			using var client = new HttpClient();
 			client.Timeout = TimeSpan.FromSeconds(5.0);
 			client.DefaultRequestHeaders.Add("User-Agent", "curl/7.0.0");
-			HttpResponseMessage response = await client.GetAsync("https://api.github.com/repos/advocaite/HermesProxy-WOTLK/releases/latest");
+			var response = await client.GetAsync("https://api.github.com/repos/advocaite/HermesProxy-WOTLK/releases/latest");
 			response.EnsureSuccessStatusCode();
-			Dictionary<string, object> parsedJson = JsonSerializer.Deserialize<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
-			string commitDateStr = parsedJson["created_at"].ToString();
-			DateTime commitDate = DateTime.Parse(commitDateStr, CultureInfo.InvariantCulture).ToUniversalTime();
-			string myCommitDateStr = GitVersionInformation.CommitDate;
-			DateTime myCommitDate = DateTime.Parse(myCommitDateStr, CultureInfo.InvariantCulture).ToUniversalTime();
+			var parsedJson = JsonSerializer.Deserialize<Dictionary<string, object>>(await response.Content.ReadAsStringAsync());
+			var commitDateStr = parsedJson["created_at"].ToString();
+			var commitDate = DateTime.Parse(commitDateStr, CultureInfo.InvariantCulture).ToUniversalTime();
+			var myCommitDateStr = GitVersionInformation.CommitDate;
+			var myCommitDate = DateTime.Parse(myCommitDateStr, CultureInfo.InvariantCulture).ToUniversalTime();
 			if (commitDate > myCommitDate)
 			{
 				Console.WriteLine("------------------------");
@@ -142,8 +142,8 @@ internal class Server
 
 	private static string GetVersionInformation()
 	{
-		DateTime commitDate = DateTime.Parse(GitVersionInformation.CommitDate, CultureInfo.InvariantCulture).ToUniversalTime();
-		string version = $"{commitDate:yyyy-MM-dd} {_buildTag}{GitVersionInformation.MajorMinorPatch}";
+		var commitDate = DateTime.Parse(GitVersionInformation.CommitDate, CultureInfo.InvariantCulture).ToUniversalTime();
+		var version = $"{commitDate:yyyy-MM-dd} {_buildTag}{GitVersionInformation.MajorMinorPatch}";
 		if (GitVersionInformation.CommitsSinceVersionSource != "0")
 		{
 			version += $"+{GitVersionInformation.CommitsSinceVersionSource}({GitVersionInformation.ShortSha})";
