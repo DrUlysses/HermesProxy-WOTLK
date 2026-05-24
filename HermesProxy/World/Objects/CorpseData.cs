@@ -4,7 +4,7 @@ namespace HermesProxy.World.Objects;
 
 public class CorpseData
 {
-	public WowGuid128 Owner;
+	public WowGuid128? Owner;
 
 	public WowGuid128 PartyGUID;
 

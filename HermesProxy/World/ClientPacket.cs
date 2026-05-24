@@ -32,14 +32,7 @@ public abstract class ClientPacket : IDisposable
 
 	public void LogPacket(ref SniffFile sniffFile)
 	{
-		if (Settings.PacketsLog)
-		{
-			if (sniffFile == null)
-			{
-				sniffFile = new SniffFile("modern", (ushort)Settings.ClientBuild);
-				sniffFile.WriteHeader();
-			}
-			sniffFile.WritePacket(GetOpcode(), isFromClient: true, _worldPacket.GetData());
-		}
+		if (!Settings.PacketsLog) return;
+		sniffFile.WritePacket(GetOpcode(), isFromClient: true, _worldPacket.GetData());
 	}
 }

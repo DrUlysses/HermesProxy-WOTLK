@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Framework.Logging;
 using HermesProxy.World.Enums;
 using HermesProxy.World.Objects;
@@ -13,7 +14,7 @@ public class ObjectUpdate
 
 	public readonly GlobalSessionData GlobalSession;
 
-	public readonly CreateObjectData CreateData;
+	public readonly CreateObjectData? CreateData;
 
 	public ObjectData ObjectData;
 
@@ -21,17 +22,17 @@ public class ObjectUpdate
 
 	public readonly ContainerData ContainerData;
 
-	public UnitData UnitData;
+	public UnitData? UnitData;
 
-	public PlayerData PlayerData;
+	public PlayerData? PlayerData;
 
-	public ActivePlayerData ActivePlayerData;
+	public ActivePlayerData? ActivePlayerData;
 
-	public readonly GameObjectData GameObjectData;
+	public readonly GameObjectData? GameObjectData;
 
 	public readonly DynamicObjectData DynamicObjectData;
 
-	public readonly CorpseData CorpseData;
+	public readonly CorpseData? CorpseData;
 
 	public ObjectUpdate(WowGuid128 guid, UpdateTypeModern type, GlobalSessionData globalSession)
 	{
@@ -70,7 +71,14 @@ public class ObjectUpdate
 			break;
 		case ObjectType.AzeriteEmpoweredItem:
 		case ObjectType.AzeriteItem:
+		case ObjectType.Object:
+		case ObjectType.AreaTrigger:
+		case ObjectType.SceneObject:
+		case ObjectType.Conversation:
+		case ObjectType.Map:
 			break;
+		default:
+			throw new ArgumentOutOfRangeException();
 		}
 	}
 
@@ -127,7 +135,7 @@ public class ObjectUpdate
 				CreateData.MoveInfo.FlagsExtra = 512u;
 			}
 		}
-		if (CreateData.MoveSpline != null && CreateData.MoveSpline.SplineFlags == SplineFlagModern.None)
+		if (CreateData.MoveSpline is { SplineFlags: SplineFlagModern.None })
 		{
 			CreateData.MoveSpline.SplineFlags = SplineFlagModern.Unknown5 | SplineFlagModern.Steering | SplineFlagModern.Unknown10;
 		}
@@ -164,13 +172,15 @@ public class ObjectUpdate
 				Log.Print(LogType.Debug, $"[TransportFixup] Entry={entry} Period={period} DynFlagsSet={ObjectData.DynamicFlags.HasValue} DynFlags=0x{ObjectData.DynamicFlags.GetValueOrDefault():X8} Level={GameObjectData.Level} State={GameObjectData.State} TypeID={GameObjectData.TypeID} HasCreateData={CreateData != null} HasMoveInfo={CreateData?.MoveInfo != null}");
 				if (period != 0)
 				{
-					if (!GameObjectData.Level.HasValue)
-					{
-						GameObjectData.Level = (int)period;
-					}
+					GameObjectData.Level ??= (int)period;
 					if (!ObjectData.DynamicFlags.HasValue)
 					{
-						var pathTimer = CreateData.MoveInfo.TransportPathTimer;
+						var pathTimer = CreateData?.MoveInfo?.TransportPathTimer;
+						if (pathTimer is null)
+						{
+							Log.Print(LogType.Debug, $"[TransportFixup] Entry={entry} Period={period} DynFlagsSet={ObjectData.DynamicFlags.HasValue} DynFlags=0x{ObjectData.DynamicFlags.GetValueOrDefault():X8} Level={GameObjectData.Level} State={GameObjectData.State} TypeID={GameObjectData.TypeID} HasCreateData={CreateData != null} HasMoveInfo={CreateData?.MoveInfo != null} TransportPathTimer=null");
+							return;
+						}
 						var progress = pathTimer % period;
 						var dynFlags = (uint)(progress / (float)period * 65535f) << 16;
 						ObjectData.DynamicFlags = dynFlags;
@@ -271,105 +281,45 @@ public class ObjectUpdate
 		{
 			if (PlayerData.WowAccount == null)
 			{
-				if (CreateData.ThisIsYou)
-				{
-					PlayerData.WowAccount = WowGuid128.Create(HighGuidType703.WowAccount, GlobalSession.GameAccountInfo.Id);
-				}
-				else
-				{
-					PlayerData.WowAccount = WowGuid128.Create(HighGuidType703.WowAccount, Guid.GetCounter());
-				}
+				PlayerData.WowAccount = CreateData is { ThisIsYou: true }
+					? WowGuid128.Create(HighGuidType703.WowAccount,
+						GlobalSession.GameAccountInfo.Id)
+					: WowGuid128.Create(HighGuidType703.WowAccount,
+						Guid.GetCounter());
 			}
-			if (!PlayerData.VirtualPlayerRealm.HasValue)
-			{
-				PlayerData.VirtualPlayerRealm = GlobalSession.RealmId.GetAddress();
-			}
-			if (!PlayerData.HonorLevel.HasValue)
-			{
-				PlayerData.HonorLevel = 1;
-			}
-			if (!PlayerData.AvgItemLevel[3].HasValue)
-			{
-				PlayerData.AvgItemLevel[3] = 1f;
-			}
+			PlayerData.VirtualPlayerRealm ??= GlobalSession.RealmId.GetAddress();
+			PlayerData.HonorLevel ??= 1;
+			PlayerData.AvgItemLevel[3] ??= 1f;
 		}
 		if (ActivePlayerData == null)
 		{
 			return;
 		}
-		if (ActivePlayerData.RestInfo[0] == null)
+		if (ActivePlayerData.RestInfo.FirstOrDefault() == null)
 		{
 			ActivePlayerData.RestInfo[0] = new RestInfo();
 		}
-		if (!ActivePlayerData.RestInfo[0].Threshold.HasValue)
-		{
-			ActivePlayerData.RestInfo[0].Threshold = 1u;
-		}
-		if (!ActivePlayerData.RestInfo[0].StateID.HasValue)
-		{
-			ActivePlayerData.RestInfo[0].StateID = 0u;
-		}
+		ActivePlayerData.RestInfo[0].Threshold ??= 1u;
+		ActivePlayerData.RestInfo[0].StateID ??= 0u;
 		for (var j = 0; j < 7; j++)
 		{
-			if (!ActivePlayerData.ModDamageDonePercent[j].HasValue)
-			{
-				ActivePlayerData.ModDamageDonePercent[j] = 1f;
-			}
+			ActivePlayerData.ModDamageDonePercent[j] ??= 1f;
 		}
-		if (!ActivePlayerData.ModHealingPercent.HasValue)
-		{
-			ActivePlayerData.ModHealingPercent = 1f;
-		}
-		if (!ActivePlayerData.ModHealingDonePercent.HasValue)
-		{
-			ActivePlayerData.ModHealingDonePercent = 1f;
-		}
-		if (!ActivePlayerData.ModPeriodicHealingDonePercent.HasValue)
-		{
-			ActivePlayerData.ModPeriodicHealingDonePercent = 1f;
-		}
+		ActivePlayerData.ModHealingPercent ??= 1f;
+		ActivePlayerData.ModHealingDonePercent ??= 1f;
+		ActivePlayerData.ModPeriodicHealingDonePercent ??= 1f;
 		for (var k = 0; k < 3; k++)
 		{
-			if (!ActivePlayerData.WeaponDmgMultipliers[k].HasValue)
-			{
-				ActivePlayerData.WeaponDmgMultipliers[k] = 1f;
-			}
-			if (!ActivePlayerData.WeaponAtkSpeedMultipliers[k].HasValue)
-			{
-				ActivePlayerData.WeaponAtkSpeedMultipliers[k] = 1f;
-			}
+			ActivePlayerData.WeaponDmgMultipliers[k] ??= 1f;
+			ActivePlayerData.WeaponAtkSpeedMultipliers[k] ??= 1f;
 		}
-		if (!ActivePlayerData.ModSpellPowerPercent.HasValue)
-		{
-			ActivePlayerData.ModSpellPowerPercent = 1f;
-		}
-		if (!ActivePlayerData.NumBackpackSlots.HasValue)
-		{
-			ActivePlayerData.NumBackpackSlots = 16;
-		}
-		if (!ActivePlayerData.MultiActionBars.HasValue)
-		{
-			ActivePlayerData.MultiActionBars = 7;
-		}
-		if (!ActivePlayerData.MaxLevel.HasValue)
-		{
-			ActivePlayerData.MaxLevel = LegacyVersion.GetMaxLevel();
-		}
-		if (!ActivePlayerData.ModPetHaste.HasValue)
-		{
-			ActivePlayerData.ModPetHaste = 1f;
-		}
-		if (!ActivePlayerData.HonorNextLevel.HasValue)
-		{
-			ActivePlayerData.HonorNextLevel = 5500;
-		}
-		if (!ActivePlayerData.PvPTierMaxFromWins.HasValue)
-		{
-			ActivePlayerData.PvPTierMaxFromWins = uint.MaxValue;
-		}
-		if (!ActivePlayerData.PvPLastWeeksTierMaxFromWins.HasValue)
-		{
-			ActivePlayerData.PvPLastWeeksTierMaxFromWins = uint.MaxValue;
-		}
+		ActivePlayerData.ModSpellPowerPercent ??= 1f;
+		ActivePlayerData.NumBackpackSlots ??= 16;
+		ActivePlayerData.MultiActionBars ??= 7;
+		ActivePlayerData.MaxLevel ??= LegacyVersion.GetMaxLevel();
+		ActivePlayerData.ModPetHaste ??= 1f;
+		ActivePlayerData.HonorNextLevel ??= 5500;
+		ActivePlayerData.PvPTierMaxFromWins ??= uint.MaxValue;
+		ActivePlayerData.PvPLastWeeksTierMaxFromWins ??= uint.MaxValue;
 	}
 }

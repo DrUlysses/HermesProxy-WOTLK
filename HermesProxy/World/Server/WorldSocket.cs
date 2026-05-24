@@ -29,7 +29,7 @@ namespace HermesProxy.World.Server;
 
 public class WorldSocket : SocketBase, BnetServices.INetwork
 {
-	public struct ConnectToKey
+	private struct ConnectToKey
 	{
 		public uint AccountId;
 
@@ -39,10 +39,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 		public ulong Raw
 		{
-			get
-			{
-				return (ulong)(AccountId | ((long)connectionType << 32)) | (Key << 33);
-			}
+			get => (ulong)(AccountId | ((long)connectionType << 32)) | (Key << 33);
 			set
 			{
 				AccountId = (uint)(value & 0xFFFFFFFFu);
@@ -52,9 +49,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		}
 	}
 
-	public class CharacterLoginFailed : ServerPacket
+	private class CharacterLoginFailed : ServerPacket
 	{
-		private LoginFailureReason Code;
+		private readonly LoginFailureReason Code;
 
 		public CharacterLoginFailed(LoginFailureReason code)
 			: base(Opcode.SMSG_CHARACTER_LOGIN_FAILED)
@@ -70,24 +67,31 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public class PacketHandler
 	{
-		private Action<WorldSocket, ClientPacket> methodCaller;
+		private readonly Action<WorldSocket, ClientPacket>? methodCaller;
 
-		private Type packetType;
+		private readonly Type? packetType;
 
 		public PacketHandler(MethodInfo info, Type type)
 		{
-			methodCaller = (Action<WorldSocket, ClientPacket>)GetType().GetMethod("CreateDelegate", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(type)
-				.Invoke(null, new object[1] { info });
+			methodCaller = (Action<WorldSocket, ClientPacket>?)GetType()
+				.GetMethod("CreateDelegate",
+					BindingFlags.Static | BindingFlags.NonPublic)
+				?.MakeGenericMethod(type)
+				.Invoke(null, new object[] { info });
 			packetType = type;
 		}
 
 		public void Invoke(WorldSocket session, WorldPacket packet)
 		{
-			if (packetType == null)
+			if (packetType == null || methodCaller == null)
 			{
 				return;
 			}
-			using var clientPacket = (ClientPacket)Activator.CreateInstance(packetType, packet);
+			using var clientPacket = (ClientPacket?)Activator.CreateInstance(packetType, packet);
+			if (clientPacket == null)
+			{
+				return;
+			}
 			clientPacket.LogPacket(ref session.GetSession().ModernSniff);
 			clientPacket.Read();
 			methodCaller(session, clientPacket);

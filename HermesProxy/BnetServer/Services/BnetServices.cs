@@ -130,7 +130,12 @@ public class BnetServices
 				return;
 			}
 			_serviceHolder.ServiceLog(LogType.Debug, $"Client requested service {serviceHash}/m:{methodId}");
-			var request = (IMessage)Activator.CreateInstance(handler.RequestType);
+			var request = (IMessage?)Activator.CreateInstance(handler.RequestType);
+			if (request == null)
+			{
+				SendErrorResponse(BattlenetRpcErrorCode.InvalidArgs);
+				return;
+			}
 			request.MergeFrom(stream);
 			if (handler.ResponseType != null)
 			{
@@ -157,7 +162,7 @@ public class BnetServices
 			{
 				SendRpcMessage(errorCode, null);
 			}
-			void SendResponse(IMessage message)
+			void SendResponse(IMessage? message)
 			{
 				SendRpcMessage(BattlenetRpcErrorCode.Ok, message);
 			}
@@ -177,32 +182,24 @@ public class BnetServices
 
 	private static uint _serverInvokedRequestToken;
 
-	private Dictionary<uint, Action<CodedInputStream>> _callbackHandlers = new();
-
-	private GlobalSessionData _globalSession;
-
 	private readonly byte[] _clientSecret = new byte[32];
 
 	private readonly string _connectionPath;
 
 	private readonly INetwork _net;
 
-	public GlobalSessionData Session => _globalSession;
-
-	private BnetServices()
-	{
-	}
+	public GlobalSessionData? Session { get; private set; }
 
 	private BnetServices(string connectionPath, INetwork net, GlobalSessionData? initialSession)
 	{
 		_connectionPath = connectionPath;
 		_net = net;
-		_globalSession = initialSession;
+		Session = initialSession;
 	}
 
-	public GlobalSessionData GetSession()
+	public GlobalSessionData? GetSession()
 	{
-		return _globalSession;
+		return Session;
 	}
 
 	private void SendRequest(OriginalHash service, uint methodId, IMessage? data)
@@ -237,15 +234,16 @@ public class BnetServices
 		handler.AppendLiteral("[");
 		handler.AppendFormatted(GetRemoteIpEndPoint());
 		stringBuilder3.Append(ref handler);
-		if (GetSession() != null)
+		var session = GetSession();
+		if (session != null)
 		{
-			if (GetSession().AccountInfo != null && !GetSession().AccountInfo.Login.IsEmpty())
+			if (!session.AccountInfo.Login.IsEmpty())
 			{
-				prefix.Append(", Account: " + GetSession().AccountInfo.Login);
+				prefix.Append(", Account: " + session.AccountInfo.Login);
 			}
-			if (GetSession().GameAccountInfo != null)
+			if (session.GameAccountInfo != null)
 			{
-				prefix.Append(", Game account: " + GetSession().GameAccountInfo.Name);
+				prefix.Append(", Game account: " + session.GameAccountInfo.Name);
 			}
 		}
 		prefix.Append(']');
@@ -254,7 +252,7 @@ public class BnetServices
 
 	public ServiceRequirement CurrentMatchingRequirement()
 	{
-		return _globalSession != null ? ServiceRequirement.LoggedIn : ServiceRequirement.Unauthorized;
+		return Session != null ? ServiceRequirement.LoggedIn : ServiceRequirement.Unauthorized;
 	}
 
 	[Service(ServiceRequirement.LoggedIn, OriginalHash.AccountService, 30u)]
@@ -396,7 +394,7 @@ public class BnetServices
 		}
 		tmpSession.SessionKey = new byte[64].GenerateRandomKey(64);
 		logonResult.SessionKey = ByteString.CopyFrom(tmpSession.SessionKey);
-		_globalSession = tmpSession;
+		Session = tmpSession;
 		SendRequest(OriginalHash.AuthenticationListener, 5u, logonResult);
 		return BattlenetRpcErrorCode.Ok;
 	}
@@ -514,8 +512,8 @@ public class BnetServices
 		var identity = Params.LookupByKey("Param_Identity");
 		if (identity != null)
 		{
-			var realmListTicketIdentity = Json.CreateObject<RealmListTicketIdentity>(identity.BlobValue.ToStringUtf8(), split: true);
-			var gameAccount = GetSession().AccountInfo.GameAccounts.LookupByKey(realmListTicketIdentity.GameAccountId);
+			var realmListTicketIdentity = Json.CreateObjectOrNull<RealmListTicketIdentity>(identity.BlobValue.ToStringUtf8(), split: true);
+			var gameAccount = GetSession()?.AccountInfo.GameAccounts.LookupByKey(realmListTicketIdentity.GameAccountId);
 			if (gameAccount != null)
 			{
 				GetSession().GameAccountInfo = gameAccount;
@@ -537,7 +535,7 @@ public class BnetServices
 		var clientInfo = Params.LookupByKey("Param_ClientInfo");
 		if (clientInfo != null)
 		{
-			var realmListTicketClientInformation = Json.CreateObject<RealmListTicketClientInformation>(clientInfo.BlobValue.ToStringUtf8(), split: true);
+			var realmListTicketClientInformation = Json.CreateObjectOrNull<RealmListTicketClientInformation>(clientInfo.BlobValue.ToStringUtf8(), split: true);
 			clientInfoOk = true;
 			for (var i = 0; i < Math.Min(_clientSecret.Length, realmListTicketClientInformation.Info.Secret.Count); i++)
 			{

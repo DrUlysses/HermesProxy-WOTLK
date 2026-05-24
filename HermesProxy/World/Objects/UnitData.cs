@@ -224,7 +224,7 @@ public class UnitData
 
 	public WowGuid128 GuildGUID;
 
-	public WowGuid128 ChannelObject;
+	public WowGuid128? ChannelObject;
 
 	public int?[] Resistances { get; } = new int?[7];
 

@@ -14,6 +14,7 @@ using BNetServer.Networking;
 using Framework;
 using Framework.Logging;
 using Framework.Networking;
+using HermesProxy.BnetServer.Networking;
 using HermesProxy.Configuration;
 using HermesProxy.World;
 using HermesProxy.World.Server;

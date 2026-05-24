@@ -1,16 +1,16 @@
 using System;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using BNetServer;
 using Framework;
 using Framework.Networking;
 using Framework.Serialization;
 using Framework.Web;
-using HermesProxy;
 using HermesProxy.Auth;
 using HermesProxy.Enums;
 using HermesProxy.World.Server;
 
-namespace BNetServer.Networking;
+namespace HermesProxy.BnetServer.Networking;
 
 public class BnetRestApiSession : SSLSocket
 {
@@ -25,7 +25,7 @@ public class BnetRestApiSession : SSLSocket
 
 	public override void Accept()
 	{
-		AsyncHandshake(BnetServerCertificate.Certificate);
+		AsyncHandshake(BnetServerCertificate.Certificate).Wait();
 	}
 
 	public override async Task ReadHandler(byte[] data, int receivedLength)
@@ -41,14 +41,14 @@ public class BnetRestApiSession : SSLSocket
 		}
 	}
 
-	public bool RequestRouter(HttpHeader httpRequest)
+	private bool RequestRouter(HttpHeader httpRequest)
 	{
 		if (!httpRequest.Path.StartsWith("/bnetserver/"))
 		{
-			SendEmptyResponse(HttpCode.NotFound);
+			SendEmptyResponse(HttpCode.NotFound).Wait();
 			return false;
 		}
-		var path = httpRequest.Path.Substring("/bnetserver/".Length);
+		var path = httpRequest.Path["/bnetserver/".Length..];
 		var pathElements = path.Split('/');
 		(string, string) tuple = (pathElements[0], httpRequest.Method);
 		var tuple2 = tuple;
@@ -56,27 +56,30 @@ public class BnetRestApiSession : SSLSocket
 		if (text == "login")
 		{
 			var item = tuple2.Item2;
-			if (item == "GET")
+			switch (item)
 			{
-				SendResponse(HttpCode.Ok, Singleton<LoginServiceManager>.Instance.GetFormInput());
-				return true;
-			}
-			if (item == "POST")
-			{
-				HandleLoginRequest(pathElements, httpRequest);
-				return true;
+				case "GET":
+					SendResponse(
+						HttpCode.Ok,
+						Singleton<LoginServiceManager>.Instance.GetFormInput()
+					).Wait();
+					return true;
+				case "POST":
+					HandleLoginRequest(pathElements, httpRequest);
+					return true;
 			}
 		}
-		SendEmptyResponse(HttpCode.NotFound);
+		SendEmptyResponse(HttpCode.NotFound).Wait();
 		return false;
 	}
 
-	public Task HandleLoginRequest(string[] pathElements, HttpHeader request)
+	private void HandleLoginRequest(string[] pathElements, HttpHeader request)
 	{
-		var loginForm = Json.CreateObject<LogonData>(request.Content);
+		var loginForm = Json.CreateObjectOrNull<LogonData>(request.Content);
 		if (loginForm == null)
 		{
-			return SendEmptyResponse(HttpCode.InternalServerError);
+			SendEmptyResponse(HttpCode.InternalServerError).Wait();
+			return;
 		}
 		var globalSession = new GlobalSessionData
 		{
@@ -86,7 +89,8 @@ public class BnetRestApiSession : SSLSocket
 		};
 		if (Settings.ClientBuild != (ClientVersionBuild)globalSession.Build)
 		{
-			return SendAuthError(AuthResult.FAIL_WRONG_MODERN_VER);
+			SendAuthError(AuthResult.FAIL_WRONG_MODERN_VER).Wait();
+			return;
 		}
 		var login = "";
 		var password = "";
@@ -110,7 +114,8 @@ public class BnetRestApiSession : SSLSocket
 		var response = globalSession.AuthClient.ConnectToAuthServer(login, password, globalSession.Locale);
 		if (response != AuthResult.SUCCESS)
 		{
-			return SendAuthError(response);
+			SendAuthError(response).Wait();
+			return;
 		}
 		globalSession.AuthClient.SendRealmListUpdateRequest();
 		var loginResult = new LogonResult();
@@ -122,7 +127,7 @@ public class BnetRestApiSession : SSLSocket
 		BnetSessionTicketStorage.AddNewSessionByTicket(loginTicket, globalSession);
 		loginResult.LoginTicket = loginTicket;
 		loginResult.AuthenticationState = "DONE";
-		return SendResponse(HttpCode.Ok, loginResult);
+		SendResponse(HttpCode.Ok, loginResult).Wait();
 	}
 
 	private async Task SendResponse<T>(HttpCode code, T response)

@@ -6,7 +6,7 @@ public class PlayerData
 {
 	public WowGuid128 DuelArbiter;
 
-	public WowGuid128 WowAccount;
+	public WowGuid128? WowAccount;
 
 	public WowGuid128 LootTargetGUID;
 

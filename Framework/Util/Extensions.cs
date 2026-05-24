@@ -24,6 +24,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using Framework.Logging;
 
 namespace System
 {
@@ -219,15 +220,13 @@ namespace System
 
         public static void Swap<T>(ref T left, ref T right)
         {
-            var temp = left;
-            left = right;
-            right = temp;
+            (left, right) = (right, left);
         }
 
-        public static uint[] SerializeObject<T>(this T obj)
+        public static uint[]? SerializeObject<T>(this T obj)
         {
-            //if (obj.GetType()<StructLayoutAttribute>() == null)
-                //return null;
+            if (obj == null || typeof(T).GetCustomAttribute<StructLayoutAttribute>() == null)
+                return null;
 
             var size = Marshal.SizeOf(typeof(T));
             var ptr = Marshal.AllocHGlobal(size);
@@ -248,10 +247,7 @@ namespace System
         {
             var list = new List<T>();
 
-            if (data.Count == 0)
-                return list;
-
-            if (typeof(T).GetCustomAttribute<StructLayoutAttribute>() == null)
+            if (data.Count == 0 || typeof(T).GetCustomAttribute<StructLayoutAttribute>() == null)
                 return list;
 
             var result = new byte[data.Count * sizeof(uint)];
@@ -264,7 +260,14 @@ namespace System
             {
                 var ptr = Marshal.AllocHGlobal(typeSize);
                 Marshal.Copy(result, typeSize * i, ptr, typeSize);
-                list.Add((T)Marshal.PtrToStructure(ptr, typeof(T)));
+                var newValue = Marshal.PtrToStructure(ptr, typeof(T));
+                if (newValue == null)
+                {
+                    Log.Print(LogType.Debug, $"Failed to deserialize object at index {i}");
+                    Marshal.FreeHGlobal(ptr);
+                    continue;
+                }
+                list.Add((T)newValue);
                 Marshal.FreeHGlobal(ptr);
             }
 

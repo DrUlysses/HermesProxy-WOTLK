@@ -53,29 +53,22 @@ namespace System.Collections.Generic
         /// <param name="dict">The dictionary to operate on.</param>
         /// <param name="key">The key of the element to retrieve.</param>
         /// <returns>The value (if any).</returns>
-        public static TValue LookupByKey<TKey, TValue>(this IDictionary<TKey, TValue> dict, object key)
+        public static TValue? LookupByKey<TKey, TValue>(this IDictionary<TKey, TValue> dict, object key)
         {
-            TValue val;
-            var newkey = (TKey)Convert.ChangeType(key, typeof(TKey));
-            return dict.TryGetValue(newkey, out val) ? val : default;
+            return dict.TryGetValue((TKey)Convert.ChangeType(key, typeof(TKey)), out var val) ? val : default;
         }
-        public static TValue LookupByKey<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
+        public static TValue? LookupByKey<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
         {
-            TValue val;
-            return dict.TryGetValue(key, out val) ? val : default;
+            return dict.TryGetValue(key, out var val) ? val : default;
         }
         public static KeyValuePair<TKey, TValue> Find<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
         {
-            if (!dict.ContainsKey(key))
-                return default;
-
-            return new KeyValuePair<TKey, TValue>(key, dict[key]);
+            return !dict.TryGetValue(key, out var value) ? default : new KeyValuePair<TKey, TValue>(key, value);
         }
 
         public static bool ContainsKey<TKey, TValue>(this IDictionary<TKey, TValue> dict, object key)
         {
-            var newkey = (TKey)Convert.ChangeType(key, typeof(TKey));
-            return dict.ContainsKey(newkey);
+            return dict.ContainsKey((TKey)Convert.ChangeType(key, typeof(TKey)));
         }
 
         public static void RemoveAll<T>(this List<T> collection, ICheck<T> check)
@@ -83,7 +76,7 @@ namespace System.Collections.Generic
             collection.RemoveAll(check.Invoke);
         }
 
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+        private static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
         {
             return source.OrderBy(x => Guid.NewGuid());
         }
@@ -93,12 +86,10 @@ namespace System.Collections.Generic
             //
             // Swaps elements in an array. Doesn't need to return a reference.
             //
-            var temp = array[position1]; // Copy the first position's element
-            array[position1] = array[position2]; // Assign to the second element
-            array[position2] = temp; // Assign to the first element
+            (array[position1], array[position2]) = (array[position2], array[position1]);
         }
 
-        public static void Resize<T>(this List<T> list, uint size)
+        private static void Resize<T>(this List<T?> list, uint size)
         {
             var cur = list.Count;
             if (size < cur)

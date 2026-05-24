@@ -75,16 +75,16 @@ namespace Framework.Web
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
 
-        public static HttpHeader ParseRequest(byte[] data, int length)
+        public static HttpHeader? ParseRequest(byte[] data, int length)
         {
             var headerValues = new Dictionary<string, object>();
             var header = new HttpHeader();
 
             using (var sr = new StreamReader(new MemoryStream(data, 0, length)))
             {
-                var info = sr.ReadLine().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                var info = sr.ReadLine()?.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (info.Length != 3)
+                if (info is not { Length: 3 })
                     return null;
 
                 headerValues.Add("method", info[0]);
@@ -93,22 +93,23 @@ namespace Framework.Web
 
                 while (!sr.EndOfStream)
                 {
-                    info = sr.ReadLine().Split(new[] { ": " }, StringSplitOptions.RemoveEmptyEntries);
+                    info = sr.ReadLine()?.Split(new[] { ": " }, StringSplitOptions.RemoveEmptyEntries);
 
-                    if (info.Length == 2)
+                    if (info is { Length: 2 })
                         headerValues.Add(info[0].Replace("-", "").ToLower(), info[1]);
-                    else if (info.Length > 2)
+                    else if (info is { Length: > 2 })
                     {
-                        var val = "";
-
                         info.Skip(1);
 
-                        headerValues.Add(info[0].Replace("-", "").ToLower(), val);
+                        headerValues.Add(info[0].Replace("-", "").ToLower(), "");
                     }
                     else
                     {
                         // We are at content here.
                         var content = sr.ReadLine();
+
+                        if (content is null)
+                            break;
 
                         headerValues.Add("content", content);
 
@@ -122,15 +123,11 @@ namespace Framework.Web
 
             foreach (var f in httpFields)
             {
-                object val;
-
-                if (headerValues.TryGetValue(f.Name.ToLower(), out val))
-                {
-                    if (f.PropertyType == typeof(int))
-                        f.SetValue(header, Convert.ChangeType(Convert.ToInt32(val), f.PropertyType));
-                    else
-                        f.SetValue(header, Convert.ChangeType(val, f.PropertyType));
-                }
+                if (!headerValues.TryGetValue(f.Name.ToLower(), out var val)) continue;
+                f.SetValue(header,
+                    f.PropertyType == typeof(int)
+                        ? Convert.ChangeType(Convert.ToInt32(val), f.PropertyType)
+                        : Convert.ChangeType(val, f.PropertyType));
             }
 
             return header;

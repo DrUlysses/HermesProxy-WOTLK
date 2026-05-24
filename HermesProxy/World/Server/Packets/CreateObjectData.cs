@@ -7,9 +7,9 @@ public class CreateObjectData
 {
 	public ObjectType ObjectType;
 
-	public MovementInfo MoveInfo;
+	public MovementInfo? MoveInfo;
 
-	public ServerSideMovement MoveSpline;
+	public ServerSideMovement? MoveSpline;
 
 	public bool NoBirthAnim;
 
