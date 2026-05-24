@@ -42,7 +42,7 @@ public class WorldClient
 
     private Realm _realm;
 
-    private LegacyWorldCrypt _worldCrypt;
+    private LegacyWorldCrypt? _worldCrypt;
 
     private Dictionary<Opcode, Action<WorldPacket>> _packetHandlers;
 
@@ -15809,10 +15809,7 @@ public class WorldClient
             Log.PrintNet(LogType.Debug, LogNetDir.P2S,
                 $"Raw header ({headerArray.Length} bytes): {BitConverter.ToString(headerArray, 0, Math.Min(headerArray.Length, 6))}",
                 "WorldClient.cs");
-            if (_worldCrypt != null)
-            {
-                _worldCrypt.Encrypt(headerArray, 6);
-            }
+            _worldCrypt?.Encrypt(headerArray, 6);
 
             buffer.Clear();
             buffer.WriteBytes(headerArray);
@@ -15826,10 +15823,7 @@ public class WorldClient
         catch (Exception ex)
         {
             Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Write Error: " + ex.Message, "WorldClient.cs");
-            if (!_isSuccessful.HasValue)
-            {
-                _isSuccessful = false;
-            }
+            _isSuccessful ??= false;
         }
 
         _sendMutex.ReleaseMutex();
@@ -15846,8 +15840,7 @@ public class WorldClient
                 return;
             }
 
-            var packets = new List<ServerPacket>();
-            packets.Add(packet);
+            var packets = new List<ServerPacket> { packet };
             _delayedPacketsToClient.Add(delayUntilOpcode, packets);
         }
         else
@@ -15885,15 +15878,14 @@ public class WorldClient
             {
                 lock (pendingPackets)
                 {
-                    ServerPacket oldPacket;
-                    while (pendingPackets.TryDequeue(out oldPacket))
+                    while (pendingPackets.TryDequeue(out var oldPacket))
                     {
-                        realmSocket.SendPacket(oldPacket);
+                        realmSocket?.SendPacket(oldPacket);
                     }
                 }
             }
 
-            realmSocket.SendPacket(packet);
+            realmSocket?.SendPacket(packet);
             return;
         }
 
@@ -15937,15 +15929,14 @@ public class WorldClient
         {
             lock (pendingPackets)
             {
-                ServerPacket oldPacket;
-                while (pendingPackets.TryDequeue(out oldPacket))
+                while (pendingPackets.TryDequeue(out var oldPacket))
                 {
-                    instanceSocket.SendPacket(oldPacket);
+                    instanceSocket?.SendPacket(oldPacket);
                 }
             }
         }
 
-        instanceSocket.SendPacket(packet);
+        instanceSocket?.SendPacket(packet);
     }
 
     public void SendPacketToServer(WorldPacket packet, Opcode delayUntilOpcode = Opcode.MSG_NULL_ACTION)
@@ -15959,8 +15950,7 @@ public class WorldClient
                 return;
             }
 
-            var packets = new List<WorldPacket>();
-            packets.Add(packet);
+            var packets = new List<WorldPacket> { packet };
             _delayedPacketsToServer.Add(delayUntilOpcode, packets);
         }
         else
@@ -15972,27 +15962,23 @@ public class WorldClient
 
     private void SendDelayedPacketsToServerOnOpcode(Opcode opcode)
     {
-        if (_delayedPacketsToServer.ContainsKey(opcode))
+        if (!_delayedPacketsToServer.TryGetValue(opcode, out var packets))
+            return;
+        for (var i = packets.Count - 1; i >= 0; i--)
         {
-            var packets = _delayedPacketsToServer[opcode];
-            for (var i = packets.Count - 1; i >= 0; i--)
-            {
-                SendPacket(packets[i]);
-                packets.RemoveAt(i);
-            }
+            SendPacket(packets[i]);
+            packets.RemoveAt(i);
         }
     }
 
     private void SendDelayedPacketsToClientOnOpcode(Opcode opcode)
     {
-        if (_delayedPacketsToClient.ContainsKey(opcode))
+        if (!_delayedPacketsToClient.TryGetValue(opcode, out var packets))
+            return;
+        for (var i = packets.Count - 1; i >= 0; i--)
         {
-            var packets = _delayedPacketsToClient[opcode];
-            for (var i = packets.Count - 1; i >= 0; i--)
-            {
-                SendPacketToClientDirect(packets[i]);
-                packets.RemoveAt(i);
-            }
+            SendPacketToClientDirect(packets[i]);
+            packets.RemoveAt(i);
         }
     }
 
@@ -16011,8 +15997,7 @@ public class WorldClient
 
         lock (pendingPackets)
         {
-            ServerPacket next;
-            while (pendingPackets.TryPeek(out next))
+            while (pendingPackets.TryPeek(out var next))
             {
                 var socket = next.GetConnection() == ConnectionType.Realm
                     ? GetSession().RealmSocket

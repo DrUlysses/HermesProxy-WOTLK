@@ -92,7 +92,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			{
 				return;
 			}
-			clientPacket.LogPacket(ref session.GetSession().ModernSniff);
+
+			var sessionToLog = session.GetSession();
+			if (sessionToLog == null) 
+				return;
+			clientPacket.LogPacket(ref sessionToLog.ModernSniff);
 			clientPacket.Read();
 			methodCaller(session, clientPacket);
 		}
@@ -161,13 +165,11 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private ConcurrentDictionary<Opcode, PacketHandler> _clientPacketTable = new();
 
-	private GlobalSessionData _globalSession;
-
 	private Mutex _sendMutex = new();
 
 	private BnetServices.ServiceManager _bnetRpc;
 
-	public GlobalSessionData Session => _globalSession;
+	public GlobalSessionData? Session { get; private set; }
 
 	[PacketHandler(Opcode.CMSG_ARENA_TEAM_ROSTER)]
 	private void HandleArenaTeamRoster(ArenaTeamRosterRequest arena)
@@ -4741,14 +4743,13 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		base.Dispose();
 	}
 
-	public GlobalSessionData GetSession()
+	public GlobalSessionData? GetSession()
 	{
-		return _globalSession;
+		return Session;
 	}
 
 	public override void Accept()
 	{
-		var ip_address = GetRemoteIpAddress().ToString();
 		_packetBuffer.Resize(ClientConnectionInitialize.Length + 1);
 		AsyncReadWithCallback(InitializeHandler);
 		var packet = new ByteBuffer();
@@ -4997,21 +4998,21 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	public void SendPacket(ServerPacket packet)
 	{
+		var session = GetSession();
 		if (!IsOpen())
 		{
 			Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't send {packet.GetUniversalOpcode()}, socket is closed!", "WorldSocket.cs");
-			if (GetSession() != null)
+			if (session == null)
+				return;
+			if (session.RealmSocket == this)
 			{
-				if (GetSession().RealmSocket == this)
-				{
-					GetSession().RealmSocket = null;
-				}
-				else if (GetSession().InstanceSocket == this)
-				{
-					GetSession().InstanceSocket = null;
-				}
-				GetSession().OnDisconnect();
+				session.RealmSocket = null;
 			}
+			else if (session.InstanceSocket == this)
+			{
+				session.InstanceSocket = null;
+			}
+			session.OnDisconnect();
 			return;
 		}
 		packet.WritePacketData();
@@ -5019,10 +5020,9 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		{
 			return;
 		}
-		if (GetSession() != null)
-		{
-			packet.LogPacket(ref GetSession().ModernSniff);
-		}
+
+		if (session?.ModernSniff != null)
+			packet.LogPacket(ref session.ModernSniff!);
 		_sendMutex.WaitOne();
 		var data = packet.GetData();
 		var universalOpcode = packet.GetUniversalOpcode();
@@ -5034,8 +5034,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 			_sendMutex.ReleaseMutex();
 			return;
 		}
-		if (universalOpcode != Opcode.SMSG_ON_MONSTER_MOVE)
-			Log.PrintNet(LogType.Debug, LogNetDir.P2C, $"Sending opcode {universalOpcode} ({opcode}), size={data.Length}.", "WorldSocket.cs");
+		Log.PrintNet(LogType.Debug, LogNetDir.P2C, $"Sending opcode {universalOpcode} ({opcode}), size={data.Length}.", "WorldSocket.cs");
 		var buffer = new ByteBuffer();
 		var packetSize = data.Length;
 		if (packetSize > 1024 && _worldCrypt.IsInitialized && ModernVersion.ExpansionVersion < 3)
@@ -5078,22 +5077,16 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		_compressionStream.next_in = 0u;
 		_compressionStream.avail_in = (uint)uncompressedData.Length;
 		_compressionStream.in_buf = uncompressedData;
-		var z_res = ZLib.deflate(_compressionStream, 2);
-		if (z_res != 0)
-		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't compress packet data (zlib: deflate) Error code: {z_res} msg: {_compressionStream.msg}", "WorldSocket.cs");
-			return 0u;
-		}
-		return bufferSize - _compressionStream.avail_out;
+		var zRes = ZLib.deflate(_compressionStream, 2);
+		if (zRes == 0)
+			return bufferSize - _compressionStream.avail_out;
+		Log.PrintNet(LogType.Error, LogNetDir.P2C, $"Can't compress packet data (zlib: deflate) Error code: {zRes} msg: {_compressionStream.msg}", "WorldSocket.cs");
+		return 0u;
 	}
 
 	public override bool Update()
 	{
-		if (!base.Update())
-		{
-			return false;
-		}
-		return true;
+		return IsOpen();
 	}
 
 	private void HandleSendAuthSession()
@@ -5109,41 +5102,42 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 
 	private void HandleAuthSession(AuthSession authSession)
 	{
-		_globalSession = BnetSessionTicketStorage.SessionsByName[authSession.RealmJoinTicket];
-		_bnetRpc = new BnetServices.ServiceManager("WorldSocket", this, _globalSession);
+		Session = BnetSessionTicketStorage.SessionsByName[authSession.RealmJoinTicket];
+		_bnetRpc = new BnetServices.ServiceManager("WorldSocket", this, Session);
 		HandleAuthSessionCallback(authSession);
 	}
 
 	private void HandleAuthSessionCallback(AuthSession authSession)
 	{
-		var buildInfo = GetSession().RealmManager.GetBuildInfo(GetSession().Build);
+		var session = GetSession();
+		var buildInfo = session?.RealmManager.GetBuildInfo(session.Build);
 		if (buildInfo == null)
 		{
 			SendAuthResponseError(BattlenetRpcErrorCode.BadVersion);
-			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSessionCallback: Missing auth seed for realm build {GetSession().Build} ({GetRemoteIpAddress()}).", "WorldSocket.cs");
+			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSessionCallback: Missing auth seed for realm build {session.Build} ({GetRemoteIpAddress()}).", "WorldSocket.cs");
 			CloseSocket();
-			GetSession().OnDisconnect();
+			session.OnDisconnect();
 			return;
 		}
 		var address = GetRemoteIpAddress();
-		if (GetSession().OS != "Wn64" && GetSession().OS != "Mc64" && GetSession().OS != "MacA")
+		if (session?.OS != "Wn64" && session?.OS != "Mc64" && session?.OS != "MacA")
 		{
-			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSession: Unknown OS for account: {GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') address: {address}", "WorldSocket.cs");
+			Log.Print(LogType.Error, $"WorldSocket.HandleAuthSession: Unknown OS for account: {session?.GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') address: {address}", "WorldSocket.cs");
 			CloseSocket();
-			GetSession().OnDisconnect();
+			session?.OnDisconnect();
 			return;
 		}
-		var platformSeed = buildInfo.BuildSeeds.GetValueOrDefault(GetSession().OS);
+		var platformSeed = buildInfo.BuildSeeds.GetValueOrDefault(session.OS);
 		if (platformSeed == null || !TrySeed(platformSeed))
 		{
 			Log.Print(LogType.Debug, "WorldSocket.HandleAuthSession: Fallback to static seed", "WorldSocket.cs");
 			if (!TrySeed(buildInfo.FallbackStaticSeed))
 			{
-				Log.Print(LogType.Warn, $"WorldSocket.HandleAuthSession: Seed mismatch for account: {GetSession().GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') - BYPASSING for testing", "WorldSocket.cs");
+				Log.Print(LogType.Warn, $"WorldSocket.HandleAuthSession: Seed mismatch for account: {session.GameAccountInfo.Id} ('{authSession.RealmJoinTicket}') - BYPASSING for testing", "WorldSocket.cs");
 			}
 		}
 		var keyData = new Sha256();
-		keyData.Finish(GetSession().SessionKey);
+		keyData.Finish(session.SessionKey);
 		var sessionKeyHmac = new HmacSha256(keyData.Digest);
 		sessionKeyHmac.Process(_serverChallenge, 16);
 		sessionKeyHmac.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
@@ -5156,27 +5150,30 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		encryptKeyGen.Process(_serverChallenge, 16);
 		encryptKeyGen.Finish(EncryptionKeySeed, 16);
 		Buffer.BlockCopy(encryptKeyGen.Digest, 0, _encryptKey, 0, 16);
-		GetSession().SessionKey = _sessionKey;
+		session.SessionKey = _sessionKey;
 		Log.Print(LogType.Server, $"WorldSocket:HandleAuthSession: Client '{authSession.RealmJoinTicket}' authenticated successfully from {address}.", "WorldSocket.cs");
 		_realmId = new RealmId((byte)authSession.RegionID, (byte)authSession.BattlegroupID, authSession.RealmID);
-		GetSession().WorldClient = new WorldClient();
-		if (!GetSession().WorldClient.ConnectToWorldServer(GetSession().RealmManager.GetRealm(_realmId), GetSession()))
+		session.WorldClient = new WorldClient();
+		if (!session.WorldClient.ConnectToWorldServer(session.RealmManager.GetRealm(_realmId), session))
 		{
 			SendAuthResponseError(BattlenetRpcErrorCode.BadServer);
 			Log.Print(LogType.Error, "The WorldClient failed to connect to the selected world server!", "WorldSocket.cs");
 			Session.AccountMetaDataMgr.InvalidateLastSelectedCharacter();
 			CloseSocket();
-			GetSession().OnDisconnect();
+			session.OnDisconnect();
 		}
 		else
 		{
 			SendPacket(new EnterEncryptedMode(_encryptKey, enabled: true));
 			AsyncRead();
 		}
+
+		return;
+
 		bool TrySeed(byte[] seed)
 		{
 			var digestKeyHash = new Sha256();
-			digestKeyHash.Process(GetSession().SessionKey, GetSession().SessionKey.Length);
+			digestKeyHash.Process(session.SessionKey, session.SessionKey.Length);
 			digestKeyHash.Finish(seed);
 			var hmac = new HmacSha256(digestKeyHash.Digest);
 			hmac.Process(authSession.LocalChallenge, authSession.LocalChallenge.Count);
@@ -5208,7 +5205,7 @@ public class WorldSocket : SocketBase, BnetServices.INetwork
 		var key = default(ConnectToKey);
 		var key2 = key.Raw = authSession.Key;
 		_key = key2;
-		_globalSession = BnetSessionTicketStorage.SessionsByKey[_key];
+		Session = BnetSessionTicketStorage.SessionsByKey[_key];
 		var accountId = key.AccountId;
 		var login = GetSession().AccountInfo.Login;
 		_sessionKey = GetSession().SessionKey;

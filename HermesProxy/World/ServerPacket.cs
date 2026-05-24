@@ -53,7 +53,7 @@ public abstract class ServerPacket
 		return _buffer;
 	}
 
-	public void LogPacket(ref SniffFile sniffFile)
+	public void LogPacket(ref SniffFile? sniffFile)
 	{
 		if (!Settings.PacketsLog) return;
 		if (sniffFile == null)

@@ -40,7 +40,7 @@ public class GlobalSessionData
 
 	public AccountDataManager AccountDataMgr;
 
-	public WorldSocket RealmSocket;
+	public WorldSocket? RealmSocket;
 
 	public WorldSocket? InstanceSocket;
 
@@ -48,7 +48,7 @@ public class GlobalSessionData
 
 	public WorldClient WorldClient;
 
-	public SniffFile ModernSniff;
+	public SniffFile? ModernSniff;
 
 	public readonly Dictionary<string, WowGuid128> GuildsByName = new();
 

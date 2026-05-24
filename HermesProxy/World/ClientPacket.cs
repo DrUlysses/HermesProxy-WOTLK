@@ -30,9 +30,10 @@ public abstract class ClientPacket : IDisposable
 		return ModernVersion.GetUniversalOpcode(GetOpcode());
 	}
 
-	public void LogPacket(ref SniffFile sniffFile)
+	public void LogPacket(ref SniffFile? sniffFile)
 	{
-		if (!Settings.PacketsLog) return;
+		if (!Settings.PacketsLog || sniffFile == null)
+			return;
 		sniffFile.WritePacket(GetOpcode(), isFromClient: true, _worldPacket.GetData());
 	}
 }
