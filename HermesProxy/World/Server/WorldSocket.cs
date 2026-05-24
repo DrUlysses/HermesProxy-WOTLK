@@ -23,7 +23,6 @@ using HermesProxy.World.Client;
 using HermesProxy.World.Enums;
 using HermesProxy.World.Objects;
 using HermesProxy.World.Server.Packets;
-using JetBrains.Annotations;
 using AuthResult = HermesProxy.Auth.AuthResult;
 
 namespace HermesProxy.World.Server;
