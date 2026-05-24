@@ -15,7 +15,7 @@ public class TutorialFlags : ServerPacket
 	{
 		for (byte i = 0; i < 8; i++)
 		{
-			base._worldPacket.WriteUInt32(this.TutorialData[i]);
+			_worldPacket.WriteUInt32(TutorialData[i]);
 		}
 	}
 }

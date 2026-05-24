@@ -6,7 +6,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
-using ThreadingState = System.Threading.ThreadState;
 
 namespace Framework.Logging
 {
@@ -41,7 +40,7 @@ namespace Framework.Logging
         };
 
         static BlockingCollection<(LogType Type, string Message)> logQueue = new();
-        private static Thread? _logOutputThread = null;
+        private static Thread? _logOutputThread;
         public static bool IsLogging => _logOutputThread != null && !logQueue.IsCompleted;
 
         public static bool DebugLogEnabled { get; set; }

@@ -15,10 +15,10 @@ public class SetSpellModifier : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Modifiers.Count);
-		foreach (SpellModifierInfo spellMod in this.Modifiers)
+		_worldPacket.WriteInt32(Modifiers.Count);
+		foreach (SpellModifierInfo spellMod in Modifiers)
 		{
-			spellMod.Write(base._worldPacket);
+			spellMod.Write(_worldPacket);
 		}
 	}
 }

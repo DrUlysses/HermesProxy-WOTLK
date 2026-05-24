@@ -26,17 +26,17 @@ public class GuildEventPlayerLeft : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.Removed);
-		base._worldPacket.WriteBits(this.LeaverName.GetByteCount(), 6);
-		if (this.Removed)
+		_worldPacket.WriteBit(Removed);
+		_worldPacket.WriteBits(LeaverName.GetByteCount(), 6);
+		if (Removed)
 		{
-			base._worldPacket.WriteBits(this.RemoverName.GetByteCount(), 6);
-			base._worldPacket.WritePackedGuid128(this.RemoverGUID);
-			base._worldPacket.WriteUInt32(this.RemoverVirtualRealmAddress);
-			base._worldPacket.WriteString(this.RemoverName);
+			_worldPacket.WriteBits(RemoverName.GetByteCount(), 6);
+			_worldPacket.WritePackedGuid128(RemoverGUID);
+			_worldPacket.WriteUInt32(RemoverVirtualRealmAddress);
+			_worldPacket.WriteString(RemoverName);
 		}
-		base._worldPacket.WritePackedGuid128(this.LeaverGUID);
-		base._worldPacket.WriteUInt32(this.LeaverVirtualRealmAddress);
-		base._worldPacket.WriteString(this.LeaverName);
+		_worldPacket.WritePackedGuid128(LeaverGUID);
+		_worldPacket.WriteUInt32(LeaverVirtualRealmAddress);
+		_worldPacket.WriteString(LeaverName);
 	}
 }

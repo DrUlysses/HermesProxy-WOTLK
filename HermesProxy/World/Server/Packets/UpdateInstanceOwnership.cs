@@ -13,6 +13,6 @@ internal class UpdateInstanceOwnership : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.IOwnInstance);
+		_worldPacket.WriteUInt32(IOwnInstance);
 	}
 }

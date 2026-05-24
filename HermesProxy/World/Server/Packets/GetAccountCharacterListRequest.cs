@@ -2,7 +2,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class GetAccountCharacterListRequest : ClientPacket
 {
-	public uint Token = 0u;
+	public uint Token;
 
 	public GetAccountCharacterListRequest(WorldPacket packet)
 		: base(packet)
@@ -11,6 +11,6 @@ public class GetAccountCharacterListRequest : ClientPacket
 
 	public override void Read()
 	{
-		this.Token = base._worldPacket.ReadUInt32();
+		Token = _worldPacket.ReadUInt32();
 	}
 }

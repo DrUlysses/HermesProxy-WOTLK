@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_invitation.proto</summary>
@@ -367,8 +367,8 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(TargetId, other.TargetId)) return false;
-      if (!object.Equals(Slot, other.Slot)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(Slot, other.Slot)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -720,14 +720,14 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if (Id != other.Id) return false;
-      if (!object.Equals(Inviter, other.Inviter)) return false;
-      if (!object.Equals(Invitee, other.Invitee)) return false;
-      if (!object.Equals(Club, other.Club)) return false;
-      if (!object.Equals(Slot, other.Slot)) return false;
+      if (!Equals(Inviter, other.Inviter)) return false;
+      if (!Equals(Invitee, other.Invitee)) return false;
+      if (!Equals(Club, other.Club)) return false;
+      if (!Equals(Slot, other.Slot)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (CreationTime != other.CreationTime) return false;
       if (ExpirationTime != other.ExpirationTime) return false;
-      if (!object.Equals(Suggester, other.Suggester)) return false;
+      if (!Equals(Suggester, other.Suggester)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1042,8 +1042,8 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(TargetId, other.TargetId)) return false;
-      if (!object.Equals(Slot, other.Slot)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(Slot, other.Slot)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1377,9 +1377,9 @@ namespace Bgs.Protocol.Club.V1 {
       }
       if (Id != other.Id) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Suggester, other.Suggester)) return false;
-      if (!object.Equals(Suggestee, other.Suggestee)) return false;
-      if (!object.Equals(Slot, other.Slot)) return false;
+      if (!Equals(Suggester, other.Suggester)) return false;
+      if (!Equals(Suggestee, other.Suggestee)) return false;
+      if (!Equals(Slot, other.Slot)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (CreationTime != other.CreationTime) return false;
       if (ExpirationTime != other.ExpirationTime) return false;
@@ -1700,7 +1700,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Slot, other.Slot)) return false;
+      if (!Equals(Slot, other.Slot)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (AllowedRedeemCount != other.AllowedRedeemCount) return false;
       if (ExpirationTime != other.ExpirationTime) return false;
@@ -2068,9 +2068,9 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if (Id != other.Id) return false;
-      if (!object.Equals(Creator, other.Creator)) return false;
-      if (!object.Equals(Club, other.Club)) return false;
-      if (!object.Equals(Slot, other.Slot)) return false;
+      if (!Equals(Creator, other.Creator)) return false;
+      if (!Equals(Club, other.Club)) return false;
+      if (!Equals(Slot, other.Slot)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (CurrentRedeemCount != other.CurrentRedeemCount) return false;
       if (AllowedRedeemCount != other.AllowedRedeemCount) return false;

@@ -18,9 +18,9 @@ public class GuildEventPlayerJoined : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WriteUInt32(this.VirtualRealmAddress);
-		base._worldPacket.WriteBits(this.Name.GetByteCount(), 6);
-		base._worldPacket.WriteString(this.Name);
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WriteUInt32(VirtualRealmAddress);
+		_worldPacket.WriteBits(Name.GetByteCount(), 6);
+		_worldPacket.WriteString(Name);
 	}
 }

@@ -11,6 +11,6 @@ internal class OptOutOfLoot : ClientPacket
 
 	public override void Read()
 	{
-		this.PassOnLoot = base._worldPacket.HasBit();
+		PassOnLoot = _worldPacket.HasBit();
 	}
 }

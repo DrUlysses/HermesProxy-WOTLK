@@ -22,10 +22,10 @@ internal class PlayObjectSound : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.SoundEntryID);
-		base._worldPacket.WritePackedGuid128(this.SourceObjectGUID);
-		base._worldPacket.WritePackedGuid128(this.TargetObjectGUID);
-		base._worldPacket.WriteVector3(this.Position);
-		base._worldPacket.WriteInt32(this.BroadcastTextID);
+		_worldPacket.WriteUInt32(SoundEntryID);
+		_worldPacket.WritePackedGuid128(SourceObjectGUID);
+		_worldPacket.WritePackedGuid128(TargetObjectGUID);
+		_worldPacket.WriteVector3(Position);
+		_worldPacket.WriteInt32(BroadcastTextID);
 	}
 }

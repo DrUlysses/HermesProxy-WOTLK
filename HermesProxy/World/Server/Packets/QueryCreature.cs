@@ -16,18 +16,18 @@ public class QueryCreature : ClientPacket
 
 	public override void Read()
 	{
-		this.CreatureID = base._worldPacket.ReadUInt32();
-		this.Guid = WowGuid128.Create(HighGuidType703.Creature, 0u, this.CreatureID, 1u);
-		if (!base._worldPacket.CanRead())
+		CreatureID = _worldPacket.ReadUInt32();
+		Guid = WowGuid128.Create(HighGuidType703.Creature, 0u, CreatureID, 1u);
+		if (!_worldPacket.CanRead())
 		{
 			return;
 		}
 		try
 		{
-			WowGuid128 packedGuid = base._worldPacket.ReadPackedGuid128();
+			WowGuid128 packedGuid = _worldPacket.ReadPackedGuid128();
 			if (!packedGuid.IsEmpty())
 			{
-				this.Guid = packedGuid;
+				Guid = packedGuid;
 			}
 		}
 		catch (EndOfStreamException)

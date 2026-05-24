@@ -10,8 +10,8 @@ public class InspectGuildData
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.GuildGUID);
-		data.WriteInt32(this.NumGuildMembers);
-		data.WriteInt32(this.AchievementPoints);
+		data.WritePackedGuid128(GuildGUID);
+		data.WriteInt32(NumGuildMembers);
+		data.WriteInt32(AchievementPoints);
 	}
 }

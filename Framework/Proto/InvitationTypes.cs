@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/invitation_types.proto</summary>
@@ -318,8 +318,8 @@ namespace Bgs.Protocol {
         return true;
       }
       if (Id != other.Id) return false;
-      if (!object.Equals(InviterIdentity, other.InviterIdentity)) return false;
-      if (!object.Equals(InviteeIdentity, other.InviteeIdentity)) return false;
+      if (!Equals(InviterIdentity, other.InviterIdentity)) return false;
+      if (!Equals(InviteeIdentity, other.InviteeIdentity)) return false;
       if (InviterName != other.InviterName) return false;
       if (InviteeName != other.InviteeName) return false;
       if (InvitationMessage != other.InvitationMessage) return false;

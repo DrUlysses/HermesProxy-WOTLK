@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Google.Protobuf {
 
   /// <summary>Holder for reflection information generated from google/protobuf/descriptor.proto</summary>
@@ -496,8 +496,8 @@ namespace Google.Protobuf {
       if(!enumType_.Equals(other.enumType_)) return false;
       if(!service_.Equals(other.service_)) return false;
       if(!extension_.Equals(other.extension_)) return false;
-      if (!object.Equals(Options, other.Options)) return false;
-      if (!object.Equals(SourceCodeInfo, other.SourceCodeInfo)) return false;
+      if (!Equals(Options, other.Options)) return false;
+      if (!Equals(SourceCodeInfo, other.SourceCodeInfo)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -770,7 +770,7 @@ namespace Google.Protobuf {
     /// <summary>Field number for the "nested_type" field.</summary>
     public const int NestedTypeFieldNumber = 3;
     private static readonly pb::FieldCodec<global::Google.Protobuf.DescriptorProto> _repeated_nestedType_codec
-        = pb::FieldCodec.ForMessage(26, global::Google.Protobuf.DescriptorProto.Parser);
+        = pb::FieldCodec.ForMessage(26, Parser);
     private readonly pbc::RepeatedField<global::Google.Protobuf.DescriptorProto> nestedType_ = new pbc::RepeatedField<global::Google.Protobuf.DescriptorProto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public pbc::RepeatedField<global::Google.Protobuf.DescriptorProto> NestedType {
@@ -848,7 +848,7 @@ namespace Google.Protobuf {
       if(!enumType_.Equals(other.enumType_)) return false;
       if(!extensionRange_.Equals(other.extensionRange_)) return false;
       if(!oneofDecl_.Equals(other.oneofDecl_)) return false;
-      if (!object.Equals(Options, other.Options)) return false;
+      if (!Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1454,7 +1454,7 @@ namespace Google.Protobuf {
       if (Extendee != other.Extendee) return false;
       if (DefaultValue != other.DefaultValue) return false;
       if (OneofIndex != other.OneofIndex) return false;
-      if (!object.Equals(Options, other.Options)) return false;
+      if (!Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1931,7 +1931,7 @@ namespace Google.Protobuf {
       }
       if (Name != other.Name) return false;
       if(!value_.Equals(other.value_)) return false;
-      if (!object.Equals(Options, other.Options)) return false;
+      if (!Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2152,7 +2152,7 @@ namespace Google.Protobuf {
       }
       if (Name != other.Name) return false;
       if (Number != other.Number) return false;
-      if (!object.Equals(Options, other.Options)) return false;
+      if (!Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2364,7 +2364,7 @@ namespace Google.Protobuf {
       }
       if (Name != other.Name) return false;
       if(!method_.Equals(other.method_)) return false;
-      if (!object.Equals(Options, other.Options)) return false;
+      if (!Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2607,7 +2607,7 @@ namespace Google.Protobuf {
       if (Name != other.Name) return false;
       if (InputType != other.InputType) return false;
       if (OutputType != other.OutputType) return false;
-      if (!object.Equals(Options, other.Options)) return false;
+      if (!Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

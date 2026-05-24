@@ -15,10 +15,10 @@ public class SetAllTaskProgress : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Tasks.Count);
-		foreach (TaskProgress task in this.Tasks)
+		_worldPacket.WriteInt32(Tasks.Count);
+		foreach (TaskProgress task in Tasks)
 		{
-			task.Write(base._worldPacket);
+			task.Write(_worldPacket);
 		}
 	}
 }

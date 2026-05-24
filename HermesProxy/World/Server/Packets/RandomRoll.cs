@@ -21,10 +21,10 @@ public class RandomRoll : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Roller);
-		base._worldPacket.WritePackedGuid128(this.RollerWowAccount);
-		base._worldPacket.WriteInt32(this.Min);
-		base._worldPacket.WriteInt32(this.Max);
-		base._worldPacket.WriteInt32(this.Result);
+		_worldPacket.WritePackedGuid128(Roller);
+		_worldPacket.WritePackedGuid128(RollerWowAccount);
+		_worldPacket.WriteInt32(Min);
+		_worldPacket.WriteInt32(Max);
+		_worldPacket.WriteInt32(Result);
 	}
 }

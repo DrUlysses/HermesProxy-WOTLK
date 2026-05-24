@@ -24,31 +24,31 @@ public class WorldServerInfo : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.DifficultyID);
+		_worldPacket.WriteUInt32(DifficultyID);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteBit(this.IsTournamentRealm != 0);
+			_worldPacket.WriteBit(IsTournamentRealm != 0);
 		}
 		else
 		{
-			base._worldPacket.WriteUInt8(this.IsTournamentRealm);
+			_worldPacket.WriteUInt8(IsTournamentRealm);
 		}
-		base._worldPacket.WriteBit(this.XRealmPvpAlert);
-		base._worldPacket.WriteBit(this.RestrictedAccountMaxLevel.HasValue);
-		base._worldPacket.WriteBit(this.RestrictedAccountMaxMoney.HasValue);
-		base._worldPacket.WriteBit(this.InstanceGroupSize.HasValue);
-		if (this.RestrictedAccountMaxLevel.HasValue)
+		_worldPacket.WriteBit(XRealmPvpAlert);
+		_worldPacket.WriteBit(RestrictedAccountMaxLevel.HasValue);
+		_worldPacket.WriteBit(RestrictedAccountMaxMoney.HasValue);
+		_worldPacket.WriteBit(InstanceGroupSize.HasValue);
+		if (RestrictedAccountMaxLevel.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.RestrictedAccountMaxLevel.Value);
+			_worldPacket.WriteUInt32(RestrictedAccountMaxLevel.Value);
 		}
-		if (this.RestrictedAccountMaxMoney.HasValue)
+		if (RestrictedAccountMaxMoney.HasValue)
 		{
-			base._worldPacket.WriteUInt64(this.RestrictedAccountMaxMoney.Value);
+			_worldPacket.WriteUInt64(RestrictedAccountMaxMoney.Value);
 		}
-		if (this.InstanceGroupSize.HasValue)
+		if (InstanceGroupSize.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.InstanceGroupSize.Value);
+			_worldPacket.WriteUInt32(InstanceGroupSize.Value);
 		}
-		base._worldPacket.FlushBits();
+		_worldPacket.FlushBits();
 	}
 }

@@ -1,3 +1,4 @@
+using System;
 using HermesProxy.Enums;
 
 namespace HermesProxy;
@@ -87,7 +88,7 @@ public static class VersionChecker
 
 	public static ClientVersionBuild GetBestLegacyVersion(ClientVersionBuild modernVersion)
 	{
-		byte expansionVersion = VersionChecker.GetExpansionVersion(modernVersion);
+		byte expansionVersion = GetExpansionVersion(modernVersion);
 		if (1 == 0)
 		{
 		}
@@ -108,7 +109,7 @@ public static class VersionChecker
 	{
 		string str = version.ToString();
 		str = str.Replace("V", "");
-		str = str.Substring(0, str.IndexOf("_"));
+		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
 	}
 }

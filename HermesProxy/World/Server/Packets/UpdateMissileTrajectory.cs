@@ -1,5 +1,3 @@
-using HermesProxy.World.Objects;
-
 namespace HermesProxy.World.Server.Packets;
 
 public class UpdateMissileTrajectory : ClientPacket
@@ -24,18 +22,18 @@ public class UpdateMissileTrajectory : ClientPacket
 
 	public override void Read()
 	{
-		this.Guid = base._worldPacket.ReadPackedGuid128();
-		this.CastID = base._worldPacket.ReadPackedGuid128();
-		this.MoveMsgID = base._worldPacket.ReadUInt16();
-		this.SpellID = base._worldPacket.ReadInt32();
-		this.Pitch = base._worldPacket.ReadFloat();
-		this.Speed = base._worldPacket.ReadFloat();
-		this.FirePosX = base._worldPacket.ReadFloat();
-		this.FirePosY = base._worldPacket.ReadFloat();
-		this.FirePosZ = base._worldPacket.ReadFloat();
-		this.ImpactPosX = base._worldPacket.ReadFloat();
-		this.ImpactPosY = base._worldPacket.ReadFloat();
-		this.ImpactPosZ = base._worldPacket.ReadFloat();
+		Guid = _worldPacket.ReadPackedGuid128();
+		CastID = _worldPacket.ReadPackedGuid128();
+		MoveMsgID = _worldPacket.ReadUInt16();
+		SpellID = _worldPacket.ReadInt32();
+		Pitch = _worldPacket.ReadFloat();
+		Speed = _worldPacket.ReadFloat();
+		FirePosX = _worldPacket.ReadFloat();
+		FirePosY = _worldPacket.ReadFloat();
+		FirePosZ = _worldPacket.ReadFloat();
+		ImpactPosX = _worldPacket.ReadFloat();
+		ImpactPosY = _worldPacket.ReadFloat();
+		ImpactPosZ = _worldPacket.ReadFloat();
 		// Optional MovementInfo follows but we skip it
 	}
 }

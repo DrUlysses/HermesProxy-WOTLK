@@ -35,38 +35,38 @@ public class PetSpells : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PetGUID);
-		base._worldPacket.WriteUInt16(this.CreatureFamily);
-		base._worldPacket.WriteInt16(this.Specialization);
-		base._worldPacket.WriteUInt32(this.TimeLimit);
-		base._worldPacket.WriteUInt16((ushort)((byte)this.CommandState | (this.Flag << 16)));
-		base._worldPacket.WriteUInt8((byte)this.ReactState);
-		uint[] actionButtons = this.ActionButtons;
+		_worldPacket.WritePackedGuid128(PetGUID);
+		_worldPacket.WriteUInt16(CreatureFamily);
+		_worldPacket.WriteInt16(Specialization);
+		_worldPacket.WriteUInt32(TimeLimit);
+		_worldPacket.WriteUInt16((ushort)((byte)CommandState | (Flag << 16)));
+		_worldPacket.WriteUInt8((byte)ReactState);
+		uint[] actionButtons = ActionButtons;
 		foreach (uint actionButton in actionButtons)
 		{
-			base._worldPacket.WriteUInt32(actionButton);
+			_worldPacket.WriteUInt32(actionButton);
 		}
-		base._worldPacket.WriteInt32(this.Actions.Count);
-		base._worldPacket.WriteInt32(this.Cooldowns.Count);
-		base._worldPacket.WriteInt32(this.SpellHistory.Count);
-		foreach (uint action in this.Actions)
+		_worldPacket.WriteInt32(Actions.Count);
+		_worldPacket.WriteInt32(Cooldowns.Count);
+		_worldPacket.WriteInt32(SpellHistory.Count);
+		foreach (uint action in Actions)
 		{
-			base._worldPacket.WriteUInt32(action);
+			_worldPacket.WriteUInt32(action);
 		}
-		foreach (PetSpellCooldown cooldown in this.Cooldowns)
+		foreach (PetSpellCooldown cooldown in Cooldowns)
 		{
-			base._worldPacket.WriteUInt32(cooldown.SpellID);
-			base._worldPacket.WriteUInt32(cooldown.Duration);
-			base._worldPacket.WriteUInt32(cooldown.CategoryDuration);
-			base._worldPacket.WriteFloat(cooldown.ModRate);
-			base._worldPacket.WriteUInt16(cooldown.Category);
+			_worldPacket.WriteUInt32(cooldown.SpellID);
+			_worldPacket.WriteUInt32(cooldown.Duration);
+			_worldPacket.WriteUInt32(cooldown.CategoryDuration);
+			_worldPacket.WriteFloat(cooldown.ModRate);
+			_worldPacket.WriteUInt16(cooldown.Category);
 		}
-		foreach (PetSpellHistory history in this.SpellHistory)
+		foreach (PetSpellHistory history in SpellHistory)
 		{
-			base._worldPacket.WriteUInt32(history.CategoryID);
-			base._worldPacket.WriteUInt32(history.RecoveryTime);
-			base._worldPacket.WriteFloat(history.ChargeModRate);
-			base._worldPacket.WriteInt8(history.ConsumedCharges);
+			_worldPacket.WriteUInt32(history.CategoryID);
+			_worldPacket.WriteUInt32(history.RecoveryTime);
+			_worldPacket.WriteFloat(history.ChargeModRate);
+			_worldPacket.WriteInt8(history.ConsumedCharges);
 		}
 	}
 }

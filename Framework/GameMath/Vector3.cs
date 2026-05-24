@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
  * Copyright (C) 2003-2004  Eran Kampf	eran@ekampf.com	http://www.ekampf.com
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -31,7 +32,7 @@ namespace Framework.GameMath
     [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     //[TypeConverter(typeof(Vector3Converter))]
-    public struct Vector3 : ICloneable
+    public struct Vector3 : ICloneable, IEquatable<Vector3>
     {
         #region Constructors
         /// <summary>
@@ -172,10 +173,8 @@ namespace Framework.GameMath
                     float.Parse(m.Result("${z}"))
                     );
             }
-            else
-            {
-                throw new Exception("Unsuccessful Match.");
-            }
+
+            throw new Exception("Unsuccessful Match.");
         }
         /// <summary>
         /// Converts the specified string to its <see cref="Vector3"/> equivalent.
@@ -202,7 +201,7 @@ namespace Framework.GameMath
                 return true;
             }
 
-            result = Vector3.Zero;
+            result = Zero;
             return false;
         }
         #endregion
@@ -507,9 +506,9 @@ namespace Framework.GameMath
         {
             return
                 (
-                (System.Math.Abs(left.X - right.X) <= tolerance) &&
-                (System.Math.Abs(left.Y - right.Y) <= tolerance) &&
-                (System.Math.Abs(left.Z - right.Z) <= tolerance)
+                (Math.Abs(left.X - right.X) <= tolerance) &&
+                (Math.Abs(left.Y - right.Y) <= tolerance) &&
+                (Math.Abs(left.Z - right.Z) <= tolerance)
                 );
         }
         #endregion
@@ -536,7 +535,7 @@ namespace Framework.GameMath
         /// <returns>Returns the length of the vector. (Sqrt(X*X + Y*Y))</returns>
         public float GetLength()
         {
-            return (float)System.Math.Sqrt(X * X + Y * Y + Z * Z);
+            return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
         }
         /// <summary>
         /// Calculates the squared length of the vector.
@@ -617,7 +616,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two vectors are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Vector3 left, Vector3 right)
         {
-            return ValueType.Equals(left, right);
+            return Equals(left, right);
         }
         /// <summary>
         /// Tests whether two specified vectors are not equal.
@@ -627,7 +626,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two vectors are not equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Vector3 left, Vector3 right)
         {
-            return !ValueType.Equals(left, right);
+            return !Equals(left, right);
         }
 
         /// <summary>
@@ -692,7 +691,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Vector3"/> instance containing the negated values.</returns>
         public static Vector3 operator -(Vector3 vector)
         {
-            return Vector3.Negate(vector);
+            return Negate(vector);
         }
         #endregion
 
@@ -705,7 +704,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Vector3"/> instance containing the sum.</returns>
         public static Vector3 operator +(Vector3 left, Vector3 right)
         {
-            return Vector3.Add(left, right);
+            return Add(left, right);
         }
         /// <summary>
         /// Adds a vector and a scalar.
@@ -715,7 +714,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Vector3"/> instance containing the sum.</returns>
         public static Vector3 operator +(Vector3 vector, float scalar)
         {
-            return Vector3.Add(vector, scalar);
+            return Add(vector, scalar);
         }
         /// <summary>
         /// Adds a vector and a scalar.
@@ -725,7 +724,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Vector3"/> instance containing the sum.</returns>
         public static Vector3 operator +(float scalar, Vector3 vector)
         {
-            return Vector3.Add(vector, scalar);
+            return Add(vector, scalar);
         }
         /// <summary>
         /// Subtracts a vector from a vector.
@@ -738,7 +737,7 @@ namespace Framework.GameMath
         /// </remarks>
         public static Vector3 operator -(Vector3 left, Vector3 right)
         {
-            return Vector3.Subtract(left, right);
+            return Subtract(left, right);
         }
         /// <summary>
         /// Subtracts a scalar from a vector.
@@ -751,7 +750,7 @@ namespace Framework.GameMath
         /// </remarks>
         public static Vector3 operator -(Vector3 vector, float scalar)
         {
-            return Vector3.Subtract(vector, scalar);
+            return Subtract(vector, scalar);
         }
         /// <summary>
         /// Subtracts a vector from a scalar.
@@ -764,7 +763,7 @@ namespace Framework.GameMath
         /// </remarks>
         public static Vector3 operator -(float scalar, Vector3 vector)
         {
-            return Vector3.Subtract(scalar, vector);
+            return Subtract(scalar, vector);
         }
         /// <summary>
         /// Multiplies a vector by a scalar.
@@ -774,7 +773,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Vector3"/> containing the result.</returns>
         public static Vector3 operator *(Vector3 vector, float scalar)
         {
-            return Vector3.Multiply(vector, scalar);
+            return Multiply(vector, scalar);
         }
         /// <summary>
         /// Multiplies a vector by a scalar.
@@ -784,7 +783,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Vector3"/> containing the result.</returns>
         public static Vector3 operator *(float scalar, Vector3 vector)
         {
-            return Vector3.Multiply(vector, scalar);
+            return Multiply(vector, scalar);
         }
         /// <summary>
         /// Divides a vector by a scalar.
@@ -797,7 +796,7 @@ namespace Framework.GameMath
         /// </remarks>
         public static Vector3 operator /(Vector3 vector, float scalar)
         {
-            return Vector3.Divide(vector, scalar);
+            return Divide(vector, scalar);
         }
         /// <summary>
         /// Divides a scalar by a vector.
@@ -810,7 +809,7 @@ namespace Framework.GameMath
         /// </remarks>
         public static Vector3 operator /(float scalar, Vector3 vector)
         {
-            return Vector3.Divide(scalar, vector);
+            return Divide(scalar, vector);
         }
         #endregion
 
@@ -985,7 +984,7 @@ namespace Framework.GameMath
             return a;
         }
 
-        public enum Axis { X = 0, Y = 1, Z = 2, Detect = -1 };
+        public enum Axis { X = 0, Y = 1, Z = 2, Detect = -1 }
 
         public Vector3 lerp(Vector3 v, float alpha)
         {
@@ -1003,14 +1002,18 @@ namespace Framework.GameMath
             {
                 return Zero;
             }
-            else if (mag < 1.00001f && mag > 0.99999f)
+
+            if (mag < 1.00001f && mag > 0.99999f)
             {
                 return this;
             }
-            else
-            {
-                return this * (1.0f / mag);
-            }
+
+            return this * (1.0f / mag);
+        }
+
+        public bool Equals(Vector3 other)
+        {
+            return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);
         }
     }
 
@@ -1054,7 +1057,7 @@ namespace Framework.GameMath
         /// <param name="value">The <see cref="Object"/> to convert.</param>
         /// <param name="destinationType">The Type to convert the <paramref name="value"/> parameter to.</param>
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if ((destinationType == typeof(string)) && (value is Vector3))
             {
@@ -1071,9 +1074,9 @@ namespace Framework.GameMath
         /// <param name="culture">The <see cref="System.Globalization.CultureInfo"/> to use as the current culture. </param>
         /// <param name="value">The <see cref="Object"/> to convert.</param>
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
-        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value.GetType() == typeof(string))
+            if (value is string)
             {
                 return Vector3.Parse((string)value);
             }
@@ -1096,7 +1099,7 @@ namespace Framework.GameMath
         /// </summary>
         /// <param name="context">An <see cref="ITypeDescriptorContext"/> that provides a format context that can be used to extract additional information about the environment from which this converter is invoked. This parameter or properties of this parameter can be a null reference.</param>
         /// <returns>A <see cref="TypeConverter.StandardValuesCollection"/> that holds a standard set of valid values, or a null reference (Nothing in Visual Basic) if the data type does not support a standard set of values.</returns>
-        public override System.ComponentModel.TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
             StandardValuesCollection svc =
                 new StandardValuesCollection(new object[4] { Vector3.Zero, Vector3.XAxis, Vector3.YAxis, Vector3.ZAxis });

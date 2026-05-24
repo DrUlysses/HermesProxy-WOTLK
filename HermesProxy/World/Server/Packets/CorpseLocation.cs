@@ -24,12 +24,12 @@ public class CorpseLocation : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.Valid);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WritePackedGuid128(this.Player);
-		base._worldPacket.WriteInt32(this.ActualMapID);
-		base._worldPacket.WriteVector3(this.Position);
-		base._worldPacket.WriteInt32(this.MapID);
-		base._worldPacket.WritePackedGuid128(this.Transport);
+		_worldPacket.WriteBit(Valid);
+		_worldPacket.FlushBits();
+		_worldPacket.WritePackedGuid128(Player);
+		_worldPacket.WriteInt32(ActualMapID);
+		_worldPacket.WriteVector3(Position);
+		_worldPacket.WriteInt32(MapID);
+		_worldPacket.WritePackedGuid128(Transport);
 	}
 }

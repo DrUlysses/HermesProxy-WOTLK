@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Presence.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/presence_types.proto</summary>
@@ -643,8 +643,8 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Key, other.Key)) return false;
-      if (!object.Equals(Value, other.Value)) return false;
+      if (!Equals(Key, other.Key)) return false;
+      if (!Equals(Value, other.Value)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -837,7 +837,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Field, other.Field)) return false;
+      if (!Equals(Field, other.Field)) return false;
       if (Operation != other.Operation) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1021,7 +1021,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if(!fieldOperation_.Equals(other.fieldOperation_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1213,7 +1213,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if(!fieldOperation_.Equals(other.fieldOperation_)) return false;
       if (Healing != other.Healing) return false;
       return Equals(_unknownFields, other._unknownFields);

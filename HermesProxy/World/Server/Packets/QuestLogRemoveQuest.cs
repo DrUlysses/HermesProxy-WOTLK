@@ -11,6 +11,6 @@ public class QuestLogRemoveQuest : ClientPacket
 
 	public override void Read()
 	{
-		this.Slot = base._worldPacket.ReadUInt8();
+		Slot = _worldPacket.ReadUInt8();
 	}
 }

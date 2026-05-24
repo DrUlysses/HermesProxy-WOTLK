@@ -35,17 +35,17 @@ public class InspectHonorStatsResultTBC : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
-		base._worldPacket.WriteUInt8(this.LifetimeHighestRank);
-		base._worldPacket.WriteUInt16(this.Unused1);
-		base._worldPacket.WriteUInt16(this.YesterdayHonorableKills);
-		base._worldPacket.WriteUInt16(this.Unused3);
-		base._worldPacket.WriteUInt16(this.LifetimeHonorableKills);
-		base._worldPacket.WriteUInt32(this.Unused4);
-		base._worldPacket.WriteUInt32(this.Unused5);
-		base._worldPacket.WriteUInt32(this.Unused6);
-		base._worldPacket.WriteUInt32(this.Unused7);
-		base._worldPacket.WriteUInt32(this.Unused8);
-		base._worldPacket.WriteUInt8(this.Unused9);
+		_worldPacket.WritePackedGuid128(PlayerGUID);
+		_worldPacket.WriteUInt8(LifetimeHighestRank);
+		_worldPacket.WriteUInt16(Unused1);
+		_worldPacket.WriteUInt16(YesterdayHonorableKills);
+		_worldPacket.WriteUInt16(Unused3);
+		_worldPacket.WriteUInt16(LifetimeHonorableKills);
+		_worldPacket.WriteUInt32(Unused4);
+		_worldPacket.WriteUInt32(Unused5);
+		_worldPacket.WriteUInt32(Unused6);
+		_worldPacket.WriteUInt32(Unused7);
+		_worldPacket.WriteUInt32(Unused8);
+		_worldPacket.WriteUInt8(Unused9);
 	}
 }

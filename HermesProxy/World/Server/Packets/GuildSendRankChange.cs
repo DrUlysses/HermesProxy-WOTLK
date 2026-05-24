@@ -19,10 +19,10 @@ public class GuildSendRankChange : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Officer);
-		base._worldPacket.WritePackedGuid128(this.Other);
-		base._worldPacket.WriteUInt32(this.RankID);
-		base._worldPacket.WriteBit(this.Promote);
-		base._worldPacket.FlushBits();
+		_worldPacket.WritePackedGuid128(Officer);
+		_worldPacket.WritePackedGuid128(Other);
+		_worldPacket.WriteUInt32(RankID);
+		_worldPacket.WriteBit(Promote);
+		_worldPacket.FlushBits();
 	}
 }

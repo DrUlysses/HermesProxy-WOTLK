@@ -11,6 +11,6 @@ internal class SelfRes : ClientPacket
 
 	public override void Read()
 	{
-		this.SpellId = base._worldPacket.ReadUInt32();
+		SpellId = _worldPacket.ReadUInt32();
 	}
 }

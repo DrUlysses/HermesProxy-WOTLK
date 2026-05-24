@@ -6,9 +6,8 @@
 #region Designer generated code
 
 using pb = global::Google.Protobuf;
-using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Report.V2 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/api/client/v2/report_service.proto</summary>
@@ -248,11 +247,11 @@ namespace Bgs.Protocol.Report.V2 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (UserDescription != other.UserDescription) return false;
-      if (!object.Equals(UserOptions, other.UserOptions)) return false;
-      if (!object.Equals(ClubOptions, other.ClubOptions)) return false;
-      if (!object.Equals(EntityOptions, other.EntityOptions)) return false;
+      if (!Equals(UserOptions, other.UserOptions)) return false;
+      if (!Equals(ClubOptions, other.ClubOptions)) return false;
+      if (!Equals(EntityOptions, other.EntityOptions)) return false;
       if (TypeCase != other.TypeCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

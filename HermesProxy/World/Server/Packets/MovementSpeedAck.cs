@@ -15,8 +15,8 @@ public class MovementSpeedAck : ClientPacket
 
 	public override void Read()
 	{
-		this.MoverGUID = base._worldPacket.ReadPackedGuid128();
-		this.Ack.Read(base._worldPacket);
-		this.Speed = base._worldPacket.ReadFloat();
+		MoverGUID = _worldPacket.ReadPackedGuid128();
+		Ack.Read(_worldPacket);
+		Speed = _worldPacket.ReadFloat();
 	}
 }

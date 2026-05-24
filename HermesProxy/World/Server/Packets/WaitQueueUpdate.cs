@@ -13,6 +13,6 @@ internal class WaitQueueUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		this.WaitInfo.Write(base._worldPacket);
+		WaitInfo.Write(_worldPacket);
 	}
 }

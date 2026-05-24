@@ -13,7 +13,7 @@ public class TimeSyncResponse : ClientPacket
 
 	public override void Read()
 	{
-		this.SequenceIndex = base._worldPacket.ReadUInt32();
-		this.ClientTime = base._worldPacket.ReadUInt32();
+		SequenceIndex = _worldPacket.ReadUInt32();
+		ClientTime = _worldPacket.ReadUInt32();
 	}
 }

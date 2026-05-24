@@ -13,8 +13,8 @@ public class ChatMessage : ClientPacket
 
 	public override void Read()
 	{
-		this.Language = base._worldPacket.ReadUInt32();
-		uint len = base._worldPacket.ReadBits<uint>(11);
-		this.Text = base._worldPacket.ReadString(len);
+		Language = _worldPacket.ReadUInt32();
+		uint len = _worldPacket.ReadBits<uint>(11);
+		Text = _worldPacket.ReadString(len);
 	}
 }

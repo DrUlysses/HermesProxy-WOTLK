@@ -11,6 +11,6 @@ internal class LootUnit : ClientPacket
 
 	public override void Read()
 	{
-		this.Unit = base._worldPacket.ReadPackedGuid128();
+		Unit = _worldPacket.ReadPackedGuid128();
 	}
 }

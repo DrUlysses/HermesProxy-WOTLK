@@ -10,16 +10,16 @@ public struct SpellMissStatus
 
 	public SpellMissStatus(SpellMissInfo reason, SpellMissInfo reflectStatus)
 	{
-		this.Reason = reason;
-		this.ReflectStatus = reflectStatus;
+		Reason = reason;
+		ReflectStatus = reflectStatus;
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits((byte)this.Reason, 4);
-		if (this.Reason == SpellMissInfo.Reflect)
+		data.WriteBits((byte)Reason, 4);
+		if (Reason == SpellMissInfo.Reflect)
 		{
-			data.WriteBits(this.ReflectStatus, 4);
+			data.WriteBits(ReflectStatus, 4);
 		}
 		data.FlushBits();
 	}

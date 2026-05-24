@@ -18,11 +18,11 @@ public class GuildEventTabModified : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Tab);
-		base._worldPacket.WriteBits(this.Name.GetByteCount(), 7);
-		base._worldPacket.WriteBits(this.Icon.GetByteCount(), 9);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.Name);
-		base._worldPacket.WriteString(this.Icon);
+		_worldPacket.WriteInt32(Tab);
+		_worldPacket.WriteBits(Name.GetByteCount(), 7);
+		_worldPacket.WriteBits(Icon.GetByteCount(), 9);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(Name);
+		_worldPacket.WriteString(Icon);
 	}
 }

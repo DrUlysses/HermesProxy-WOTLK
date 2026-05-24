@@ -13,9 +13,9 @@ public class EmptyAccountMountUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(bit: true);
-		base._worldPacket.WriteUInt32(0u);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(bit: true);
+		_worldPacket.WriteUInt32(0u);
+		_worldPacket.FlushBits();
 	}
 }
 
@@ -30,13 +30,13 @@ public class AccountMountUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(true); // IsFullUpdate
-		base._worldPacket.WriteUInt32((uint)this.MountSpellIDs.Count);
-		foreach (uint spellId in this.MountSpellIDs)
+		_worldPacket.WriteBit(true); // IsFullUpdate
+		_worldPacket.WriteUInt32((uint)MountSpellIDs.Count);
+		foreach (uint spellId in MountSpellIDs)
 		{
-			base._worldPacket.WriteInt32((int)spellId);
-			base._worldPacket.WriteBits(0u, 4); // flags: none
+			_worldPacket.WriteInt32((int)spellId);
+			_worldPacket.WriteBits(0u, 4); // flags: none
 		}
-		base._worldPacket.FlushBits();
+		_worldPacket.FlushBits();
 	}
 }

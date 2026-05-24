@@ -14,15 +14,15 @@ public class ItemModList
 		{
 			ItemMod itemMod = new ItemMod();
 			itemMod.Read(data);
-			this.Values[i] = itemMod;
+			Values[i] = itemMod;
 		}
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits(this.Values.Count, 6);
+		data.WriteBits(Values.Count, 6);
 		data.FlushBits();
-		foreach (ItemMod itemMod in this.Values)
+		foreach (ItemMod itemMod in Values)
 		{
 			itemMod.Write(data);
 		}

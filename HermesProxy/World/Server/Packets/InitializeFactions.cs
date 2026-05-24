@@ -25,23 +25,23 @@ public class InitializeFactions : ServerPacket
 
 	protected override void Write()
 	{
-		ushort count = InitializeFactions.GetFactionCount();
+		ushort count = GetFactionCount();
 		for (ushort i = 0; i < count; i++)
 		{
 			if (ModernVersion.ExpansionVersion >= 3)
 			{
-				base._worldPacket.WriteUInt16((ushort)this.FactionFlags[i]);
+				_worldPacket.WriteUInt16((ushort)FactionFlags[i]);
 			}
 			else
 			{
-				base._worldPacket.WriteUInt8((byte)(this.FactionFlags[i] & (ReputationFlags.Visible | ReputationFlags.AtWar | ReputationFlags.Hidden | ReputationFlags.Header | ReputationFlags.Peaceful | ReputationFlags.Inactive | ReputationFlags.ShowPropagated | ReputationFlags.HeaderShowsBar)));
+				_worldPacket.WriteUInt8((byte)(FactionFlags[i] & (ReputationFlags.Visible | ReputationFlags.AtWar | ReputationFlags.Hidden | ReputationFlags.Header | ReputationFlags.Peaceful | ReputationFlags.Inactive | ReputationFlags.ShowPropagated | ReputationFlags.HeaderShowsBar)));
 			}
-			base._worldPacket.WriteInt32(this.FactionStandings[i]);
+			_worldPacket.WriteInt32(FactionStandings[i]);
 		}
 		for (ushort i2 = 0; i2 < count; i2++)
 		{
-			base._worldPacket.WriteBit(this.FactionHasBonus[i2]);
+			_worldPacket.WriteBit(FactionHasBonus[i2]);
 		}
-		base._worldPacket.FlushBits();
+		_worldPacket.FlushBits();
 	}
 }

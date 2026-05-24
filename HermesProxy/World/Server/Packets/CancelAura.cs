@@ -13,7 +13,7 @@ internal class CancelAura : ClientPacket
 
 	public override void Read()
 	{
-		this.SpellID = base._worldPacket.ReadUInt32();
-		this.CasterGUID = base._worldPacket.ReadPackedGuid128();
+		SpellID = _worldPacket.ReadUInt32();
+		CasterGUID = _worldPacket.ReadPackedGuid128();
 	}
 }

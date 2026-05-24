@@ -11,6 +11,6 @@ public class DeclinePetition : ClientPacket
 
 	public override void Read()
 	{
-		this.PetitionGUID = base._worldPacket.ReadPackedGuid128();
+		PetitionGUID = _worldPacket.ReadPackedGuid128();
 	}
 }

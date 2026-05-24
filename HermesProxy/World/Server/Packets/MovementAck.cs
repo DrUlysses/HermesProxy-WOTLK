@@ -10,8 +10,8 @@ public struct MovementAck
 
 	public void Read(WorldPacket data)
 	{
-		this.MoveInfo = new MovementInfo();
-		this.MoveInfo.ReadMovementInfoModern(data);
-		this.MoveCounter = data.ReadUInt32();
+		MoveInfo = new MovementInfo();
+		MoveInfo.ReadMovementInfoModern(data);
+		MoveCounter = data.ReadUInt32();
 	}
 }

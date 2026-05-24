@@ -13,15 +13,15 @@ public class DfJoinPkt : ClientPacket
 
 	public override void Read()
 	{
-		this.QueueAsGroup = base._worldPacket.HasBit();
-		bool hasPartyIndex = base._worldPacket.HasBit();
-		base._worldPacket.HasBit(); // Unknown
-		this.Roles = base._worldPacket.ReadUInt8();
-		uint slotCount = base._worldPacket.ReadUInt32();
+		QueueAsGroup = _worldPacket.HasBit();
+		bool hasPartyIndex = _worldPacket.HasBit();
+		_worldPacket.HasBit(); // Unknown
+		Roles = _worldPacket.ReadUInt8();
+		uint slotCount = _worldPacket.ReadUInt32();
 		if (hasPartyIndex)
-			base._worldPacket.ReadUInt8();
-		this.Slots = new uint[slotCount];
+			_worldPacket.ReadUInt8();
+		Slots = new uint[slotCount];
 		for (int i = 0; i < slotCount; i++)
-			this.Slots[i] = base._worldPacket.ReadUInt32();
+			Slots[i] = _worldPacket.ReadUInt32();
 	}
 }

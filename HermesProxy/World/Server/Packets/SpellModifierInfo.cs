@@ -10,9 +10,9 @@ public class SpellModifierInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.ModIndex);
-		data.WriteInt32(this.ModifierData.Count);
-		foreach (SpellModifierData modifierDatum in this.ModifierData)
+		data.WriteUInt8(ModIndex);
+		data.WriteInt32(ModifierData.Count);
+		foreach (SpellModifierData modifierDatum in ModifierData)
 		{
 			modifierDatum.Write(data);
 		}

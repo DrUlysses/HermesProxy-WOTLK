@@ -33,28 +33,28 @@ internal struct ArenaTeamMember
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.MemberGUID);
-		data.WriteBool(this.Online);
-		data.WriteInt32(this.Captain);
-		data.WriteUInt8(this.Level);
-		data.WriteUInt8((byte)this.ClassId);
-		data.WriteUInt32(this.WeekGamesPlayed);
-		data.WriteUInt32(this.WeekGamesWon);
-		data.WriteUInt32(this.SeasonGamesPlayed);
-		data.WriteUInt32(this.SeasonGamesWon);
-		data.WriteUInt32(this.PersonalRating);
-		data.WriteBits(this.Name.GetByteCount(), 6);
-		data.WriteBit(this.dword60.HasValue);
-		data.WriteBit(this.dword68.HasValue);
+		data.WritePackedGuid128(MemberGUID);
+		data.WriteBool(Online);
+		data.WriteInt32(Captain);
+		data.WriteUInt8(Level);
+		data.WriteUInt8((byte)ClassId);
+		data.WriteUInt32(WeekGamesPlayed);
+		data.WriteUInt32(WeekGamesWon);
+		data.WriteUInt32(SeasonGamesPlayed);
+		data.WriteUInt32(SeasonGamesWon);
+		data.WriteUInt32(PersonalRating);
+		data.WriteBits(Name.GetByteCount(), 6);
+		data.WriteBit(dword60.HasValue);
+		data.WriteBit(dword68.HasValue);
 		data.FlushBits();
-		data.WriteString(this.Name);
-		if (this.dword60.HasValue)
+		data.WriteString(Name);
+		if (dword60.HasValue)
 		{
-			data.WriteFloat(this.dword60.Value);
+			data.WriteFloat(dword60.Value);
 		}
-		if (this.dword68.HasValue)
+		if (dword68.HasValue)
 		{
-			data.WriteFloat(this.dword68.Value);
+			data.WriteFloat(dword68.Value);
 		}
 	}
 }

@@ -23,11 +23,11 @@ public class MailCommandResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt64((ulong)this.MailID);
-		base._worldPacket.WriteInt32((int)this.Command);
-		base._worldPacket.WriteInt32((int)this.ErrorCode);
-		base._worldPacket.WriteInt32((int)this.BagResult);
-		base._worldPacket.WriteUInt64((ulong)this.AttachID);
-		base._worldPacket.WriteInt32((int)this.QtyInInventory);
+		_worldPacket.WriteUInt64(MailID);
+		_worldPacket.WriteInt32((int)Command);
+		_worldPacket.WriteInt32((int)ErrorCode);
+		_worldPacket.WriteInt32((int)BagResult);
+		_worldPacket.WriteUInt64(AttachID);
+		_worldPacket.WriteInt32((int)QtyInInventory);
 	}
 }

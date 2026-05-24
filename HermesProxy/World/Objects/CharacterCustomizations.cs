@@ -1239,8 +1239,8 @@ public static class CharacterCustomizations
 		facialHair = 0;
 		foreach (ChrCustomizationChoice custom in customizations)
 		{
-			LegacyCustomizationOption option = CharacterCustomizations.GetLegacyCustomizationOption(custom.ChrCustomizationOptionID);
-			byte choice = CharacterCustomizations.GetLegacyCustomizationChoice(custom.ChrCustomizationChoiceID);
+			LegacyCustomizationOption option = GetLegacyCustomizationOption(custom.ChrCustomizationOptionID);
+			byte choice = GetLegacyCustomizationChoice(custom.ChrCustomizationChoiceID);
 			switch (option)
 			{
 			case LegacyCustomizationOption.Skin:
@@ -3382,11 +3382,11 @@ public static class CharacterCustomizations
 	public static Array<ChrCustomizationChoice> ConvertLegacyCustomizationsToModern(Race raceId, Gender gender, byte skin, byte face, byte hairStyle, byte hairColor, byte facialHair)
 	{
 		Array<ChrCustomizationChoice> customizations = new Array<ChrCustomizationChoice>(5);
-		customizations[0] = new ChrCustomizationChoice(CharacterCustomizations.GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.Skin), CharacterCustomizations.GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.Skin, skin));
-		customizations[1] = new ChrCustomizationChoice(CharacterCustomizations.GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.Face), CharacterCustomizations.GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.Face, face));
-		customizations[2] = new ChrCustomizationChoice(CharacterCustomizations.GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.HairStyle), CharacterCustomizations.GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.HairStyle, hairStyle));
-		customizations[3] = new ChrCustomizationChoice(CharacterCustomizations.GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.HairColor), CharacterCustomizations.GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.HairColor, hairColor));
-		customizations[4] = new ChrCustomizationChoice(CharacterCustomizations.GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.FacialHair), CharacterCustomizations.GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.FacialHair, facialHair));
+		customizations[0] = new ChrCustomizationChoice(GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.Skin), GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.Skin, skin));
+		customizations[1] = new ChrCustomizationChoice(GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.Face), GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.Face, face));
+		customizations[2] = new ChrCustomizationChoice(GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.HairStyle), GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.HairStyle, hairStyle));
+		customizations[3] = new ChrCustomizationChoice(GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.HairColor), GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.HairColor, hairColor));
+		customizations[4] = new ChrCustomizationChoice(GetModernCustomizationOption(raceId, gender, LegacyCustomizationOption.FacialHair), GetModernCustomizationChoice(raceId, gender, LegacyCustomizationOption.FacialHair, facialHair));
 		return customizations;
 	}
 }

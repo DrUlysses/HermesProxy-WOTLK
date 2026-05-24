@@ -31,9 +31,9 @@ internal class PartyMemberPartialState : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteUInt32(this.Unk902_3);
-			data.WriteUInt32(this.Unk902_4);
-			data.WriteUInt32(this.Unk902_5);
+			data.WriteUInt32(Unk902_3);
+			data.WriteUInt32(Unk902_4);
+			data.WriteUInt32(Unk902_5);
 		}
 	}
 
@@ -90,112 +90,112 @@ internal class PartyMemberPartialState : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.ForEnemyChanged);
-		base._worldPacket.WriteBit(this.SetPvPInactive);
-		base._worldPacket.WriteBit(this.Unk901_1);
-		base._worldPacket.WriteBit(this.PartyType != null);
-		base._worldPacket.WriteBit(this.StatusFlags.HasValue);
-		base._worldPacket.WriteBit(this.PowerType.HasValue);
-		base._worldPacket.WriteBit(this.OverrideDisplayPower.HasValue);
-		base._worldPacket.WriteBit(this.CurrentHealth.HasValue);
-		base._worldPacket.WriteBit(this.MaxHealth.HasValue);
-		base._worldPacket.WriteBit(this.CurrentPower.HasValue);
-		base._worldPacket.WriteBit(this.MaxPower.HasValue);
-		base._worldPacket.WriteBit(this.Level.HasValue);
-		base._worldPacket.WriteBit(this.Spec.HasValue);
-		base._worldPacket.WriteBit(this.ZoneID.HasValue);
-		base._worldPacket.WriteBit(this.WmoGroupID.HasValue);
-		base._worldPacket.WriteBit(this.WmoDoodadPlacementID.HasValue);
-		base._worldPacket.WriteBit(this.Position != null);
-		base._worldPacket.WriteBit(this.VehicleSeatRecID.HasValue);
-		base._worldPacket.WriteBit(this.Auras != null);
-		base._worldPacket.WriteBit(this.Pet != null);
-		base._worldPacket.WriteBit(this.Phase != null);
-		base._worldPacket.WriteBit(this.Unk901_2 != null);
-		base._worldPacket.FlushBits();
-		if (this.Pet != null)
+		_worldPacket.WriteBit(ForEnemyChanged);
+		_worldPacket.WriteBit(SetPvPInactive);
+		_worldPacket.WriteBit(Unk901_1);
+		_worldPacket.WriteBit(PartyType != null);
+		_worldPacket.WriteBit(StatusFlags.HasValue);
+		_worldPacket.WriteBit(PowerType.HasValue);
+		_worldPacket.WriteBit(OverrideDisplayPower.HasValue);
+		_worldPacket.WriteBit(CurrentHealth.HasValue);
+		_worldPacket.WriteBit(MaxHealth.HasValue);
+		_worldPacket.WriteBit(CurrentPower.HasValue);
+		_worldPacket.WriteBit(MaxPower.HasValue);
+		_worldPacket.WriteBit(Level.HasValue);
+		_worldPacket.WriteBit(Spec.HasValue);
+		_worldPacket.WriteBit(ZoneID.HasValue);
+		_worldPacket.WriteBit(WmoGroupID.HasValue);
+		_worldPacket.WriteBit(WmoDoodadPlacementID.HasValue);
+		_worldPacket.WriteBit(Position != null);
+		_worldPacket.WriteBit(VehicleSeatRecID.HasValue);
+		_worldPacket.WriteBit(Auras != null);
+		_worldPacket.WriteBit(Pet != null);
+		_worldPacket.WriteBit(Phase != null);
+		_worldPacket.WriteBit(Unk901_2 != null);
+		_worldPacket.FlushBits();
+		if (Pet != null)
 		{
-			this.Pet.WritePartial(base._worldPacket);
+			Pet.WritePartial(_worldPacket);
 		}
-		base._worldPacket.WritePackedGuid128(this.AffectedGUID);
-		if (this.PartyType != null)
+		_worldPacket.WritePackedGuid128(AffectedGUID);
+		if (PartyType != null)
 		{
-			base._worldPacket.WriteUInt8(this.PartyType.PartyType1);
-			base._worldPacket.WriteUInt8(this.PartyType.PartyType2);
+			_worldPacket.WriteUInt8(PartyType.PartyType1);
+			_worldPacket.WriteUInt8(PartyType.PartyType2);
 		}
-		if (this.StatusFlags.HasValue)
+		if (StatusFlags.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.StatusFlags.Value);
+			_worldPacket.WriteUInt16(StatusFlags.Value);
 		}
-		if (this.PowerType.HasValue)
+		if (PowerType.HasValue)
 		{
-			base._worldPacket.WriteUInt8(this.PowerType.Value);
+			_worldPacket.WriteUInt8(PowerType.Value);
 		}
-		if (this.OverrideDisplayPower.HasValue)
+		if (OverrideDisplayPower.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.OverrideDisplayPower.Value);
+			_worldPacket.WriteUInt16(OverrideDisplayPower.Value);
 		}
-		if (this.CurrentHealth.HasValue)
+		if (CurrentHealth.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.CurrentHealth.Value);
+			_worldPacket.WriteUInt32(CurrentHealth.Value);
 		}
-		if (this.MaxHealth.HasValue)
+		if (MaxHealth.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.MaxHealth.Value);
+			_worldPacket.WriteUInt32(MaxHealth.Value);
 		}
-		if (this.CurrentPower.HasValue)
+		if (CurrentPower.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.CurrentPower.Value);
+			_worldPacket.WriteUInt16(CurrentPower.Value);
 		}
-		if (this.MaxPower.HasValue)
+		if (MaxPower.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.MaxPower.Value);
+			_worldPacket.WriteUInt16(MaxPower.Value);
 		}
-		if (this.Level.HasValue)
+		if (Level.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.Level.Value);
+			_worldPacket.WriteUInt16(Level.Value);
 		}
-		if (this.Spec.HasValue)
+		if (Spec.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.Spec.Value);
+			_worldPacket.WriteUInt16(Spec.Value);
 		}
-		if (this.ZoneID.HasValue)
+		if (ZoneID.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.ZoneID.Value);
+			_worldPacket.WriteUInt16(ZoneID.Value);
 		}
-		if (this.WmoGroupID.HasValue)
+		if (WmoGroupID.HasValue)
 		{
-			base._worldPacket.WriteUInt16(this.WmoGroupID.Value);
+			_worldPacket.WriteUInt16(WmoGroupID.Value);
 		}
-		if (this.WmoDoodadPlacementID.HasValue)
+		if (WmoDoodadPlacementID.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.WmoDoodadPlacementID.Value);
+			_worldPacket.WriteUInt32(WmoDoodadPlacementID.Value);
 		}
-		if (this.Position != null)
+		if (Position != null)
 		{
-			base._worldPacket.WriteInt16(this.Position.X);
-			base._worldPacket.WriteInt16(this.Position.Y);
-			base._worldPacket.WriteInt16(this.Position.Z);
+			_worldPacket.WriteInt16(Position.X);
+			_worldPacket.WriteInt16(Position.Y);
+			_worldPacket.WriteInt16(Position.Z);
 		}
-		if (this.VehicleSeatRecID.HasValue)
+		if (VehicleSeatRecID.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.VehicleSeatRecID.Value);
+			_worldPacket.WriteUInt32(VehicleSeatRecID.Value);
 		}
-		if (this.Auras != null)
+		if (Auras != null)
 		{
-			base._worldPacket.WriteInt32(this.Auras.Count);
-			foreach (PartyMemberAuraStates aura in this.Auras)
+			_worldPacket.WriteInt32(Auras.Count);
+			foreach (PartyMemberAuraStates aura in Auras)
 			{
-				aura.Write(base._worldPacket);
+				aura.Write(_worldPacket);
 			}
 		}
-		if (this.Phase != null)
+		if (Phase != null)
 		{
-			this.Phase.Write(base._worldPacket);
+			Phase.Write(_worldPacket);
 		}
-		if (this.Unk901_2 != null)
+		if (Unk901_2 != null)
 		{
-			this.Unk901_2.Write(base._worldPacket);
+			Unk901_2.Write(_worldPacket);
 		}
 	}
 }

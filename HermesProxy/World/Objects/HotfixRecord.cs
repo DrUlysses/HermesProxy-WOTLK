@@ -19,18 +19,18 @@ public class HotfixRecord
 
 	public void WriteAvailable(WorldPacket data)
 	{
-		data.WriteUInt32(this.HotfixId);
-		data.WriteUInt32((uint)this.TableHash);
+		data.WriteUInt32(HotfixId);
+		data.WriteUInt32((uint)TableHash);
 	}
 
 	public void WriteHotFixMessageContent(WorldPacket data)
 	{
-		data.WriteUInt32(this.HotfixId);
-		data.WriteUInt32(this.UniqueId);
-		data.WriteUInt32((uint)this.TableHash);
-		data.WriteUInt32(this.RecordId);
-		data.WriteUInt32(this.HotfixContent.GetSize());
-		data.WriteBits((byte)this.Status, 3);
+		data.WriteUInt32(HotfixId);
+		data.WriteUInt32(UniqueId);
+		data.WriteUInt32((uint)TableHash);
+		data.WriteUInt32(RecordId);
+		data.WriteUInt32(HotfixContent.GetSize());
+		data.WriteBits((byte)Status, 3);
 		data.FlushBits();
 	}
 }

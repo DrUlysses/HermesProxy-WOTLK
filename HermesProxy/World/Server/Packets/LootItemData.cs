@@ -20,13 +20,13 @@ public class LootItemData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits(this.Type, 2);
-		data.WriteBits(this.UIType, 3);
-		data.WriteBit(this.CanTradeToTapList);
+		data.WriteBits(Type, 2);
+		data.WriteBits(UIType, 3);
+		data.WriteBit(CanTradeToTapList);
 		data.FlushBits();
-		this.Loot.Write(data);
-		data.WriteUInt32(this.Quantity);
-		data.WriteUInt8(this.LootItemType);
-		data.WriteUInt8(this.LootListID);
+		Loot.Write(data);
+		data.WriteUInt32(Quantity);
+		data.WriteUInt8(LootItemType);
+		data.WriteUInt8(LootListID);
 	}
 }

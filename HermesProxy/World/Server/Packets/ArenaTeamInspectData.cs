@@ -16,11 +16,11 @@ public class ArenaTeamInspectData
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.TeamGuid);
-		data.WriteInt32(this.TeamRating);
-		data.WriteInt32(this.TeamGamesPlayed);
-		data.WriteInt32(this.TeamGamesWon);
-		data.WriteInt32(this.PersonalGamesPlayed);
-		data.WriteInt32(this.PersonalRating);
+		data.WritePackedGuid128(TeamGuid);
+		data.WriteInt32(TeamRating);
+		data.WriteInt32(TeamGamesPlayed);
+		data.WriteInt32(TeamGamesWon);
+		data.WriteInt32(PersonalGamesPlayed);
+		data.WriteInt32(PersonalRating);
 	}
 }

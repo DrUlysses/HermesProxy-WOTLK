@@ -23,22 +23,22 @@ public class LevelUpInfo : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Level);
-		base._worldPacket.WriteInt32(this.HealthDelta);
+		_worldPacket.WriteInt32(Level);
+		_worldPacket.WriteInt32(HealthDelta);
 		int powerCount = ((ModernVersion.ExpansionVersion >= 3) ? 10 : ModernVersion.GetPowerCountForClientVersion());
 		for (int i = 0; i < powerCount; i++)
 		{
-			base._worldPacket.WriteInt32((i < this.PowerDelta.Length) ? this.PowerDelta[i] : 0);
+			_worldPacket.WriteInt32((i < PowerDelta.Length) ? PowerDelta[i] : 0);
 		}
-		int[] statDelta = this.StatDelta;
+		int[] statDelta = StatDelta;
 		foreach (int stat in statDelta)
 		{
-			base._worldPacket.WriteInt32(stat);
+			_worldPacket.WriteInt32(stat);
 		}
-		base._worldPacket.WriteInt32(this.NumNewTalents);
+		_worldPacket.WriteInt32(NumNewTalents);
 		if (ModernVersion.ExpansionVersion < 3)
 		{
-			base._worldPacket.WriteInt32(this.NumNewPvpTalentSlots);
+			_worldPacket.WriteInt32(NumNewPvpTalentSlots);
 		}
 	}
 }

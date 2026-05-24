@@ -11,6 +11,6 @@ internal class UnlearnSkill : ClientPacket
 
 	public override void Read()
 	{
-		this.SkillLine = base._worldPacket.ReadUInt32();
+		SkillLine = _worldPacket.ReadUInt32();
 	}
 }

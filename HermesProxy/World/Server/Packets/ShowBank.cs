@@ -21,9 +21,9 @@ public class ShowBank : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WriteInt32(this.InteractionType);
-		base._worldPacket.WriteBit(true); // Success
-		base._worldPacket.FlushBits();
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WriteInt32(InteractionType);
+		_worldPacket.WriteBit(true); // Success
+		_worldPacket.FlushBits();
 	}
 }

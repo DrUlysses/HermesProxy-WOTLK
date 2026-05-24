@@ -13,24 +13,24 @@ public class CreateCharacter : ClientPacket
 
 	public override void Read()
 	{
-		this.CreateInfo = new CharacterCreateInfo();
-		uint nameLength = base._worldPacket.ReadBits<uint>(6);
-		bool hasTemplateSet = base._worldPacket.HasBit();
-		this.CreateInfo.IsTrialBoost = base._worldPacket.HasBit();
-		this.CreateInfo.UseNPE = base._worldPacket.HasBit();
-		this.CreateInfo.RaceId = (Race)base._worldPacket.ReadUInt8();
-		this.CreateInfo.ClassId = (Class)base._worldPacket.ReadUInt8();
-		this.CreateInfo.Sex = (Gender)base._worldPacket.ReadUInt8();
-		uint customizationCount = base._worldPacket.ReadUInt32();
-		this.CreateInfo.Name = base._worldPacket.ReadString(nameLength);
+		CreateInfo = new CharacterCreateInfo();
+		uint nameLength = _worldPacket.ReadBits<uint>(6);
+		bool hasTemplateSet = _worldPacket.HasBit();
+		CreateInfo.IsTrialBoost = _worldPacket.HasBit();
+		CreateInfo.UseNPE = _worldPacket.HasBit();
+		CreateInfo.RaceId = (Race)_worldPacket.ReadUInt8();
+		CreateInfo.ClassId = (Class)_worldPacket.ReadUInt8();
+		CreateInfo.Sex = (Gender)_worldPacket.ReadUInt8();
+		uint customizationCount = _worldPacket.ReadUInt32();
+		CreateInfo.Name = _worldPacket.ReadString(nameLength);
 		if (hasTemplateSet)
 		{
-			this.CreateInfo.TemplateSet = base._worldPacket.ReadUInt32();
+			CreateInfo.TemplateSet = _worldPacket.ReadUInt32();
 		}
 		for (int i = 0; i < customizationCount; i++)
 		{
-			this.CreateInfo.Customizations[i] = new ChrCustomizationChoice(base._worldPacket.ReadUInt32(), base._worldPacket.ReadUInt32());
+			CreateInfo.Customizations[i] = new ChrCustomizationChoice(_worldPacket.ReadUInt32(), _worldPacket.ReadUInt32());
 		}
-		this.CreateInfo.Customizations.Sort();
+		CreateInfo.Customizations.Sort();
 	}
 }

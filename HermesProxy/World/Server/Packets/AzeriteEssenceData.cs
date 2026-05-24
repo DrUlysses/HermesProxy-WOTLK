@@ -12,10 +12,10 @@ public struct AzeriteEssenceData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Index);
-		data.WriteUInt32(this.AzeriteEssenceID);
-		data.WriteUInt32(this.Rank);
-		data.WriteBit(this.SlotUnlocked);
+		data.WriteUInt32(Index);
+		data.WriteUInt32(AzeriteEssenceID);
+		data.WriteUInt32(Rank);
+		data.WriteBit(SlotUnlocked);
 		data.FlushBits();
 	}
 }

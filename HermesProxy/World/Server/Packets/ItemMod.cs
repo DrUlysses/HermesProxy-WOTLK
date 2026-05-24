@@ -10,24 +10,24 @@ public class ItemMod
 
 	public ItemMod()
 	{
-		this.Type = ItemModifier.Max;
+		Type = ItemModifier.Max;
 	}
 
 	public ItemMod(uint value, ItemModifier type)
 	{
-		this.Value = value;
-		this.Type = type;
+		Value = value;
+		Type = type;
 	}
 
 	public void Read(WorldPacket data)
 	{
-		this.Value = data.ReadUInt32();
-		this.Type = (ItemModifier)data.ReadUInt8();
+		Value = data.ReadUInt32();
+		Type = (ItemModifier)data.ReadUInt8();
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Value);
-		data.WriteUInt8((byte)this.Type);
+		data.WriteUInt32(Value);
+		data.WriteUInt8((byte)Type);
 	}
 }

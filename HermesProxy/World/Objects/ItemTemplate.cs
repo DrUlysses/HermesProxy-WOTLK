@@ -162,135 +162,135 @@ public class ItemTemplate
 
 	public void ReadFromLegacyPacket(uint entry, WorldPacket packet)
 	{
-		this.Entry = entry;
-		this.Class = packet.ReadInt32();
-		this.SubClass = packet.ReadUInt32();
+		Entry = entry;
+		Class = packet.ReadInt32();
+		SubClass = packet.ReadUInt32();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_3_6299))
 		{
-			this.SoundOverrideSubclass = packet.ReadInt32();
+			SoundOverrideSubclass = packet.ReadInt32();
 		}
 		for (int i = 0; i < 4; i++)
 		{
-			this.Name[i] = packet.ReadCString();
+			Name[i] = packet.ReadCString();
 		}
-		this.DisplayID = packet.ReadUInt32();
-		this.Quality = packet.ReadInt32();
-		this.Flags = packet.ReadUInt32();
+		DisplayID = packet.ReadUInt32();
+		Quality = packet.ReadInt32();
+		Flags = packet.ReadUInt32();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 		{
-			this.FlagsExtra = packet.ReadUInt32();
+			FlagsExtra = packet.ReadUInt32();
 		}
-		this.BuyPrice = packet.ReadUInt32();
-		this.SellPrice = packet.ReadUInt32();
-		this.InventoryType = packet.ReadInt32();
-		this.AllowedClasses = packet.ReadInt32();
-		this.AllowedRaces = packet.ReadInt32();
-		this.ItemLevel = packet.ReadUInt32();
-		this.RequiredLevel = packet.ReadUInt32();
-		this.RequiredSkillId = packet.ReadUInt32();
-		this.RequiredSkillLevel = packet.ReadUInt32();
-		this.RequiredSpell = packet.ReadUInt32();
-		this.RequiredHonorRank = packet.ReadUInt32();
-		this.RequiredCityRank = packet.ReadUInt32();
-		this.RequiredRepFaction = packet.ReadUInt32();
-		this.RequiredRepValue = packet.ReadUInt32();
-		this.MaxCount = packet.ReadInt32();
-		this.MaxStackSize = packet.ReadInt32();
-		this.ContainerSlots = packet.ReadUInt32();
-		this.StatsCount = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? packet.ReadUInt32() : 10u);
-		if (this.StatsCount > 10)
+		BuyPrice = packet.ReadUInt32();
+		SellPrice = packet.ReadUInt32();
+		InventoryType = packet.ReadInt32();
+		AllowedClasses = packet.ReadInt32();
+		AllowedRaces = packet.ReadInt32();
+		ItemLevel = packet.ReadUInt32();
+		RequiredLevel = packet.ReadUInt32();
+		RequiredSkillId = packet.ReadUInt32();
+		RequiredSkillLevel = packet.ReadUInt32();
+		RequiredSpell = packet.ReadUInt32();
+		RequiredHonorRank = packet.ReadUInt32();
+		RequiredCityRank = packet.ReadUInt32();
+		RequiredRepFaction = packet.ReadUInt32();
+		RequiredRepValue = packet.ReadUInt32();
+		MaxCount = packet.ReadInt32();
+		MaxStackSize = packet.ReadInt32();
+		ContainerSlots = packet.ReadUInt32();
+		StatsCount = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? packet.ReadUInt32() : 10u);
+		if (StatsCount > 10)
 		{
-			this.StatTypes = new int[this.StatsCount];
-			this.StatValues = new int[this.StatsCount];
+			StatTypes = new int[StatsCount];
+			StatValues = new int[StatsCount];
 		}
-		for (int j = 0; j < this.StatsCount; j++)
+		for (int j = 0; j < StatsCount; j++)
 		{
-			this.StatTypes[j] = packet.ReadInt32();
-			this.StatValues[j] = packet.ReadInt32();
+			StatTypes[j] = packet.ReadInt32();
+			StatValues[j] = packet.ReadInt32();
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			this.ScalingStatDistribution = packet.ReadInt32();
-			this.ScalingStatValue = packet.ReadUInt32();
+			ScalingStatDistribution = packet.ReadInt32();
+			ScalingStatValue = packet.ReadUInt32();
 		}
 		int dmgCount = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767) ? 2 : 5);
 		for (int k = 0; k < dmgCount; k++)
 		{
-			this.DamageMins[k] = packet.ReadFloat();
-			this.DamageMaxs[k] = packet.ReadFloat();
-			this.DamageTypes[k] = packet.ReadInt32();
+			DamageMins[k] = packet.ReadFloat();
+			DamageMaxs[k] = packet.ReadFloat();
+			DamageTypes[k] = packet.ReadInt32();
 		}
-		this.Armor = packet.ReadUInt32();
-		this.HolyResistance = packet.ReadUInt32();
-		this.FireResistance = packet.ReadUInt32();
-		this.NatureResistance = packet.ReadUInt32();
-		this.FrostResistance = packet.ReadUInt32();
-		this.ShadowResistance = packet.ReadUInt32();
-		this.ArcaneResistance = packet.ReadUInt32();
-		this.Delay = packet.ReadUInt32();
-		this.AmmoType = packet.ReadInt32();
-		this.RangedMod = packet.ReadFloat();
+		Armor = packet.ReadUInt32();
+		HolyResistance = packet.ReadUInt32();
+		FireResistance = packet.ReadUInt32();
+		NatureResistance = packet.ReadUInt32();
+		FrostResistance = packet.ReadUInt32();
+		ShadowResistance = packet.ReadUInt32();
+		ArcaneResistance = packet.ReadUInt32();
+		Delay = packet.ReadUInt32();
+		AmmoType = packet.ReadInt32();
+		RangedMod = packet.ReadFloat();
 		for (byte i2 = 0; i2 < 5; i2++)
 		{
-			this.TriggeredSpellIds[i2] = packet.ReadInt32();
-			this.TriggeredSpellTypes[i2] = packet.ReadInt32();
-			this.TriggeredSpellCharges[i2] = packet.ReadInt32();
-			this.TriggeredSpellCooldowns[i2] = packet.ReadInt32();
-			this.TriggeredSpellCategories[i2] = packet.ReadUInt32();
-			this.TriggeredSpellCategoryCooldowns[i2] = packet.ReadInt32();
-			if (this.TriggeredSpellIds[i2] != 0)
+			TriggeredSpellIds[i2] = packet.ReadInt32();
+			TriggeredSpellTypes[i2] = packet.ReadInt32();
+			TriggeredSpellCharges[i2] = packet.ReadInt32();
+			TriggeredSpellCooldowns[i2] = packet.ReadInt32();
+			TriggeredSpellCategories[i2] = packet.ReadUInt32();
+			TriggeredSpellCategoryCooldowns[i2] = packet.ReadInt32();
+			if (TriggeredSpellIds[i2] != 0)
 			{
-				GameData.SaveItemEffectSlot(this.Entry, (uint)this.TriggeredSpellIds[i2], i2);
+				GameData.SaveItemEffectSlot(Entry, (uint)TriggeredSpellIds[i2], i2);
 			}
 		}
-		this.Bonding = packet.ReadInt32();
-		this.Description = packet.ReadCString();
-		this.PageText = packet.ReadUInt32();
-		this.Language = packet.ReadInt32();
-		this.PageMaterial = packet.ReadInt32();
-		this.StartQuestId = packet.ReadUInt32();
-		this.LockId = packet.ReadUInt32();
-		this.Material = packet.ReadInt32();
-		if (this.Material < 0)
+		Bonding = packet.ReadInt32();
+		Description = packet.ReadCString();
+		PageText = packet.ReadUInt32();
+		Language = packet.ReadInt32();
+		PageMaterial = packet.ReadInt32();
+		StartQuestId = packet.ReadUInt32();
+		LockId = packet.ReadUInt32();
+		Material = packet.ReadInt32();
+		if (Material < 0)
 		{
-			this.Material = 0;
+			Material = 0;
 		}
-		this.SheathType = packet.ReadInt32();
-		this.RandomProperty = packet.ReadInt32();
+		SheathType = packet.ReadInt32();
+		RandomProperty = packet.ReadInt32();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			this.RandomSuffix = packet.ReadUInt32();
+			RandomSuffix = packet.ReadUInt32();
 		}
-		this.Block = packet.ReadUInt32();
-		this.ItemSet = packet.ReadUInt32();
-		this.MaxDurability = packet.ReadUInt32();
-		this.AreaID = packet.ReadUInt32();
-		this.MapID = packet.ReadInt32();
-		this.BagFamily = packet.ReadUInt32();
+		Block = packet.ReadUInt32();
+		ItemSet = packet.ReadUInt32();
+		MaxDurability = packet.ReadUInt32();
+		AreaID = packet.ReadUInt32();
+		MapID = packet.ReadInt32();
+		BagFamily = packet.ReadUInt32();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			this.TotemCategory = packet.ReadInt32();
+			TotemCategory = packet.ReadInt32();
 			for (int l = 0; l < 3; l++)
 			{
-				this.ItemSocketColors[l] = packet.ReadInt32();
-				this.SocketContent[l] = packet.ReadUInt32();
+				ItemSocketColors[l] = packet.ReadInt32();
+				SocketContent[l] = packet.ReadUInt32();
 			}
-			this.SocketBonus = packet.ReadInt32();
-			this.GemProperties = packet.ReadInt32();
-			this.RequiredDisenchantSkill = packet.ReadInt32();
-			this.ArmorDamageModifier = packet.ReadFloat();
+			SocketBonus = packet.ReadInt32();
+			GemProperties = packet.ReadInt32();
+			RequiredDisenchantSkill = packet.ReadInt32();
+			ArmorDamageModifier = packet.ReadFloat();
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_2_8209))
 		{
-			this.Duration = packet.ReadUInt32();
+			Duration = packet.ReadUInt32();
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			this.ItemLimitCategory = packet.ReadInt32();
+			ItemLimitCategory = packet.ReadInt32();
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
-			this.HolidayID = packet.ReadInt32();
+			HolidayID = packet.ReadInt32();
 		}
 	}
 }

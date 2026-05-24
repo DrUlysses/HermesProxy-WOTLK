@@ -19,9 +19,9 @@ internal class SetLootMethod : ClientPacket
 
 	public override void Read()
 	{
-		this.PartyIndex = base._worldPacket.ReadInt8();
-		this.LootMethod = (LootMethod)base._worldPacket.ReadUInt8();
-		this.LootMasterGUID = base._worldPacket.ReadPackedGuid128();
-		this.LootThreshold = base._worldPacket.ReadUInt32();
+		PartyIndex = _worldPacket.ReadInt8();
+		LootMethod = (LootMethod)_worldPacket.ReadUInt8();
+		LootMasterGUID = _worldPacket.ReadPackedGuid128();
+		LootThreshold = _worldPacket.ReadUInt32();
 	}
 }

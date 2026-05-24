@@ -19,16 +19,16 @@ public class SendKnownSpells : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.InitialLogin);
-		base._worldPacket.WriteInt32(this.KnownSpells.Count);
-		base._worldPacket.WriteInt32(this.FavoriteSpells.Count);
-		foreach (uint spellId in this.KnownSpells)
+		_worldPacket.WriteBit(InitialLogin);
+		_worldPacket.WriteInt32(KnownSpells.Count);
+		_worldPacket.WriteInt32(FavoriteSpells.Count);
+		foreach (uint spellId in KnownSpells)
 		{
-			base._worldPacket.WriteUInt32(spellId);
+			_worldPacket.WriteUInt32(spellId);
 		}
-		foreach (uint spellId2 in this.FavoriteSpells)
+		foreach (uint spellId2 in FavoriteSpells)
 		{
-			base._worldPacket.WriteUInt32(spellId2);
+			_worldPacket.WriteUInt32(spellId2);
 		}
 	}
 }

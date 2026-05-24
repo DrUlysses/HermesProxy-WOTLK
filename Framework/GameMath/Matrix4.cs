@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
  * Copyright (C) 2003-2004  Eran Kampf	eran@ekampf.com	http://www.ekampf.com
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -339,10 +339,8 @@ namespace Framework.GameMath
                     float.Parse(m.Result("${m44}"))
                     );
             }
-            else
-            {
-                throw new Exception("Unsuccessful Match.");
-            }
+
+            throw new Exception("Unsuccessful Match.");
         }
         /// <summary>
         /// Converts the specified string to its <see cref="Matrix4"/> equivalent.
@@ -389,7 +387,7 @@ namespace Framework.GameMath
                 return true;
             }
 
-            result = Matrix4.Zero;
+            result = Zero;
             return false;
         }
         #endregion
@@ -739,12 +737,12 @@ namespace Framework.GameMath
         /// </summary>
         public void Transpose()
         {
-            MathFunctions.Swap<float>(ref _m12, ref _m21);
-            MathFunctions.Swap<float>(ref _m13, ref _m31);
-            MathFunctions.Swap<float>(ref _m14, ref _m41);
-            MathFunctions.Swap<float>(ref _m23, ref _m32);
-            MathFunctions.Swap<float>(ref _m24, ref _m42);
-            MathFunctions.Swap<float>(ref _m34, ref _m43);
+            MathFunctions.Swap(ref _m12, ref _m21);
+            MathFunctions.Swap(ref _m13, ref _m31);
+            MathFunctions.Swap(ref _m14, ref _m41);
+            MathFunctions.Swap(ref _m23, ref _m32);
+            MathFunctions.Swap(ref _m24, ref _m42);
+            MathFunctions.Swap(ref _m34, ref _m43);
         }
         #endregion
 
@@ -757,7 +755,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two matrices are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Matrix4 left, Matrix4 right)
         {
-            return ValueType.Equals(left, right);
+            return Equals(left, right);
         }
         /// <summary>
         /// Tests whether two specified matrices are not equal.
@@ -767,7 +765,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two matrices are not equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Matrix4 left, Matrix4 right)
         {
-            return !ValueType.Equals(left, right);
+            return !Equals(left, right);
         }
         #endregion
 
@@ -780,7 +778,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix4"/> instance containing the sum.</returns>
         public static Matrix4 operator +(Matrix4 left, Matrix4 right)
         {
-            return Matrix4.Add(left, right);
+            return Add(left, right);
         }
         /// <summary>
         /// Adds a matrix and a scalar.
@@ -790,7 +788,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix4"/> instance containing the sum.</returns>
         public static Matrix4 operator +(Matrix4 matrix, float scalar)
         {
-            return Matrix4.Add(matrix, scalar);
+            return Add(matrix, scalar);
         }
         /// <summary>
         /// Adds a matrix and a scalar.
@@ -800,7 +798,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix4"/> instance containing the sum.</returns>
         public static Matrix4 operator +(float scalar, Matrix4 matrix)
         {
-            return Matrix4.Add(matrix, scalar);
+            return Add(matrix, scalar);
         }
         /// <summary>
         /// Subtracts a matrix from a matrix.
@@ -810,7 +808,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix4"/> instance containing the difference.</returns>
         public static Matrix4 operator -(Matrix4 left, Matrix4 right)
         {
-            return Matrix4.Subtract(left, right);
+            return Subtract(left, right);
         }
         /// <summary>
         /// Subtracts a scalar from a matrix.
@@ -820,7 +818,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix4"/> instance containing the difference.</returns>
         public static Matrix4 operator -(Matrix4 matrix, float scalar)
         {
-            return Matrix4.Subtract(matrix, scalar);
+            return Subtract(matrix, scalar);
         }
         /// <summary>
         /// Multiplies two matrices.
@@ -830,7 +828,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix4"/> instance containing the result.</returns>
         public static Matrix4 operator *(Matrix4 left, Matrix4 right)
         {
-            return Matrix4.Multiply(left, right);
+            return Multiply(left, right);
         }
         /// <summary>
         /// Transforms a given vector by a matrix.

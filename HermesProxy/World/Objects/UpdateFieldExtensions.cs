@@ -33,7 +33,7 @@ public static class UpdateFieldExtensions
 	{
 		if (dict != null && dict.TryGetValue(LegacyVersion.GetUpdateField(updateField), out var uf))
 		{
-			switch (UpdateFieldExtensions.GetTypeCodeOfReturnValue<TK>())
+			switch (GetTypeCodeOfReturnValue<TK>())
 			{
 			case TypeCode.UInt32:
 				return (TK)(object)uf.UInt32Value;
@@ -52,16 +52,16 @@ public static class UpdateFieldExtensions
 	{
 		if (dict != null && dict.TryGetValue(LegacyVersion.GetUpdateField(updateField), out var ufs))
 		{
-			switch (UpdateFieldExtensions.GetTypeCodeOfReturnValue<TK>())
+			switch (GetTypeCodeOfReturnValue<TK>())
 			{
 			case TypeCode.UInt32:
-				return ufs.Select((UpdateField uf) => (TK)(object)uf.UInt32Value);
+				return ufs.Select(uf => (TK)(object)uf.UInt32Value);
 			case TypeCode.Int32:
-				return ufs.Select((UpdateField uf) => (TK)(object)(int)uf.UInt32Value);
+				return ufs.Select(uf => (TK)(object)(int)uf.UInt32Value);
 			case TypeCode.Single:
-				return ufs.Select((UpdateField uf) => (TK)(object)uf.FloatValue);
+				return ufs.Select(uf => (TK)(object)uf.FloatValue);
 			case TypeCode.Double:
-				return ufs.Select((UpdateField uf) => (TK)(object)(double)uf.FloatValue);
+				return ufs.Select(uf => (TK)(object)(double)uf.FloatValue);
 			}
 		}
 		return Enumerable.Empty<TK>();
@@ -75,7 +75,7 @@ public static class UpdateFieldExtensions
 	public static TK[] GetArray<TK>(this Dictionary<int, UpdateField> dict, int firstUpdateField, int count)
 	{
 		TK[] result = new TK[count];
-		TypeCode type = UpdateFieldExtensions.GetTypeCodeOfReturnValue<TK>();
+		TypeCode type = GetTypeCodeOfReturnValue<TK>();
 		for (int i = 0; i < count; i++)
 		{
 			if (dict != null && dict.TryGetValue(firstUpdateField + i, out var uf))

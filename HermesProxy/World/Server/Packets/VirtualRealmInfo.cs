@@ -8,13 +8,13 @@ internal struct VirtualRealmInfo
 
 	public VirtualRealmInfo(uint realmAddress, bool isHomeRealm, bool isInternalRealm, string realmNameActual, string realmNameNormalized)
 	{
-		this.RealmAddress = realmAddress;
-		this.RealmNameInfo = new VirtualRealmNameInfo(isHomeRealm, isInternalRealm, realmNameActual, realmNameNormalized);
+		RealmAddress = realmAddress;
+		RealmNameInfo = new VirtualRealmNameInfo(isHomeRealm, isInternalRealm, realmNameActual, realmNameNormalized);
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.RealmAddress);
-		this.RealmNameInfo.Write(data);
+		data.WriteUInt32(RealmAddress);
+		RealmNameInfo.Write(data);
 	}
 }

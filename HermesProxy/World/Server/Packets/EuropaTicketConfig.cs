@@ -14,10 +14,10 @@ public class EuropaTicketConfig
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBit(this.TicketsEnabled);
-		data.WriteBit(this.BugsEnabled);
-		data.WriteBit(this.ComplaintsEnabled);
-		data.WriteBit(this.SuggestionsEnabled);
-		this.ThrottleState.Write(data);
+		data.WriteBit(TicketsEnabled);
+		data.WriteBit(BugsEnabled);
+		data.WriteBit(ComplaintsEnabled);
+		data.WriteBit(SuggestionsEnabled);
+		ThrottleState.Write(data);
 	}
 }

@@ -11,6 +11,6 @@ public class ClearTradeItem : ClientPacket
 
 	public override void Read()
 	{
-		this.TradeSlot = base._worldPacket.ReadUInt8();
+		TradeSlot = _worldPacket.ReadUInt8();
 	}
 }

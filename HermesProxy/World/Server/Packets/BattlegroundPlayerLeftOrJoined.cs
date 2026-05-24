@@ -14,6 +14,6 @@ internal class BattlegroundPlayerLeftOrJoined : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Guid);
+		_worldPacket.WritePackedGuid128(Guid);
 	}
 }

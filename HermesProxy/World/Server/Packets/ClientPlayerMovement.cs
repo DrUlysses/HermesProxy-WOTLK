@@ -15,8 +15,8 @@ public class ClientPlayerMovement : ClientPacket
 
 	public override void Read()
 	{
-		this.Guid = base._worldPacket.ReadPackedGuid128();
-		this.MoveInfo = new MovementInfo();
-		this.MoveInfo.ReadMovementInfoModern(base._worldPacket);
+		Guid = _worldPacket.ReadPackedGuid128();
+		MoveInfo = new MovementInfo();
+		MoveInfo.ReadMovementInfoModern(_worldPacket);
 	}
 }

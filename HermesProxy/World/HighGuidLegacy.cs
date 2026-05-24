@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using Framework.Logging;
 using HermesProxy.World.Enums;
 
 namespace HermesProxy.World;
@@ -67,12 +67,12 @@ public class HighGuidLegacy : HighGuid
 	public HighGuidLegacy(HighGuidTypeLegacy high)
 	{
 		this.high = high;
-		if (!HighGuidLegacy.HighLegacyToHighType.ContainsKey(high))
+		if (!HighLegacyToHighType.ContainsKey(high))
 		{
-			Framework.Logging.Log.Print(Framework.Logging.LogType.Warn, $"Unknown HighGuidTypeLegacy: 0x{high:X}, defaulting to Null", "HighGuidLegacy", "HighGuidLegacy.cs");
-			base.highGuidType = HighGuidType.Null;
+			Log.Print(LogType.Warn, $"Unknown HighGuidTypeLegacy: 0x{high:X}, defaulting to Null", "HighGuidLegacy", "HighGuidLegacy.cs");
+			highGuidType = HighGuidType.Null;
 			return;
 		}
-		base.highGuidType = HighGuidLegacy.HighLegacyToHighType[high];
+		highGuidType = HighLegacyToHighType[high];
 	}
 }

@@ -23,72 +23,72 @@ public class SpellTargetData
 
 	public void Read(WorldPacket data)
 	{
-		this.Flags = (SpellCastTargetFlags)data.ReadBits<uint>(28);
+		Flags = (SpellCastTargetFlags)data.ReadBits<uint>(28);
 		if (data.HasBit())
 		{
-			this.SrcLocation = new TargetLocation();
+			SrcLocation = new TargetLocation();
 		}
 		if (data.HasBit())
 		{
-			this.DstLocation = new TargetLocation();
+			DstLocation = new TargetLocation();
 		}
 		if (data.HasBit())
 		{
-			this.Orientation = 0f;
+			Orientation = 0f;
 		}
 		if (data.HasBit())
 		{
-			this.MapID = 0;
+			MapID = 0;
 		}
 		uint nameLength = data.ReadBits<uint>(7);
-		this.Unit = data.ReadPackedGuid128();
-		this.Item = data.ReadPackedGuid128();
-		if (this.SrcLocation != null)
+		Unit = data.ReadPackedGuid128();
+		Item = data.ReadPackedGuid128();
+		if (SrcLocation != null)
 		{
-			this.SrcLocation.Read(data);
+			SrcLocation.Read(data);
 		}
-		if (this.DstLocation != null)
+		if (DstLocation != null)
 		{
-			this.DstLocation.Read(data);
+			DstLocation.Read(data);
 		}
-		if (this.Orientation.HasValue)
+		if (Orientation.HasValue)
 		{
-			this.Orientation = data.ReadFloat();
+			Orientation = data.ReadFloat();
 		}
-		if (this.MapID.HasValue)
+		if (MapID.HasValue)
 		{
-			this.MapID = data.ReadInt32();
+			MapID = data.ReadInt32();
 		}
-		this.Name = data.ReadString(nameLength);
+		Name = data.ReadString(nameLength);
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits((uint)this.Flags, 28);
-		data.WriteBit(this.SrcLocation != null);
-		data.WriteBit(this.DstLocation != null);
-		data.WriteBit(this.Orientation.HasValue);
-		data.WriteBit(this.MapID.HasValue);
-		data.WriteBits(this.Name.GetByteCount(), 7);
+		data.WriteBits((uint)Flags, 28);
+		data.WriteBit(SrcLocation != null);
+		data.WriteBit(DstLocation != null);
+		data.WriteBit(Orientation.HasValue);
+		data.WriteBit(MapID.HasValue);
+		data.WriteBits(Name.GetByteCount(), 7);
 		data.FlushBits();
-		data.WritePackedGuid128(this.Unit);
-		data.WritePackedGuid128(this.Item);
-		if (this.SrcLocation != null)
+		data.WritePackedGuid128(Unit);
+		data.WritePackedGuid128(Item);
+		if (SrcLocation != null)
 		{
-			this.SrcLocation.Write(data);
+			SrcLocation.Write(data);
 		}
-		if (this.DstLocation != null)
+		if (DstLocation != null)
 		{
-			this.DstLocation.Write(data);
+			DstLocation.Write(data);
 		}
-		if (this.Orientation.HasValue)
+		if (Orientation.HasValue)
 		{
-			data.WriteFloat(this.Orientation.Value);
+			data.WriteFloat(Orientation.Value);
 		}
-		if (this.MapID.HasValue)
+		if (MapID.HasValue)
 		{
-			data.WriteInt32(this.MapID.Value);
+			data.WriteInt32(MapID.Value);
 		}
-		data.WriteString(this.Name);
+		data.WriteString(Name);
 	}
 }

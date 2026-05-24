@@ -11,6 +11,6 @@ public class ArenaTeamRosterRequest : ClientPacket
 
 	public override void Read()
 	{
-		this.TeamIndex = base._worldPacket.ReadUInt32();
+		TeamIndex = _worldPacket.ReadUInt32();
 	}
 }

@@ -48,35 +48,35 @@ internal class ConnectTo : ServerPacket
 	public ConnectTo()
 		: base(Opcode.SMSG_CONNECT_TO)
 	{
-		this.Payload = new ConnectPayload();
+		Payload = new ConnectPayload();
 	}
 
 	protected override void Write()
 	{
 		ByteBuffer whereBuffer = new ByteBuffer();
-		whereBuffer.WriteUInt8((byte)this.Payload.Where.Type);
-		switch (this.Payload.Where.Type)
+		whereBuffer.WriteUInt8((byte)Payload.Where.Type);
+		switch (Payload.Where.Type)
 		{
 		case AddressType.IPv4:
-			whereBuffer.WriteBytes(this.Payload.Where.IPv4);
+			whereBuffer.WriteBytes(Payload.Where.IPv4);
 			break;
 		case AddressType.IPv6:
-			whereBuffer.WriteBytes(this.Payload.Where.IPv6);
+			whereBuffer.WriteBytes(Payload.Where.IPv6);
 			break;
 		case AddressType.NamedSocket:
-			whereBuffer.WriteString(this.Payload.Where.NameSocket);
+			whereBuffer.WriteString(Payload.Where.NameSocket);
 			break;
 		}
 		Sha256 hash = new Sha256();
 		hash.Process(whereBuffer.GetData(), (int)whereBuffer.GetSize());
-		hash.Process((uint)this.Payload.Where.Type);
-		hash.Finish(BitConverter.GetBytes(this.Payload.Port));
-		this.Payload.Signature = RsaCrypt.RSA.SignHash(hash.Digest, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1).Reverse().ToArray();
-		base._worldPacket.WriteBytes(this.Payload.Signature, (uint)this.Payload.Signature.Length);
-		base._worldPacket.WriteBytes(whereBuffer);
-		base._worldPacket.WriteUInt16(this.Payload.Port);
-		base._worldPacket.WriteUInt32((uint)this.Serial);
-		base._worldPacket.WriteUInt8(this.Con);
-		base._worldPacket.WriteUInt64(this.Key);
+		hash.Process((uint)Payload.Where.Type);
+		hash.Finish(BitConverter.GetBytes(Payload.Port));
+		Payload.Signature = RsaCrypt.RSA.SignHash(hash.Digest, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1).Reverse().ToArray();
+		_worldPacket.WriteBytes(Payload.Signature, (uint)Payload.Signature.Length);
+		_worldPacket.WriteBytes(whereBuffer);
+		_worldPacket.WriteUInt16(Payload.Port);
+		_worldPacket.WriteUInt32((uint)Serial);
+		_worldPacket.WriteUInt8(Con);
+		_worldPacket.WriteUInt64(Key);
 	}
 }

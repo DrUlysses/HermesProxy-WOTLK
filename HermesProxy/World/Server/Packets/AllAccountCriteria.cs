@@ -15,10 +15,10 @@ internal class AllAccountCriteria : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Progress.Count);
-		foreach (CriteriaProgressPkt item in this.Progress)
+		_worldPacket.WriteInt32(Progress.Count);
+		foreach (CriteriaProgressPkt item in Progress)
 		{
-			item.Write(base._worldPacket);
+			item.Write(_worldPacket);
 		}
 	}
 }

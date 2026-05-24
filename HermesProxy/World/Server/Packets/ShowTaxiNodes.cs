@@ -18,26 +18,26 @@ public class ShowTaxiNodes : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.WindowInfo != null);
-		base._worldPacket.FlushBits();
-		List<byte> canLandNodes = new List<byte>(this.CanLandNodes);
-		this.PadToUInt64Alignment(canLandNodes);
-		base._worldPacket.WriteInt32(canLandNodes.Count / 8);
-		List<byte> canUseNodes = new List<byte>(this.CanUseNodes);
-		this.PadToUInt64Alignment(canUseNodes);
-		base._worldPacket.WriteInt32(canUseNodes.Count / 8);
-		if (this.WindowInfo != null)
+		_worldPacket.WriteBit(WindowInfo != null);
+		_worldPacket.FlushBits();
+		List<byte> canLandNodes = new List<byte>(CanLandNodes);
+		PadToUInt64Alignment(canLandNodes);
+		_worldPacket.WriteInt32(canLandNodes.Count / 8);
+		List<byte> canUseNodes = new List<byte>(CanUseNodes);
+		PadToUInt64Alignment(canUseNodes);
+		_worldPacket.WriteInt32(canUseNodes.Count / 8);
+		if (WindowInfo != null)
 		{
-			base._worldPacket.WritePackedGuid128(this.WindowInfo.UnitGUID);
-			base._worldPacket.WriteUInt32(this.WindowInfo.CurrentNode);
+			_worldPacket.WritePackedGuid128(WindowInfo.UnitGUID);
+			_worldPacket.WriteUInt32(WindowInfo.CurrentNode);
 		}
 		foreach (byte node in canLandNodes)
 		{
-			base._worldPacket.WriteUInt8(node);
+			_worldPacket.WriteUInt8(node);
 		}
 		foreach (byte node2 in canUseNodes)
 		{
-			base._worldPacket.WriteUInt8(node2);
+			_worldPacket.WriteUInt8(node2);
 		}
 	}
 

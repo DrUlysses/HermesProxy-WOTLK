@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,7 +17,6 @@
 
 using System;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace Framework.GameMath
 {
@@ -208,13 +207,14 @@ namespace Framework.GameMath
         /// <returns><b>true</b> if the vectors are not equal; otherwise, <b>false</b>.</returns> 
         public static bool operator !=(AxisAlignedBox a, AxisAlignedBox b)
         {
-            if (Object.Equals(a, null) == true)
+            if (Equals(a, null))
             {
-                return !Object.Equals(b, null);
+                return !Equals(b, null);
             }
-            else if (Object.Equals(b, null) == true)
+
+            if (Equals(b, null))
             {
-                return !Object.Equals(a, null);
+                return !Equals(a, null);
             }
             return !((a.Lo == b.Lo) && (a.Hi == b.Hi));
         }
@@ -301,9 +301,6 @@ namespace Framework.GameMath
                     v.X = _lo.X;
                     v.Y = _hi.Y;
                     v.Z = _lo.Z;
-                    break;
-
-                default:
                     break;
             }
 

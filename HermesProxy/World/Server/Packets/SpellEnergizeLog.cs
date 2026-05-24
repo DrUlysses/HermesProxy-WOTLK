@@ -26,17 +26,17 @@ internal class SpellEnergizeLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.TargetGUID);
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteUInt32((uint)this.Type);
-		base._worldPacket.WriteInt32(this.Amount);
-		base._worldPacket.WriteInt32(this.OverEnergize);
-		base._worldPacket.WriteBit(this.LogData != null);
-		base._worldPacket.FlushBits();
-		if (this.LogData != null)
+		_worldPacket.WritePackedGuid128(TargetGUID);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteUInt32((uint)Type);
+		_worldPacket.WriteInt32(Amount);
+		_worldPacket.WriteInt32(OverEnergize);
+		_worldPacket.WriteBit(LogData != null);
+		_worldPacket.FlushBits();
+		if (LogData != null)
 		{
-			this.LogData.Write(base._worldPacket);
+			LogData.Write(_worldPacket);
 		}
 	}
 }

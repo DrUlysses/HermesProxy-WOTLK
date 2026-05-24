@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_membership_types.proto</summary>
@@ -167,8 +167,8 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(MemberId, other.MemberId)) return false;
-      if (!object.Equals(Type, other.Type)) return false;
+      if (!Equals(MemberId, other.MemberId)) return false;
+      if (!Equals(Type, other.Type)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -598,8 +598,8 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(MemberId, other.MemberId)) return false;
-      if (!object.Equals(Club, other.Club)) return false;
+      if (!Equals(MemberId, other.MemberId)) return false;
+      if (!Equals(Club, other.Club)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -811,8 +811,8 @@ namespace Bgs.Protocol.Club.V1 {
       }
       if(!description_.Equals(other.description_)) return false;
       if(!invitation_.Equals(other.invitation_)) return false;
-      if (!object.Equals(Setting, other.Setting)) return false;
-      if (!object.Equals(MentionView, other.MentionView)) return false;
+      if (!Equals(Setting, other.Setting)) return false;
+      if (!Equals(MentionView, other.MentionView)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1116,7 +1116,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ClubPosition, other.ClubPosition)) return false;
+      if (!Equals(ClubPosition, other.ClubPosition)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1261,7 +1261,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ClubPosition, other.ClubPosition)) return false;
+      if (!Equals(ClubPosition, other.ClubPosition)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1406,7 +1406,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ClubPosition, other.ClubPosition)) return false;
+      if (!Equals(ClubPosition, other.ClubPosition)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

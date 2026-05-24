@@ -26,22 +26,22 @@ public class MailAttachedItem
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.Position);
-		data.WriteUInt64((ulong)this.AttachID);
-		data.WriteInt32((int)this.Count);
-		data.WriteInt32(this.Charges);
-		data.WriteUInt32(this.MaxDurability);
-		data.WriteInt32((int)this.Durability);
-		this.Item.Write(data);
-		data.WriteBits(this.Enchants.Count, 4);
-		data.WriteBits(this.Gems.Count, 2);
-		data.WriteBit(this.Unlocked);
+		data.WriteUInt8(Position);
+		data.WriteUInt64((ulong)AttachID);
+		data.WriteInt32((int)Count);
+		data.WriteInt32(Charges);
+		data.WriteUInt32(MaxDurability);
+		data.WriteInt32((int)Durability);
+		Item.Write(data);
+		data.WriteBits(Enchants.Count, 4);
+		data.WriteBits(Gems.Count, 2);
+		data.WriteBit(Unlocked);
 		data.FlushBits();
-		foreach (ItemGemData gem in this.Gems)
+		foreach (ItemGemData gem in Gems)
 		{
 			gem.Write(data);
 		}
-		foreach (ItemEnchantData en in this.Enchants)
+		foreach (ItemEnchantData en in Enchants)
 		{
 			en.Write(data);
 		}

@@ -25,16 +25,16 @@ public class SeasonInfo : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.MythicPlusSeasonID);
+		_worldPacket.WriteInt32(MythicPlusSeasonID);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteInt32(this.MythicPlusMilestoneSeasonID);
+			_worldPacket.WriteInt32(MythicPlusMilestoneSeasonID);
 		}
-		base._worldPacket.WriteInt32(this.CurrentSeason);
-		base._worldPacket.WriteInt32(this.PreviousSeason);
-		base._worldPacket.WriteInt32(this.ConquestWeeklyProgressCurrencyID);
-		base._worldPacket.WriteInt32(this.PvpSeasonID);
-		base._worldPacket.WriteBit(this.WeeklyRewardChestsEnabled);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteInt32(CurrentSeason);
+		_worldPacket.WriteInt32(PreviousSeason);
+		_worldPacket.WriteInt32(ConquestWeeklyProgressCurrencyID);
+		_worldPacket.WriteInt32(PvpSeasonID);
+		_worldPacket.WriteBit(WeeklyRewardChestsEnabled);
+		_worldPacket.FlushBits();
 	}
 }

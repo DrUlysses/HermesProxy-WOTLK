@@ -27,19 +27,19 @@ public class TransferPending : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.MapID);
-		base._worldPacket.WriteVector3(this.OldMapPosition);
-		base._worldPacket.WriteBit(this.Ship != null);
-		base._worldPacket.WriteBit(this.TransferSpellID.HasValue);
-		if (this.Ship != null)
+		_worldPacket.WriteUInt32(MapID);
+		_worldPacket.WriteVector3(OldMapPosition);
+		_worldPacket.WriteBit(Ship != null);
+		_worldPacket.WriteBit(TransferSpellID.HasValue);
+		if (Ship != null)
 		{
-			base._worldPacket.WriteUInt32(this.Ship.Id);
-			base._worldPacket.WriteInt32(this.Ship.OriginMapID);
+			_worldPacket.WriteUInt32(Ship.Id);
+			_worldPacket.WriteInt32(Ship.OriginMapID);
 		}
-		if (this.TransferSpellID.HasValue)
+		if (TransferSpellID.HasValue)
 		{
-			base._worldPacket.WriteInt32(this.TransferSpellID.Value);
+			_worldPacket.WriteInt32(TransferSpellID.Value);
 		}
-		base._worldPacket.FlushBits();
+		_worldPacket.FlushBits();
 	}
 }

@@ -11,7 +11,7 @@ public class GuildUpdateInfoText : ClientPacket
 
 	public override void Read()
 	{
-		uint textLen = base._worldPacket.ReadBits<uint>(11);
-		this.InfoText = base._worldPacket.ReadString(textLen);
+		uint textLen = _worldPacket.ReadBits<uint>(11);
+		InfoText = _worldPacket.ReadString(textLen);
 	}
 }

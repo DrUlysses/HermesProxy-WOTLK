@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.UserManager.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/user_manager_service.proto</summary>
@@ -212,7 +212,7 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ObjectId != other.ObjectId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -541,7 +541,7 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ObjectId != other.ObjectId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -741,7 +741,7 @@ namespace Bgs.Protocol.UserManager.V1 {
         return true;
       }
       if(!players_.Equals(other.players_)) return false;
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (Program != other.Program) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -937,7 +937,7 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (Program != other.Program) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1120,8 +1120,8 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1309,8 +1309,8 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1520,9 +1520,9 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Player, other.Player)) return false;
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(Player, other.Player)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1753,9 +1753,9 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Player, other.Player)) return false;
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(Player, other.Player)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

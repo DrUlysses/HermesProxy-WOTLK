@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
  * Copyright (C) 2003-2004  Eran Kampf	eran@ekampf.com	http://www.ekampf.com
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -18,6 +18,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Framework.GameMath
@@ -114,10 +115,8 @@ namespace Framework.GameMath
                     Vector3.Parse(m.Result("${direction}"))
                     );
             }
-            else
-            {
-                throw new Exception("Unsuccessful Match.");
-            }
+
+            throw new Exception("Unsuccessful Match.");
         }
         #endregion
 
@@ -177,7 +176,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two rays are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Ray a, Ray b)
         {
-            return ValueType.Equals(a, b);
+            return Equals(a, b);
         }
         /// <summary>
         /// Tests whether two specified rays are not equal.
@@ -187,7 +186,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two rays are not equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Ray a, Ray b)
         {
-            return !ValueType.Equals(a, b);
+            return !Equals(a, b);
         }
 
         #endregion
@@ -203,11 +202,9 @@ namespace Framework.GameMath
             {
                 return Vector3.Inf;
             }
-            else
-            {
-                float t = -(d + Origin.dot(normal)) / rate;
-                return Origin + Direction * t;
-            }
+
+            float t = -(d + Origin.dot(normal)) / rate;
+            return Origin + Direction * t;
         }
 
         public float intersectionTime(AxisAlignedBox box)
@@ -218,8 +215,7 @@ namespace Framework.GameMath
 
             if (float.IsInfinity(time) && inside)
                 return 0.0f;
-            else
-                return time;
+            return time;
         }
 
         public Vector3 invDirection()
@@ -268,7 +264,7 @@ namespace Framework.GameMath
         /// <param name="value">The <see cref="Object"/> to convert.</param>
         /// <param name="destinationType">The Type to convert the <paramref name="value"/> parameter to.</param>
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if ((destinationType == typeof(string)) && (value is Ray))
             {
@@ -285,7 +281,7 @@ namespace Framework.GameMath
         /// <param name="culture">The <see cref="System.Globalization.CultureInfo"/> to use as the current culture. </param>
         /// <param name="value">The <see cref="Object"/> to convert.</param>
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
-        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value.GetType() == typeof(string))
             {

@@ -168,16 +168,16 @@ public static class ObjectTypeConverter
 
 	public static ObjectType Convert(ObjectTypeLegacy type)
 	{
-		if (!ObjectTypeConverter.ConvDictLegacy.ContainsKey(type))
+		if (!ConvDictLegacy.ContainsKey(type))
 		{
 			throw new ArgumentOutOfRangeException("0x" + type.ToString("X"));
 		}
-		return ObjectTypeConverter.ConvDictLegacy[type];
+		return ConvDictLegacy[type];
 	}
 
 	public static ObjectTypeLegacy ConvertToLegacy(ObjectType type)
 	{
-		foreach (KeyValuePair<ObjectTypeLegacy, ObjectType> itr in ObjectTypeConverter.ConvDictLegacy)
+		foreach (KeyValuePair<ObjectTypeLegacy, ObjectType> itr in ConvDictLegacy)
 		{
 			if (itr.Value == type)
 			{
@@ -189,16 +189,16 @@ public static class ObjectTypeConverter
 
 	public static ObjectType Convert(ObjectType801 type)
 	{
-		if (!ObjectTypeConverter.ConvDict801.ContainsKey(type))
+		if (!ConvDict801.ContainsKey(type))
 		{
 			throw new ArgumentOutOfRangeException("0x" + type.ToString("X"));
 		}
-		return ObjectTypeConverter.ConvDict801[type];
+		return ConvDict801[type];
 	}
 
 	public static ObjectType801 ConvertTo801(ObjectType type)
 	{
-		foreach (KeyValuePair<ObjectType801, ObjectType> itr in ObjectTypeConverter.ConvDict801)
+		foreach (KeyValuePair<ObjectType801, ObjectType> itr in ConvDict801)
 		{
 			if (itr.Value == type)
 			{
@@ -210,16 +210,16 @@ public static class ObjectTypeConverter
 
 	public static ObjectType Convert(ObjectTypeBCC type)
 	{
-		if (!ObjectTypeConverter.ConvDictBCC.ContainsKey(type))
+		if (!ConvDictBCC.ContainsKey(type))
 		{
 			throw new ArgumentOutOfRangeException("0x" + type.ToString("X"));
 		}
-		return ObjectTypeConverter.ConvDictBCC[type];
+		return ConvDictBCC[type];
 	}
 
 	public static ObjectTypeBCC ConvertToBCC(ObjectType type)
 	{
-		foreach (KeyValuePair<ObjectTypeBCC, ObjectType> itr in ObjectTypeConverter.ConvDictBCC)
+		foreach (KeyValuePair<ObjectTypeBCC, ObjectType> itr in ConvDictBCC)
 		{
 			if (itr.Value == type)
 			{

@@ -14,6 +14,6 @@ public class MountResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Result);
+		_worldPacket.WriteInt32(Result);
 	}
 }

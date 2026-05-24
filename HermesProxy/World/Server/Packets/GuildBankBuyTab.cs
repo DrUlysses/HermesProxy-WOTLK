@@ -13,7 +13,7 @@ public class GuildBankBuyTab : ClientPacket
 
 	public override void Read()
 	{
-		this.BankGuid = base._worldPacket.ReadPackedGuid128();
-		this.BankTab = base._worldPacket.ReadUInt8();
+		BankGuid = _worldPacket.ReadPackedGuid128();
+		BankTab = _worldPacket.ReadUInt8();
 	}
 }

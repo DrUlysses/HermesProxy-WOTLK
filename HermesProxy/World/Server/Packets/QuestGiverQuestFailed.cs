@@ -15,7 +15,7 @@ internal class QuestGiverQuestFailed : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.QuestID);
-		base._worldPacket.WriteUInt32((uint)this.Reason);
+		_worldPacket.WriteUInt32(QuestID);
+		_worldPacket.WriteUInt32((uint)Reason);
 	}
 }

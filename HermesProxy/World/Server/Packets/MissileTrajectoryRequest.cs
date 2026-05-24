@@ -8,7 +8,7 @@ public struct MissileTrajectoryRequest
 
 	public void Read(WorldPacket data)
 	{
-		this.Pitch = data.ReadFloat();
-		this.Speed = data.ReadFloat();
+		Pitch = data.ReadFloat();
+		Speed = data.ReadFloat();
 	}
 }

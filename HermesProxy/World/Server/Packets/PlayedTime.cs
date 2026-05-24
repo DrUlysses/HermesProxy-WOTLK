@@ -18,9 +18,9 @@ public class PlayedTime : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.TotalTime);
-		base._worldPacket.WriteUInt32(this.LevelTime);
-		base._worldPacket.WriteBit(this.TriggerEvent);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt32(TotalTime);
+		_worldPacket.WriteUInt32(LevelTime);
+		_worldPacket.WriteBit(TriggerEvent);
+		_worldPacket.FlushBits();
 	}
 }

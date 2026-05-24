@@ -23,23 +23,23 @@ internal class AuctionSellItem : ClientPacket
 
 	public override void Read()
 	{
-		this.Auctioneer = base._worldPacket.ReadPackedGuid128();
-		this.MinBid = base._worldPacket.ReadUInt64();
-		this.BuyoutPrice = base._worldPacket.ReadUInt64();
-		this.ExpireTime = base._worldPacket.ReadUInt32();
-		if (base._worldPacket.HasBit())
+		Auctioneer = _worldPacket.ReadPackedGuid128();
+		MinBid = _worldPacket.ReadUInt64();
+		BuyoutPrice = _worldPacket.ReadUInt64();
+		ExpireTime = _worldPacket.ReadUInt32();
+		if (_worldPacket.HasBit())
 		{
-			this.TaintedBy = new AddOnInfo();
+			TaintedBy = new AddOnInfo();
 		}
 		int itemCountBits = (ModernVersion.AddedInClassicVersion(1, 14, 3, 2, 5, 4) ? 6 : 5);
-		uint itemCount = base._worldPacket.ReadBits<uint>(itemCountBits);
-		if (this.TaintedBy != null)
+		uint itemCount = _worldPacket.ReadBits<uint>(itemCountBits);
+		if (TaintedBy != null)
 		{
-			this.TaintedBy.Read(base._worldPacket);
+			TaintedBy.Read(_worldPacket);
 		}
 		for (int i = 0; i < itemCount; i++)
 		{
-			this.Items.Add(new AuctionItemForSale(base._worldPacket));
+			Items.Add(new AuctionItemForSale(_worldPacket));
 		}
 	}
 }

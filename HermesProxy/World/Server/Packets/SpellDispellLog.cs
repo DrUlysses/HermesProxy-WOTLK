@@ -25,27 +25,27 @@ internal class SpellDispellLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.IsSteal);
-		base._worldPacket.WriteBit(this.IsBreak);
-		base._worldPacket.WritePackedGuid128(this.TargetGUID);
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.DispelledBySpellID);
-		base._worldPacket.WriteInt32(this.DispellData.Count);
-		foreach (SpellDispellData data in this.DispellData)
+		_worldPacket.WriteBit(IsSteal);
+		_worldPacket.WriteBit(IsBreak);
+		_worldPacket.WritePackedGuid128(TargetGUID);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(DispelledBySpellID);
+		_worldPacket.WriteInt32(DispellData.Count);
+		foreach (SpellDispellData data in DispellData)
 		{
-			base._worldPacket.WriteUInt32(data.SpellID);
-			base._worldPacket.WriteBit(data.Harmful);
-			base._worldPacket.WriteBit(data.Rolled.HasValue);
-			base._worldPacket.WriteBit(data.Needed.HasValue);
+			_worldPacket.WriteUInt32(data.SpellID);
+			_worldPacket.WriteBit(data.Harmful);
+			_worldPacket.WriteBit(data.Rolled.HasValue);
+			_worldPacket.WriteBit(data.Needed.HasValue);
 			if (data.Rolled.HasValue)
 			{
-				base._worldPacket.WriteInt32(data.Rolled.Value);
+				_worldPacket.WriteInt32(data.Rolled.Value);
 			}
 			if (data.Needed.HasValue)
 			{
-				base._worldPacket.WriteInt32(data.Needed.Value);
+				_worldPacket.WriteInt32(data.Needed.Value);
 			}
-			base._worldPacket.FlushBits();
+			_worldPacket.FlushBits();
 		}
 	}
 }

@@ -32,35 +32,35 @@ public class WhoRequest
 
 	public void Read(WorldPacket data)
 	{
-		this.MinLevel = data.ReadInt32();
-		this.MaxLevel = data.ReadInt32();
-		this.RaceFilter = data.ReadInt64();
-		this.ClassFilter = data.ReadInt32();
+		MinLevel = data.ReadInt32();
+		MaxLevel = data.ReadInt32();
+		RaceFilter = data.ReadInt64();
+		ClassFilter = data.ReadInt32();
 		uint nameLength = data.ReadBits<uint>(6);
 		uint virtualRealmNameLength = data.ReadBits<uint>(9);
 		uint guildNameLength = data.ReadBits<uint>(7);
 		uint guildVirtualRealmNameLength = data.ReadBits<uint>(9);
 		uint wordsCount = data.ReadBits<uint>(3);
-		this.ShowEnemies = data.HasBit();
-		this.ShowArenaPlayers = data.HasBit();
-		this.ExactName = data.HasBit();
+		ShowEnemies = data.HasBit();
+		ShowArenaPlayers = data.HasBit();
+		ExactName = data.HasBit();
 		if (data.HasBit())
 		{
-			this.ServerInfo = new WhoRequestServerInfo();
+			ServerInfo = new WhoRequestServerInfo();
 		}
 		data.ResetBitPos();
 		for (int i = 0; i < wordsCount; i++)
 		{
-			this.Words.Add(data.ReadString(data.ReadBits<uint>(7)));
+			Words.Add(data.ReadString(data.ReadBits<uint>(7)));
 			data.ResetBitPos();
 		}
-		this.Name = data.ReadString(nameLength);
-		this.VirtualRealmName = data.ReadString(virtualRealmNameLength);
-		this.Guild = data.ReadString(guildNameLength);
-		this.GuildVirtualRealmName = data.ReadString(guildVirtualRealmNameLength);
-		if (this.ServerInfo != null)
+		Name = data.ReadString(nameLength);
+		VirtualRealmName = data.ReadString(virtualRealmNameLength);
+		Guild = data.ReadString(guildNameLength);
+		GuildVirtualRealmName = data.ReadString(guildVirtualRealmNameLength);
+		if (ServerInfo != null)
 		{
-			this.ServerInfo.Read(data);
+			ServerInfo.Read(data);
 		}
 	}
 }

@@ -13,7 +13,7 @@ public class ConfigurationParser
 
 	public ConfigurationParser(KeyValueConfigurationCollection configCollection)
 	{
-		this._settingsCollection = configCollection;
+		_settingsCollection = configCollection;
 	}
 
 	public static ConfigurationParser ParseFromFile(string configFile, Dictionary<string, string> overwrittenValues)
@@ -34,7 +34,7 @@ public class ConfigurationParser
 		}
 		catch
 		{
-			Log.Print(LogType.Error, "Fail to load config file '" + configFile + "'", "ParseFromFile", "ConfigurationParser.cs");
+			Log.Print(LogType.Error, "Fail to load config file '" + configFile + "'", "ConfigurationParser.cs");
 			throw;
 		}
 		foreach (KeyValuePair<string, string> pair in overwrittenValues)
@@ -47,12 +47,12 @@ public class ConfigurationParser
 
 	public string GetString(string key, string defValue)
 	{
-		return this._settingsCollection[key]?.Value ?? defValue;
+		return _settingsCollection[key]?.Value ?? defValue;
 	}
 
 	public string[] GetStringList(string key, string[] defValue)
 	{
-		KeyValueConfigurationElement s = this._settingsCollection[key];
+		KeyValueConfigurationElement s = _settingsCollection[key];
 		if (s?.Value == null)
 		{
 			return defValue;
@@ -67,7 +67,7 @@ public class ConfigurationParser
 
 	public bool GetBoolean(string key, bool defValue)
 	{
-		KeyValueConfigurationElement s = this._settingsCollection[key];
+		KeyValueConfigurationElement s = _settingsCollection[key];
 		if (s?.Value == null)
 		{
 			return defValue;
@@ -82,7 +82,7 @@ public class ConfigurationParser
 
 	public int GetInt(string key, int defValue)
 	{
-		KeyValueConfigurationElement s = this._settingsCollection[key];
+		KeyValueConfigurationElement s = _settingsCollection[key];
 		if (string.IsNullOrEmpty(s?.Value))
 		{
 			return defValue;
@@ -97,7 +97,7 @@ public class ConfigurationParser
 
 	public TEnum GetEnum<TEnum>(string key, TEnum defValue) where TEnum : struct
 	{
-		KeyValueConfigurationElement s = this._settingsCollection[key];
+		KeyValueConfigurationElement s = _settingsCollection[key];
 		if (string.IsNullOrEmpty(s?.Value))
 		{
 			return defValue;
@@ -121,7 +121,7 @@ public class ConfigurationParser
 
 	public byte[] GetByteArray(string key, byte[] defValue)
 	{
-		KeyValueConfigurationElement s = this._settingsCollection[key];
+		KeyValueConfigurationElement s = _settingsCollection[key];
 		if (string.IsNullOrWhiteSpace(s?.Value))
 		{
 			return defValue;

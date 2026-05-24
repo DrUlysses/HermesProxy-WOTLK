@@ -11,6 +11,6 @@ public class BattlefieldListRequest : ClientPacket
 
 	public override void Read()
 	{
-		this.ListID = base._worldPacket.ReadInt32();
+		ListID = _worldPacket.ReadInt32();
 	}
 }

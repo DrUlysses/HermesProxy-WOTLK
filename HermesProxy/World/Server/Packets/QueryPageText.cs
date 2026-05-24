@@ -13,7 +13,7 @@ public class QueryPageText : ClientPacket
 
 	public override void Read()
 	{
-		this.PageTextID = base._worldPacket.ReadUInt32();
-		this.ItemGUID = base._worldPacket.ReadPackedGuid128();
+		PageTextID = _worldPacket.ReadUInt32();
+		ItemGUID = _worldPacket.ReadPackedGuid128();
 	}
 }

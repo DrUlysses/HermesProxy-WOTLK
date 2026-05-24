@@ -26,16 +26,16 @@ public class TradeUpdated : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteInt32(this.EnchantID);
-			data.WriteInt32(this.OnUseEnchantmentID);
-			data.WritePackedGuid128(this.Creator);
-			data.WriteInt32(this.Charges);
-			data.WriteUInt32(this.MaxDurability);
-			data.WriteUInt32(this.Durability);
-			data.WriteBits(this.Gems.Count, 2);
-			data.WriteBit(this.Lock);
+			data.WriteInt32(EnchantID);
+			data.WriteInt32(OnUseEnchantmentID);
+			data.WritePackedGuid128(Creator);
+			data.WriteInt32(Charges);
+			data.WriteUInt32(MaxDurability);
+			data.WriteUInt32(Durability);
+			data.WriteBits(Gems.Count, 2);
+			data.WriteBit(Lock);
 			data.FlushBits();
-			foreach (ItemGemData gem in this.Gems)
+			foreach (ItemGemData gem in Gems)
 			{
 				gem.Write(data);
 			}
@@ -56,15 +56,15 @@ public class TradeUpdated : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteUInt8(this.Slot);
-			data.WriteInt32(this.StackCount);
-			data.WritePackedGuid128(this.GiftCreator);
-			this.Item.Write(data);
-			data.WriteBit(this.Unwrapped != null);
+			data.WriteUInt8(Slot);
+			data.WriteInt32(StackCount);
+			data.WritePackedGuid128(GiftCreator);
+			Item.Write(data);
+			data.WriteBit(Unwrapped != null);
 			data.FlushBits();
-			if (this.Unwrapped != null)
+			if (Unwrapped != null)
 			{
-				this.Unwrapped.Write(data);
+				Unwrapped.Write(data);
 			}
 		}
 	}
@@ -94,18 +94,18 @@ public class TradeUpdated : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8(this.WhichPlayer);
-		base._worldPacket.WriteUInt32(this.Id);
-		base._worldPacket.WriteUInt32(this.ClientStateIndex);
-		base._worldPacket.WriteUInt32(this.CurrentStateIndex);
-		base._worldPacket.WriteUInt64(this.Gold);
-		base._worldPacket.WriteInt32(this.CurrencyType);
-		base._worldPacket.WriteInt32(this.CurrencyQuantity);
-		base._worldPacket.WriteInt32(this.ProposedEnchantment);
-		base._worldPacket.WriteInt32(this.Items.Count);
-		this.Items.ForEach(delegate(TradeItem item)
+		_worldPacket.WriteUInt8(WhichPlayer);
+		_worldPacket.WriteUInt32(Id);
+		_worldPacket.WriteUInt32(ClientStateIndex);
+		_worldPacket.WriteUInt32(CurrentStateIndex);
+		_worldPacket.WriteUInt64(Gold);
+		_worldPacket.WriteInt32(CurrencyType);
+		_worldPacket.WriteInt32(CurrencyQuantity);
+		_worldPacket.WriteInt32(ProposedEnchantment);
+		_worldPacket.WriteInt32(Items.Count);
+		Items.ForEach(delegate(TradeItem item)
 		{
-			item.Write(base._worldPacket);
+			item.Write(_worldPacket);
 		});
 	}
 }

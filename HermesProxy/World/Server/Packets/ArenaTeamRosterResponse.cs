@@ -32,23 +32,23 @@ internal class ArenaTeamRosterResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.TeamId);
-		base._worldPacket.WriteUInt32(this.TeamSize);
-		base._worldPacket.WriteUInt32(this.TeamPlayed);
-		base._worldPacket.WriteUInt32(this.TeamWins);
-		base._worldPacket.WriteUInt32(this.SeasonPlayed);
-		base._worldPacket.WriteUInt32(this.SeasonWins);
-		base._worldPacket.WriteUInt32(this.TeamRating);
-		base._worldPacket.WriteUInt32(this.PlayerRating);
-		base._worldPacket.WriteInt32(this.Members.Count);
+		_worldPacket.WriteUInt32(TeamId);
+		_worldPacket.WriteUInt32(TeamSize);
+		_worldPacket.WriteUInt32(TeamPlayed);
+		_worldPacket.WriteUInt32(TeamWins);
+		_worldPacket.WriteUInt32(SeasonPlayed);
+		_worldPacket.WriteUInt32(SeasonWins);
+		_worldPacket.WriteUInt32(TeamRating);
+		_worldPacket.WriteUInt32(PlayerRating);
+		_worldPacket.WriteInt32(Members.Count);
 		if (ModernVersion.AddedInClassicVersion(1, 14, 2, 2, 5, 3))
 		{
-			base._worldPacket.WriteBit(this.UnkBit);
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteBit(UnkBit);
+			_worldPacket.FlushBits();
 		}
-		foreach (ArenaTeamMember member2 in this.Members)
+		foreach (ArenaTeamMember member2 in Members)
 		{
-			member2.Write(base._worldPacket);
+			member2.Write(_worldPacket);
 		}
 	}
 }

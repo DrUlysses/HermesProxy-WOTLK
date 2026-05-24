@@ -8,8 +8,8 @@ public class TreasureLootList
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.Items.Count);
-		foreach (TreasureItem item in this.Items)
+		data.WriteInt32(Items.Count);
+		foreach (TreasureItem item in Items)
 		{
 			item.Write(data);
 		}

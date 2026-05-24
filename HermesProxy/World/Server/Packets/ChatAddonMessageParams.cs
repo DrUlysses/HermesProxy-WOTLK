@@ -17,9 +17,9 @@ public class ChatAddonMessageParams
 		data.ResetBitPos();
 		uint prefixLen = data.ReadBits<uint>(5);
 		uint textLen = data.ReadBits<uint>(8);
-		this.IsLogged = data.HasBit();
-		this.Type = (ChatMessageTypeModern)data.ReadInt32();
-		this.Prefix = data.ReadString(prefixLen);
-		this.Text = data.ReadString(textLen);
+		IsLogged = data.HasBit();
+		Type = (ChatMessageTypeModern)data.ReadInt32();
+		Prefix = data.ReadString(prefixLen);
+		Text = data.ReadString(textLen);
 	}
 }

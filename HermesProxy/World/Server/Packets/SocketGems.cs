@@ -13,10 +13,10 @@ internal class SocketGems : ClientPacket
 
 	public override void Read()
 	{
-		this.ItemGuid = base._worldPacket.ReadPackedGuid128();
+		ItemGuid = _worldPacket.ReadPackedGuid128();
 		for (int i = 0; i < 3; i++)
 		{
-			this.Gems[i] = base._worldPacket.ReadPackedGuid128();
+			Gems[i] = _worldPacket.ReadPackedGuid128();
 		}
 	}
 }

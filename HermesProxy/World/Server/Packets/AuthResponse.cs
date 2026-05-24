@@ -25,9 +25,9 @@ internal class AuthResponse : ServerPacket
 
 		public ClassAvailability(byte classId, byte activeExpLevel, byte accountExpLevel)
 		{
-			this.ClassID = classId;
-			this.ActiveExpansionLevel = activeExpLevel;
-			this.AccountExpansionLevel = accountExpLevel;
+			ClassID = classId;
+			ActiveExpansionLevel = activeExpLevel;
+			AccountExpansionLevel = accountExpLevel;
 		}
 	}
 
@@ -46,8 +46,8 @@ internal class AuthResponse : ServerPacket
 
 		public CharacterTemplateClass(FactionMasks factionGroup, byte classID)
 		{
-			this.FactionGroup = factionGroup;
-			this.ClassID = classID;
+			FactionGroup = factionGroup;
+			ClassID = classID;
 		}
 	}
 
@@ -123,89 +123,89 @@ internal class AuthResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Result);
-		base._worldPacket.WriteBit(this.SuccessInfo != null);
-		base._worldPacket.WriteBit(this.WaitInfo != null);
-		base._worldPacket.FlushBits();
-		if (this.SuccessInfo != null)
+		_worldPacket.WriteUInt32((uint)Result);
+		_worldPacket.WriteBit(SuccessInfo != null);
+		_worldPacket.WriteBit(WaitInfo != null);
+		_worldPacket.FlushBits();
+		if (SuccessInfo != null)
 		{
-			base._worldPacket.WriteUInt32(this.SuccessInfo.VirtualRealmAddress);
-			base._worldPacket.WriteInt32(this.SuccessInfo.VirtualRealms.Count);
-			base._worldPacket.WriteUInt32(this.SuccessInfo.TimeRested);
-			base._worldPacket.WriteUInt8(this.SuccessInfo.ActiveExpansionLevel);
-			base._worldPacket.WriteUInt8(this.SuccessInfo.AccountExpansionLevel);
-			base._worldPacket.WriteUInt32(this.SuccessInfo.TimeSecondsUntilPCKick);
-			base._worldPacket.WriteInt32(this.SuccessInfo.AvailableClasses.Count);
-			base._worldPacket.WriteInt32(this.SuccessInfo.Templates.Count);
-			base._worldPacket.WriteUInt32(this.SuccessInfo.CurrencyID);
-			base._worldPacket.WriteInt64(this.SuccessInfo.Time);
-			foreach (RaceClassAvailability raceClassAvailability in this.SuccessInfo.AvailableClasses)
+			_worldPacket.WriteUInt32(SuccessInfo.VirtualRealmAddress);
+			_worldPacket.WriteInt32(SuccessInfo.VirtualRealms.Count);
+			_worldPacket.WriteUInt32(SuccessInfo.TimeRested);
+			_worldPacket.WriteUInt8(SuccessInfo.ActiveExpansionLevel);
+			_worldPacket.WriteUInt8(SuccessInfo.AccountExpansionLevel);
+			_worldPacket.WriteUInt32(SuccessInfo.TimeSecondsUntilPCKick);
+			_worldPacket.WriteInt32(SuccessInfo.AvailableClasses.Count);
+			_worldPacket.WriteInt32(SuccessInfo.Templates.Count);
+			_worldPacket.WriteUInt32(SuccessInfo.CurrencyID);
+			_worldPacket.WriteInt64(SuccessInfo.Time);
+			foreach (RaceClassAvailability raceClassAvailability in SuccessInfo.AvailableClasses)
 			{
-				base._worldPacket.WriteUInt8(raceClassAvailability.RaceID);
-				base._worldPacket.WriteInt32(raceClassAvailability.Classes.Count);
+				_worldPacket.WriteUInt8(raceClassAvailability.RaceID);
+				_worldPacket.WriteInt32(raceClassAvailability.Classes.Count);
 				foreach (ClassAvailability classAvailability in raceClassAvailability.Classes)
 				{
-					base._worldPacket.WriteUInt8(classAvailability.ClassID);
-					base._worldPacket.WriteUInt8(classAvailability.ActiveExpansionLevel);
-					base._worldPacket.WriteUInt8(classAvailability.AccountExpansionLevel);
+					_worldPacket.WriteUInt8(classAvailability.ClassID);
+					_worldPacket.WriteUInt8(classAvailability.ActiveExpansionLevel);
+					_worldPacket.WriteUInt8(classAvailability.AccountExpansionLevel);
 					if (ModernVersion.ExpansionVersion >= 3)
 					{
-						base._worldPacket.WriteUInt8(0);
+						_worldPacket.WriteUInt8(0);
 					}
 				}
 			}
-			base._worldPacket.WriteBit(this.SuccessInfo.IsExpansionTrial);
-			base._worldPacket.WriteBit(this.SuccessInfo.ForceCharacterTemplate);
-			base._worldPacket.WriteBit(this.SuccessInfo.NumPlayersHorde.HasValue);
-			base._worldPacket.WriteBit(this.SuccessInfo.NumPlayersAlliance.HasValue);
-			base._worldPacket.WriteBit(this.SuccessInfo.ExpansionTrialExpiration.HasValue);
+			_worldPacket.WriteBit(SuccessInfo.IsExpansionTrial);
+			_worldPacket.WriteBit(SuccessInfo.ForceCharacterTemplate);
+			_worldPacket.WriteBit(SuccessInfo.NumPlayersHorde.HasValue);
+			_worldPacket.WriteBit(SuccessInfo.NumPlayersAlliance.HasValue);
+			_worldPacket.WriteBit(SuccessInfo.ExpansionTrialExpiration.HasValue);
 			if (ModernVersion.ExpansionVersion >= 3)
 			{
-				base._worldPacket.WriteBit(bit: false);
+				_worldPacket.WriteBit(bit: false);
 			}
-			base._worldPacket.FlushBits();
-			base._worldPacket.WriteUInt32(this.SuccessInfo.GameTimeInfo.BillingPlan);
-			base._worldPacket.WriteUInt32(this.SuccessInfo.GameTimeInfo.TimeRemain);
-			base._worldPacket.WriteUInt32(this.SuccessInfo.GameTimeInfo.Unknown735);
-			base._worldPacket.WriteBit(this.SuccessInfo.GameTimeInfo.InGameRoom);
-			base._worldPacket.WriteBit(this.SuccessInfo.GameTimeInfo.InGameRoom);
-			base._worldPacket.WriteBit(this.SuccessInfo.GameTimeInfo.InGameRoom);
-			base._worldPacket.FlushBits();
-			if (this.SuccessInfo.NumPlayersHorde.HasValue)
+			_worldPacket.FlushBits();
+			_worldPacket.WriteUInt32(SuccessInfo.GameTimeInfo.BillingPlan);
+			_worldPacket.WriteUInt32(SuccessInfo.GameTimeInfo.TimeRemain);
+			_worldPacket.WriteUInt32(SuccessInfo.GameTimeInfo.Unknown735);
+			_worldPacket.WriteBit(SuccessInfo.GameTimeInfo.InGameRoom);
+			_worldPacket.WriteBit(SuccessInfo.GameTimeInfo.InGameRoom);
+			_worldPacket.WriteBit(SuccessInfo.GameTimeInfo.InGameRoom);
+			_worldPacket.FlushBits();
+			if (SuccessInfo.NumPlayersHorde.HasValue)
 			{
-				base._worldPacket.WriteUInt16(this.SuccessInfo.NumPlayersHorde.Value);
+				_worldPacket.WriteUInt16(SuccessInfo.NumPlayersHorde.Value);
 			}
-			if (this.SuccessInfo.NumPlayersAlliance.HasValue)
+			if (SuccessInfo.NumPlayersAlliance.HasValue)
 			{
-				base._worldPacket.WriteUInt16(this.SuccessInfo.NumPlayersAlliance.Value);
+				_worldPacket.WriteUInt16(SuccessInfo.NumPlayersAlliance.Value);
 			}
-			if (this.SuccessInfo.ExpansionTrialExpiration.HasValue)
+			if (SuccessInfo.ExpansionTrialExpiration.HasValue)
 			{
-				base._worldPacket.WriteInt32(this.SuccessInfo.ExpansionTrialExpiration.Value);
+				_worldPacket.WriteInt32(SuccessInfo.ExpansionTrialExpiration.Value);
 			}
-			foreach (VirtualRealmInfo virtualRealm2 in this.SuccessInfo.VirtualRealms)
+			foreach (VirtualRealmInfo virtualRealm2 in SuccessInfo.VirtualRealms)
 			{
-				virtualRealm2.Write(base._worldPacket);
+				virtualRealm2.Write(_worldPacket);
 			}
-			foreach (CharacterTemplate templat in this.SuccessInfo.Templates)
+			foreach (CharacterTemplate templat in SuccessInfo.Templates)
 			{
-				base._worldPacket.WriteUInt32(templat.TemplateSetId);
-				base._worldPacket.WriteInt32(templat.Classes.Count);
+				_worldPacket.WriteUInt32(templat.TemplateSetId);
+				_worldPacket.WriteInt32(templat.Classes.Count);
 				foreach (CharacterTemplateClass templateClass in templat.Classes)
 				{
-					base._worldPacket.WriteUInt8(templateClass.ClassID);
-					base._worldPacket.WriteUInt8((byte)templateClass.FactionGroup);
+					_worldPacket.WriteUInt8(templateClass.ClassID);
+					_worldPacket.WriteUInt8((byte)templateClass.FactionGroup);
 				}
-				base._worldPacket.WriteBits(templat.Name.GetByteCount(), 7);
-				base._worldPacket.WriteBits(templat.Description.GetByteCount(), 10);
-				base._worldPacket.FlushBits();
-				base._worldPacket.WriteString(templat.Name);
-				base._worldPacket.WriteString(templat.Description);
+				_worldPacket.WriteBits(templat.Name.GetByteCount(), 7);
+				_worldPacket.WriteBits(templat.Description.GetByteCount(), 10);
+				_worldPacket.FlushBits();
+				_worldPacket.WriteString(templat.Name);
+				_worldPacket.WriteString(templat.Description);
 			}
 		}
-		if (this.WaitInfo != null)
+		if (WaitInfo != null)
 		{
-			this.WaitInfo.Write(base._worldPacket);
+			WaitInfo.Write(_worldPacket);
 		}
 	}
 }

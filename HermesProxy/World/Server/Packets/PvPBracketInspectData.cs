@@ -28,17 +28,17 @@ public class PvPBracketInspectData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.Bracket);
-		data.WriteInt32(this.Rating);
-		data.WriteInt32(this.Rank);
-		data.WriteInt32(this.WeeklyPlayed);
-		data.WriteInt32(this.WeeklyWon);
-		data.WriteInt32(this.SeasonPlayed);
-		data.WriteInt32(this.SeasonWon);
-		data.WriteInt32(this.WeeklyBestRating);
-		data.WriteInt32(this.SeasonBestRating);
-		data.WriteInt32(this.PvpTierID);
-		data.WriteInt32(this.WeeklyBestWinPvpTierID);
-		data.WriteBool(this.Disqualified);
+		data.WriteUInt8(Bracket);
+		data.WriteInt32(Rating);
+		data.WriteInt32(Rank);
+		data.WriteInt32(WeeklyPlayed);
+		data.WriteInt32(WeeklyWon);
+		data.WriteInt32(SeasonPlayed);
+		data.WriteInt32(SeasonWon);
+		data.WriteInt32(WeeklyBestRating);
+		data.WriteInt32(SeasonBestRating);
+		data.WriteInt32(PvpTierID);
+		data.WriteInt32(WeeklyBestWinPvpTierID);
+		data.WriteBool(Disqualified);
 	}
 }

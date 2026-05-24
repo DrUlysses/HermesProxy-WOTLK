@@ -13,6 +13,6 @@ public class DeleteChar : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8(this.Code);
+		_worldPacket.WriteUInt8(Code);
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Framework.GameMath
+﻿namespace Framework.GameMath
 {
     public struct Position
     {

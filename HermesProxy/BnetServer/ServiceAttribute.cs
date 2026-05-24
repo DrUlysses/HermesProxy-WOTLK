@@ -14,8 +14,8 @@ public sealed class ServiceAttribute : Attribute
 
 	public ServiceAttribute(ServiceRequirement requirement, OriginalHash serviceHash, uint methodId)
 	{
-		this.Requirement = requirement;
-		this.ServiceHash = serviceHash;
-		this.MethodId = methodId;
+		Requirement = requirement;
+		ServiceHash = serviceHash;
+		MethodId = methodId;
 	}
 }

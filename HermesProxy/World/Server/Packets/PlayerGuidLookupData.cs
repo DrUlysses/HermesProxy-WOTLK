@@ -33,27 +33,27 @@ public class PlayerGuidLookupData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBit(this.IsDeleted);
-		data.WriteBits(this.Name.GetByteCount(), 6);
+		data.WriteBit(IsDeleted);
+		data.WriteBits(Name.GetByteCount(), 6);
 		for (byte i = 0; i < 5; i++)
 		{
-			data.WriteBits(this.DeclinedNames.name[i].GetByteCount(), 7);
+			data.WriteBits(DeclinedNames.name[i].GetByteCount(), 7);
 		}
 		data.FlushBits();
 		for (byte i2 = 0; i2 < 5; i2++)
 		{
-			data.WriteString(this.DeclinedNames.name[i2]);
+			data.WriteString(DeclinedNames.name[i2]);
 		}
-		data.WritePackedGuid128(this.AccountID);
-		data.WritePackedGuid128(this.BnetAccountID);
-		data.WritePackedGuid128(this.GuidActual);
-		data.WriteUInt64(this.GuildClubMemberID);
-		data.WriteUInt32(this.VirtualRealmAddress);
-		data.WriteUInt8((byte)this.RaceID);
-		data.WriteUInt8((byte)this.Sex);
-		data.WriteUInt8((byte)this.ClassID);
-		data.WriteUInt8(this.Level);
-		data.WriteUInt8(this.Unused915);
-		data.WriteString(this.Name);
+		data.WritePackedGuid128(AccountID);
+		data.WritePackedGuid128(BnetAccountID);
+		data.WritePackedGuid128(GuidActual);
+		data.WriteUInt64(GuildClubMemberID);
+		data.WriteUInt32(VirtualRealmAddress);
+		data.WriteUInt8((byte)RaceID);
+		data.WriteUInt8((byte)Sex);
+		data.WriteUInt8((byte)ClassID);
+		data.WriteUInt8(Level);
+		data.WriteUInt8(Unused915);
+		data.WriteString(Name);
 	}
 }

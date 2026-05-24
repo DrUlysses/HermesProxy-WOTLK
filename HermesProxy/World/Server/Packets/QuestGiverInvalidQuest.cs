@@ -20,11 +20,11 @@ internal class QuestGiverInvalidQuest : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Reason);
-		base._worldPacket.WriteInt32(this.ContributionRewardID);
-		base._worldPacket.WriteBit(this.SendErrorMessage);
-		base._worldPacket.WriteBits(this.ReasonText.GetByteCount(), 9);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.ReasonText);
+		_worldPacket.WriteUInt32((uint)Reason);
+		_worldPacket.WriteInt32(ContributionRewardID);
+		_worldPacket.WriteBit(SendErrorMessage);
+		_worldPacket.WriteBits(ReasonText.GetByteCount(), 9);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(ReasonText);
 	}
 }

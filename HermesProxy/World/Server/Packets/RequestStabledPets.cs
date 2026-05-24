@@ -11,6 +11,6 @@ internal class RequestStabledPets : ClientPacket
 
 	public override void Read()
 	{
-		this.StableMaster = base._worldPacket.ReadPackedGuid128();
+		StableMaster = _worldPacket.ReadPackedGuid128();
 	}
 }

@@ -15,8 +15,8 @@ public class QuestGiverQueryQuest : ClientPacket
 
 	public override void Read()
 	{
-		this.QuestGiverGUID = base._worldPacket.ReadPackedGuid128();
-		this.QuestID = base._worldPacket.ReadUInt32();
-		this.RespondToGiver = base._worldPacket.HasBit();
+		QuestGiverGUID = _worldPacket.ReadPackedGuid128();
+		QuestID = _worldPacket.ReadUInt32();
+		RespondToGiver = _worldPacket.HasBit();
 	}
 }

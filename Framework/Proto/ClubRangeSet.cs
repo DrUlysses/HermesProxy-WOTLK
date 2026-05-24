@@ -6,9 +6,8 @@
 #region Designer generated code
 
 using pb = global::Google.Protobuf;
-using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_range_set.proto</summary>
@@ -340,16 +339,16 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(NameRange, other.NameRange)) return false;
-      if (!object.Equals(DescriptionRange, other.DescriptionRange)) return false;
-      if (!object.Equals(BroadcastRange, other.BroadcastRange)) return false;
-      if (!object.Equals(ShortNameRange, other.ShortNameRange)) return false;
-      if (!object.Equals(Member, other.Member)) return false;
-      if (!object.Equals(Stream, other.Stream)) return false;
-      if (!object.Equals(Invitation, other.Invitation)) return false;
-      if (!object.Equals(Suggestion, other.Suggestion)) return false;
-      if (!object.Equals(Ticket, other.Ticket)) return false;
-      if (!object.Equals(Ban, other.Ban)) return false;
+      if (!Equals(NameRange, other.NameRange)) return false;
+      if (!Equals(DescriptionRange, other.DescriptionRange)) return false;
+      if (!Equals(BroadcastRange, other.BroadcastRange)) return false;
+      if (!Equals(ShortNameRange, other.ShortNameRange)) return false;
+      if (!Equals(Member, other.Member)) return false;
+      if (!Equals(Stream, other.Stream)) return false;
+      if (!Equals(Invitation, other.Invitation)) return false;
+      if (!Equals(Suggestion, other.Suggestion)) return false;
+      if (!Equals(Ticket, other.Ticket)) return false;
+      if (!Equals(Ban, other.Ban)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -749,10 +748,10 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Count, other.Count)) return false;
-      if (!object.Equals(Voice, other.Voice)) return false;
-      if (!object.Equals(StreamSubscriptions, other.StreamSubscriptions)) return false;
-      if (!object.Equals(NoteRange, other.NoteRange)) return false;
+      if (!Equals(Count, other.Count)) return false;
+      if (!Equals(Voice, other.Voice)) return false;
+      if (!Equals(StreamSubscriptions, other.StreamSubscriptions)) return false;
+      if (!Equals(NoteRange, other.NoteRange)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1026,10 +1025,10 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Count, other.Count)) return false;
-      if (!object.Equals(NameRange, other.NameRange)) return false;
-      if (!object.Equals(SubjectRange, other.SubjectRange)) return false;
-      if (!object.Equals(MessageRange, other.MessageRange)) return false;
+      if (!Equals(Count, other.Count)) return false;
+      if (!Equals(NameRange, other.NameRange)) return false;
+      if (!Equals(SubjectRange, other.SubjectRange)) return false;
+      if (!Equals(MessageRange, other.MessageRange)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1237,7 +1236,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Count, other.Count)) return false;
+      if (!Equals(Count, other.Count)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1382,7 +1381,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Count, other.Count)) return false;
+      if (!Equals(Count, other.Count)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1527,7 +1526,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Count, other.Count)) return false;
+      if (!Equals(Count, other.Count)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1694,8 +1693,8 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Count, other.Count)) return false;
-      if (!object.Equals(ReasonRange, other.ReasonRange)) return false;
+      if (!Equals(Count, other.Count)) return false;
+      if (!Equals(ReasonRange, other.ReasonRange)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

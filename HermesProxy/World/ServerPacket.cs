@@ -1,6 +1,5 @@
 using Framework;
 using Framework.Constants;
-using Framework.Logging;
 using HermesProxy.World.Enums;
 
 namespace HermesProxy.World;
@@ -70,7 +69,6 @@ public abstract class ServerPacket
 	public void WritePacketData()
 	{
 		if (_buffer != null) return;
-		Log.Print(LogType.Debug, $"Writing: {_universalOpcode}");
 		Write();
 		_buffer = _worldPacket.GetData();
 		_worldPacket.Dispose();

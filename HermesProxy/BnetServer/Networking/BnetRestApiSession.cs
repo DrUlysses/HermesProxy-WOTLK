@@ -25,19 +25,19 @@ public class BnetRestApiSession : SSLSocket
 
 	public override void Accept()
 	{
-		base.AsyncHandshake(BnetServerCertificate.Certificate);
+		AsyncHandshake(BnetServerCertificate.Certificate);
 	}
 
 	public override async Task ReadHandler(byte[] data, int receivedLength)
 	{
 		HttpHeader httpRequest = HttpHelper.ParseRequest(data, receivedLength);
-		if (httpRequest == null || !this.RequestRouter(httpRequest))
+		if (httpRequest == null || !RequestRouter(httpRequest))
 		{
-			base.CloseSocket();
+			CloseSocket();
 		}
 		else
 		{
-			await base.AsyncRead();
+			await AsyncRead();
 		}
 	}
 
@@ -45,7 +45,7 @@ public class BnetRestApiSession : SSLSocket
 	{
 		if (!httpRequest.Path.StartsWith("/bnetserver/"))
 		{
-			this.SendEmptyResponse(HttpCode.NotFound);
+			SendEmptyResponse(HttpCode.NotFound);
 			return false;
 		}
 		string path = httpRequest.Path.Substring("/bnetserver/".Length);
@@ -58,16 +58,16 @@ public class BnetRestApiSession : SSLSocket
 			string item = tuple2.Item2;
 			if (item == "GET")
 			{
-				this.SendResponse(HttpCode.Ok, Singleton<LoginServiceManager>.Instance.GetFormInput());
+				SendResponse(HttpCode.Ok, Singleton<LoginServiceManager>.Instance.GetFormInput());
 				return true;
 			}
 			if (item == "POST")
 			{
-				this.HandleLoginRequest(pathElements, httpRequest);
+				HandleLoginRequest(pathElements, httpRequest);
 				return true;
 			}
 		}
-		this.SendEmptyResponse(HttpCode.NotFound);
+		SendEmptyResponse(HttpCode.NotFound);
 		return false;
 	}
 
@@ -76,7 +76,7 @@ public class BnetRestApiSession : SSLSocket
 		LogonData loginForm = Json.CreateObject<LogonData>(request.Content);
 		if (loginForm == null)
 		{
-			return this.SendEmptyResponse(HttpCode.InternalServerError);
+			return SendEmptyResponse(HttpCode.InternalServerError);
 		}
 		GlobalSessionData globalSession = new GlobalSessionData();
 		globalSession.OS = pathElements[1];
@@ -84,7 +84,7 @@ public class BnetRestApiSession : SSLSocket
 		globalSession.Locale = pathElements[3];
 		if (Settings.ClientBuild != (ClientVersionBuild)globalSession.Build)
 		{
-			return this.SendAuthError(AuthResult.FAIL_WRONG_MODERN_VER);
+			return SendAuthError(AuthResult.FAIL_WRONG_MODERN_VER);
 		}
 		string login = "";
 		string password = "";
@@ -108,7 +108,7 @@ public class BnetRestApiSession : SSLSocket
 		AuthResult response = globalSession.AuthClient.ConnectToAuthServer(login, password, globalSession.Locale);
 		if (response != AuthResult.SUCCESS)
 		{
-			return this.SendAuthError(response);
+			return SendAuthError(response);
 		}
 		globalSession.AuthClient.SendRealmListUpdateRequest();
 		LogonResult loginResult = new LogonResult();
@@ -120,12 +120,12 @@ public class BnetRestApiSession : SSLSocket
 		BnetSessionTicketStorage.AddNewSessionByTicket(loginTicket, globalSession);
 		loginResult.LoginTicket = loginTicket;
 		loginResult.AuthenticationState = "DONE";
-		return this.SendResponse(HttpCode.Ok, loginResult);
+		return SendResponse(HttpCode.Ok, loginResult);
 	}
 
 	private async Task SendResponse<T>(HttpCode code, T response)
 	{
-		await base.AsyncWrite(HttpHelper.CreateResponse(code, Json.CreateString(response)));
+		await AsyncWrite(HttpHelper.CreateResponse(code, Json.CreateString(response)));
 	}
 
 	private async Task SendAuthError(AuthResult response)
@@ -151,11 +151,11 @@ public class BnetRestApiSession : SSLSocket
 		{
 		}
 		(logonResult.AuthenticationState, logonResult2.ErrorCode, logonResult3.ErrorMessage) = tuple;
-		await this.SendResponse(HttpCode.BadRequest, loginResult);
+		await SendResponse(HttpCode.BadRequest, loginResult);
 	}
 
 	private async Task SendEmptyResponse(HttpCode code)
 	{
-		await this.SendResponse(code, (object)new { });
+		await SendResponse(code, (object)new { });
 	}
 }

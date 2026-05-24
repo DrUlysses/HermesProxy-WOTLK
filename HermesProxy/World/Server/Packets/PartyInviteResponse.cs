@@ -15,14 +15,14 @@ internal class PartyInviteResponse : ClientPacket
 
 	public override void Read()
 	{
-		bool hasPartyIndex = base._worldPacket.HasBit();
-		this.Accept = base._worldPacket.HasBit();
-		bool hasRolesDesired = base._worldPacket.HasBit();
+		bool hasPartyIndex = _worldPacket.HasBit();
+		Accept = _worldPacket.HasBit();
+		bool hasRolesDesired = _worldPacket.HasBit();
 
 		if (hasPartyIndex)
-			this.PartyIndex = base._worldPacket.ReadUInt8();
+			PartyIndex = _worldPacket.ReadUInt8();
 
 		if (hasRolesDesired)
-			this.RolesDesired = base._worldPacket.ReadUInt8();
+			RolesDesired = _worldPacket.ReadUInt8();
 	}
 }

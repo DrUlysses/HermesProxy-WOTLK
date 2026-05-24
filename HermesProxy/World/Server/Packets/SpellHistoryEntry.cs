@@ -22,23 +22,23 @@ public class SpellHistoryEntry
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.SpellID);
-		data.WriteUInt32(this.ItemID);
-		data.WriteUInt32(this.Category);
-		data.WriteInt32(this.RecoveryTime);
-		data.WriteInt32(this.CategoryRecoveryTime);
-		data.WriteFloat(this.ModRate);
-		data.WriteBit(this.unused622_1.HasValue);
-		data.WriteBit(this.unused622_2.HasValue);
-		data.WriteBit(this.OnHold);
+		data.WriteUInt32(SpellID);
+		data.WriteUInt32(ItemID);
+		data.WriteUInt32(Category);
+		data.WriteInt32(RecoveryTime);
+		data.WriteInt32(CategoryRecoveryTime);
+		data.WriteFloat(ModRate);
+		data.WriteBit(unused622_1.HasValue);
+		data.WriteBit(unused622_2.HasValue);
+		data.WriteBit(OnHold);
 		data.FlushBits();
-		if (this.unused622_1.HasValue)
+		if (unused622_1.HasValue)
 		{
-			data.WriteUInt32(this.unused622_1.Value);
+			data.WriteUInt32(unused622_1.Value);
 		}
-		if (this.unused622_2.HasValue)
+		if (unused622_2.HasValue)
 		{
-			data.WriteUInt32(this.unused622_2.Value);
+			data.WriteUInt32(unused622_2.Value);
 		}
 	}
 }

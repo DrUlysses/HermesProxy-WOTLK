@@ -19,7 +19,7 @@ public class MoveUpdateSpeed : ServerPacket
 
 	protected override void Write()
 	{
-		this.MoveInfo.WriteMovementInfoModern(base._worldPacket, this.MoverGUID);
-		base._worldPacket.WriteFloat(this.Speed);
+		MoveInfo.WriteMovementInfoModern(_worldPacket, MoverGUID);
+		_worldPacket.WriteFloat(Speed);
 	}
 }

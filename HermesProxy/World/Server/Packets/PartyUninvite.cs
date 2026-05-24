@@ -17,19 +17,19 @@ internal class PartyUninvite : ClientPacket
 	{
 		if (ModernVersion.ExpansionVersion == 3)
 		{
-            bool hasPartyIndex = base._worldPacket.HasBit();
-            uint reasonLen = base._worldPacket.ReadBits<uint>(8);
-            this.TargetGUID = base._worldPacket.ReadPackedGuid128();
+            bool hasPartyIndex = _worldPacket.HasBit();
+            uint reasonLen = _worldPacket.ReadBits<uint>(8);
+            TargetGUID = _worldPacket.ReadPackedGuid128();
             if (hasPartyIndex)
-                this.PartyIndex = base._worldPacket.ReadUInt8();
-            this.Reason = base._worldPacket.ReadString(reasonLen);
+                PartyIndex = _worldPacket.ReadUInt8();
+            Reason = _worldPacket.ReadString(reasonLen);
         }
 		else
 		{
-            this.PartyIndex = base._worldPacket.ReadUInt8();
-            this.TargetGUID = base._worldPacket.ReadPackedGuid128();
-            byte reasonLen = base._worldPacket.ReadBits<byte>(8);
-            this.Reason = base._worldPacket.ReadString(reasonLen);
+            PartyIndex = _worldPacket.ReadUInt8();
+            TargetGUID = _worldPacket.ReadPackedGuid128();
+            byte reasonLen = _worldPacket.ReadBits<byte>(8);
+            Reason = _worldPacket.ReadString(reasonLen);
         }
 	}
 }

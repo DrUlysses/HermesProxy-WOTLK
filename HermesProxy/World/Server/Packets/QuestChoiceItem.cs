@@ -11,15 +11,15 @@ public class QuestChoiceItem
 	public void Read(WorldPacket data)
 	{
 		data.ResetBitPos();
-		this.LootItemType = data.ReadBits<byte>(2);
-		this.Item.Read(data);
-		this.Quantity = data.ReadUInt32();
+		LootItemType = data.ReadBits<byte>(2);
+		Item.Read(data);
+		Quantity = data.ReadUInt32();
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits(this.LootItemType, 2);
-		this.Item.Write(data);
-		data.WriteUInt32(this.Quantity);
+		data.WriteBits(LootItemType, 2);
+		Item.Write(data);
+		data.WriteUInt32(Quantity);
 	}
 }

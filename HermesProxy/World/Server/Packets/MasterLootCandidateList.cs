@@ -17,11 +17,11 @@ internal class MasterLootCandidateList : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.LootObj);
-		base._worldPacket.WriteInt32(this.Players.Count);
-		foreach (WowGuid128 guid in this.Players)
+		_worldPacket.WritePackedGuid128(LootObj);
+		_worldPacket.WriteInt32(Players.Count);
+		foreach (WowGuid128 guid in Players)
 		{
-			base._worldPacket.WritePackedGuid128(guid);
+			_worldPacket.WritePackedGuid128(guid);
 		}
 	}
 }

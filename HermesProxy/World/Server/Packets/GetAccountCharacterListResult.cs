@@ -16,13 +16,13 @@ public class GetAccountCharacterListResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Token);
-		base._worldPacket.WriteUInt32((uint)this.CharacterList.Count);
-		base._worldPacket.ResetBitPos();
-		base._worldPacket.WriteBit(bit: false);
-		foreach (AccountCharacterListEntry entry in this.CharacterList)
+		_worldPacket.WriteUInt32(Token);
+		_worldPacket.WriteUInt32((uint)CharacterList.Count);
+		_worldPacket.ResetBitPos();
+		_worldPacket.WriteBit(bit: false);
+		foreach (AccountCharacterListEntry entry in CharacterList)
 		{
-			entry.Write(base._worldPacket);
+			entry.Write(_worldPacket);
 		}
 	}
 }

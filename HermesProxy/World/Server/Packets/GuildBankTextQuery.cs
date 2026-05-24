@@ -11,6 +11,6 @@ public class GuildBankTextQuery : ClientPacket
 
 	public override void Read()
 	{
-		this.Tab = base._worldPacket.ReadInt32();
+		Tab = _worldPacket.ReadInt32();
 	}
 }

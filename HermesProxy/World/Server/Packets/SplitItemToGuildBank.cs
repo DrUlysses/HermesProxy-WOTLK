@@ -21,14 +21,14 @@ internal class SplitItemToGuildBank : ClientPacket
 
 	public override void Read()
 	{
-		this.BankGuid = base._worldPacket.ReadPackedGuid128();
-		this.BankTab = base._worldPacket.ReadUInt8();
-		this.BankSlot = base._worldPacket.ReadUInt8();
-		this.ContainerItemSlot = base._worldPacket.ReadUInt8();
-		this.StackCount = base._worldPacket.ReadUInt32();
-		if (base._worldPacket.HasBit())
+		BankGuid = _worldPacket.ReadPackedGuid128();
+		BankTab = _worldPacket.ReadUInt8();
+		BankSlot = _worldPacket.ReadUInt8();
+		ContainerItemSlot = _worldPacket.ReadUInt8();
+		StackCount = _worldPacket.ReadUInt32();
+		if (_worldPacket.HasBit())
 		{
-			this.ContainerSlot = base._worldPacket.ReadUInt8();
+			ContainerSlot = _worldPacket.ReadUInt8();
 		}
 	}
 }

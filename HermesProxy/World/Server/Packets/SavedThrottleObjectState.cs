@@ -12,9 +12,9 @@ public struct SavedThrottleObjectState
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.MaxTries);
-		data.WriteUInt32(this.PerMilliseconds);
-		data.WriteUInt32(this.TryCount);
-		data.WriteUInt32(this.LastResetTimeBeforeNow);
+		data.WriteUInt32(MaxTries);
+		data.WriteUInt32(PerMilliseconds);
+		data.WriteUInt32(TryCount);
+		data.WriteUInt32(LastResetTimeBeforeNow);
 	}
 }

@@ -17,12 +17,12 @@ public class QueryPetitionResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.PetitionID);
-		base._worldPacket.WriteBit(this.Allow);
-		base._worldPacket.FlushBits();
-		if (this.Allow)
+		_worldPacket.WriteUInt32(PetitionID);
+		_worldPacket.WriteBit(Allow);
+		_worldPacket.FlushBits();
+		if (Allow)
 		{
-			this.Info.Write(base._worldPacket);
+			Info.Write(_worldPacket);
 		}
 	}
 }

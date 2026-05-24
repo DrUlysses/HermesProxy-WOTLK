@@ -15,8 +15,8 @@ internal class TrainerBuySpell : ClientPacket
 
 	public override void Read()
 	{
-		this.TrainerGUID = base._worldPacket.ReadPackedGuid128();
-		this.TrainerID = base._worldPacket.ReadUInt32();
-		this.SpellID = base._worldPacket.ReadUInt32();
+		TrainerGUID = _worldPacket.ReadPackedGuid128();
+		TrainerID = _worldPacket.ReadUInt32();
+		SpellID = _worldPacket.ReadUInt32();
 	}
 }

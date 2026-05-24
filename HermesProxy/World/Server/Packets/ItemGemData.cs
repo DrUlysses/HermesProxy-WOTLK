@@ -8,13 +8,13 @@ public class ItemGemData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.Slot);
-		this.Item.Write(data);
+		data.WriteUInt8(Slot);
+		Item.Write(data);
 	}
 
 	public void Read(WorldPacket data)
 	{
-		this.Slot = data.ReadUInt8();
-		this.Item.Read(data);
+		Slot = data.ReadUInt8();
+		Item.Read(data);
 	}
 }

@@ -15,10 +15,10 @@ public class PetGuids : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Guids.Count);
-		foreach (WowGuid128 guid in this.Guids)
+		_worldPacket.WriteInt32(Guids.Count);
+		foreach (WowGuid128 guid in Guids)
 		{
-			base._worldPacket.WritePackedGuid128(guid);
+			_worldPacket.WritePackedGuid128(guid);
 		}
 	}
 }

@@ -32,17 +32,17 @@ public class FriendStatusPkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8((byte)this.FriendResult);
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WritePackedGuid128(this.WowAccountGuid);
-		base._worldPacket.WriteUInt32(this.VirtualRealmAddress);
-		base._worldPacket.WriteUInt8((byte)this.Status);
-		base._worldPacket.WriteUInt32(this.AreaID);
-		base._worldPacket.WriteUInt32(this.Level);
-		base._worldPacket.WriteUInt32((uint)this.ClassID);
-		base._worldPacket.WriteBits(this.Notes.GetByteCount(), 10);
-		base._worldPacket.WriteBit(this.Mobile);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.Notes);
+		_worldPacket.WriteUInt8((byte)FriendResult);
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WritePackedGuid128(WowAccountGuid);
+		_worldPacket.WriteUInt32(VirtualRealmAddress);
+		_worldPacket.WriteUInt8((byte)Status);
+		_worldPacket.WriteUInt32(AreaID);
+		_worldPacket.WriteUInt32(Level);
+		_worldPacket.WriteUInt32((uint)ClassID);
+		_worldPacket.WriteBits(Notes.GetByteCount(), 10);
+		_worldPacket.WriteBit(Mobile);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(Notes);
 	}
 }

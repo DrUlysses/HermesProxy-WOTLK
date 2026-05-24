@@ -19,9 +19,9 @@ public class BuySucceeded : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.VendorGUID);
-		base._worldPacket.WriteUInt32(this.Muid);
-		base._worldPacket.WriteInt32(this.NewQuantity);
-		base._worldPacket.WriteUInt32(this.QuantityBought);
+		_worldPacket.WritePackedGuid128(VendorGUID);
+		_worldPacket.WriteUInt32(Muid);
+		_worldPacket.WriteInt32(NewQuantity);
+		_worldPacket.WriteUInt32(QuantityBought);
 	}
 }

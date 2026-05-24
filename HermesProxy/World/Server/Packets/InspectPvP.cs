@@ -18,17 +18,17 @@ public class InspectPvP : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
-		base._worldPacket.WriteBits(this.Brackets.Count, 3);
-		base._worldPacket.WriteBits(this.ArenaTeams.Count, 2);
-		base._worldPacket.FlushBits();
-		foreach (PvPBracketInspectData bracket in this.Brackets)
+		_worldPacket.WritePackedGuid128(PlayerGUID);
+		_worldPacket.WriteBits(Brackets.Count, 3);
+		_worldPacket.WriteBits(ArenaTeams.Count, 2);
+		_worldPacket.FlushBits();
+		foreach (PvPBracketInspectData bracket in Brackets)
 		{
-			bracket.Write(base._worldPacket);
+			bracket.Write(_worldPacket);
 		}
-		foreach (ArenaTeamInspectData team in this.ArenaTeams)
+		foreach (ArenaTeamInspectData team in ArenaTeams)
 		{
-			team.Write(base._worldPacket);
+			team.Write(_worldPacket);
 		}
 	}
 }

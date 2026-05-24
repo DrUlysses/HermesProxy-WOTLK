@@ -23,17 +23,17 @@ public class QueryPlayerNamesResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Players.Count);
-		foreach (NameCacheLookupResult result in this.Players)
+		_worldPacket.WriteUInt32((uint)Players.Count);
+		foreach (NameCacheLookupResult result in Players)
 		{
-			base._worldPacket.WriteUInt8(result.Result);
-			base._worldPacket.WritePackedGuid128(result.Player);
-			base._worldPacket.WriteBit(result.Result == 0 && result.Data != null); // hasData
-			base._worldPacket.WriteBit(false); // hasUnused920
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteUInt8(result.Result);
+			_worldPacket.WritePackedGuid128(result.Player);
+			_worldPacket.WriteBit(result.Result == 0 && result.Data != null); // hasData
+			_worldPacket.WriteBit(false); // hasUnused920
+			_worldPacket.FlushBits();
 			if (result.Result == 0 && result.Data != null)
 			{
-				result.Data.Write(base._worldPacket);
+				result.Data.Write(_worldPacket);
 			}
 		}
 	}

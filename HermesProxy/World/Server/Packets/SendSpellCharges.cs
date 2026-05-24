@@ -15,10 +15,10 @@ public class SendSpellCharges : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Entries.Count);
-		this.Entries.ForEach(delegate(SpellChargeEntry p)
+		_worldPacket.WriteInt32(Entries.Count);
+		Entries.ForEach(delegate(SpellChargeEntry p)
 		{
-			p.Write(base._worldPacket);
+			p.Write(_worldPacket);
 		});
 	}
 }

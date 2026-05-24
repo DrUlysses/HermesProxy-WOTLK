@@ -25,85 +25,85 @@ public class MonsterMove : ServerPacket
 			{
 				foreach (Vector3 point in moveSpline.SplinePoints)
 				{
-					this.Points.Add(point);
+					Points.Add(point);
 				}
 				if (moveSpline.EndPosition != Vector3.Zero)
 				{
-					this.Points.Add(moveSpline.EndPosition);
+					Points.Add(moveSpline.EndPosition);
 				}
 			}
 			else
 			{
 				if (moveSpline.EndPosition != Vector3.Zero)
 				{
-					this.Points.Add(moveSpline.EndPosition);
+					Points.Add(moveSpline.EndPosition);
 				}
 				foreach (Vector3 point2 in moveSpline.SplinePoints)
 				{
-					this.Points.Add(point2);
+					Points.Add(point2);
 				}
 			}
 		}
 		else if (moveSpline.EndPosition != Vector3.Zero)
 		{
-			this.Points.Add(moveSpline.EndPosition);
+			Points.Add(moveSpline.EndPosition);
 			if (moveSpline.SplinePoints.Count > 0)
 			{
 				Vector3 middle = (moveSpline.StartPosition + moveSpline.EndPosition) / 2f;
 				for (int i = 0; i < moveSpline.SplinePoints.Count; i++)
 				{
-					this.PackedDeltas.Add(middle - moveSpline.SplinePoints[i]);
+					PackedDeltas.Add(middle - moveSpline.SplinePoints[i]);
 				}
 			}
 		}
-		this.MoverGUID = guid;
-		this.MoveSpline = moveSpline;
+		MoverGUID = guid;
+		MoveSpline = moveSpline;
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.MoverGUID);
-		base._worldPacket.WriteVector3(this.MoveSpline.StartPosition);
-		base._worldPacket.WriteUInt32(this.MoveSpline.SplineId);
-		base._worldPacket.WriteVector3(Vector3.Zero);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.WriteBits((this.Points.Count == 0) ? 2 : 0, 3);
-		base._worldPacket.WriteUInt32((uint)this.MoveSpline.SplineFlags);
-		base._worldPacket.WriteInt32(0);
-		base._worldPacket.WriteUInt32(this.MoveSpline.SplineTimeFull);
-		base._worldPacket.WriteUInt32(0u);
-		base._worldPacket.WriteUInt8(this.MoveSpline.SplineMode);
-		base._worldPacket.WritePackedGuid128((this.MoveSpline.TransportGuid != null) ? this.MoveSpline.TransportGuid : WowGuid128.Empty);
-		base._worldPacket.WriteInt8(this.MoveSpline.TransportSeat);
-		base._worldPacket.WriteBits((byte)this.MoveSpline.SplineType, 2);
-		base._worldPacket.WriteBits(this.Points.Count, 16);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.WriteBits(this.PackedDeltas.Count, 16);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.FlushBits();
-		switch (this.MoveSpline.SplineType)
+		_worldPacket.WritePackedGuid128(MoverGUID);
+		_worldPacket.WriteVector3(MoveSpline.StartPosition);
+		_worldPacket.WriteUInt32(MoveSpline.SplineId);
+		_worldPacket.WriteVector3(Vector3.Zero);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.WriteBits((Points.Count == 0) ? 2 : 0, 3);
+		_worldPacket.WriteUInt32((uint)MoveSpline.SplineFlags);
+		_worldPacket.WriteInt32(0);
+		_worldPacket.WriteUInt32(MoveSpline.SplineTimeFull);
+		_worldPacket.WriteUInt32(0u);
+		_worldPacket.WriteUInt8(MoveSpline.SplineMode);
+		_worldPacket.WritePackedGuid128((MoveSpline.TransportGuid != null) ? MoveSpline.TransportGuid : WowGuid128.Empty);
+		_worldPacket.WriteInt8(MoveSpline.TransportSeat);
+		_worldPacket.WriteBits((byte)MoveSpline.SplineType, 2);
+		_worldPacket.WriteBits(Points.Count, 16);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.WriteBits(PackedDeltas.Count, 16);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.FlushBits();
+		switch (MoveSpline.SplineType)
 		{
 		case SplineTypeModern.FacingSpot:
-			base._worldPacket.WriteVector3(this.MoveSpline.FinalFacingSpot);
+			_worldPacket.WriteVector3(MoveSpline.FinalFacingSpot);
 			break;
 		case SplineTypeModern.FacingTarget:
-			base._worldPacket.WriteFloat(this.MoveSpline.FinalOrientation);
-			base._worldPacket.WritePackedGuid128(this.MoveSpline.FinalFacingGuid);
+			_worldPacket.WriteFloat(MoveSpline.FinalOrientation);
+			_worldPacket.WritePackedGuid128(MoveSpline.FinalFacingGuid);
 			break;
 		case SplineTypeModern.FacingAngle:
-			base._worldPacket.WriteFloat(this.MoveSpline.FinalOrientation);
+			_worldPacket.WriteFloat(MoveSpline.FinalOrientation);
 			break;
 		}
-		foreach (Vector3 pos in this.Points)
+		foreach (Vector3 pos in Points)
 		{
-			base._worldPacket.WriteVector3(pos);
+			_worldPacket.WriteVector3(pos);
 		}
-		foreach (Vector3 pos2 in this.PackedDeltas)
+		foreach (Vector3 pos2 in PackedDeltas)
 		{
-			base._worldPacket.WritePackXYZ(pos2);
+			_worldPacket.WritePackXYZ(pos2);
 		}
 	}
 }

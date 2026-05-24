@@ -13,6 +13,6 @@ public class LfgOfferContinue : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Slot);
+		_worldPacket.WriteUInt32(Slot);
 	}
 }

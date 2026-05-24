@@ -36,37 +36,37 @@ public class PartyUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt16((ushort)this.PartyFlags);
-		base._worldPacket.WriteUInt8(this.PartyIndex);
-		base._worldPacket.WriteUInt8((byte)this.PartyType);
-		base._worldPacket.WriteInt32(this.MyIndex);
-		base._worldPacket.WritePackedGuid128(this.PartyGUID);
-		base._worldPacket.WriteUInt32((uint)this.SequenceNum);
-		base._worldPacket.WritePackedGuid128(this.LeaderGUID);
+		_worldPacket.WriteUInt16((ushort)PartyFlags);
+		_worldPacket.WriteUInt8(PartyIndex);
+		_worldPacket.WriteUInt8((byte)PartyType);
+		_worldPacket.WriteInt32(MyIndex);
+		_worldPacket.WritePackedGuid128(PartyGUID);
+		_worldPacket.WriteUInt32((uint)SequenceNum);
+		_worldPacket.WritePackedGuid128(LeaderGUID);
         if (ModernVersion.ExpansionVersion == 3)
         {
-            base._worldPacket.WriteUInt8(this.LeaderFactionGroup);
+            _worldPacket.WriteUInt8(LeaderFactionGroup);
         }
-        base._worldPacket.WriteUInt32((uint)this.PlayerList.Count);
-		base._worldPacket.WriteBit(this.LfgInfos != null);
-		base._worldPacket.WriteBit(this.LootSettings != null);
-		base._worldPacket.WriteBit(this.DifficultySettings != null);
-		base._worldPacket.FlushBits();
-		foreach (PartyPlayerInfo player in this.PlayerList)
+        _worldPacket.WriteUInt32((uint)PlayerList.Count);
+		_worldPacket.WriteBit(LfgInfos != null);
+		_worldPacket.WriteBit(LootSettings != null);
+		_worldPacket.WriteBit(DifficultySettings != null);
+		_worldPacket.FlushBits();
+		foreach (PartyPlayerInfo player in PlayerList)
 		{
-			player.Write(base._worldPacket);
+			player.Write(_worldPacket);
 		}
-		if (this.LootSettings != null)
+		if (LootSettings != null)
 		{
-			this.LootSettings.Write(base._worldPacket);
+			LootSettings.Write(_worldPacket);
 		}
-		if (this.DifficultySettings != null)
+		if (DifficultySettings != null)
 		{
-			this.DifficultySettings.Write(base._worldPacket);
+			DifficultySettings.Write(_worldPacket);
 		}
-		if (this.LfgInfos != null)
+		if (LfgInfos != null)
 		{
-			this.LfgInfos.Write(base._worldPacket);
+			LfgInfos.Write(_worldPacket);
 		}
 	}
 }

@@ -11,6 +11,6 @@ public class SetAmmo : ClientPacket
 
 	public override void Read()
 	{
-		this.ItemId = base._worldPacket.ReadUInt32();
+		ItemId = _worldPacket.ReadUInt32();
 	}
 }

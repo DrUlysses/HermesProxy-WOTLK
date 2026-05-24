@@ -23,10 +23,10 @@ internal class MoveKnockBack : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.MoverGUID);
-		base._worldPacket.WriteUInt32(this.MoveCounter);
-		base._worldPacket.WriteVector2(this.Direction);
-		base._worldPacket.WriteFloat(this.HorizontalSpeed);
-		base._worldPacket.WriteFloat(this.VerticalSpeed);
+		_worldPacket.WritePackedGuid128(MoverGUID);
+		_worldPacket.WriteUInt32(MoveCounter);
+		_worldPacket.WriteVector2(Direction);
+		_worldPacket.WriteFloat(HorizontalSpeed);
+		_worldPacket.WriteFloat(VerticalSpeed);
 	}
 }

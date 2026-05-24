@@ -13,7 +13,7 @@ public class CharacterRenameRequest : ClientPacket
 
 	public override void Read()
 	{
-		this.Guid = base._worldPacket.ReadPackedGuid128();
-		this.NewName = base._worldPacket.ReadString(base._worldPacket.ReadBits<uint>(6));
+		Guid = _worldPacket.ReadPackedGuid128();
+		NewName = _worldPacket.ReadString(_worldPacket.ReadBits<uint>(6));
 	}
 }

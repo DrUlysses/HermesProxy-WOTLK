@@ -23,11 +23,11 @@ internal class LootRollWon : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.LootObj);
-		base._worldPacket.WritePackedGuid128(this.Winner);
-		base._worldPacket.WriteInt32(this.Roll);
-		base._worldPacket.WriteUInt8((byte)this.RollType);
-		this.Item.Write(base._worldPacket);
-		base._worldPacket.WriteUInt8(this.MainSpec);
+		_worldPacket.WritePackedGuid128(LootObj);
+		_worldPacket.WritePackedGuid128(Winner);
+		_worldPacket.WriteInt32(Roll);
+		_worldPacket.WriteUInt8((byte)RollType);
+		Item.Write(_worldPacket);
+		_worldPacket.WriteUInt8(MainSpec);
 	}
 }

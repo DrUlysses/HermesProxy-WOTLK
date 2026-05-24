@@ -20,6 +20,8 @@ using Framework.Util;
 using Framework.Web;
 using Google.Protobuf;
 using HermesProxy;
+using Attribute = Bgs.Protocol.Attribute;
+using LogonResult = Bgs.Protocol.Authentication.V1.LogonResult;
 
 namespace BNetServer.Services;
 
@@ -37,13 +39,13 @@ public class BnetServices
 
 		public BnetServiceHandlerInfo(ServiceRequirement requirement, MethodInfo info, ParameterInfo[] parameters)
 		{
-			this.Requirement = requirement;
-			this.RequestType = parameters[0].ParameterType;
+			Requirement = requirement;
+			RequestType = parameters[0].ParameterType;
 			if (parameters.Length > 1)
 			{
-				this.ResponseType = parameters[1].ParameterType;
+				ResponseType = parameters[1].ParameterType;
 			}
-			this.MethodCaller = info.CreateDelegate((this.ResponseType != null) ? Expression.GetDelegateType(typeof(BnetServices), this.RequestType, this.ResponseType, info.ReturnType) : Expression.GetDelegateType(typeof(BnetServices), this.RequestType, info.ReturnType));
+			MethodCaller = info.CreateDelegate((ResponseType != null) ? Expression.GetDelegateType(typeof(BnetServices), RequestType, ResponseType, info.ReturnType) : Expression.GetDelegateType(typeof(BnetServices), RequestType, info.ReturnType));
 		}
 	}
 
@@ -64,7 +66,7 @@ public class BnetServices
 
 		static ServiceManager()
 		{
-			ServiceManager._serviceHandlers = new ConcurrentDictionary<(OriginalHash, uint), BnetServiceHandlerInfo>();
+			_serviceHandlers = new ConcurrentDictionary<(OriginalHash, uint), BnetServiceHandlerInfo>();
 			Assembly currentAsm = Assembly.GetExecutingAssembly();
 			Type[] types = currentAsm.GetTypes();
 			foreach (Type type in types)
@@ -79,9 +81,9 @@ public class BnetServices
 							continue;
 						}
 						(OriginalHash, uint) key = (serviceAttr.ServiceHash, serviceAttr.MethodId);
-						if (ServiceManager._serviceHandlers.ContainsKey(key))
+						if (_serviceHandlers.ContainsKey(key))
 						{
-							Log.Print(LogType.Error, $"Tried to override ServiceHandler: {ServiceManager._serviceHandlers[key]} with {methodInfo.Name} (ServiceHash: {serviceAttr.ServiceHash} MethodId: {serviceAttr.MethodId})", ".cctor", "BnetServices.ServiceManager.cs");
+							Log.Print(LogType.Error, $"Tried to override ServiceHandler: {_serviceHandlers[key]} with {methodInfo.Name} (ServiceHash: {serviceAttr.ServiceHash} MethodId: {serviceAttr.MethodId})", ".cctor", "BnetServices.ServiceManager.cs");
 						}
 						else
 						{
@@ -92,7 +94,7 @@ public class BnetServices
 							}
 							else
 							{
-								ServiceManager._serviceHandlers[key] = new BnetServiceHandlerInfo(serviceAttr.Requirement, methodInfo, parameters);
+								_serviceHandlers[key] = new BnetServiceHandlerInfo(serviceAttr.Requirement, methodInfo, parameters);
 							}
 						}
 					}
@@ -102,38 +104,38 @@ public class BnetServices
 
 		public ServiceManager(string connectionPath, INetwork net, GlobalSessionData? initialSession)
 		{
-			this._serviceHolder = new BnetServices(connectionPath, net, initialSession);
+			_serviceHolder = new BnetServices(connectionPath, net, initialSession);
 		}
 
 		public void SetClientSecret(byte[] key)
 		{
-			for (int i = 0; i < Math.Min(this._serviceHolder._clientSecret.Length, key.Length); i++)
+			for (int i = 0; i < Math.Min(_serviceHolder._clientSecret.Length, key.Length); i++)
 			{
-				this._serviceHolder._clientSecret[i] = key[i];
+				_serviceHolder._clientSecret[i] = key[i];
 			}
 		}
 
 		public void Invoke(uint serviceId, OriginalHash serviceHash, uint methodId, uint requestToken, CodedInputStream stream)
 		{
-			if (!ServiceManager._serviceHandlers.TryGetValue((serviceHash, methodId), out var handler))
+			if (!_serviceHandlers.TryGetValue((serviceHash, methodId), out var handler))
 			{
-				this._serviceHolder.ServiceLog(LogType.Warn, $"Client requested service {serviceHash}/m:{methodId} but this service is not implemented - sending OK stub");
+				_serviceHolder.ServiceLog(LogType.Warn, $"Client requested service {serviceHash}/m:{methodId} but this service is not implemented - sending OK stub");
 				SendResponse(null);
 				return;
 			}
-			if (handler.Requirement != ServiceRequirement.Always && handler.Requirement != this._serviceHolder.CurrentMatchingRequirement())
+			if (handler.Requirement != ServiceRequirement.Always && handler.Requirement != _serviceHolder.CurrentMatchingRequirement())
 			{
-				this._serviceHolder.ServiceLog(LogType.Warn, $"Client requested service {serviceHash}/m:{methodId} but with invalid state, required: {handler.Requirement} but only has {this._serviceHolder.CurrentMatchingRequirement()}!");
+				_serviceHolder.ServiceLog(LogType.Warn, $"Client requested service {serviceHash}/m:{methodId} but with invalid state, required: {handler.Requirement} but only has {_serviceHolder.CurrentMatchingRequirement()}!");
 				SendErrorResponse(BattlenetRpcErrorCode.Denied);
 				return;
 			}
-			this._serviceHolder.ServiceLog(LogType.Debug, $"Client requested service {serviceHash}/m:{methodId}");
+			_serviceHolder.ServiceLog(LogType.Debug, $"Client requested service {serviceHash}/m:{methodId}");
 			IMessage request = (IMessage)Activator.CreateInstance(handler.RequestType);
 			request.MergeFrom(stream);
 			if (handler.ResponseType != null)
 			{
 				IMessage response = (IMessage)Activator.CreateInstance(handler.ResponseType);
-				BattlenetRpcErrorCode status = (BattlenetRpcErrorCode)handler.MethodCaller.DynamicInvoke(this._serviceHolder, request, response);
+				BattlenetRpcErrorCode status = (BattlenetRpcErrorCode)handler.MethodCaller.DynamicInvoke(_serviceHolder, request, response);
 				if (status == BattlenetRpcErrorCode.Ok)
 				{
 					SendResponse(response);
@@ -145,7 +147,7 @@ public class BnetServices
 			}
 			else
 			{
-				BattlenetRpcErrorCode status = (BattlenetRpcErrorCode)handler.MethodCaller.DynamicInvoke(this._serviceHolder, request);
+				BattlenetRpcErrorCode status = (BattlenetRpcErrorCode)handler.MethodCaller.DynamicInvoke(_serviceHolder, request);
 				if (status != BattlenetRpcErrorCode.Ok)
 				{
 					SendErrorResponse(status);
@@ -161,13 +163,13 @@ public class BnetServices
 			}
 			void SendRpcMessage(BattlenetRpcErrorCode status2, IMessage? message)
 			{
-				if (this._serviceHolder._connectionPath == "WorldSocket")
+				if (_serviceHolder._connectionPath == "WorldSocket")
 				{
-					this._serviceHolder._net.SendRpcMessage(serviceId, serviceHash, methodId, requestToken, status2, message);
+					_serviceHolder._net.SendRpcMessage(serviceId, serviceHash, methodId, requestToken, status2, message);
 				}
 				else
 				{
-					this._serviceHolder._net.SendRpcMessage(254u, serviceHash, methodId, requestToken, status2, message);
+					_serviceHolder._net.SendRpcMessage(254u, serviceHash, methodId, requestToken, status2, message);
 				}
 			}
 		}
@@ -185,7 +187,7 @@ public class BnetServices
 
 	private readonly INetwork _net;
 
-	public GlobalSessionData Session => this._globalSession;
+	public GlobalSessionData Session => _globalSession;
 
 	private BnetServices()
 	{
@@ -193,30 +195,30 @@ public class BnetServices
 
 	private BnetServices(string connectionPath, INetwork net, GlobalSessionData? initialSession)
 	{
-		this._connectionPath = connectionPath;
-		this._net = net;
-		this._globalSession = initialSession;
+		_connectionPath = connectionPath;
+		_net = net;
+		_globalSession = initialSession;
 	}
 
 	public GlobalSessionData GetSession()
 	{
-		return this._globalSession;
+		return _globalSession;
 	}
 
 	private void SendRequest(OriginalHash service, uint methodId, IMessage? data)
 	{
-		BnetServices._serverInvokedRequestToken++;
-		this._net.SendRpcMessage(0u, service, methodId, BnetServices._serverInvokedRequestToken, BattlenetRpcErrorCode.Ok, data);
+		_serverInvokedRequestToken++;
+		_net.SendRpcMessage(0u, service, methodId, _serverInvokedRequestToken, BattlenetRpcErrorCode.Ok, data);
 	}
 
 	private void CloseSocket()
 	{
-		this._net.CloseSocket();
+		_net.CloseSocket();
 	}
 
 	private IPEndPoint GetRemoteIpEndPoint()
 	{
-		return this._net.GetRemoteIpEndPoint();
+		return _net.GetRemoteIpEndPoint();
 	}
 
 	private void ServiceLog(LogType type, string message)
@@ -226,33 +228,33 @@ public class BnetServices
 		StringBuilder stringBuilder2 = stringBuilder;
 		StringBuilder.AppendInterpolatedStringHandler handler = new StringBuilder.AppendInterpolatedStringHandler(2, 1, stringBuilder);
 		handler.AppendLiteral("[");
-		handler.AppendFormatted(this._connectionPath);
+		handler.AppendFormatted(_connectionPath);
 		handler.AppendLiteral("]");
 		stringBuilder2.Append(ref handler);
 		stringBuilder = prefix;
 		StringBuilder stringBuilder3 = stringBuilder;
 		handler = new StringBuilder.AppendInterpolatedStringHandler(1, 1, stringBuilder);
 		handler.AppendLiteral("[");
-		handler.AppendFormatted(this.GetRemoteIpEndPoint());
+		handler.AppendFormatted(GetRemoteIpEndPoint());
 		stringBuilder3.Append(ref handler);
-		if (this.GetSession() != null)
+		if (GetSession() != null)
 		{
-			if (this.GetSession().AccountInfo != null && !this.GetSession().AccountInfo.Login.IsEmpty())
+			if (GetSession().AccountInfo != null && !GetSession().AccountInfo.Login.IsEmpty())
 			{
-				prefix.Append(", Account: " + this.GetSession().AccountInfo.Login);
+				prefix.Append(", Account: " + GetSession().AccountInfo.Login);
 			}
-			if (this.GetSession().GameAccountInfo != null)
+			if (GetSession().GameAccountInfo != null)
 			{
-				prefix.Append(", Game account: " + this.GetSession().GameAccountInfo.Name);
+				prefix.Append(", Game account: " + GetSession().GameAccountInfo.Name);
 			}
 		}
 		prefix.Append(']');
-		Log.Print(type, $"{prefix} {message}", "ServiceLog", "BnetServices.cs");
+		Log.Print(type, $"{prefix} {message}", "BnetServices.cs");
 	}
 
 	public ServiceRequirement CurrentMatchingRequirement()
 	{
-		return (this._globalSession != null) ? ServiceRequirement.LoggedIn : ServiceRequirement.Unauthorized;
+		return (_globalSession != null) ? ServiceRequirement.LoggedIn : ServiceRequirement.Unauthorized;
 	}
 
 	[Service(ServiceRequirement.LoggedIn, OriginalHash.AccountService, 30u)]
@@ -276,7 +278,7 @@ public class BnetServices
 	{
 		if (request.Options.FieldGameLevelInfo)
 		{
-			GameAccountInfo gameAccountInfo = this.GetSession().AccountInfo.GameAccounts.LookupByKey(request.GameAccountId.Low);
+			GameAccountInfo gameAccountInfo = GetSession().AccountInfo.GameAccounts.LookupByKey(request.GameAccountId.Low);
 			if (gameAccountInfo != null)
 			{
 				response.State = new GameAccountState();
@@ -294,7 +296,7 @@ public class BnetServices
 				response.State = new GameAccountState();
 			}
 			response.State.GameStatus = new GameStatus();
-			GameAccountInfo gameAccountInfo2 = this.GetSession().AccountInfo.GameAccounts.LookupByKey(request.GameAccountId.Low);
+			GameAccountInfo gameAccountInfo2 = GetSession().AccountInfo.GameAccounts.LookupByKey(request.GameAccountId.Low);
 			if (gameAccountInfo2 != null)
 			{
 				response.State.GameStatus.IsSuspended = gameAccountInfo2.IsBanned;
@@ -312,29 +314,29 @@ public class BnetServices
 	{
 		if (logonRequest.Program != "WoW")
 		{
-			this.ServiceLog(LogType.Error, "Battlenet.LogonRequest: Attempted to log in with game other than WoW (using " + logonRequest.Program + ")!");
+			ServiceLog(LogType.Error, "Battlenet.LogonRequest: Attempted to log in with game other than WoW (using " + logonRequest.Program + ")!");
 			return BattlenetRpcErrorCode.BadProgram;
 		}
 		if (logonRequest.ApplicationVersion != ModernVersion.BuildInt)
 		{
-			this.ServiceLog(LogType.Error, $"Battlenet.LogonRequest: Attempted to log in with wrong game version (using {logonRequest.ApplicationVersion})!");
+			ServiceLog(LogType.Error, $"Battlenet.LogonRequest: Attempted to log in with wrong game version (using {logonRequest.ApplicationVersion})!");
 			return BattlenetRpcErrorCode.BadVersion;
 		}
 		if (logonRequest.Platform != "Win" && logonRequest.Platform != "Wn64" && logonRequest.Platform != "Mc64" && logonRequest.Platform != "MacA")
 		{
-			this.ServiceLog(LogType.Error, "Battlenet.LogonRequest: Attempted to log in from an unsupported platform (using " + logonRequest.Platform + ")!");
+			ServiceLog(LogType.Error, "Battlenet.LogonRequest: Attempted to log in from an unsupported platform (using " + logonRequest.Platform + ")!");
 			return BattlenetRpcErrorCode.BadPlatform;
 		}
 		if (!LocaleChecker.IsValidLocale(logonRequest.Locale.ToEnum<Locale>()))
 		{
-			this.ServiceLog(LogType.Error, "Battlenet.LogonRequest: Attempted to log in with unsupported locale (using " + logonRequest.Locale + ")!");
+			ServiceLog(LogType.Error, "Battlenet.LogonRequest: Attempted to log in with unsupported locale (using " + logonRequest.Locale + ")!");
 			return BattlenetRpcErrorCode.BadLocale;
 		}
-		IPEndPoint endpoint = Singleton<LoginServiceManager>.Instance.GetAddressForClient(this.GetRemoteIpEndPoint().Address);
+		IPEndPoint endpoint = Singleton<LoginServiceManager>.Instance.GetAddressForClient(GetRemoteIpEndPoint().Address);
 		ChallengeExternalRequest externalChallenge = new ChallengeExternalRequest();
 		externalChallenge.PayloadType = "web_auth_url";
 		externalChallenge.Payload = ByteString.CopyFromUtf8($"https://{endpoint.Address}:{endpoint.Port}/bnetserver/login/{logonRequest.Platform}/{logonRequest.ApplicationVersion}/{logonRequest.Locale}/");
-		this.SendRequest(OriginalHash.ChallengeListener, 3u, externalChallenge);
+		SendRequest(OriginalHash.ChallengeListener, 3u, externalChallenge);
 		return BattlenetRpcErrorCode.Ok;
 	}
 
@@ -354,13 +356,13 @@ public class BnetServices
 		{
 			if (tmpSession.AccountInfo.IsPermanenetlyBanned)
 			{
-				this.ServiceLog(LogType.Debug, "Session.HandleVerifyWebCredentials: Banned account " + tmpSession.AccountInfo.Login + " tried to login!");
+				ServiceLog(LogType.Debug, "Session.HandleVerifyWebCredentials: Banned account " + tmpSession.AccountInfo.Login + " tried to login!");
 				return BattlenetRpcErrorCode.GameAccountBanned;
 			}
-			this.ServiceLog(LogType.Debug, "Session.HandleVerifyWebCredentials: Temporarily banned account " + tmpSession.AccountInfo.Login + " tried to login!");
+			ServiceLog(LogType.Debug, "Session.HandleVerifyWebCredentials: Temporarily banned account " + tmpSession.AccountInfo.Login + " tried to login!");
 			return BattlenetRpcErrorCode.GameAccountSuspended;
 		}
-		Bgs.Protocol.Authentication.V1.LogonResult logonResult = new Bgs.Protocol.Authentication.V1.LogonResult();
+		LogonResult logonResult = new LogonResult();
 		logonResult.ErrorCode = 0u;
 		logonResult.AccountId = new EntityId();
 		logonResult.AccountId.Low = tmpSession.AccountInfo.Id;
@@ -374,8 +376,8 @@ public class BnetServices
 		}
 		tmpSession.SessionKey = new byte[64].GenerateRandomKey(64);
 		logonResult.SessionKey = ByteString.CopyFrom(tmpSession.SessionKey);
-		this._globalSession = tmpSession;
-		this.SendRequest(OriginalHash.AuthenticationListener, 5u, logonResult);
+		_globalSession = tmpSession;
+		SendRequest(OriginalHash.AuthenticationListener, 5u, logonResult);
 		return BattlenetRpcErrorCode.Ok;
 	}
 
@@ -403,14 +405,14 @@ public class BnetServices
 	[Service(ServiceRequirement.Always, OriginalHash.ConnectionService, 7u)]
 	private BattlenetRpcErrorCode HandleRequestDisconnect(DisconnectRequest request)
 	{
-		if (this.GetSession() != null && this.GetSession().AuthClient != null)
+		if (GetSession() != null && GetSession().AuthClient != null)
 		{
-			this.GetSession().AuthClient.Disconnect();
+			GetSession().AuthClient.Disconnect();
 		}
 		DisconnectNotification disconnectNotification = new DisconnectNotification();
 		disconnectNotification.ErrorCode = request.ErrorCode;
-		this.SendRequest(OriginalHash.ConnectionService, 4u, disconnectNotification);
-		this.CloseSocket();
+		SendRequest(OriginalHash.ConnectionService, 4u, disconnectNotification);
+		CloseSocket();
 		return BattlenetRpcErrorCode.Ok;
 	}
 
@@ -434,11 +436,11 @@ public class BnetServices
 	[Service(ServiceRequirement.LoggedIn, OriginalHash.GameUtilitiesService, 1u)]
 	private BattlenetRpcErrorCode HandleProcessClientRequest(ClientRequest request, ClientResponse response)
 	{
-		Bgs.Protocol.Attribute command = null;
+		Attribute command = null;
 		Dictionary<string, Variant> Params = new Dictionary<string, Variant>();
 		for (int i = 0; i < request.Attribute.Count; i++)
 		{
-			Bgs.Protocol.Attribute attr = request.Attribute[i];
+			Attribute attr = request.Attribute[i];
 			Params[attr.Name] = attr.Value;
 			if (attr.Name.Contains("Command_"))
 			{
@@ -447,37 +449,37 @@ public class BnetServices
 		}
 		if (command == null)
 		{
-			this.ServiceLog(LogType.Error, "Sent ClientRequest with no command.");
+			ServiceLog(LogType.Error, "Sent ClientRequest with no command.");
 			return BattlenetRpcErrorCode.RpcMalformedRequest;
 		}
-		this.ServiceLog(LogType.Debug, "GameUtilitiesService method: " + command.Name);
-		if (command.Name == "Command_RealmListTicketRequest_v1_" + this.GetCommandEndingForVersion())
+		ServiceLog(LogType.Debug, "GameUtilitiesService method: " + command.Name);
+		if (command.Name == "Command_RealmListTicketRequest_v1_" + GetCommandEndingForVersion())
 		{
-			return this.GetRealmListTicket(Params, response);
+			return GetRealmListTicket(Params, response);
 		}
-		if (command.Name == "Command_LastCharPlayedRequest_v1_" + this.GetCommandEndingForVersion())
+		if (command.Name == "Command_LastCharPlayedRequest_v1_" + GetCommandEndingForVersion())
 		{
-			return this.GetLastCharPlayed(Params, response);
+			return GetLastCharPlayed(Params, response);
 		}
-		if (command.Name == "Command_RealmListRequest_v1_" + this.GetCommandEndingForVersion())
+		if (command.Name == "Command_RealmListRequest_v1_" + GetCommandEndingForVersion())
 		{
-			return this.GetRealmList(Params, response);
+			return GetRealmList(Params, response);
 		}
-		if (command.Name == "Command_RealmJoinRequest_v1_" + this.GetCommandEndingForVersion())
+		if (command.Name == "Command_RealmJoinRequest_v1_" + GetCommandEndingForVersion())
 		{
-			return this.JoinRealm(Params, response);
+			return JoinRealm(Params, response);
 		}
-		this.ServiceLog(LogType.Warn, "Sent unhandled command '" + command.Name + "'.");
+		ServiceLog(LogType.Warn, "Sent unhandled command '" + command.Name + "'.");
 		return BattlenetRpcErrorCode.RpcNotImplemented;
 	}
 
 	[Service(ServiceRequirement.LoggedIn, OriginalHash.GameUtilitiesService, 10u)]
 	private BattlenetRpcErrorCode HandleGetAllValuesForAttribute(GetAllValuesForAttributeRequest request, GetAllValuesForAttributeResponse response)
 	{
-		if (request.AttributeKey == "Command_RealmListRequest_v1_" + this.GetCommandEndingForVersion())
+		if (request.AttributeKey == "Command_RealmListRequest_v1_" + GetCommandEndingForVersion())
 		{
-			this.GetSession().AuthClient.WaitOrRequestRealmList();
-			this.GetSession().RealmManager.WriteSubRegions(response);
+			GetSession().AuthClient.WaitOrRequestRealmList();
+			GetSession().RealmManager.WriteSubRegions(response);
 			return BattlenetRpcErrorCode.Ok;
 		}
 		return BattlenetRpcErrorCode.RpcNotImplemented;
@@ -489,21 +491,21 @@ public class BnetServices
 		if (identity != null)
 		{
 			RealmListTicketIdentity realmListTicketIdentity = Json.CreateObject<RealmListTicketIdentity>(identity.BlobValue.ToStringUtf8(), split: true);
-			GameAccountInfo gameAccount = this.GetSession().AccountInfo.GameAccounts.LookupByKey(realmListTicketIdentity.GameAccountId);
+			GameAccountInfo gameAccount = GetSession().AccountInfo.GameAccounts.LookupByKey(realmListTicketIdentity.GameAccountId);
 			if (gameAccount != null)
 			{
-				this.GetSession().GameAccountInfo = gameAccount;
+				GetSession().GameAccountInfo = gameAccount;
 			}
 		}
-		if (this.GetSession().GameAccountInfo == null)
+		if (GetSession().GameAccountInfo == null)
 		{
 			return BattlenetRpcErrorCode.UtilServerInvalidIdentityArgs;
 		}
-		if (this.GetSession().GameAccountInfo.IsPermanenetlyBanned)
+		if (GetSession().GameAccountInfo.IsPermanenetlyBanned)
 		{
 			return BattlenetRpcErrorCode.GameAccountBanned;
 		}
-		if (this.GetSession().GameAccountInfo.IsBanned)
+		if (GetSession().GameAccountInfo.IsBanned)
 		{
 			return BattlenetRpcErrorCode.GameAccountSuspended;
 		}
@@ -513,9 +515,9 @@ public class BnetServices
 		{
 			RealmListTicketClientInformation realmListTicketClientInformation = Json.CreateObject<RealmListTicketClientInformation>(clientInfo.BlobValue.ToStringUtf8(), split: true);
 			clientInfoOk = true;
-			for (int i = 0; i < Math.Min(this._clientSecret.Length, realmListTicketClientInformation.Info.Secret.Count); i++)
+			for (int i = 0; i < Math.Min(_clientSecret.Length, realmListTicketClientInformation.Info.Secret.Count); i++)
 			{
-				this._clientSecret[i] = (byte)realmListTicketClientInformation.Info.Secret[i];
+				_clientSecret[i] = (byte)realmListTicketClientInformation.Info.Secret[i];
 			}
 		}
 		if (!clientInfoOk)
@@ -528,24 +530,24 @@ public class BnetServices
 
 	private BattlenetRpcErrorCode GetLastCharPlayed(Dictionary<string, Variant> Params, ClientResponse response)
 	{
-		Variant subRegion = Params.LookupByKey("Command_LastCharPlayedRequest_v1_" + this.GetCommandEndingForVersion());
+		Variant subRegion = Params.LookupByKey("Command_LastCharPlayedRequest_v1_" + GetCommandEndingForVersion());
 		if (subRegion == null)
 		{
 			return BattlenetRpcErrorCode.UtilServerUnknownRealm;
 		}
-		(string, string, ulong, long)? rawLastPlayedChar = this.GetSession().AccountMetaDataMgr.GetLastSelectedCharacter();
+		(string, string, ulong, long)? rawLastPlayedChar = GetSession().AccountMetaDataMgr.GetLastSelectedCharacter();
 		if (!rawLastPlayedChar.HasValue)
 		{
 			return BattlenetRpcErrorCode.Ok;
 		}
 		(string realmName, string charName, ulong charLowerGuid, long lastLoginUnixSec) lastPlayedChar = rawLastPlayedChar.Value;
-		this.GetSession().AuthClient.WaitOrRequestRealmList();
-		Realm realm = this.GetSession().RealmManager.GetRealms().FirstOrDefault((Realm r) => r.Name == lastPlayedChar.realmName && !r.Flags.HasFlag(RealmFlags.Offline));
+		GetSession().AuthClient.WaitOrRequestRealmList();
+		Realm realm = GetSession().RealmManager.GetRealms().FirstOrDefault(r => r.Name == lastPlayedChar.realmName && !r.Flags.HasFlag(RealmFlags.Offline));
 		if (realm == null)
 		{
 			return BattlenetRpcErrorCode.UtilServerFailedToSerializeResponse;
 		}
-		byte[] compressedRealmEntry = this.GetSession().RealmManager.GetCompressdRealmEntryJSON(realm, this.GetSession().Build);
+		byte[] compressedRealmEntry = GetSession().RealmManager.GetCompressdRealmEntryJSON(realm, GetSession().Build);
 		if (compressedRealmEntry.Length == 0)
 		{
 			return BattlenetRpcErrorCode.UtilServerFailedToSerializeResponse;
@@ -559,28 +561,28 @@ public class BnetServices
 
 	private BattlenetRpcErrorCode GetRealmList(Dictionary<string, Variant> Params, ClientResponse response)
 	{
-		if (this.GetSession().GameAccountInfo == null)
+		if (GetSession().GameAccountInfo == null)
 		{
 			return BattlenetRpcErrorCode.UserServerBadWowAccount;
 		}
-		if (!this.GetSession().AuthClient.IsConnected())
+		if (!GetSession().AuthClient.IsConnected())
 		{
 			return BattlenetRpcErrorCode.UtilServerMissingRealmList;
 		}
 		string subRegionId = "";
-		Variant subRegion = Params.LookupByKey("Command_RealmListRequest_v1_" + this.GetCommandEndingForVersion());
+		Variant subRegion = Params.LookupByKey("Command_RealmListRequest_v1_" + GetCommandEndingForVersion());
 		if (subRegion != null)
 		{
 			subRegionId = subRegion.StringValue;
 		}
-		byte[] compressedRealmList = this.GetSession().RealmManager.GetRealmList(this.GetSession().Build, subRegionId);
+		byte[] compressedRealmList = GetSession().RealmManager.GetRealmList(GetSession().Build, subRegionId);
 		if (compressedRealmList.Length == 0)
 		{
 			return BattlenetRpcErrorCode.UtilServerFailedToSerializeResponse;
 		}
 		response.Attribute.AddBlob("Param_RealmList", ByteString.CopyFrom(compressedRealmList));
 		RealmCharacterCountList realmCharacterCounts = new RealmCharacterCountList();
-		foreach (Realm realm in this.GetSession().RealmManager.GetRealms())
+		foreach (Realm realm in GetSession().RealmManager.GetRealms())
 		{
 			RealmCharacterCountEntry countEntry = new RealmCharacterCountEntry();
 			countEntry.WowRealmAddress = (int)realm.Id.GetAddress();
@@ -599,6 +601,6 @@ public class BnetServices
 		{
 			return BattlenetRpcErrorCode.WowServicesInvalidJoinTicket;
 		}
-		return this.GetSession().RealmManager.JoinRealm(this.GetSession(), (uint)realmAddress.UintValue, this.GetSession().Build, this.GetRemoteIpEndPoint().Address, this._clientSecret, this.GetSession().GameAccountInfo.Name, response);
+		return GetSession().RealmManager.JoinRealm(GetSession(), (uint)realmAddress.UintValue, GetSession().Build, GetRemoteIpEndPoint().Address, _clientSecret, GetSession().GameAccountInfo.Name, response);
 	}
 }

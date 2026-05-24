@@ -22,6 +22,6 @@ public static class BnetServerCertificate
 		MemoryStream ms = new MemoryStream();
 		stream.CopyTo(ms);
 		byte[] bytes = ms.ToArray();
-		BnetServerCertificate.Certificate = new X509Certificate2(bytes);
+		Certificate = new X509Certificate2(bytes);
 	}
 }

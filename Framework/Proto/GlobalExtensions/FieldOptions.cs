@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/global_extensions/field_options.proto</summary>
@@ -693,14 +693,14 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Signed, other.Signed)) return false;
-      if (!object.Equals(Unsigned, other.Unsigned)) return false;
-      if (!object.Equals(Float, other.Float)) return false;
-      if (!object.Equals(String, other.String)) return false;
-      if (!object.Equals(Repeated, other.Repeated)) return false;
-      if (!object.Equals(Message, other.Message)) return false;
-      if (!object.Equals(EntityId, other.EntityId)) return false;
-      if (!object.Equals(Bytes, other.Bytes)) return false;
+      if (!Equals(Signed, other.Signed)) return false;
+      if (!Equals(Unsigned, other.Unsigned)) return false;
+      if (!Equals(Float, other.Float)) return false;
+      if (!Equals(String, other.String)) return false;
+      if (!Equals(Repeated, other.Repeated)) return false;
+      if (!Equals(Message, other.Message)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(Bytes, other.Bytes)) return false;
       if (TypeCase != other.TypeCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1222,14 +1222,14 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Size, other.Size)) return false;
+      if (!Equals(Size, other.Size)) return false;
       if (Unique != other.Unique) return false;
-      if (!object.Equals(Signed, other.Signed)) return false;
-      if (!object.Equals(Unsigned, other.Unsigned)) return false;
-      if (!object.Equals(Float, other.Float)) return false;
-      if (!object.Equals(String, other.String)) return false;
-      if (!object.Equals(EntityId, other.EntityId)) return false;
-      if (!object.Equals(Bytes, other.Bytes)) return false;
+      if (!Equals(Signed, other.Signed)) return false;
+      if (!Equals(Unsigned, other.Unsigned)) return false;
+      if (!Equals(Float, other.Float)) return false;
+      if (!Equals(String, other.String)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(Bytes, other.Bytes)) return false;
       if (TypeCase != other.TypeCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1543,7 +1543,7 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Limits, other.Limits)) return false;
+      if (!Equals(Limits, other.Limits)) return false;
       if(!exclude_.Equals(other.exclude_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1709,7 +1709,7 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Limits, other.Limits)) return false;
+      if (!Equals(Limits, other.Limits)) return false;
       if(!exclude_.Equals(other.exclude_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1875,7 +1875,7 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Limits, other.Limits)) return false;
+      if (!Equals(Limits, other.Limits)) return false;
       if(!exclude_.Equals(other.exclude_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2041,7 +2041,7 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Size, other.Size)) return false;
+      if (!Equals(Size, other.Size)) return false;
       if(!exclude_.Equals(other.exclude_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

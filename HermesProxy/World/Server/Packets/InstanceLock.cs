@@ -20,13 +20,13 @@ public class InstanceLock
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.MapID);
-		data.WriteUInt32((uint)this.DifficultyID);
-		data.WriteUInt64(this.InstanceID);
-		data.WriteInt32(this.TimeRemaining);
-		data.WriteUInt32(this.CompletedMask);
-		data.WriteBit(this.Locked);
-		data.WriteBit(this.Extended);
+		data.WriteUInt32(MapID);
+		data.WriteUInt32((uint)DifficultyID);
+		data.WriteUInt64(InstanceID);
+		data.WriteInt32(TimeRemaining);
+		data.WriteUInt32(CompletedMask);
+		data.WriteBit(Locked);
+		data.WriteBit(Extended);
 		data.FlushBits();
 	}
 }

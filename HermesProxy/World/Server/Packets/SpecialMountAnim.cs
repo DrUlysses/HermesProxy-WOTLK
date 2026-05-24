@@ -19,12 +19,12 @@ internal class SpecialMountAnim : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.UnitGUID);
-		base._worldPacket.WriteInt32(this.SpellVisualKitIDs.Count);
-		base._worldPacket.WriteInt32(this.SequenceVariation);
-		foreach (int id in this.SpellVisualKitIDs)
+		_worldPacket.WritePackedGuid128(UnitGUID);
+		_worldPacket.WriteInt32(SpellVisualKitIDs.Count);
+		_worldPacket.WriteInt32(SequenceVariation);
+		foreach (int id in SpellVisualKitIDs)
 		{
-			base._worldPacket.WriteInt32(id);
+			_worldPacket.WriteInt32(id);
 		}
 	}
 }

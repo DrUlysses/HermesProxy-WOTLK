@@ -52,82 +52,82 @@ public class AuctionItem
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBit(this.Item != null);
-		data.WriteBits(this.Enchantments.Count, 4);
-		data.WriteBits(this.Gems.Count, 2);
-		data.WriteBit(this.MinBid.HasValue);
-		data.WriteBit(this.MinIncrement.HasValue);
-		data.WriteBit(this.BuyoutPrice.HasValue);
-		data.WriteBit(this.UnitPrice.HasValue);
-		data.WriteBit(this.CensorServerSideInfo);
-		data.WriteBit(this.CensorBidInfo);
-		data.WriteBit(this.AuctionBucketKey != null);
-		data.WriteBit(this.Creator != null);
-		if (!this.CensorBidInfo)
+		data.WriteBit(Item != null);
+		data.WriteBits(Enchantments.Count, 4);
+		data.WriteBits(Gems.Count, 2);
+		data.WriteBit(MinBid.HasValue);
+		data.WriteBit(MinIncrement.HasValue);
+		data.WriteBit(BuyoutPrice.HasValue);
+		data.WriteBit(UnitPrice.HasValue);
+		data.WriteBit(CensorServerSideInfo);
+		data.WriteBit(CensorBidInfo);
+		data.WriteBit(AuctionBucketKey != null);
+		data.WriteBit(Creator != null);
+		if (!CensorBidInfo)
 		{
-			data.WriteBit(this.Bidder != null);
-			data.WriteBit(this.BidAmount.HasValue);
+			data.WriteBit(Bidder != null);
+			data.WriteBit(BidAmount.HasValue);
 		}
 		data.FlushBits();
-		if (this.Item != null)
+		if (Item != null)
 		{
-			this.Item.Write(data);
+			Item.Write(data);
 		}
-		data.WriteInt32(this.Count);
-		data.WriteInt32(this.Charges);
-		data.WriteUInt32(this.Flags);
-		data.WriteUInt32(this.AuctionID);
-		data.WritePackedGuid128(this.Owner);
-		data.WriteInt32(this.DurationLeft);
-		data.WriteUInt8(this.DeleteReason);
-		foreach (ItemEnchantData enchant in this.Enchantments)
+		data.WriteInt32(Count);
+		data.WriteInt32(Charges);
+		data.WriteUInt32(Flags);
+		data.WriteUInt32(AuctionID);
+		data.WritePackedGuid128(Owner);
+		data.WriteInt32(DurationLeft);
+		data.WriteUInt8(DeleteReason);
+		foreach (ItemEnchantData enchant in Enchantments)
 		{
 			enchant.Write(data);
 		}
-		if (this.MinBid.HasValue)
+		if (MinBid.HasValue)
 		{
-			data.WriteUInt64(this.MinBid.Value);
+			data.WriteUInt64(MinBid.Value);
 		}
-		if (this.MinIncrement.HasValue)
+		if (MinIncrement.HasValue)
 		{
-			data.WriteUInt64(this.MinIncrement.Value);
+			data.WriteUInt64(MinIncrement.Value);
 		}
-		if (this.BuyoutPrice.HasValue)
+		if (BuyoutPrice.HasValue)
 		{
-			data.WriteUInt64(this.BuyoutPrice.Value);
+			data.WriteUInt64(BuyoutPrice.Value);
 		}
-		if (this.UnitPrice.HasValue)
+		if (UnitPrice.HasValue)
 		{
-			data.WriteUInt64(this.UnitPrice.Value);
+			data.WriteUInt64(UnitPrice.Value);
 		}
-		if (!this.CensorServerSideInfo)
+		if (!CensorServerSideInfo)
 		{
-			data.WritePackedGuid128(this.ItemGuid);
-			data.WritePackedGuid128(this.OwnerAccountID);
-			data.WriteUInt32(this.EndTime);
+			data.WritePackedGuid128(ItemGuid);
+			data.WritePackedGuid128(OwnerAccountID);
+			data.WriteUInt32(EndTime);
 		}
-		if (this.Creator != null)
+		if (Creator != null)
 		{
-			data.WritePackedGuid128(this.Creator);
+			data.WritePackedGuid128(Creator);
 		}
-		if (!this.CensorBidInfo)
+		if (!CensorBidInfo)
 		{
-			if (this.Bidder != null)
+			if (Bidder != null)
 			{
-				data.WritePackedGuid128(this.Bidder);
+				data.WritePackedGuid128(Bidder);
 			}
-			if (this.BidAmount.HasValue)
+			if (BidAmount.HasValue)
 			{
-				data.WriteUInt64(this.BidAmount.Value);
+				data.WriteUInt64(BidAmount.Value);
 			}
 		}
-		foreach (ItemGemData gem in this.Gems)
+		foreach (ItemGemData gem in Gems)
 		{
 			gem.Write(data);
 		}
-		if (this.AuctionBucketKey != null)
+		if (AuctionBucketKey != null)
 		{
-			this.AuctionBucketKey.Write(data);
+			AuctionBucketKey.Write(data);
 		}
 	}
 }

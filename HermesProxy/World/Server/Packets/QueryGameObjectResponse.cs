@@ -21,40 +21,40 @@ public class QueryGameObjectResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.GameObjectID);
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WriteBit(this.Allow);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt32(GameObjectID);
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WriteBit(Allow);
+		_worldPacket.FlushBits();
 		ByteBuffer statsData = new ByteBuffer();
-		if (this.Allow)
+		if (Allow)
 		{
-			statsData.WriteUInt32(this.Stats.Type);
-			statsData.WriteUInt32(this.Stats.DisplayID);
+			statsData.WriteUInt32(Stats.Type);
+			statsData.WriteUInt32(Stats.DisplayID);
 			for (int i = 0; i < 4; i++)
 			{
-				statsData.WriteCString(this.Stats.Name[i]);
+				statsData.WriteCString(Stats.Name[i]);
 			}
-			statsData.WriteCString(this.Stats.IconName);
-			statsData.WriteCString(this.Stats.CastBarCaption);
-			statsData.WriteCString(this.Stats.UnkString);
+			statsData.WriteCString(Stats.IconName);
+			statsData.WriteCString(Stats.CastBarCaption);
+			statsData.WriteCString(Stats.UnkString);
 			int dataFieldsCount = (ModernVersion.AddedInClassicVersion(1, 14, 1, 2, 5, 3) ? 35 : 34);
 			for (int j = 0; j < dataFieldsCount; j++)
 			{
-				statsData.WriteInt32(this.Stats.Data[j]);
+				statsData.WriteInt32(Stats.Data[j]);
 			}
-			statsData.WriteFloat(this.Stats.Size);
-			statsData.WriteUInt8((byte)this.Stats.QuestItems.Count);
-			foreach (uint questItem in this.Stats.QuestItems)
+			statsData.WriteFloat(Stats.Size);
+			statsData.WriteUInt8((byte)Stats.QuestItems.Count);
+			foreach (uint questItem in Stats.QuestItems)
 			{
 				statsData.WriteUInt32(questItem);
 			}
-			statsData.WriteUInt32(this.Stats.ContentTuningId);
-			statsData.WriteUInt32(this.Stats.RequiredLevel);
+			statsData.WriteUInt32(Stats.ContentTuningId);
+			statsData.WriteUInt32(Stats.RequiredLevel);
 		}
-		base._worldPacket.WriteUInt32(statsData.GetSize());
+		_worldPacket.WriteUInt32(statsData.GetSize());
 		if (statsData.GetSize() != 0)
 		{
-			base._worldPacket.WriteBytes(statsData);
+			_worldPacket.WriteBytes(statsData);
 		}
 	}
 }

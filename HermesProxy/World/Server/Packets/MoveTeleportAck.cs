@@ -15,8 +15,8 @@ internal class MoveTeleportAck : ClientPacket
 
 	public override void Read()
 	{
-		this.MoverGUID = base._worldPacket.ReadPackedGuid128();
-		this.MoveCounter = base._worldPacket.ReadUInt32();
-		this.MoveTime = base._worldPacket.ReadUInt32();
+		MoverGUID = _worldPacket.ReadPackedGuid128();
+		MoveCounter = _worldPacket.ReadUInt32();
+		MoveTime = _worldPacket.ReadUInt32();
 	}
 }

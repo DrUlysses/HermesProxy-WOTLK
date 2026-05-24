@@ -21,10 +21,10 @@ public class BattlefieldStatusFailed : ServerPacket
 
 	protected override void Write()
 	{
-		this.Ticket.Write(base._worldPacket);
-		ulong queueID = this.BattlefieldListId | 0x1F10000000000000L;
-		base._worldPacket.WriteUInt64(queueID);
-		base._worldPacket.WriteInt32(this.Reason);
-		base._worldPacket.WritePackedGuid128(this.ClientID);
+		Ticket.Write(_worldPacket);
+		ulong queueID = BattlefieldListId | 0x1F10000000000000L;
+		_worldPacket.WriteUInt64(queueID);
+		_worldPacket.WriteInt32(Reason);
+		_worldPacket.WritePackedGuid128(ClientID);
 	}
 }

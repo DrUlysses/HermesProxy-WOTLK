@@ -13,10 +13,10 @@ internal class ChatRegisterAddonPrefixes : ClientPacket
 
 	public override void Read()
 	{
-		int count = base._worldPacket.ReadInt32();
+		int count = _worldPacket.ReadInt32();
 		for (int i = 0; i < count && i < 64; i++)
 		{
-			this.Prefixes.Add(base._worldPacket.ReadString(base._worldPacket.ReadBits<uint>(5)));
+			Prefixes.Add(_worldPacket.ReadString(_worldPacket.ReadBits<uint>(5)));
 		}
 	}
 }

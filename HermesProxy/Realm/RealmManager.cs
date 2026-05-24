@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,22 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
-using Framework.Web;
-using Framework.Serialization;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Collections.Concurrent;
 using System.Text;
-using Framework.Realm;
+using Bgs.Protocol;
+using Bgs.Protocol.GameUtilities.V1;
+using Framework;
+using Framework.Constants;
 using Framework.Logging;
+using Framework.Realm;
+using Framework.Serialization;
 using Framework.Util;
+using Framework.Web;
 using Google.Protobuf;
 using HermesProxy;
 using HermesProxy.Auth;
 using HermesProxy.World;
+using Address = Framework.Web.Address;
 
 public class RealmManager
 {
@@ -57,9 +61,9 @@ public class RealmManager
         if (!hotfixVersion.IsEmpty() && hotfixVersion.Length < build.HotfixVersion.Length)
             build.HotfixVersion = hotfixVersion.ToCharArray();
 
-        build.Build = (uint)Framework.Settings.ClientBuild;
+        build.Build = (uint)Settings.ClientBuild;
 
-        build.FallbackStaticSeed = Framework.Settings.ClientSeed;
+        build.FallbackStaticSeed = Settings.ClientSeed;
         build.BuildSeeds = GameData.BuildAuthSeeds.GetValueOrDefault(build.Build, new Dictionary<string, byte[]>());
 
         _builds.Add(build);
@@ -96,7 +100,7 @@ public class RealmManager
         realm.CharacterCount = characterCount;
         realm.Timezone = timezone;
         realm.PopulationLevel = populationLevel;
-        realm.Build = (uint)Framework.Settings.ClientBuild;
+        realm.Build = (uint)Settings.ClientBuild;
 
         realm.Id = new RealmId(placeholderRegion, placeholderBattlegroup, id);
         UpdateRealm(realm);
@@ -160,11 +164,11 @@ public class RealmManager
         return buildInfo != null ? (buildInfo.MajorVersion * 10000 + buildInfo.MinorVersion * 100 + buildInfo.BugfixVersion) : 0;
     }
 
-    public void WriteSubRegions(Bgs.Protocol.GameUtilities.V1.GetAllValuesForAttributeResponse response)
+    public void WriteSubRegions(GetAllValuesForAttributeResponse response)
     {
         foreach (string subRegion in GetSubRegions())
         {
-            var variant = new Bgs.Protocol.Variant();
+            var variant = new Variant();
             variant.StringValue = subRegion;
             response.AttributeValue.Add(variant);
         }
@@ -262,7 +266,7 @@ public class RealmManager
         return Json.Deflate("JSONRealmListUpdates", realmList);
     }
 
-    public BattlenetRpcErrorCode JoinRealm(GlobalSessionData globalSession, uint realmAddress, uint build, IPAddress clientAddress, byte[] clientSecret, string accountName, Bgs.Protocol.GameUtilities.V1.ClientResponse response)
+    public BattlenetRpcErrorCode JoinRealm(GlobalSessionData globalSession, uint realmAddress, uint build, IPAddress clientAddress, byte[] clientSecret, string accountName, ClientResponse response)
     {
         globalSession.RealmId = new RealmId(realmAddress);
         Log.Print(LogType.Debug, $"JoinRealm: realmAddress=0x{realmAddress:X8}, decoded={globalSession.RealmId}, realms count={_realms.Count}");
@@ -280,7 +284,7 @@ public class RealmManager
 
             var address = new Address();
             address.Ip = realm.GetAddressForClient(clientAddress).Address.ToString();
-            address.Port = Framework.Settings.RealmPort;
+            address.Port = Settings.RealmPort;
             addressFamily.Addresses.Add(address);
             serverAddresses.Families.Add(addressFamily);
 

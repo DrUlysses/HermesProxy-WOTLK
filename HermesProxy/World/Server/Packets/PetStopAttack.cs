@@ -11,6 +11,6 @@ internal class PetStopAttack : ClientPacket
 
 	public override void Read()
 	{
-		this.PetGUID = base._worldPacket.ReadPackedGuid128();
+		PetGUID = _worldPacket.ReadPackedGuid128();
 	}
 }

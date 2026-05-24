@@ -10,12 +10,12 @@ public class QuestGiverStatusPkt : ServerPacket
 	public QuestGiverStatusPkt()
 		: base(Opcode.SMSG_QUEST_GIVER_STATUS, ConnectionType.Instance)
 	{
-		this.QuestGiver = new QuestGiverInfo();
+		QuestGiver = new QuestGiverInfo();
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.QuestGiver.Guid);
-		base._worldPacket.WriteUInt64((ulong)this.QuestGiver.Status);
+		_worldPacket.WritePackedGuid128(QuestGiver.Guid);
+		_worldPacket.WriteUInt64((ulong)QuestGiver.Status);
 	}
 }

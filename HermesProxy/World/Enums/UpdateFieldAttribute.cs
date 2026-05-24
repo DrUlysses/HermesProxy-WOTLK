@@ -3,7 +3,7 @@ using HermesProxy.Enums;
 
 namespace HermesProxy.World.Enums;
 
-[AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = false)]
+[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
 public sealed class UpdateFieldAttribute : Attribute
 {
 	public UpdateFieldType UFAttribute { get; private set; }
@@ -12,13 +12,13 @@ public sealed class UpdateFieldAttribute : Attribute
 
 	public UpdateFieldAttribute(UpdateFieldType attrib)
 	{
-		this.UFAttribute = attrib;
-		this.Version = ClientVersionBuild.Zero;
+		UFAttribute = attrib;
+		Version = ClientVersionBuild.Zero;
 	}
 
 	public UpdateFieldAttribute(UpdateFieldType attrib, ClientVersionBuild fromVersion)
 	{
-		this.UFAttribute = attrib;
-		this.Version = fromVersion;
+		UFAttribute = attrib;
+		Version = fromVersion;
 	}
 }

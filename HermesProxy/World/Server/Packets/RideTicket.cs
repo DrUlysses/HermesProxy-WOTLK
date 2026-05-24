@@ -12,11 +12,11 @@ public class RideTicket
 
 	public void Read(WorldPacket data)
 	{
-		this.RequesterGuid = data.ReadPackedGuid128();
-		this.Id = data.ReadUInt32();
-		this.Type = (RideType)data.ReadUInt32();
-		this.Time = data.ReadInt64();
-		this.Unknown925 = data.HasBit();
+		RequesterGuid = data.ReadPackedGuid128();
+		Id = data.ReadUInt32();
+		Type = (RideType)data.ReadUInt32();
+		Time = data.ReadInt64();
+		Unknown925 = data.HasBit();
 		data.ResetBitPos();
 	}
 
@@ -24,11 +24,11 @@ public class RideTicket
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.RequesterGuid);
-		data.WriteUInt32(this.Id);
-		data.WriteUInt32((uint)this.Type);
-		data.WriteInt64(this.Time);
-		data.WriteBit(this.Unknown925);
+		data.WritePackedGuid128(RequesterGuid);
+		data.WriteUInt32(Id);
+		data.WriteUInt32((uint)Type);
+		data.WriteInt64(Time);
+		data.WriteBit(Unknown925);
 		data.FlushBits();
 	}
 }

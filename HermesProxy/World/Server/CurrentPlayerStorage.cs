@@ -10,14 +10,14 @@ public class CurrentPlayerStorage
 
 	public CurrentPlayerStorage(GlobalSessionData globalSession)
 	{
-		this._globalSession = globalSession;
+		_globalSession = globalSession;
 	}
 
 	public void LoadCurrentPlayer()
 	{
-		this.CompletedQuests = new CompletedQuestTracker(this._globalSession);
-		this.Settings = new PlayerSettings(this._globalSession);
-		this.CompletedQuests.Reload();
-		this.Settings.Reload();
+		CompletedQuests = new CompletedQuestTracker(_globalSession);
+		Settings = new PlayerSettings(_globalSession);
+		CompletedQuests.Reload();
+		Settings.Reload();
 	}
 }

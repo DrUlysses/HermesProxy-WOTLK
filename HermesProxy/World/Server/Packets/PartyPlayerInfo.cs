@@ -31,37 +31,37 @@ public struct PartyPlayerInfo
 
     public void Write(WorldPacket data)
     {
-        data.WriteBits(this.Name.GetByteCount(), 6);
-        data.WriteBits(this.VoiceStateID.GetByteCount() + 1, 6);
+        data.WriteBits(Name.GetByteCount(), 6);
+        data.WriteBits(VoiceStateID.GetByteCount() + 1, 6);
         if (ModernVersion.ExpansionVersion == 3)
         {
-            bool isConnected = this.Connected || this.Status != GroupMemberOnlineStatus.Offline;
+            bool isConnected = Connected || Status != GroupMemberOnlineStatus.Offline;
             data.WriteBit(isConnected);
-            data.WriteBit(this.VoiceChatSilenced);
-            data.WriteBit(this.FromSocialQueue);
+            data.WriteBit(VoiceChatSilenced);
+            data.WriteBit(FromSocialQueue);
         }
         else
         {
-            data.WriteBit(this.FromSocialQueue);
-            data.WriteBit(this.VoiceChatSilenced);
+            data.WriteBit(FromSocialQueue);
+            data.WriteBit(VoiceChatSilenced);
         }
-        data.WritePackedGuid128(this.GUID);
+        data.WritePackedGuid128(GUID);
         if (ModernVersion.ExpansionVersion < 3)
         {
-            data.WriteUInt8((byte)this.Status);
+            data.WriteUInt8((byte)Status);
         }
-        data.WriteUInt8(this.Subgroup);
-        data.WriteUInt8((byte)this.Flags);
-        data.WriteUInt8(this.RolesAssigned);
-        data.WriteUInt8((byte)this.ClassId);
+        data.WriteUInt8(Subgroup);
+        data.WriteUInt8((byte)Flags);
+        data.WriteUInt8(RolesAssigned);
+        data.WriteUInt8((byte)ClassId);
         if (ModernVersion.ExpansionVersion == 3)
         {
-            data.WriteUInt8(this.FactionGroup);
+            data.WriteUInt8(FactionGroup);
         }
-        data.WriteString(this.Name);
-        if (!this.VoiceStateID.IsEmpty())
+        data.WriteString(Name);
+        if (!VoiceStateID.IsEmpty())
         {
-            data.WriteString(this.VoiceStateID);
+            data.WriteString(VoiceStateID);
         }
     }
 }

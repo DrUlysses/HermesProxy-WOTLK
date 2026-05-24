@@ -14,6 +14,6 @@ public class CorpseReclaimDelay : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Remaining);
+		_worldPacket.WriteUInt32(Remaining);
 	}
 }

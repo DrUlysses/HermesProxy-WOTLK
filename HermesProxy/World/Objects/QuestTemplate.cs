@@ -152,14 +152,14 @@ public class QuestTemplate
 
 	public QuestTemplate()
 	{
-		this.LogTitle = "";
-		this.LogDescription = "";
-		this.QuestDescription = "";
-		this.AreaDescription = "";
-		this.PortraitGiverText = "";
-		this.PortraitGiverName = "";
-		this.PortraitTurnInText = "";
-		this.PortraitTurnInName = "";
-		this.QuestCompletionLog = "";
+		LogTitle = "";
+		LogDescription = "";
+		QuestDescription = "";
+		AreaDescription = "";
+		PortraitGiverText = "";
+		PortraitGiverName = "";
+		PortraitTurnInText = "";
+		PortraitTurnInName = "";
+		QuestCompletionLog = "";
 	}
 }

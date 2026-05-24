@@ -34,37 +34,37 @@ public class SetupCurrency : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Data.Count);
-		foreach (Record data in this.Data)
+		_worldPacket.WriteInt32(Data.Count);
+		foreach (Record data in Data)
 		{
-			base._worldPacket.WriteUInt32(data.Type);
-			base._worldPacket.WriteUInt32(data.Quantity);
-			base._worldPacket.WriteBit(data.WeeklyQuantity.HasValue);
-			base._worldPacket.WriteBit(data.MaxWeeklyQuantity.HasValue);
-			base._worldPacket.WriteBit(data.TrackedQuantity.HasValue);
-			base._worldPacket.WriteBit(data.MaxQuantity.HasValue);
-			base._worldPacket.WriteBit(data.Unused901.HasValue);
-			base._worldPacket.WriteBits(data.Flags, 5);
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteUInt32(data.Type);
+			_worldPacket.WriteUInt32(data.Quantity);
+			_worldPacket.WriteBit(data.WeeklyQuantity.HasValue);
+			_worldPacket.WriteBit(data.MaxWeeklyQuantity.HasValue);
+			_worldPacket.WriteBit(data.TrackedQuantity.HasValue);
+			_worldPacket.WriteBit(data.MaxQuantity.HasValue);
+			_worldPacket.WriteBit(data.Unused901.HasValue);
+			_worldPacket.WriteBits(data.Flags, 5);
+			_worldPacket.FlushBits();
 			if (data.WeeklyQuantity.HasValue)
 			{
-				base._worldPacket.WriteUInt32(data.WeeklyQuantity.Value);
+				_worldPacket.WriteUInt32(data.WeeklyQuantity.Value);
 			}
 			if (data.MaxWeeklyQuantity.HasValue)
 			{
-				base._worldPacket.WriteUInt32(data.MaxWeeklyQuantity.Value);
+				_worldPacket.WriteUInt32(data.MaxWeeklyQuantity.Value);
 			}
 			if (data.TrackedQuantity.HasValue)
 			{
-				base._worldPacket.WriteUInt32(data.TrackedQuantity.Value);
+				_worldPacket.WriteUInt32(data.TrackedQuantity.Value);
 			}
 			if (data.MaxQuantity.HasValue)
 			{
-				base._worldPacket.WriteInt32(data.MaxQuantity.Value);
+				_worldPacket.WriteInt32(data.MaxQuantity.Value);
 			}
 			if (data.Unused901.HasValue)
 			{
-				base._worldPacket.WriteInt32(data.Unused901.Value);
+				_worldPacket.WriteInt32(data.Unused901.Value);
 			}
 		}
 	}

@@ -13,6 +13,6 @@ public class DuelCountdown : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Countdown);
+		_worldPacket.WriteUInt32(Countdown);
 	}
 }

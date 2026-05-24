@@ -23,27 +23,27 @@ public class BuyItem : ClientPacket
 	public BuyItem(WorldPacket packet)
 		: base(packet)
 	{
-		this.Item = new ItemInstance();
+		Item = new ItemInstance();
 	}
 
 	public override void Read()
 	{
-		this.VendorGUID = base._worldPacket.ReadPackedGuid128();
-		this.ContainerGUID = base._worldPacket.ReadPackedGuid128();
-		this.Quantity = base._worldPacket.ReadUInt32();
+		VendorGUID = _worldPacket.ReadPackedGuid128();
+		ContainerGUID = _worldPacket.ReadPackedGuid128();
+		Quantity = _worldPacket.ReadUInt32();
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			this.Muid = base._worldPacket.ReadUInt32();
-			this.Slot = base._worldPacket.ReadUInt32();
-			this.ItemType = (ItemVendorType)base._worldPacket.ReadInt32();
-			this.Item.Read(base._worldPacket);
+			Muid = _worldPacket.ReadUInt32();
+			Slot = _worldPacket.ReadUInt32();
+			ItemType = (ItemVendorType)_worldPacket.ReadInt32();
+			Item.Read(_worldPacket);
 		}
 		else
 		{
-			this.Slot = base._worldPacket.ReadUInt32();
-			this.BagSlot = base._worldPacket.ReadUInt32();
-			this.Item.Read(base._worldPacket);
-			this.ItemType = (ItemVendorType)base._worldPacket.ReadBits<int>(3);
+			Slot = _worldPacket.ReadUInt32();
+			BagSlot = _worldPacket.ReadUInt32();
+			Item.Read(_worldPacket);
+			ItemType = (ItemVendorType)_worldPacket.ReadBits<int>(3);
 		}
 	}
 }

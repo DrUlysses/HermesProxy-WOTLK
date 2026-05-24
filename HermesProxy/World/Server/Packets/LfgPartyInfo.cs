@@ -28,17 +28,17 @@ public class LfgPartyInfo : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Players.Count);
-		foreach (LfgBlackListEntry player in this.Players)
+		_worldPacket.WriteUInt32((uint)Players.Count);
+		foreach (LfgBlackListEntry player in Players)
 		{
-			base._worldPacket.WritePackedGuid128(player.PlayerGuid);
-			base._worldPacket.WriteUInt32((uint)player.Locks.Count);
+			_worldPacket.WritePackedGuid128(player.PlayerGuid);
+			_worldPacket.WriteUInt32((uint)player.Locks.Count);
 			foreach (LfgLockInfoData lockInfo in player.Locks)
 			{
-				base._worldPacket.WriteUInt32(lockInfo.Slot);
-				base._worldPacket.WriteUInt32(lockInfo.LockStatus);
-				base._worldPacket.WriteUInt32(lockInfo.SubReason1);
-				base._worldPacket.WriteUInt32(lockInfo.SubReason2);
+				_worldPacket.WriteUInt32(lockInfo.Slot);
+				_worldPacket.WriteUInt32(lockInfo.LockStatus);
+				_worldPacket.WriteUInt32(lockInfo.SubReason1);
+				_worldPacket.WriteUInt32(lockInfo.SubReason2);
 			}
 		}
 	}

@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Friends.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/friends_types.proto</summary>
@@ -252,7 +252,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if(!role_.Equals(other.role_)) return false;
       if (Privileges != other.Privileges) return false;
@@ -550,7 +550,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       if(!role_.Equals(other.role_)) return false;
       if (Privileges != other.Privileges) return false;
       if (FullName != other.FullName) return false;
@@ -904,8 +904,8 @@ namespace Bgs.Protocol.Friends.V1 {
         return true;
       }
       if (Id != other.Id) return false;
-      if (!object.Equals(InviterIdentity, other.InviterIdentity)) return false;
-      if (!object.Equals(InviteeIdentity, other.InviteeIdentity)) return false;
+      if (!Equals(InviterIdentity, other.InviterIdentity)) return false;
+      if (!Equals(InviteeIdentity, other.InviteeIdentity)) return false;
       if (InviterName != other.InviterName) return false;
       if (InviteeName != other.InviteeName) return false;
       if (CreationTime != other.CreationTime) return false;

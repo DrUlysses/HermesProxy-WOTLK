@@ -6,9 +6,8 @@
 #region Designer generated code
 
 using pb = global::Google.Protobuf;
-using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/embed_types.proto</summary>
@@ -849,10 +848,10 @@ namespace Bgs.Protocol {
       if (Title != other.Title) return false;
       if (Type != other.Type) return false;
       if (OriginalUrl != other.OriginalUrl) return false;
-      if (!object.Equals(Thumbnail, other.Thumbnail)) return false;
-      if (!object.Equals(Provider, other.Provider)) return false;
+      if (!Equals(Thumbnail, other.Thumbnail)) return false;
+      if (!Equals(Provider, other.Provider)) return false;
       if (Description != other.Description) return false;
-      if (!object.Equals(Html, other.Html)) return false;
+      if (!Equals(Html, other.Html)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

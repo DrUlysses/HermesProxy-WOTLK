@@ -8,15 +8,23 @@ using Framework.Logging;
 using HermesProxy.Enums;
 using HermesProxy.World.Enums;
 using HermesProxy.World.Enums.V1_12_1_5875;
-using HermesProxy.World.Enums.V2_4_3_8606;
+using ContainerField = HermesProxy.World.Enums.ContainerField;
+using CorpseField = HermesProxy.World.Enums.CorpseField;
+using DynamicObjectField = HermesProxy.World.Enums.DynamicObjectField;
+using GameObjectField = HermesProxy.World.Enums.GameObjectField;
+using ItemField = HermesProxy.World.Enums.ItemField;
+using ObjectField = HermesProxy.World.Enums.ObjectField;
+using Opcode = HermesProxy.World.Enums.Opcode;
+using PlayerField = HermesProxy.World.Enums.PlayerField;
+using UnitField = HermesProxy.World.Enums.UnitField;
 
 namespace HermesProxy;
 
 public static class LegacyVersion
 {
-	private static readonly Dictionary<uint, HermesProxy.World.Enums.Opcode> CurrentToUniversalOpcodeDictionary;
+	private static readonly Dictionary<uint, Opcode> CurrentToUniversalOpcodeDictionary;
 
-	private static readonly Dictionary<HermesProxy.World.Enums.Opcode, uint> UniversalToCurrentOpcodeDictionary;
+	private static readonly Dictionary<Opcode, uint> UniversalToCurrentOpcodeDictionary;
 
 	private static readonly Dictionary<Type, SortedList<int, UpdateFieldInfo>> UpdateFieldDictionary;
 
@@ -30,25 +38,25 @@ public static class LegacyVersion
 
 	public static ClientVersionBuild Build { get; private set; }
 
-	public static int BuildInt => (int)LegacyVersion.Build;
+	public static int BuildInt => (int)Build;
 
-	public static string VersionString => LegacyVersion.Build.ToString();
+	public static string VersionString => Build.ToString();
 
 	static LegacyVersion()
 	{
-		LegacyVersion.CurrentToUniversalOpcodeDictionary = new Dictionary<uint, HermesProxy.World.Enums.Opcode>();
-		LegacyVersion.UniversalToCurrentOpcodeDictionary = new Dictionary<HermesProxy.World.Enums.Opcode, uint>();
-		LegacyVersion.Build = Settings.ServerBuild;
-		LegacyVersion.ExpansionVersion = LegacyVersion.GetExpansionVersion();
-		LegacyVersion.MajorVersion = LegacyVersion.GetMajorPatchVersion();
-		LegacyVersion.MinorVersion = LegacyVersion.GetMinorPatchVersion();
-		LegacyVersion.UpdateFieldDictionary = new Dictionary<Type, SortedList<int, UpdateFieldInfo>>();
-		LegacyVersion.UpdateFieldNameDictionary = new Dictionary<Type, Dictionary<string, int>>();
-		if (!LegacyVersion.LoadUFDictionariesInto(LegacyVersion.UpdateFieldDictionary, LegacyVersion.UpdateFieldNameDictionary))
+		CurrentToUniversalOpcodeDictionary = new Dictionary<uint, Opcode>();
+		UniversalToCurrentOpcodeDictionary = new Dictionary<Opcode, uint>();
+		Build = Settings.ServerBuild;
+		ExpansionVersion = GetExpansionVersion();
+		MajorVersion = GetMajorPatchVersion();
+		MinorVersion = GetMinorPatchVersion();
+		UpdateFieldDictionary = new Dictionary<Type, SortedList<int, UpdateFieldInfo>>();
+		UpdateFieldNameDictionary = new Dictionary<Type, Dictionary<string, int>>();
+		if (!LoadUFDictionariesInto(UpdateFieldDictionary, UpdateFieldNameDictionary))
 		{
 			Log.Print(LogType.Error, "Could not load update fields for current legacy version.", ".cctor", "VersionChecker.cs");
 		}
-		if (!LegacyVersion.LoadOpcodeDictionaries())
+		if (!LoadOpcodeDictionaries())
 		{
 			Log.Print(LogType.Error, "Could not load opcodes for current legacy version.", ".cctor", "VersionChecker.cs");
 		}
@@ -56,7 +64,7 @@ public static class LegacyVersion
 
 	private static bool LoadOpcodeDictionaries()
 	{
-		Type enumType = Opcodes.GetOpcodesEnumForVersion(LegacyVersion.Build);
+		Type enumType = Opcodes.GetOpcodesEnumForVersion(Build);
 		if (enumType == null)
 		{
 			return false;
@@ -64,36 +72,36 @@ public static class LegacyVersion
 		foreach (object item in Enum.GetValues(enumType))
 		{
 			string oldOpcodeName = Enum.GetName(enumType, item);
-			HermesProxy.World.Enums.Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
-			if (universalOpcode == HermesProxy.World.Enums.Opcode.MSG_NULL_ACTION && oldOpcodeName != "MSG_NULL_ACTION")
+			Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
+			if (universalOpcode == Opcode.MSG_NULL_ACTION && oldOpcodeName != "MSG_NULL_ACTION")
 			{
-				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "LoadOpcodeDictionaries", "VersionChecker.cs");
+				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "VersionChecker.cs");
 				continue;
 			}
-			LegacyVersion.CurrentToUniversalOpcodeDictionary.Add((uint)item, universalOpcode);
-			LegacyVersion.UniversalToCurrentOpcodeDictionary.Add(universalOpcode, (uint)item);
+			CurrentToUniversalOpcodeDictionary.Add((uint)item, universalOpcode);
+			UniversalToCurrentOpcodeDictionary.Add(universalOpcode, (uint)item);
 		}
-		if (LegacyVersion.CurrentToUniversalOpcodeDictionary.Count < 1)
+		if (CurrentToUniversalOpcodeDictionary.Count < 1)
 		{
 			return false;
 		}
-		Log.Print(LogType.Server, $"Loaded {LegacyVersion.CurrentToUniversalOpcodeDictionary.Count} legacy opcodes.", "LoadOpcodeDictionaries", "VersionChecker.cs");
+		Log.Print(LogType.Server, $"Loaded {CurrentToUniversalOpcodeDictionary.Count} legacy opcodes.", "VersionChecker.cs");
 		return true;
 	}
 
-	public static HermesProxy.World.Enums.Opcode GetUniversalOpcode(uint opcode)
+	public static Opcode GetUniversalOpcode(uint opcode)
 	{
-		if (LegacyVersion.CurrentToUniversalOpcodeDictionary.TryGetValue(opcode, out var universalOpcode))
+		if (CurrentToUniversalOpcodeDictionary.TryGetValue(opcode, out var universalOpcode))
 		{
 			return universalOpcode;
 		}
-		Log.Print(LogType.Warn, $"Unknown legacy opcode 0x{opcode:X4} received from server!", "GetUniversalOpcode", "VersionChecker.cs");
-		return HermesProxy.World.Enums.Opcode.UNKNOWN_SMSG;
+		Log.Print(LogType.Warn, $"Unknown legacy opcode 0x{opcode:X4} received from server!", "VersionChecker.cs");
+		return Opcode.UNKNOWN_SMSG;
 	}
 
-	public static uint GetCurrentOpcode(HermesProxy.World.Enums.Opcode universalOpcode)
+	public static uint GetCurrentOpcode(Opcode universalOpcode)
 	{
-		if (LegacyVersion.UniversalToCurrentOpcodeDictionary.TryGetValue(universalOpcode, out var opcode))
+		if (UniversalToCurrentOpcodeDictionary.TryGetValue(universalOpcode, out var opcode))
 		{
 			return opcode;
 		}
@@ -102,7 +110,7 @@ public static class LegacyVersion
 
 	public static ClientVersionBuild GetUpdateFieldsDefiningBuild()
 	{
-		return LegacyVersion.GetUpdateFieldsDefiningBuild(LegacyVersion.Build);
+		return GetUpdateFieldsDefiningBuild(Build);
 	}
 
 	public static ClientVersionBuild GetUpdateFieldsDefiningBuild(ClientVersionBuild version)
@@ -126,17 +134,17 @@ public static class LegacyVersion
 	{
 		Type[] enumTypes = new Type[28]
 		{
-			typeof(HermesProxy.World.Enums.ObjectField),
-			typeof(HermesProxy.World.Enums.ItemField),
-			typeof(HermesProxy.World.Enums.ContainerField),
+			typeof(ObjectField),
+			typeof(ItemField),
+			typeof(ContainerField),
 			typeof(AzeriteEmpoweredItemField),
 			typeof(AzeriteItemField),
-			typeof(HermesProxy.World.Enums.UnitField),
-			typeof(HermesProxy.World.Enums.PlayerField),
+			typeof(UnitField),
+			typeof(PlayerField),
 			typeof(ActivePlayerField),
-			typeof(HermesProxy.World.Enums.GameObjectField),
-			typeof(HermesProxy.World.Enums.DynamicObjectField),
-			typeof(HermesProxy.World.Enums.CorpseField),
+			typeof(GameObjectField),
+			typeof(DynamicObjectField),
+			typeof(CorpseField),
 			typeof(AreaTriggerField),
 			typeof(SceneObjectField),
 			typeof(ConversationField),
@@ -155,16 +163,16 @@ public static class LegacyVersion
 			typeof(SceneObjectDynamicField),
 			typeof(ConversationDynamicField)
 		};
-		ClientVersionBuild ufDefiningBuild = LegacyVersion.GetUpdateFieldsDefiningBuild(LegacyVersion.Build);
+		ClientVersionBuild ufDefiningBuild = GetUpdateFieldsDefiningBuild(Build);
 		bool loaded = false;
 		Type[] array = enumTypes;
 		foreach (Type enumType in array)
 		{
-			string vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild.ToString() + "." + enumType.Name;
+			string vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
 			Type vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
 			if (vEnumType == null)
 			{
-				vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild.ToString() + "." + enumType.Name;
+				vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
 				vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
 				if (vEnumType == null)
 				{
@@ -177,8 +185,8 @@ public static class LegacyVersion
 			Dictionary<string, int> namesResult = new Dictionary<string, int>(vNames.Length);
 			for (int j = 0; j < vValues.Length; j++)
 			{
-				UpdateFieldType format = (from attribute in enumType.GetMember(vNames[j]).SelectMany((MemberInfo member) => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
-					where ((UpdateFieldAttribute)attribute).Version <= LegacyVersion.Build
+				UpdateFieldType format = (from attribute in enumType.GetMember(vNames[j]).SelectMany(member => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
+					where ((UpdateFieldAttribute)attribute).Version <= Build
 					orderby ((UpdateFieldAttribute)attribute).Version descending
 					select ((UpdateFieldAttribute)attribute).UFAttribute).DefaultIfEmpty(UpdateFieldType.Default).First();
 				result.Add((int)vValues.GetValue(j), new UpdateFieldInfo
@@ -203,7 +211,7 @@ public static class LegacyVersion
 
 	public static int GetUpdateField<T>(T field)
 	{
-		if (LegacyVersion.UpdateFieldNameDictionary.TryGetValue(typeof(T), out var byNamesDict) && byNamesDict.TryGetValue(field.ToString(), out var fieldValue))
+		if (UpdateFieldNameDictionary.TryGetValue(typeof(T), out var byNamesDict) && byNamesDict.TryGetValue(field.ToString(), out var fieldValue))
 		{
 			return fieldValue;
 		}
@@ -212,7 +220,7 @@ public static class LegacyVersion
 
 	public static string GetUpdateFieldName<T>(int field)
 	{
-		if (LegacyVersion.UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
+		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
 			int index = infoDict.BinarySearch(field);
 			if (index >= 0)
@@ -228,7 +236,7 @@ public static class LegacyVersion
 
 	public static UpdateFieldInfo GetUpdateFieldInfo<T>(int field)
 	{
-		if (LegacyVersion.UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
+		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
 			int index = infoDict.BinarySearch(field);
 			if (index >= 0)
@@ -242,14 +250,14 @@ public static class LegacyVersion
 
 	public static Type GetResponseCodesEnum()
 	{
-		switch (Opcodes.GetOpcodesDefiningBuild(LegacyVersion.Build))
+		switch (Opcodes.GetOpcodesDefiningBuild(Build))
 		{
 		case ClientVersionBuild.V1_12_1_5875:
-			return typeof(HermesProxy.World.Enums.V1_12_1_5875.ResponseCodes);
+			return typeof(ResponseCodes);
 		case ClientVersionBuild.V2_4_3_8606:
-			return typeof(HermesProxy.World.Enums.V2_4_3_8606.ResponseCodes);
+			return typeof(World.Enums.V2_4_3_8606.ResponseCodes);
 		case ClientVersionBuild.V3_3_5a_12340:
-			return typeof(HermesProxy.World.Enums.V3_3_5a_12340.ResponseCodes);
+			return typeof(World.Enums.V3_3_5a_12340.ResponseCodes);
 		default:
 			return null;
 		}
@@ -257,48 +265,48 @@ public static class LegacyVersion
 
 	private static byte GetExpansionVersion()
 	{
-		string str = LegacyVersion.VersionString;
+		string str = VersionString;
 		str = str.Replace("V", "");
-		str = str.Substring(0, str.IndexOf("_"));
+		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
 	}
 
 	private static byte GetMajorPatchVersion()
 	{
-		string str = LegacyVersion.VersionString;
+		string str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
-		str = str.Substring(0, str.IndexOf("_"));
+		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
 	}
 
 	private static byte GetMinorPatchVersion()
 	{
-		string str = LegacyVersion.VersionString;
+		string str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(str.IndexOf('_') + 1);
-		str = str.Substring(0, str.IndexOf("_"));
+		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		str = new string(str.TakeWhile(char.IsDigit).ToArray());
 		return (byte)uint.Parse(str);
 	}
 
 	public static bool InVersion(ClientVersionBuild build1, ClientVersionBuild build2)
 	{
-		return LegacyVersion.AddedInVersion(build1) && LegacyVersion.RemovedInVersion(build2);
+		return AddedInVersion(build1) && RemovedInVersion(build2);
 	}
 
 	public static bool AddedInVersion(ClientVersionBuild build)
 	{
-		return LegacyVersion.Build >= build;
+		return Build >= build;
 	}
 
 	public static bool RemovedInVersion(ClientVersionBuild build)
 	{
-		return LegacyVersion.Build < build;
+		return Build < build;
 	}
 
 	public static int GetPowersCount()
 	{
-		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
+		if (RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			return 5;
 		}
@@ -307,11 +315,11 @@ public static class LegacyVersion
 
 	public static byte GetMaxLevel()
 	{
-		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
+		if (RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			return 60;
 		}
-		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
+		if (RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			return 70;
 		}
@@ -320,7 +328,7 @@ public static class LegacyVersion
 
 	public static HitInfo ConvertHitInfoFlags(uint hitInfo)
 	{
-		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
+		if (RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			return ((HitInfoVanilla)hitInfo).CastFlags<HitInfo>();
 		}
@@ -329,13 +337,13 @@ public static class LegacyVersion
 
 	public static uint ConvertSpellCastResult(uint result)
 	{
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
+		if (AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			Type typeFromHandle = typeof(SpellCastResultClassic);
 			SpellCastResultWotLK spellCastResultWotLK = (SpellCastResultWotLK)result;
 			return (uint)Enum.Parse(typeFromHandle, spellCastResultWotLK.ToString());
 		}
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
+		if (AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			Type typeFromHandle2 = typeof(SpellCastResultClassic);
 			SpellCastResultTBC spellCastResultTBC = (SpellCastResultTBC)result;
@@ -348,13 +356,13 @@ public static class LegacyVersion
 
 	public static QuestGiverStatusModern ConvertQuestGiverStatus(byte status)
 	{
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
+		if (AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			Type typeFromHandle = typeof(QuestGiverStatusModern);
 			QuestGiverStatusWotLK questGiverStatusWotLK = (QuestGiverStatusWotLK)status;
 			return (QuestGiverStatusModern)Enum.Parse(typeFromHandle, questGiverStatusWotLK.ToString());
 		}
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
+		if (AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			Type typeFromHandle2 = typeof(QuestGiverStatusModern);
 			QuestGiverStatusTBC questGiverStatusTBC = (QuestGiverStatusTBC)status;
@@ -367,13 +375,13 @@ public static class LegacyVersion
 
 	public static InventoryResult ConvertInventoryResult(uint result)
 	{
-		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
+		if (RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			Type typeFromHandle = typeof(InventoryResult);
 			InventoryResultVanilla inventoryResultVanilla = (InventoryResultVanilla)result;
 			return (InventoryResult)Enum.Parse(typeFromHandle, inventoryResultVanilla.ToString());
 		}
-		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
+		if (RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			Type typeFromHandle2 = typeof(InventoryResult);
 			InventoryResultTBC inventoryResultTBC = (InventoryResultTBC)result;
@@ -384,11 +392,11 @@ public static class LegacyVersion
 
 	public static int GetQuestLogSize()
 	{
-		return LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 25 : 20;
+		return AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 25 : 20;
 	}
 
 	public static int GetAuraSlotsCount()
 	{
-		return LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 56 : 48;
+		return AddedInVersion(ClientVersionBuild.V2_0_1_6180) ? 56 : 48;
 	}
 }

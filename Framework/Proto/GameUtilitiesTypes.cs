@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.GameUtilities.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/game_utilities_types.proto</summary>
@@ -156,7 +156,7 @@ namespace Bgs.Protocol.GameUtilities.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Identity, other.Identity)) return false;
+      if (!Equals(Identity, other.Identity)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Rating, other.Rating)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       return Equals(_unknownFields, other._unknownFields);

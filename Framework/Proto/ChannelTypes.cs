@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Channel.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/channel_types.proto</summary>
@@ -500,7 +500,7 @@ namespace Bgs.Protocol.Channel.V1 {
       if (Program != other.Program) return false;
       if (Locale != other.Locale) return false;
       if (CapacityFull != other.CapacityFull) return false;
-      if (!object.Equals(AttributeFilter, other.AttributeFilter)) return false;
+      if (!Equals(AttributeFilter, other.AttributeFilter)) return false;
       if (ChannelType != other.ChannelType) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -800,9 +800,9 @@ namespace Bgs.Protocol.Channel.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ChannelId, other.ChannelId)) return false;
+      if (!Equals(ChannelId, other.ChannelId)) return false;
       if (CurrentMembers != other.CurrentMembers) return false;
-      if (!object.Equals(State, other.State)) return false;
+      if (!Equals(State, other.State)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -994,7 +994,7 @@ namespace Bgs.Protocol.Channel.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Description, other.Description)) return false;
+      if (!Equals(Description, other.Description)) return false;
       if(!member_.Equals(other.member_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1864,7 +1864,7 @@ namespace Bgs.Protocol.Channel.V1 {
       if(!attribute_.Equals(other.attribute_)) return false;
       if(!role_.Equals(other.role_)) return false;
       if (Privileges != other.Privileges) return false;
-      if (!object.Equals(Info, other.Info)) return false;
+      if (!Equals(Info, other.Info)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2063,8 +2063,8 @@ namespace Bgs.Protocol.Channel.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Identity, other.Identity)) return false;
-      if (!object.Equals(State, other.State)) return false;
+      if (!Equals(Identity, other.Identity)) return false;
+      if (!Equals(State, other.State)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2277,9 +2277,9 @@ namespace Bgs.Protocol.Channel.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Account, other.Account)) return false;
-      if (!object.Equals(GameAccount, other.GameAccount)) return false;
-      if (!object.Equals(Process, other.Process)) return false;
+      if (!Equals(Account, other.Account)) return false;
+      if (!Equals(GameAccount, other.GameAccount)) return false;
+      if (!Equals(Process, other.Process)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

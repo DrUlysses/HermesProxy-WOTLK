@@ -17,8 +17,8 @@ internal class AuctionOutbidNotification : ServerPacket
 
 	protected override void Write()
 	{
-		this.Info.Write(base._worldPacket);
-		base._worldPacket.WriteUInt64(this.BidAmount);
-		base._worldPacket.WriteUInt64(this.MinIncrement);
+		Info.Write(_worldPacket);
+		_worldPacket.WriteUInt64(BidAmount);
+		_worldPacket.WriteUInt64(MinIncrement);
 	}
 }

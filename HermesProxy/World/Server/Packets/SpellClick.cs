@@ -1,5 +1,3 @@
-using HermesProxy.World.Objects;
-
 namespace HermesProxy.World.Server.Packets;
 
 public class SpellClick : ClientPacket
@@ -14,7 +12,7 @@ public class SpellClick : ClientPacket
 
 	public override void Read()
 	{
-		this.SpellClickUnitGuid = base._worldPacket.ReadPackedGuid128();
-		this.TryAutoDismount = base._worldPacket.ReadBit();
+		SpellClickUnitGuid = _worldPacket.ReadPackedGuid128();
+		TryAutoDismount = _worldPacket.ReadBit();
 	}
 }

@@ -15,7 +15,7 @@ public class HealthUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WriteInt64(this.Health);
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WriteInt64(Health);
 	}
 }

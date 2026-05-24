@@ -13,6 +13,6 @@ internal class InstanceReset : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.MapID);
+		_worldPacket.WriteUInt32(MapID);
 	}
 }

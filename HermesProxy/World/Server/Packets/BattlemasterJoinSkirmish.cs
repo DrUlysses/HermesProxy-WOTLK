@@ -19,10 +19,10 @@ internal class BattlemasterJoinSkirmish : ClientPacket
 
 	public override void Read()
 	{
-		this.Guid = base._worldPacket.ReadPackedGuid128();
-		this.Roles = base._worldPacket.ReadUInt8();
-		this.TeamSize = base._worldPacket.ReadUInt8();
-		this.AsGroup = base._worldPacket.HasBit();
-		this.Requeue = base._worldPacket.HasBit();
+		Guid = _worldPacket.ReadPackedGuid128();
+		Roles = _worldPacket.ReadUInt8();
+		TeamSize = _worldPacket.ReadUInt8();
+		AsGroup = _worldPacket.HasBit();
+		Requeue = _worldPacket.HasBit();
 	}
 }

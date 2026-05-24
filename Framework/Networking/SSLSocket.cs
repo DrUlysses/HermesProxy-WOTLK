@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,14 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Logging;
 using System;
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
+using Framework.Logging;
 
 namespace Framework.Networking
 {
@@ -76,7 +77,7 @@ namespace Framework.Networking
                     return;
                 }
 
-                ReadHandler(_receiveBuffer, result);
+                await ReadHandler(_receiveBuffer, result);
             }
             catch (Exception ex)
             {
@@ -89,13 +90,13 @@ namespace Framework.Networking
             try
             {
                 Log.Print(LogType.Debug, $"TLS handshake starting with {GetRemoteIpEndPoint()}");
-                using var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(5));
-                await _stream.AuthenticateAsServerAsync(new System.Net.Security.SslServerAuthenticationOptions
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                await _stream.AuthenticateAsServerAsync(new SslServerAuthenticationOptions
                 {
                     ServerCertificate = certificate,
                     EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.None,
                     ClientCertificateRequired = false,
-                    CertificateRevocationCheckMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck,
+                    CertificateRevocationCheckMode = X509RevocationMode.NoCheck,
                 }, cts.Token);
                 Log.Print(LogType.Debug, $"TLS handshake succeeded with {GetRemoteIpEndPoint()}");
             }
@@ -139,13 +140,6 @@ namespace Framework.Networking
             }
         }
 
-        public virtual void OnClose() { Dispose(); }
-
         public bool IsOpen() { return _socket.Connected; }
-
-        public void SetNoDelay(bool enable)
-        {
-            _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, enable);
-        }
     }
 }

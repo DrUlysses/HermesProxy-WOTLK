@@ -12,10 +12,10 @@ public class QuestPOIQuery : ClientPacket
 
 	public override void Read()
 	{
-		this.MissingQuestCount = base._worldPacket.ReadInt32();
-		for (int i = 0; i < this.MissingQuestCount && i < 175; i++)
+		MissingQuestCount = _worldPacket.ReadInt32();
+		for (int i = 0; i < MissingQuestCount && i < 175; i++)
 		{
-			this.MissingQuestPOIs[i] = base._worldPacket.ReadInt32();
+			MissingQuestPOIs[i] = _worldPacket.ReadInt32();
 		}
 	}
 }

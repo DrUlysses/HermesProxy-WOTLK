@@ -11,6 +11,6 @@ public class GuildDemoteMember : ClientPacket
 
 	public override void Read()
 	{
-		this.Demotee = base._worldPacket.ReadPackedGuid128();
+		Demotee = _worldPacket.ReadPackedGuid128();
 	}
 }

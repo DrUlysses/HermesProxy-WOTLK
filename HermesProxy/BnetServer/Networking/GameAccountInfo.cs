@@ -17,25 +17,25 @@ public class GameAccountInfo
 
 	public bool IsPermanenetlyBanned;
 
-	public WowGuid128 WoWAccountGuid => WowGuid128.Create(HighGuidType703.WowAccount, this.Id);
+	public WowGuid128 WoWAccountGuid => WowGuid128.Create(HighGuidType703.WowAccount, Id);
 
 	public GameAccountInfo(string name)
 	{
-		this.Id = 1u;
-		this.Name = name;
-		this.UnbanDate = 0u;
-		this.IsPermanenetlyBanned = false;
-		this.IsBanned = this.IsPermanenetlyBanned || this.UnbanDate > Time.UnixTime;
-		int hashPos = this.Name.IndexOf('#');
+		Id = 1u;
+		Name = name;
+		UnbanDate = 0u;
+		IsPermanenetlyBanned = false;
+		IsBanned = IsPermanenetlyBanned || UnbanDate > Time.UnixTime;
+		int hashPos = Name.IndexOf('#');
 		if (hashPos != -1)
 		{
-			string name2 = this.Name;
+			string name2 = Name;
 			int num = hashPos + 1;
-			this.DisplayName = "WoW" + name2.Substring(num, name2.Length - num);
+			DisplayName = "WoW" + name2.Substring(num, name2.Length - num);
 		}
 		else
 		{
-			this.DisplayName = this.Name;
+			DisplayName = Name;
 		}
 	}
 }

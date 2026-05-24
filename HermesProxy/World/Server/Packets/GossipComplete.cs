@@ -15,8 +15,8 @@ public class GossipComplete : ServerPacket
 	{
 		if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 2, 2, 5, 3))
 		{
-			base._worldPacket.WriteBit(this.SuppressSound);
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteBit(SuppressSound);
+			_worldPacket.FlushBits();
 		}
 	}
 }

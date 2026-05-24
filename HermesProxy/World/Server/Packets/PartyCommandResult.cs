@@ -22,11 +22,11 @@ internal class PartyCommandResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits(this.Name.GetByteCount(), 9);
-		base._worldPacket.WriteBits(this.Command, 4);
-		base._worldPacket.WriteBits(this.Result, 6);
-		base._worldPacket.WriteUInt32(this.ResultData);
-		base._worldPacket.WritePackedGuid128(this.ResultGUID);
-		base._worldPacket.WriteString(this.Name);
+		_worldPacket.WriteBits(Name.GetByteCount(), 9);
+		_worldPacket.WriteBits(Command, 4);
+		_worldPacket.WriteBits(Result, 6);
+		_worldPacket.WriteUInt32(ResultData);
+		_worldPacket.WritePackedGuid128(ResultGUID);
+		_worldPacket.WriteString(Name);
 	}
 }

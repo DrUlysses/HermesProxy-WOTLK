@@ -13,7 +13,7 @@ internal class SetFactionInactive : ClientPacket
 
 	public override void Read()
 	{
-		this.FactionIndex = base._worldPacket.ReadUInt32();
-		this.State = base._worldPacket.HasBit();
+		FactionIndex = _worldPacket.ReadUInt32();
+		State = _worldPacket.HasBit();
 	}
 }

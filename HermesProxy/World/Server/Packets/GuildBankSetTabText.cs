@@ -13,7 +13,7 @@ public class GuildBankSetTabText : ClientPacket
 
 	public override void Read()
 	{
-		this.Tab = base._worldPacket.ReadInt32();
-		this.TabText = base._worldPacket.ReadString(base._worldPacket.ReadBits<uint>(14));
+		Tab = _worldPacket.ReadInt32();
+		TabText = _worldPacket.ReadString(_worldPacket.ReadBits<uint>(14));
 	}
 }

@@ -22,28 +22,28 @@ public class QuestGiverOfferReward
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.QuestGiverGUID);
+		data.WritePackedGuid128(QuestGiverGUID);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			data.WriteInt32((int)this.QuestGiverCreatureID);
+			data.WriteInt32((int)QuestGiverCreatureID);
 		}
-		data.WriteUInt32(this.QuestID);
-		data.WriteUInt32(this.QuestFlags[0]);
-		data.WriteUInt32(this.QuestFlags[1]);
+		data.WriteUInt32(QuestID);
+		data.WriteUInt32(QuestFlags[0]);
+		data.WriteUInt32(QuestFlags[1]);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			data.WriteUInt32((this.QuestFlags.Length > 2) ? this.QuestFlags[2] : 0u);
+			data.WriteUInt32((QuestFlags.Length > 2) ? QuestFlags[2] : 0u);
 		}
-		data.WriteUInt32(this.SuggestedPartyMembers);
-		data.WriteInt32(this.Emotes.Count);
-		foreach (QuestDescEmote emote in this.Emotes)
+		data.WriteUInt32(SuggestedPartyMembers);
+		data.WriteInt32(Emotes.Count);
+		foreach (QuestDescEmote emote in Emotes)
 		{
 			data.WriteInt32((int)emote.Type);
 			data.WriteUInt32(emote.Delay);
 		}
-		data.WriteBit(this.AutoLaunched);
+		data.WriteBit(AutoLaunched);
 		data.WriteBit(bit: false);
 		data.FlushBits();
-		this.Rewards.Write(data);
+		Rewards.Write(data);
 	}
 }

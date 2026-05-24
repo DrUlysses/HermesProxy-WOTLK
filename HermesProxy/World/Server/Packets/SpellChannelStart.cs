@@ -24,20 +24,20 @@ public class SpellChannelStart : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteUInt32(this.SpellXSpellVisualID);
-		base._worldPacket.WriteUInt32(this.Duration);
-		base._worldPacket.WriteBit(this.InterruptImmunities != null);
-		base._worldPacket.WriteBit(this.HealPrediction != null);
-		base._worldPacket.FlushBits();
-		if (this.InterruptImmunities != null)
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteUInt32(SpellXSpellVisualID);
+		_worldPacket.WriteUInt32(Duration);
+		_worldPacket.WriteBit(InterruptImmunities != null);
+		_worldPacket.WriteBit(HealPrediction != null);
+		_worldPacket.FlushBits();
+		if (InterruptImmunities != null)
 		{
-			this.InterruptImmunities.Write(base._worldPacket);
+			InterruptImmunities.Write(_worldPacket);
 		}
-		if (this.HealPrediction != null)
+		if (HealPrediction != null)
 		{
-			this.HealPrediction.Write(base._worldPacket);
+			HealPrediction.Write(_worldPacket);
 		}
 	}
 }

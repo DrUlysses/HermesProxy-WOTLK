@@ -37,26 +37,26 @@ internal class SpellPeriodicAuraLog : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteUInt32(this.Effect);
-			data.WriteInt32(this.Amount);
-			data.WriteInt32(this.OriginalDamage);
-			data.WriteUInt32(this.OverHealOrKill);
-			data.WriteUInt32(this.SchoolMaskOrPower);
-			data.WriteUInt32(this.AbsorbedOrAmplitude);
-			data.WriteUInt32(this.Resisted);
+			data.WriteUInt32(Effect);
+			data.WriteInt32(Amount);
+			data.WriteInt32(OriginalDamage);
+			data.WriteUInt32(OverHealOrKill);
+			data.WriteUInt32(SchoolMaskOrPower);
+			data.WriteUInt32(AbsorbedOrAmplitude);
+			data.WriteUInt32(Resisted);
 			data.WriteUInt32(0u); // Supporters.size() = 0
-			data.WriteBit(this.Crit);
-			data.WriteBit(this.DebugInfo != null);
-			data.WriteBit(this.ContentTuning != null);
+			data.WriteBit(Crit);
+			data.WriteBit(DebugInfo != null);
+			data.WriteBit(ContentTuning != null);
 			data.FlushBits();
-			if (this.ContentTuning != null)
+			if (ContentTuning != null)
 			{
-				this.ContentTuning.Write(data);
+				ContentTuning.Write(data);
 			}
-			if (this.DebugInfo != null)
+			if (DebugInfo != null)
 			{
-				data.WriteFloat(this.DebugInfo.CritRollMade);
-				data.WriteFloat(this.DebugInfo.CritRollNeeded);
+				data.WriteFloat(DebugInfo.CritRollMade);
+				data.WriteFloat(DebugInfo.CritRollNeeded);
 			}
 		}
 	}
@@ -78,19 +78,19 @@ internal class SpellPeriodicAuraLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.TargetGUID);
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteInt32(this.Effects.Count);
-		base._worldPacket.WriteBit(this.LogData != null);
-		base._worldPacket.FlushBits();
-		foreach (SpellLogEffect effect in this.Effects)
+		_worldPacket.WritePackedGuid128(TargetGUID);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteInt32(Effects.Count);
+		_worldPacket.WriteBit(LogData != null);
+		_worldPacket.FlushBits();
+		foreach (SpellLogEffect effect in Effects)
 		{
-			effect.Write(base._worldPacket);
+			effect.Write(_worldPacket);
 		}
-		if (this.LogData != null)
+		if (LogData != null)
 		{
-			this.LogData.Write(base._worldPacket);
+			LogData.Write(_worldPacket);
 		}
 	}
 }

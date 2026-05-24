@@ -11,6 +11,6 @@ internal class LootRelease : ClientPacket
 
 	public override void Read()
 	{
-		this.Owner = base._worldPacket.ReadPackedGuid128();
+		Owner = _worldPacket.ReadPackedGuid128();
 	}
 }

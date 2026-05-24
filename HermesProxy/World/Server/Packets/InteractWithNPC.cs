@@ -11,6 +11,6 @@ public class InteractWithNPC : ClientPacket
 
 	public override void Read()
 	{
-		this.CreatureGUID = base._worldPacket.ReadPackedGuid128();
+		CreatureGUID = _worldPacket.ReadPackedGuid128();
 	}
 }

@@ -45,22 +45,22 @@ public class InspectHonorStatsResultClassic : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
-		base._worldPacket.WriteUInt8(this.LifetimeHighestRank);
-		base._worldPacket.WriteUInt16(this.TodayHonorableKills);
-		base._worldPacket.WriteUInt16(this.TodayDishonorableKills);
-		base._worldPacket.WriteUInt16(this.YesterdayHonorableKills);
-		base._worldPacket.WriteUInt16(this.YesterdayDishonorableKills);
-		base._worldPacket.WriteUInt16(this.LastWeekHonorableKills);
-		base._worldPacket.WriteUInt16(this.LastWeekDishonorableKills);
-		base._worldPacket.WriteUInt16(this.ThisWeekHonorableKills);
-		base._worldPacket.WriteUInt16(this.ThisWeekDishonorableKills);
-		base._worldPacket.WriteUInt32(this.LifetimeHonorableKills);
-		base._worldPacket.WriteUInt32(this.LifetimeDishonorableKills);
-		base._worldPacket.WriteUInt32(this.YesterdayHonor);
-		base._worldPacket.WriteUInt32(this.LastWeekHonor);
-		base._worldPacket.WriteUInt32(this.ThisWeekHonor);
-		base._worldPacket.WriteUInt32(this.Standing);
-		base._worldPacket.WriteUInt8(this.RankProgress);
+		_worldPacket.WritePackedGuid128(PlayerGUID);
+		_worldPacket.WriteUInt8(LifetimeHighestRank);
+		_worldPacket.WriteUInt16(TodayHonorableKills);
+		_worldPacket.WriteUInt16(TodayDishonorableKills);
+		_worldPacket.WriteUInt16(YesterdayHonorableKills);
+		_worldPacket.WriteUInt16(YesterdayDishonorableKills);
+		_worldPacket.WriteUInt16(LastWeekHonorableKills);
+		_worldPacket.WriteUInt16(LastWeekDishonorableKills);
+		_worldPacket.WriteUInt16(ThisWeekHonorableKills);
+		_worldPacket.WriteUInt16(ThisWeekDishonorableKills);
+		_worldPacket.WriteUInt32(LifetimeHonorableKills);
+		_worldPacket.WriteUInt32(LifetimeDishonorableKills);
+		_worldPacket.WriteUInt32(YesterdayHonor);
+		_worldPacket.WriteUInt32(LastWeekHonor);
+		_worldPacket.WriteUInt32(ThisWeekHonor);
+		_worldPacket.WriteUInt32(Standing);
+		_worldPacket.WriteUInt8(RankProgress);
 	}
 }

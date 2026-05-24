@@ -16,7 +16,7 @@ public class SetProficiency : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.ProficiencyMask);
-		base._worldPacket.WriteUInt8(this.ProficiencyClass);
+		_worldPacket.WriteUInt32(ProficiencyMask);
+		_worldPacket.WriteUInt8(ProficiencyClass);
 	}
 }

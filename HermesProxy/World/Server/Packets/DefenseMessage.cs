@@ -16,9 +16,9 @@ internal class DefenseMessage : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.ZoneID);
-		base._worldPacket.WriteBits(this.MessageText.GetByteCount(), 12);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.MessageText);
+		_worldPacket.WriteUInt32(ZoneID);
+		_worldPacket.WriteBits(MessageText.GetByteCount(), 12);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(MessageText);
 	}
 }

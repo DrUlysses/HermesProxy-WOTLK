@@ -21,14 +21,14 @@ internal class SetFactionStanding : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteFloat(this.ReferAFriendBonus);
-		base._worldPacket.WriteFloat(this.BonusFromAchievementSystem);
-		base._worldPacket.WriteInt32(this.Factions.Count);
-		foreach (FactionStandingData faction in this.Factions)
+		_worldPacket.WriteFloat(ReferAFriendBonus);
+		_worldPacket.WriteFloat(BonusFromAchievementSystem);
+		_worldPacket.WriteInt32(Factions.Count);
+		foreach (FactionStandingData faction in Factions)
 		{
-			faction.Write(base._worldPacket);
+			faction.Write(_worldPacket);
 		}
-		base._worldPacket.WriteBit(this.ShowVisual);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(ShowVisual);
+		_worldPacket.FlushBits();
 	}
 }

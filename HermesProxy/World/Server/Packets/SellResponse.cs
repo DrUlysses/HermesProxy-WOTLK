@@ -17,9 +17,9 @@ public class SellResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.VendorGUID);
-		base._worldPacket.WriteUInt32(1); // ItemGUIDs count
-		base._worldPacket.WriteInt32((int)this.Reason);
-		base._worldPacket.WritePackedGuid128(this.ItemGUID);
+		_worldPacket.WritePackedGuid128(VendorGUID);
+		_worldPacket.WriteUInt32(1); // ItemGUIDs count
+		_worldPacket.WriteInt32(Reason);
+		_worldPacket.WritePackedGuid128(ItemGUID);
 	}
 }

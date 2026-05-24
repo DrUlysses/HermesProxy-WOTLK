@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -16,6 +16,8 @@
  */
 
 using System;
+using System.Diagnostics;
+using System.Threading;
 
 public static class Time
 {
@@ -78,8 +80,7 @@ public static class Time
     {
         if (oldMSTime > newMSTime)
             return (0xFFFFFFFF - oldMSTime) + newMSTime;
-        else
-            return newMSTime - oldMSTime;
+        return newMSTime - oldMSTime;
     }
 
     public static uint GetMSTimeDiffToNow(uint oldMSTime)
@@ -87,8 +88,7 @@ public static class Time
         var newMSTime = GetMSTime();
         if (oldMSTime > newMSTime)
             return (0xFFFFFFFF - oldMSTime) + newMSTime;
-        else
-            return newMSTime - oldMSTime;
+        return newMSTime - oldMSTime;
     }
 
     public static DateTime UnixTimeToDateTime(long unixTime)
@@ -207,13 +207,13 @@ public static class Time
     public static void Profile(string description, int iterations, Action func)
     {
         //Run at highest priority to minimize fluctuations caused by other processes/threads
-        System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
-        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Highest;
+        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+        Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
         // warm up 
         func();
 
-        var watch = new System.Diagnostics.Stopwatch();
+        var watch = new Stopwatch();
 
         // clean up
         GC.Collect();

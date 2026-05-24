@@ -13,7 +13,7 @@ public class GuildBankAtivate : ClientPacket
 
 	public override void Read()
 	{
-		this.BankGuid = base._worldPacket.ReadPackedGuid128();
-		this.FullUpdate = base._worldPacket.HasBit();
+		BankGuid = _worldPacket.ReadPackedGuid128();
+		FullUpdate = _worldPacket.HasBit();
 	}
 }

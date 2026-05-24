@@ -18,9 +18,9 @@ internal class QuestConfirmAccept : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.QuestID);
-		base._worldPacket.WritePackedGuid128(this.InitiatedBy);
-		base._worldPacket.WriteBits(this.QuestTitle.GetByteCount(), 10);
-		base._worldPacket.WriteString(this.QuestTitle);
+		_worldPacket.WriteUInt32(QuestID);
+		_worldPacket.WritePackedGuid128(InitiatedBy);
+		_worldPacket.WriteBits(QuestTitle.GetByteCount(), 10);
+		_worldPacket.WriteString(QuestTitle);
 	}
 }

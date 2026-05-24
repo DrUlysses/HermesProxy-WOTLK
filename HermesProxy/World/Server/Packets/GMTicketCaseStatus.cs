@@ -11,6 +11,6 @@ public class GMTicketCaseStatus : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(0); // Cases.size() = 0, no open tickets
+		_worldPacket.WriteInt32(0); // Cases.size() = 0, no open tickets
 	}
 }

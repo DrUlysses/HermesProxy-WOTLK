@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_ban.proto</summary>
@@ -151,7 +151,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (Reason != other.Reason) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -429,9 +429,9 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Id, other.Id)) return false;
+      if (!Equals(Id, other.Id)) return false;
       if (BattleTag != other.BattleTag) return false;
-      if (!object.Equals(Creator, other.Creator)) return false;
+      if (!Equals(Creator, other.Creator)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (Reason != other.Reason) return false;
       if (CreationTime != other.CreationTime) return false;

@@ -10,13 +10,13 @@ public class TargetLocation
 
 	public void Read(WorldPacket data)
 	{
-		this.Transport = data.ReadPackedGuid128();
-		this.Location = data.ReadVector3();
+		Transport = data.ReadPackedGuid128();
+		Location = data.ReadVector3();
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.Transport);
-		data.WriteVector3(this.Location);
+		data.WritePackedGuid128(Transport);
+		data.WriteVector3(Location);
 	}
 }

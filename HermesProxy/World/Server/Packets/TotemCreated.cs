@@ -23,12 +23,12 @@ internal class TotemCreated : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8(this.Slot);
-		base._worldPacket.WritePackedGuid128(this.Totem);
-		base._worldPacket.WriteUInt32(this.Duration);
-		base._worldPacket.WriteUInt32(this.SpellId);
-		base._worldPacket.WriteFloat(this.TimeMod);
-		base._worldPacket.WriteBit(this.CannotDismiss);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt8(Slot);
+		_worldPacket.WritePackedGuid128(Totem);
+		_worldPacket.WriteUInt32(Duration);
+		_worldPacket.WriteUInt32(SpellId);
+		_worldPacket.WriteFloat(TimeMod);
+		_worldPacket.WriteBit(CannotDismiss);
+		_worldPacket.FlushBits();
 	}
 }

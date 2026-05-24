@@ -20,19 +20,19 @@ internal class PetStableList : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.StableMaster);
-		base._worldPacket.WriteInt32(this.Pets.Count);
-		base._worldPacket.WriteUInt8(this.NumStableSlots);
-		foreach (PetStableInfo pet in this.Pets)
+		_worldPacket.WritePackedGuid128(StableMaster);
+		_worldPacket.WriteInt32(Pets.Count);
+		_worldPacket.WriteUInt8(NumStableSlots);
+		foreach (PetStableInfo pet in Pets)
 		{
-			base._worldPacket.WriteUInt32(pet.PetNumber);
-			base._worldPacket.WriteUInt32(pet.CreatureID);
-			base._worldPacket.WriteUInt32(pet.DisplayID);
-			base._worldPacket.WriteUInt32(pet.ExperienceLevel);
-			base._worldPacket.WriteUInt8(pet.LoyaltyLevel);
-			base._worldPacket.WriteUInt8(pet.PetFlags);
-			base._worldPacket.WriteBits(pet.PetName.GetByteCount(), 8);
-			base._worldPacket.WriteString(pet.PetName);
+			_worldPacket.WriteUInt32(pet.PetNumber);
+			_worldPacket.WriteUInt32(pet.CreatureID);
+			_worldPacket.WriteUInt32(pet.DisplayID);
+			_worldPacket.WriteUInt32(pet.ExperienceLevel);
+			_worldPacket.WriteUInt8(pet.LoyaltyLevel);
+			_worldPacket.WriteUInt8(pet.PetFlags);
+			_worldPacket.WriteBits(pet.PetName.GetByteCount(), 8);
+			_worldPacket.WriteString(pet.PetName);
 		}
 	}
 }

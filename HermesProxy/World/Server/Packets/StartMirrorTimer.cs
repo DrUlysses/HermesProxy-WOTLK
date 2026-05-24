@@ -23,12 +23,12 @@ public class StartMirrorTimer : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32((int)this.Timer);
-		base._worldPacket.WriteInt32(this.Value);
-		base._worldPacket.WriteInt32(this.MaxValue);
-		base._worldPacket.WriteInt32(this.Scale);
-		base._worldPacket.WriteInt32(this.SpellID);
-		base._worldPacket.WriteBit(this.Paused);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteInt32((int)Timer);
+		_worldPacket.WriteInt32(Value);
+		_worldPacket.WriteInt32(MaxValue);
+		_worldPacket.WriteInt32(Scale);
+		_worldPacket.WriteInt32(SpellID);
+		_worldPacket.WriteBit(Paused);
+		_worldPacket.FlushBits();
 	}
 }

@@ -16,24 +16,24 @@ public abstract class WowGuid
 
 	public ulong GetLowValue()
 	{
-		return this.Low;
+		return Low;
 	}
 
 	public abstract uint GetEntry();
 
 	public HighGuidType GetHighType()
 	{
-		return this.HighGuid.GetHighGuidType();
+		return HighGuid.GetHighGuidType();
 	}
 
 	public ulong GetHighValue()
 	{
-		return this.High;
+		return High;
 	}
 
 	public ObjectType GetObjectType()
 	{
-		switch (this.GetHighType())
+		switch (GetHighType())
 		{
 		case HighGuidType.Player:
 			return ObjectType.Player;
@@ -60,7 +60,7 @@ public abstract class WowGuid
 
 	public bool IsWorldObject()
 	{
-		switch (this.GetHighType())
+		switch (GetHighType())
 		{
 		case HighGuidType.Player:
 		case HighGuidType.Transport:
@@ -79,7 +79,7 @@ public abstract class WowGuid
 
 	public bool IsTransport()
 	{
-		HighGuidType highType = this.GetHighType();
+		HighGuidType highType = GetHighType();
 		HighGuidType highGuidType = highType;
 		if ((uint)(highGuidType - 6) <= 1u)
 		{
@@ -90,7 +90,7 @@ public abstract class WowGuid
 
 	public bool IsPlayer()
 	{
-		ObjectType objectType = this.GetObjectType();
+		ObjectType objectType = GetObjectType();
 		ObjectType objectType2 = objectType;
 		if ((uint)(objectType2 - 6) <= 1u)
 		{
@@ -101,12 +101,12 @@ public abstract class WowGuid
 
 	public bool IsCreature()
 	{
-		return this.GetObjectType() == ObjectType.Unit;
+		return GetObjectType() == ObjectType.Unit;
 	}
 
 	public bool IsItem()
 	{
-		ObjectType objectType = this.GetObjectType();
+		ObjectType objectType = GetObjectType();
 		ObjectType objectType2 = objectType;
 		if ((uint)(objectType2 - 1) <= 1u)
 		{
@@ -146,22 +146,22 @@ public abstract class WowGuid
 
 	public override bool Equals(object obj)
 	{
-		return obj is WowGuid && this.Equals((WowGuid)obj);
+		return obj is WowGuid && Equals((WowGuid)obj);
 	}
 
 	public bool Equals(WowGuid other)
 	{
-		return other.Low == this.Low && other.High == this.High;
+		return other.Low == Low && other.High == High;
 	}
 
 	public override int GetHashCode()
 	{
-		return new { this.Low, this.High }.GetHashCode();
+		return new { Low, High }.GetHashCode();
 	}
 
 	public bool IsEmpty()
 	{
-		return this.High == 0L && this.Low == 0;
+		return High == 0L && Low == 0;
 	}
 
 	public abstract WowGuid64 To64();

@@ -22,11 +22,11 @@ public class DBReply : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.TableHash);
-		base._worldPacket.WriteUInt32(this.RecordID);
-		base._worldPacket.WriteUInt32(this.Timestamp);
-		base._worldPacket.WriteBits((byte)this.Status, 3);
-		base._worldPacket.WriteUInt32(this.Data.GetSize());
-		base._worldPacket.WriteBytes(this.Data.GetData());
+		_worldPacket.WriteUInt32((uint)TableHash);
+		_worldPacket.WriteUInt32(RecordID);
+		_worldPacket.WriteUInt32(Timestamp);
+		_worldPacket.WriteBits((byte)Status, 3);
+		_worldPacket.WriteUInt32(Data.GetSize());
+		_worldPacket.WriteBytes(Data.GetData());
 	}
 }

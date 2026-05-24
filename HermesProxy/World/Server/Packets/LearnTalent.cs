@@ -13,7 +13,7 @@ internal class LearnTalent : ClientPacket
 
 	public override void Read()
 	{
-		this.TalentID = base._worldPacket.ReadUInt32();
-		this.Rank = base._worldPacket.ReadUInt16();
+		TalentID = _worldPacket.ReadUInt32();
+		Rank = _worldPacket.ReadUInt16();
 	}
 }

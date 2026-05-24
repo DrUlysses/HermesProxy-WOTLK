@@ -14,9 +14,9 @@ public struct BattlegroundPlayerPosition
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.Guid);
-		data.WriteVector2(this.Pos);
-		data.WriteInt8(this.IconID);
-		data.WriteInt8(this.ArenaSlot);
+		data.WritePackedGuid128(Guid);
+		data.WriteVector2(Pos);
+		data.WriteInt8(IconID);
+		data.WriteInt8(ArenaSlot);
 	}
 }

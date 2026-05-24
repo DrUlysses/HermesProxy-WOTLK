@@ -23,16 +23,16 @@ public class QuestGiverQuestListMessage : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.QuestGiverGUID);
-		base._worldPacket.WriteUInt32(this.GreetEmoteDelay);
-		base._worldPacket.WriteUInt32(this.GreetEmoteType);
-		base._worldPacket.WriteInt32(this.QuestOptions.Count);
-		base._worldPacket.WriteBits(this.Greeting.GetByteCount(), 11);
-		base._worldPacket.FlushBits();
-		foreach (ClientGossipQuest quest in this.QuestOptions)
+		_worldPacket.WritePackedGuid128(QuestGiverGUID);
+		_worldPacket.WriteUInt32(GreetEmoteDelay);
+		_worldPacket.WriteUInt32(GreetEmoteType);
+		_worldPacket.WriteInt32(QuestOptions.Count);
+		_worldPacket.WriteBits(Greeting.GetByteCount(), 11);
+		_worldPacket.FlushBits();
+		foreach (ClientGossipQuest quest in QuestOptions)
 		{
-			quest.Write(base._worldPacket);
+			quest.Write(_worldPacket);
 		}
-		base._worldPacket.WriteString(this.Greeting);
+		_worldPacket.WriteString(Greeting);
 	}
 }

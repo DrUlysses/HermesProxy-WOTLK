@@ -32,12 +32,12 @@ internal class MoveSetCollisionHeight : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.MoverGUID);
-		base._worldPacket.WriteUInt32(this.SequenceIndex);
-		base._worldPacket.WriteFloat(this.Height);
-		base._worldPacket.WriteFloat(this.Scale);
-		base._worldPacket.WriteByteEnum(this.Reason);
-		base._worldPacket.WriteUInt32(this.MountDisplayID);
-		base._worldPacket.WriteInt32(this.ScaleDuration);
+		_worldPacket.WritePackedGuid128(MoverGUID);
+		_worldPacket.WriteUInt32(SequenceIndex);
+		_worldPacket.WriteFloat(Height);
+		_worldPacket.WriteFloat(Scale);
+		_worldPacket.WriteByteEnum(Reason);
+		_worldPacket.WriteUInt32(MountDisplayID);
+		_worldPacket.WriteInt32(ScaleDuration);
 	}
 }

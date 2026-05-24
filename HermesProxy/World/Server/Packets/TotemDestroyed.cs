@@ -13,7 +13,7 @@ internal class TotemDestroyed : ClientPacket
 
 	public override void Read()
 	{
-		this.Slot = base._worldPacket.ReadUInt8();
-		this.Guid = base._worldPacket.ReadPackedGuid128();
+		Slot = _worldPacket.ReadUInt8();
+		Guid = _worldPacket.ReadPackedGuid128();
 	}
 }

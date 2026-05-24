@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_notification.proto</summary>
@@ -326,12 +326,12 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Club, other.Club)) return false;
-      if (!object.Equals(View, other.View)) return false;
-      if (!object.Equals(Settings, other.Settings)) return false;
-      if (!object.Equals(Member, other.Member)) return false;
+      if (!Equals(Club, other.Club)) return false;
+      if (!Equals(View, other.View)) return false;
+      if (!Equals(Settings, other.Settings)) return false;
+      if (!Equals(Member, other.Member)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -602,7 +602,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -812,9 +812,9 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Assignment, other.Assignment)) return false;
+      if (!Equals(Assignment, other.Assignment)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1044,9 +1044,9 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Assignment, other.Assignment)) return false;
+      if (!Equals(Assignment, other.Assignment)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1265,7 +1265,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if(!member_.Equals(other.member_)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1473,7 +1473,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if(!member_.Equals(other.member_)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1681,7 +1681,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if(!assignment_.Equals(other.assignment_)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1889,7 +1889,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if(!assignment_.Equals(other.assignment_)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -2097,7 +2097,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if(!assignment_.Equals(other.assignment_)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -2316,9 +2316,9 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Invitation, other.Invitation)) return false;
+      if (!Equals(Invitation, other.Invitation)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2576,7 +2576,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if (InvitationId != other.InvitationId) return false;
       if (Reason != other.Reason) return false;
@@ -2818,9 +2818,9 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Suggestion, other.Suggestion)) return false;
+      if (!Equals(Suggestion, other.Suggestion)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3078,7 +3078,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if (SuggestionId != other.SuggestionId) return false;
       if (Reason != other.Reason) return false;
@@ -3320,9 +3320,9 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Stream, other.Stream)) return false;
+      if (!Equals(Stream, other.Stream)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3555,7 +3555,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if (StreamId != other.StreamId) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -3806,10 +3806,10 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if (StreamId != other.StreamId) return false;
-      if (!object.Equals(Assignment, other.Assignment)) return false;
+      if (!Equals(Assignment, other.Assignment)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4079,10 +4079,10 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if (StreamId != other.StreamId) return false;
-      if (!object.Equals(Message, other.Message)) return false;
+      if (!Equals(Message, other.Message)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4352,10 +4352,10 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if (StreamId != other.StreamId) return false;
-      if (!object.Equals(Message, other.Message)) return false;
+      if (!Equals(Message, other.Message)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4614,7 +4614,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if (StreamId != other.StreamId) return false;
       if(!indicator_.Equals(other.indicator_)) return false;
@@ -4871,10 +4871,10 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Event, other.Event)) return false;
-      if (!object.Equals(Message, other.Message)) return false;
+      if (!Equals(Event, other.Event)) return false;
+      if (!Equals(Message, other.Message)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -5114,7 +5114,7 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ClubId != other.ClubId) return false;
       if(!view_.Equals(other.view_)) return false;
       return Equals(_unknownFields, other._unknownFields);

@@ -16,18 +16,18 @@ public class DynamicUpdateMask : UpdateMask
 
 	public void EncodeDynamicFieldChangeType(DynamicFieldChangeType changeType, UpdateTypeModern updateType)
 	{
-		this.DynamicFieldChangeType = (uint)(base._blockCount | ((uint)(changeType & HermesProxy.World.Objects.DynamicFieldChangeType.ValueAndSizeChanged) * ((int)(3 - updateType) / 3)));
+		DynamicFieldChangeType = (uint)(_blockCount | ((uint)(changeType & Objects.DynamicFieldChangeType.ValueAndSizeChanged) * ((int)(3 - updateType) / 3)));
 	}
 
 	public override void AppendToPacket(ByteBuffer data)
 	{
-		data.WriteUInt16((ushort)this.DynamicFieldChangeType);
-		if (this.ValueCount.HasValue)
+		data.WriteUInt16((ushort)DynamicFieldChangeType);
+		if (ValueCount.HasValue)
 		{
-			data.WriteInt32(this.ValueCount.Value);
+			data.WriteInt32(ValueCount.Value);
 		}
-		byte[] maskArray = new byte[base._blockCount << 2];
-		base._mask.CopyTo(maskArray, 0);
+		byte[] maskArray = new byte[_blockCount << 2];
+		_mask.CopyTo(maskArray, 0);
 		data.WriteBytes(maskArray);
 	}
 }

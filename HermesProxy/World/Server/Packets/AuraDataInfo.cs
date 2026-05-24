@@ -37,46 +37,46 @@ public class AuraDataInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.CastID);
-		data.WriteUInt32(this.SpellID);
-		data.WriteUInt32(this.SpellXSpellVisualID);
-		data.WriteUInt16((ushort)this.Flags);
-		data.WriteUInt32(this.ActiveFlags);
-		data.WriteUInt16(this.CastLevel);
-		data.WriteUInt8(this.Applications);
-		data.WriteInt32(this.ContentTuningID);
-		data.WriteBit(this.CastUnit != null);
-		data.WriteBit(this.Duration.HasValue);
-		data.WriteBit(this.Remaining.HasValue);
-		data.WriteBit(this.TimeMod.HasValue);
-		data.WriteBits(this.Points.Count, 6);
-		data.WriteBits(this.EstimatedPoints.Count, 6);
-		data.WriteBit(this.ContentTuning != null);
-		if (this.ContentTuning != null)
+		data.WritePackedGuid128(CastID);
+		data.WriteUInt32(SpellID);
+		data.WriteUInt32(SpellXSpellVisualID);
+		data.WriteUInt16((ushort)Flags);
+		data.WriteUInt32(ActiveFlags);
+		data.WriteUInt16(CastLevel);
+		data.WriteUInt8(Applications);
+		data.WriteInt32(ContentTuningID);
+		data.WriteBit(CastUnit != null);
+		data.WriteBit(Duration.HasValue);
+		data.WriteBit(Remaining.HasValue);
+		data.WriteBit(TimeMod.HasValue);
+		data.WriteBits(Points.Count, 6);
+		data.WriteBits(EstimatedPoints.Count, 6);
+		data.WriteBit(ContentTuning != null);
+		if (ContentTuning != null)
 		{
-			this.ContentTuning.Write(data);
+			ContentTuning.Write(data);
 		}
-		if (this.CastUnit != null)
+		if (CastUnit != null)
 		{
-			data.WritePackedGuid128(this.CastUnit);
+			data.WritePackedGuid128(CastUnit);
 		}
-		if (this.Duration.HasValue)
+		if (Duration.HasValue)
 		{
-			data.WriteInt32(this.Duration.Value);
+			data.WriteInt32(Duration.Value);
 		}
-		if (this.Remaining.HasValue)
+		if (Remaining.HasValue)
 		{
-			data.WriteInt32(this.Remaining.Value);
+			data.WriteInt32(Remaining.Value);
 		}
-		if (this.TimeMod.HasValue)
+		if (TimeMod.HasValue)
 		{
-			data.WriteFloat(this.TimeMod.Value);
+			data.WriteFloat(TimeMod.Value);
 		}
-		foreach (float point in this.Points)
+		foreach (float point in Points)
 		{
 			data.WriteFloat(point);
 		}
-		foreach (float point2 in this.EstimatedPoints)
+		foreach (float point2 in EstimatedPoints)
 		{
 			data.WriteFloat(point2);
 		}

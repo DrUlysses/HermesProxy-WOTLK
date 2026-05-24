@@ -22,15 +22,15 @@ public class ArenaTeamEmblem
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.TeamId);
-		data.WriteUInt32(this.TeamSize);
-		data.WriteUInt32(this.BackgroundColor);
-		data.WriteUInt32(this.EmblemStyle);
-		data.WriteUInt32(this.EmblemColor);
-		data.WriteUInt32(this.BorderStyle);
-		data.WriteUInt32(this.BorderColor);
-		data.WriteBits(this.TeamName.GetByteCount(), 7);
+		data.WriteUInt32(TeamId);
+		data.WriteUInt32(TeamSize);
+		data.WriteUInt32(BackgroundColor);
+		data.WriteUInt32(EmblemStyle);
+		data.WriteUInt32(EmblemColor);
+		data.WriteUInt32(BorderStyle);
+		data.WriteUInt32(BorderColor);
+		data.WriteBits(TeamName.GetByteCount(), 7);
 		data.FlushBits();
-		data.WriteString(this.TeamName);
+		data.WriteString(TeamName);
 	}
 }

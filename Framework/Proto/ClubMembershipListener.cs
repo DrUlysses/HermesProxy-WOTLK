@@ -6,9 +6,8 @@
 #region Designer generated code
 
 using pb = global::Google.Protobuf;
-using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1.Membership {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_membership_listener.proto</summary>
@@ -194,8 +193,8 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(Membership, other.Membership)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(Membership, other.Membership)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -435,8 +434,8 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(MemberId, other.MemberId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(MemberId, other.MemberId)) return false;
       if (ClubId != other.ClubId) return false;
       if (Reason != other.Reason) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -656,8 +655,8 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(Invitation, other.Invitation)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(Invitation, other.Invitation)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -875,7 +874,7 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (InvitationId != other.InvitationId) return false;
       if (Reason != other.Reason) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1074,8 +1073,8 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(Assignment, other.Assignment)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(Assignment, other.Assignment)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1263,8 +1262,8 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(Mention, other.Mention)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(Mention, other.Mention)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1452,8 +1451,8 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(MentionId, other.MentionId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(MentionId, other.MentionId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1646,7 +1645,7 @@ namespace Bgs.Protocol.Club.V1.Membership {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ViewTime != other.ViewTime) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

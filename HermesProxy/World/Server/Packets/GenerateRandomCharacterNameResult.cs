@@ -15,8 +15,8 @@ public class GenerateRandomCharacterNameResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBool(this.Success);
-		base._worldPacket.WriteBits(this.Name.Length, 6);
-		base._worldPacket.WriteString(this.Name);
+		_worldPacket.WriteBool(Success);
+		_worldPacket.WriteBits(Name.Length, 6);
+		_worldPacket.WriteString(Name);
 	}
 }

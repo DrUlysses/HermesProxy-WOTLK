@@ -14,6 +14,6 @@ internal class SetFactionVisible : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.FactionIndex);
+		_worldPacket.WriteUInt32(FactionIndex);
 	}
 }

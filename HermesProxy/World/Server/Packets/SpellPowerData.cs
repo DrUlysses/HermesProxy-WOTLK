@@ -10,7 +10,7 @@ public struct SpellPowerData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.Cost);
-		data.WriteInt8((sbyte)this.Type);
+		data.WriteInt32(Cost);
+		data.WriteInt8((sbyte)Type);
 	}
 }

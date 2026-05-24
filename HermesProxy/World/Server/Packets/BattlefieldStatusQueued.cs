@@ -25,16 +25,16 @@ public class BattlefieldStatusQueued : ServerPacket
 
 	protected override void Write()
 	{
-		this.Hdr.Write(base._worldPacket);
-		base._worldPacket.WriteUInt32(this.AverageWaitTime);
-		base._worldPacket.WriteUInt32(this.WaitTime);
+		Hdr.Write(_worldPacket);
+		_worldPacket.WriteUInt32(AverageWaitTime);
+		_worldPacket.WriteUInt32(WaitTime);
 		if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 3, 2, 5, 4))
 		{
-			base._worldPacket.WriteInt32(this.Unk254);
+			_worldPacket.WriteInt32(Unk254);
 		}
-		base._worldPacket.WriteBit(this.AsGroup);
-		base._worldPacket.WriteBit(this.EligibleForMatchmaking);
-		base._worldPacket.WriteBit(this.SuspendedQueue);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(AsGroup);
+		_worldPacket.WriteBit(EligibleForMatchmaking);
+		_worldPacket.WriteBit(SuspendedQueue);
+		_worldPacket.FlushBits();
 	}
 }

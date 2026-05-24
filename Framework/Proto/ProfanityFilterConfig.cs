@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Profanity.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/profanity_filter_config.proto</summary>

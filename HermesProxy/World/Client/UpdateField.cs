@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace HermesProxy.World.Client;
 
 [StructLayout(LayoutKind.Explicit)]
-public struct UpdateField
+public struct UpdateField : IEquatable<UpdateField>
 {
 	[FieldOffset(0)]
 	public readonly uint UInt32Value;
@@ -18,37 +18,37 @@ public struct UpdateField
 	public UpdateField(uint val)
 	{
 		this = default(UpdateField);
-		this.UInt32Value = val;
+		UInt32Value = val;
 	}
 
 	public UpdateField(int val)
 	{
 		this = default(UpdateField);
-		this.Int32Value = val;
+		Int32Value = val;
 	}
 
 	public UpdateField(float val)
 	{
 		this = default(UpdateField);
-		this.FloatValue = val;
+		FloatValue = val;
 	}
 
 	public override bool Equals(object obj)
 	{
 		if (obj is UpdateField)
 		{
-			return this.Equals((UpdateField)obj);
+			return Equals((UpdateField)obj);
 		}
 		return false;
 	}
 
 	public bool Equals(UpdateField other)
 	{
-		if (this.UInt32Value == other.UInt32Value)
+		if (UInt32Value == other.UInt32Value)
 		{
 			return true;
 		}
-		if (Math.Abs(this.FloatValue - other.FloatValue) < float.Epsilon)
+		if (Math.Abs(FloatValue - other.FloatValue) < float.Epsilon)
 		{
 			return true;
 		}
@@ -67,6 +67,6 @@ public struct UpdateField
 
 	public override int GetHashCode()
 	{
-		return this.UInt32Value.GetHashCode();
+		return UInt32Value.GetHashCode();
 	}
 }

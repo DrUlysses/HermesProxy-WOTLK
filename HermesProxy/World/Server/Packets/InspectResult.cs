@@ -36,37 +36,37 @@ public class InspectResult : ServerPacket
 
 	protected override void Write()
 	{
-		this.DisplayInfo.Write(base._worldPacket);
-		base._worldPacket.WriteInt32(this.Glyphs.Count);
-		base._worldPacket.WriteInt32(this.Talents.Count);
-		base._worldPacket.WriteInt32(this.ItemLevel);
-		base._worldPacket.WriteUInt8(this.LifetimeMaxRank);
-		base._worldPacket.WriteUInt16(this.TodayHK);
-		base._worldPacket.WriteUInt16(this.YesterdayHK);
-		base._worldPacket.WriteUInt32(this.LifetimeHK);
-		base._worldPacket.WriteUInt32(this.HonorLevel);
-		for (int i = 0; i < this.Glyphs.Count; i++)
+		DisplayInfo.Write(_worldPacket);
+		_worldPacket.WriteInt32(Glyphs.Count);
+		_worldPacket.WriteInt32(Talents.Count);
+		_worldPacket.WriteInt32(ItemLevel);
+		_worldPacket.WriteUInt8(LifetimeMaxRank);
+		_worldPacket.WriteUInt16(TodayHK);
+		_worldPacket.WriteUInt16(YesterdayHK);
+		_worldPacket.WriteUInt32(LifetimeHK);
+		_worldPacket.WriteUInt32(HonorLevel);
+		for (int i = 0; i < Glyphs.Count; i++)
 		{
-			base._worldPacket.WriteUInt16(this.Glyphs[i]);
+			_worldPacket.WriteUInt16(Glyphs[i]);
 		}
-		for (int j = 0; j < this.Talents.Count; j++)
+		for (int j = 0; j < Talents.Count; j++)
 		{
-			base._worldPacket.WriteUInt8(this.Talents[j]);
+			_worldPacket.WriteUInt8(Talents[j]);
 		}
-		base._worldPacket.WriteBit(this.GuildData != null);
-		base._worldPacket.WriteBit(this.AzeriteLevel.HasValue);
-		base._worldPacket.FlushBits();
-		foreach (PVPBracketData item in this.Bracket)
+		_worldPacket.WriteBit(GuildData != null);
+		_worldPacket.WriteBit(AzeriteLevel.HasValue);
+		_worldPacket.FlushBits();
+		foreach (PVPBracketData item in Bracket)
 		{
-			item.Write(base._worldPacket);
+			item.Write(_worldPacket);
 		}
-		if (this.GuildData != null)
+		if (GuildData != null)
 		{
-			this.GuildData.Write(base._worldPacket);
+			GuildData.Write(_worldPacket);
 		}
-		if (this.AzeriteLevel.HasValue)
+		if (AzeriteLevel.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.AzeriteLevel.Value);
+			_worldPacket.WriteUInt32(AzeriteLevel.Value);
 		}
 	}
 }

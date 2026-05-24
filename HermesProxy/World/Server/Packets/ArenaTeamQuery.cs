@@ -11,6 +11,6 @@ public class ArenaTeamQuery : ClientPacket
 
 	public override void Read()
 	{
-		this.TeamId = base._worldPacket.ReadUInt32();
+		TeamId = _worldPacket.ReadUInt32();
 	}
 }

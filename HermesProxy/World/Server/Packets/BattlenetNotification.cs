@@ -16,8 +16,8 @@ internal class BattlenetNotification : ServerPacket
 
 	protected override void Write()
 	{
-		this.Method.Write(base._worldPacket);
-		base._worldPacket.WriteUInt32(this.Data.GetSize());
-		base._worldPacket.WriteBytes(this.Data);
+		Method.Write(_worldPacket);
+		_worldPacket.WriteUInt32(Data.GetSize());
+		_worldPacket.WriteBytes(Data);
 	}
 }

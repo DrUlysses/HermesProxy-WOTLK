@@ -16,9 +16,9 @@ public class PetitionRenameGuildResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PetitionGuid);
-		base._worldPacket.WriteBits(this.NewGuildName.GetByteCount(), 7);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.NewGuildName);
+		_worldPacket.WritePackedGuid128(PetitionGuid);
+		_worldPacket.WriteBits(NewGuildName.GetByteCount(), 7);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(NewGuildName);
 	}
 }

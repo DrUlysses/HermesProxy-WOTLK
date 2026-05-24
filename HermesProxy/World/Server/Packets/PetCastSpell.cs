@@ -9,12 +9,12 @@ public class PetCastSpell : ClientPacket
 	public PetCastSpell(WorldPacket packet)
 		: base(packet)
 	{
-		this.Cast = new SpellCastRequest();
+		Cast = new SpellCastRequest();
 	}
 
 	public override void Read()
 	{
-		this.PetGUID = base._worldPacket.ReadPackedGuid128();
-		this.Cast.Read(base._worldPacket);
+		PetGUID = _worldPacket.ReadPackedGuid128();
+		Cast.Read(_worldPacket);
 	}
 }

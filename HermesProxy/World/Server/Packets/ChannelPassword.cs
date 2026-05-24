@@ -12,9 +12,9 @@ internal class ChannelPassword : ClientPacket
 
 	public override void Read()
 	{
-		uint channelNameLength = base._worldPacket.ReadBits<uint>(7);
-		uint passwordLength = base._worldPacket.ReadBits<uint>(7);
-		this.ChannelName = base._worldPacket.ReadString(channelNameLength);
-		this.Password = base._worldPacket.ReadString(passwordLength);
+		uint channelNameLength = _worldPacket.ReadBits<uint>(7);
+		uint passwordLength = _worldPacket.ReadBits<uint>(7);
+		ChannelName = _worldPacket.ReadString(channelNameLength);
+		Password = _worldPacket.ReadString(passwordLength);
 	}
 }

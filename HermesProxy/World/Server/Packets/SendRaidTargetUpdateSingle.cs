@@ -19,9 +19,9 @@ internal class SendRaidTargetUpdateSingle : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt8(this.PartyIndex);
-		base._worldPacket.WriteInt8(this.Symbol);
-		base._worldPacket.WritePackedGuid128(this.Target);
-		base._worldPacket.WritePackedGuid128(this.ChangedBy);
+		_worldPacket.WriteInt8(PartyIndex);
+		_worldPacket.WriteInt8(Symbol);
+		_worldPacket.WritePackedGuid128(Target);
+		_worldPacket.WritePackedGuid128(ChangedBy);
 	}
 }

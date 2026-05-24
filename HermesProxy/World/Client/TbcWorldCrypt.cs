@@ -30,22 +30,22 @@ public class TbcWorldCrypt : LegacyWorldCrypt
 		};
 		HmacHash recvHash = new HmacHash(recvSeed);
 		recvHash.Finish(sessionKey, sessionKey.Count());
-		this.m_key = recvHash.Digest.ToArray();
-		this.m_send_i = (this.m_send_j = (this.m_recv_i = (this.m_recv_j = 0)));
-		this.m_isInitialized = true;
+		m_key = recvHash.Digest.ToArray();
+		m_send_i = (m_send_j = (m_recv_i = (m_recv_j = 0)));
+		m_isInitialized = true;
 	}
 
 	public void Decrypt(byte[] data, int len)
 	{
-		if ((long)len >= 4L)
+		if (len >= 4L)
 		{
 			byte t = 0;
-			while ((uint)t < 4u)
+			while (t < 4u)
 			{
-				this.m_recv_i %= (byte)this.m_key.Count();
-				byte x = (byte)((data[t] - this.m_recv_j) ^ this.m_key[this.m_recv_i]);
-				this.m_recv_i++;
-				this.m_recv_j = data[t];
+				m_recv_i %= (byte)m_key.Count();
+				byte x = (byte)((data[t] - m_recv_j) ^ m_key[m_recv_i]);
+				m_recv_i++;
+				m_recv_j = data[t];
 				data[t] = x;
 				t++;
 			}
@@ -54,15 +54,15 @@ public class TbcWorldCrypt : LegacyWorldCrypt
 
 	public void Encrypt(byte[] data, int len)
 	{
-		if (this.m_isInitialized && (long)len >= 6L)
+		if (m_isInitialized && len >= 6L)
 		{
 			byte t = 0;
-			while ((uint)t < 6u)
+			while (t < 6u)
 			{
-				this.m_send_i %= (byte)this.m_key.Count();
-				byte x = (byte)((data[t] ^ this.m_key[this.m_send_i]) + this.m_send_j);
-				this.m_send_i++;
-				data[t] = (this.m_send_j = x);
+				m_send_i %= (byte)m_key.Count();
+				byte x = (byte)((data[t] ^ m_key[m_send_i]) + m_send_j);
+				m_send_i++;
+				data[t] = (m_send_j = x);
 				t++;
 			}
 		}

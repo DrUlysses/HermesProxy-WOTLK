@@ -16,11 +16,11 @@ public class MailListResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Mails.Count);
-		base._worldPacket.WriteInt32(this.TotalNumRecords);
-		this.Mails.ForEach(delegate(MailListEntry p)
+		_worldPacket.WriteUInt32((uint)Mails.Count);
+		_worldPacket.WriteInt32(TotalNumRecords);
+		Mails.ForEach(delegate(MailListEntry p)
 		{
-			p.Write(base._worldPacket);
+			p.Write(_worldPacket);
 		});
 	}
 }

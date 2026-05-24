@@ -15,8 +15,8 @@ public class OfferPetition : ClientPacket
 
 	public override void Read()
 	{
-		this.UnkInt = base._worldPacket.ReadUInt32();
-		this.ItemGUID = base._worldPacket.ReadPackedGuid128();
-		this.TargetPlayer = base._worldPacket.ReadPackedGuid128();
+		UnkInt = _worldPacket.ReadUInt32();
+		ItemGUID = _worldPacket.ReadPackedGuid128();
+		TargetPlayer = _worldPacket.ReadPackedGuid128();
 	}
 }

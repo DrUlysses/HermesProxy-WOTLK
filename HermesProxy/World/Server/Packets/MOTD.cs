@@ -15,13 +15,13 @@ public class MOTD : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits(this.Text.Count, 4);
-		base._worldPacket.FlushBits();
-		foreach (string line in this.Text)
+		_worldPacket.WriteBits(Text.Count, 4);
+		_worldPacket.FlushBits();
+		foreach (string line in Text)
 		{
-			base._worldPacket.WriteBits(line.GetByteCount(), 7);
-			base._worldPacket.FlushBits();
-			base._worldPacket.WriteString(line);
+			_worldPacket.WriteBits(line.GetByteCount(), 7);
+			_worldPacket.FlushBits();
+			_worldPacket.WriteString(line);
 		}
 	}
 }

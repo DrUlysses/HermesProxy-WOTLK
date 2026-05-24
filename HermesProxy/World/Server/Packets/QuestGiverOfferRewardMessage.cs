@@ -38,29 +38,29 @@ public class QuestGiverOfferRewardMessage : ServerPacket
 
 	protected override void Write()
 	{
-		this.QuestData.Write(base._worldPacket);
-		base._worldPacket.WriteInt32(this.QuestPackageID);
-		base._worldPacket.WriteInt32((int)this.PortraitGiver);
-		base._worldPacket.WriteInt32((int)this.PortraitGiverMount);
-		base._worldPacket.WriteInt32((int)this.PortraitGiverModelSceneID);
-		base._worldPacket.WriteInt32((int)this.PortraitTurnIn);
+		QuestData.Write(_worldPacket);
+		_worldPacket.WriteInt32(QuestPackageID);
+		_worldPacket.WriteInt32((int)PortraitGiver);
+		_worldPacket.WriteInt32((int)PortraitGiverMount);
+		_worldPacket.WriteInt32((int)PortraitGiverModelSceneID);
+		_worldPacket.WriteInt32((int)PortraitTurnIn);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteInt32(this.QuestGiverCreatureID);
-			base._worldPacket.WriteUInt32(0u);
+			_worldPacket.WriteInt32(QuestGiverCreatureID);
+			_worldPacket.WriteUInt32(0u);
 		}
-		base._worldPacket.WriteBits(this.QuestTitle.GetByteCount(), 9);
-		base._worldPacket.WriteBits(this.RewardText.GetByteCount(), 12);
-		base._worldPacket.WriteBits(this.PortraitGiverText.GetByteCount(), 10);
-		base._worldPacket.WriteBits(this.PortraitGiverName.GetByteCount(), 8);
-		base._worldPacket.WriteBits(this.PortraitTurnInText.GetByteCount(), 10);
-		base._worldPacket.WriteBits(this.PortraitTurnInName.GetByteCount(), 8);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.QuestTitle);
-		base._worldPacket.WriteString(this.RewardText);
-		base._worldPacket.WriteString(this.PortraitGiverText);
-		base._worldPacket.WriteString(this.PortraitGiverName);
-		base._worldPacket.WriteString(this.PortraitTurnInText);
-		base._worldPacket.WriteString(this.PortraitTurnInName);
+		_worldPacket.WriteBits(QuestTitle.GetByteCount(), 9);
+		_worldPacket.WriteBits(RewardText.GetByteCount(), 12);
+		_worldPacket.WriteBits(PortraitGiverText.GetByteCount(), 10);
+		_worldPacket.WriteBits(PortraitGiverName.GetByteCount(), 8);
+		_worldPacket.WriteBits(PortraitTurnInText.GetByteCount(), 10);
+		_worldPacket.WriteBits(PortraitTurnInName.GetByteCount(), 8);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(QuestTitle);
+		_worldPacket.WriteString(RewardText);
+		_worldPacket.WriteString(PortraitGiverText);
+		_worldPacket.WriteString(PortraitGiverName);
+		_worldPacket.WriteString(PortraitTurnInText);
+		_worldPacket.WriteString(PortraitTurnInName);
 	}
 }

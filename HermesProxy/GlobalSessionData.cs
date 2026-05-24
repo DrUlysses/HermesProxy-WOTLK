@@ -54,32 +54,32 @@ public class GlobalSessionData
 
 	public Dictionary<uint, List<string>> GuildRanks = new Dictionary<uint, List<string>>();
 
-	public Realm? Realm => this.RealmManager.GetRealm(this.RealmId);
+	public Realm? Realm => RealmManager.GetRealm(RealmId);
 
 	public GlobalSessionData()
 	{
-		this.GameState = GameSessionData.CreateNewGameSessionData(this);
+		GameState = GameSessionData.CreateNewGameSessionData(this);
 	}
 
 	public void StoreGuildRankNames(uint guildId, List<string> ranks)
 	{
-		if (this.GuildRanks.ContainsKey(guildId))
+		if (GuildRanks.ContainsKey(guildId))
 		{
-			this.GuildRanks[guildId] = ranks;
+			GuildRanks[guildId] = ranks;
 		}
 		else
 		{
-			this.GuildRanks.Add(guildId, ranks);
+			GuildRanks.Add(guildId, ranks);
 		}
 	}
 
 	public uint GetGuildRankIdByName(uint guildId, string name)
 	{
-		if (this.GuildRanks.ContainsKey(guildId))
+		if (GuildRanks.ContainsKey(guildId))
 		{
-			for (int i = 0; i < this.GuildRanks[guildId].Count; i++)
+			for (int i = 0; i < GuildRanks[guildId].Count; i++)
 			{
-				if (this.GuildRanks[guildId][i] == name)
+				if (GuildRanks[guildId][i] == name)
 				{
 					return (uint)i;
 				}
@@ -90,87 +90,87 @@ public class GlobalSessionData
 
 	public string GetGuildRankNameById(uint guildId, byte rankId)
 	{
-		if (this.GuildRanks.ContainsKey(guildId))
+		if (GuildRanks.ContainsKey(guildId))
 		{
-			return this.GuildRanks[guildId][rankId];
+			return GuildRanks[guildId][rankId];
 		}
 		return $"Rank {rankId}";
 	}
 
 	public void StoreGuildGuidAndName(WowGuid128 guid, string name)
 	{
-		if (this.GuildsByName.ContainsKey(name))
+		if (GuildsByName.ContainsKey(name))
 		{
-			this.GuildsByName[name] = guid;
+			GuildsByName[name] = guid;
 		}
 		else
 		{
-			this.GuildsByName.Add(name, guid);
+			GuildsByName.Add(name, guid);
 		}
 	}
 
 	public WowGuid128 GetGuildGuid(string name)
 	{
-		if (this.GuildsByName.ContainsKey(name))
+		if (GuildsByName.ContainsKey(name))
 		{
-			return this.GuildsByName[name];
+			return GuildsByName[name];
 		}
-		WowGuid128 guid = WowGuid128.Create(HighGuidType703.Guild, (ulong)(this.GuildsByName.Count + 1));
-		this.GuildsByName.Add(name, guid);
+		WowGuid128 guid = WowGuid128.Create(HighGuidType703.Guild, (ulong)(GuildsByName.Count + 1));
+		GuildsByName.Add(name, guid);
 		return guid;
 	}
 
 	public WowGuid128 GetGameAccountGuidForPlayer(WowGuid128 playerGuid)
 	{
-		if (this.GameState.OwnCharacters.Any((OwnCharacterInfo own) => own.CharacterGuid == playerGuid))
+		if (GameState.OwnCharacters.Any(own => own.CharacterGuid == playerGuid))
 		{
-			return WowGuid128.Create(HighGuidType703.WowAccount, this.GameAccountInfo.Id);
+			return WowGuid128.Create(HighGuidType703.WowAccount, GameAccountInfo.Id);
 		}
 		return WowGuid128.Create(HighGuidType703.WowAccount, playerGuid.GetCounter());
 	}
 
 	public WowGuid128 GetBnetAccountGuidForPlayer(WowGuid128 playerGuid)
 	{
-		if (this.GameState.OwnCharacters.Any((OwnCharacterInfo own) => own.CharacterGuid == playerGuid))
+		if (GameState.OwnCharacters.Any(own => own.CharacterGuid == playerGuid))
 		{
-			return WowGuid128.Create(HighGuidType703.BNetAccount, this.AccountInfo.Id);
+			return WowGuid128.Create(HighGuidType703.BNetAccount, AccountInfo.Id);
 		}
 		return WowGuid128.Create(HighGuidType703.BNetAccount, playerGuid.GetCounter());
 	}
 
 	public void OnDisconnect()
 	{
-		if (this.ModernSniff != null)
+		if (ModernSniff != null)
 		{
-			this.ModernSniff.CloseFile();
-			this.ModernSniff = null;
+			ModernSniff.CloseFile();
+			ModernSniff = null;
 		}
-		if (this.AuthClient != null)
+		if (AuthClient != null)
 		{
-			this.AuthClient.Disconnect();
-			this.AuthClient = null;
+			AuthClient.Disconnect();
+			AuthClient = null;
 		}
-		if (this.WorldClient != null)
+		if (WorldClient != null)
 		{
-			this.WorldClient.Disconnect();
-			this.WorldClient = null;
+			WorldClient.Disconnect();
+			WorldClient = null;
 		}
-		if (this.RealmSocket != null)
+		if (RealmSocket != null)
 		{
-			this.RealmSocket.CloseSocket();
-			this.RealmSocket = null;
+			RealmSocket.CloseSocket();
+			RealmSocket = null;
 		}
-		if (this.InstanceSocket != null)
+		if (InstanceSocket != null)
 		{
-			this.InstanceSocket.CloseSocket();
-			this.InstanceSocket = null;
+			InstanceSocket.CloseSocket();
+			InstanceSocket = null;
 		}
-		this.GameState = GameSessionData.CreateNewGameSessionData(this);
+		GameState = GameSessionData.CreateNewGameSessionData(this);
 	}
 
 	public void SendHermesTextMessage(string message, bool isError = false)
 	{
-		WorldSocket socket = this.InstanceSocket;
+		WorldSocket socket = InstanceSocket;
 		if (socket != null)
 		{
 			StringBuilder wholeMessage = new StringBuilder();

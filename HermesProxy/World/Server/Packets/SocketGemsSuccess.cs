@@ -14,6 +14,6 @@ internal class SocketGemsSuccess : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.ItemGuid);
+		_worldPacket.WritePackedGuid128(ItemGuid);
 	}
 }

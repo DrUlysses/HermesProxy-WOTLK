@@ -13,6 +13,6 @@ public class GuildBankRemainingWithdrawMoney : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt64(this.RemainingWithdrawMoney);
+		_worldPacket.WriteInt64(RemainingWithdrawMoney);
 	}
 }

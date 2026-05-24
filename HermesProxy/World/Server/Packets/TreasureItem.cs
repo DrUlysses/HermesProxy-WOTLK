@@ -12,8 +12,8 @@ public struct TreasureItem
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits((byte)this.Type, 1);
-		data.WriteInt32(this.ID);
-		data.WriteInt32(this.Quantity);
+		data.WriteBits((byte)Type, 1);
+		data.WriteInt32(ID);
+		data.WriteInt32(Quantity);
 	}
 }

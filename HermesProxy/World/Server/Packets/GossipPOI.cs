@@ -27,16 +27,16 @@ internal class GossipPOI : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32((int)this.Id);
-		base._worldPacket.WriteInt32((int)this.Flags);
-		base._worldPacket.WriteFloat(this.Pos.X);
-		base._worldPacket.WriteFloat(this.Pos.Y);
-		base._worldPacket.WriteFloat(this.Pos.Z);
-		base._worldPacket.WriteInt32((int)this.Icon);
-		base._worldPacket.WriteInt32((int)this.Importance);
-		base._worldPacket.WriteInt32((int)this.Unknown905);
-		base._worldPacket.WriteBits(this.Name.GetByteCount(), 6);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.Name);
+		_worldPacket.WriteInt32((int)Id);
+		_worldPacket.WriteInt32((int)Flags);
+		_worldPacket.WriteFloat(Pos.X);
+		_worldPacket.WriteFloat(Pos.Y);
+		_worldPacket.WriteFloat(Pos.Z);
+		_worldPacket.WriteInt32((int)Icon);
+		_worldPacket.WriteInt32((int)Importance);
+		_worldPacket.WriteInt32((int)Unknown905);
+		_worldPacket.WriteBits(Name.GetByteCount(), 6);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(Name);
 	}
 }

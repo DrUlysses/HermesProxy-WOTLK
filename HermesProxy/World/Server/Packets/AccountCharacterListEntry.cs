@@ -29,22 +29,22 @@ public class AccountCharacterListEntry
 
 	public void Write(WorldPacket packet)
 	{
-		packet.WritePackedGuid128(this.AccountId);
-		packet.WritePackedGuid128(this.CharacterGuid);
-		packet.WriteUInt32(this.RealmVirtualAddress);
-		packet.WriteUInt8((byte)this.Race);
-		packet.WriteUInt8((byte)this.Class);
-		packet.WriteUInt8((byte)this.Sex);
-		packet.WriteUInt8(this.Level);
-		packet.WriteUInt64(this.LastLoginUnixSec);
+		packet.WritePackedGuid128(AccountId);
+		packet.WritePackedGuid128(CharacterGuid);
+		packet.WriteUInt32(RealmVirtualAddress);
+		packet.WriteUInt8((byte)Race);
+		packet.WriteUInt8((byte)Class);
+		packet.WriteUInt8((byte)Sex);
+		packet.WriteUInt8(Level);
+		packet.WriteUInt64(LastLoginUnixSec);
 		if (ModernVersion.AddedInClassicVersion(1, 14, 1, 2, 5, 3))
 		{
-			packet.WriteUInt32(this.Unk);
+			packet.WriteUInt32(Unk);
 		}
 		packet.ResetBitPos();
-		packet.WriteBits(this.Name.GetByteCount(), 6);
-		packet.WriteBits(this.RealmName.GetByteCount(), 9);
-		packet.WriteString(this.Name);
-		packet.WriteString(this.RealmName);
+		packet.WriteBits(Name.GetByteCount(), 6);
+		packet.WriteBits(RealmName.GetByteCount(), 9);
+		packet.WriteString(Name);
+		packet.WriteString(RealmName);
 	}
 }

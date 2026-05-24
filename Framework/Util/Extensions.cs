@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -20,10 +20,10 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Runtime.CompilerServices;
 
 namespace System
 {
@@ -148,8 +148,7 @@ namespace System
         {
             if (reverse)
                 return byteArray.Reverse().Aggregate("", (current, b) => current + b.ToString("X2"));
-            else
-                return byteArray.Aggregate("", (current, b) => current + b.ToString("X2"));
+            return byteArray.Aggregate("", (current, b) => current + b.ToString("X2"));
         }
 
         static uint LeftRotate(this uint value, int shiftCount)

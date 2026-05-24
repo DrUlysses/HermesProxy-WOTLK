@@ -19,21 +19,21 @@ public class PlayerSettings
 
 	public PlayerSettings(GlobalSessionData globalSession)
 	{
-		this.Session = globalSession;
+		Session = globalSession;
 	}
 
 	public void SetAutoBlockGuildInvites(bool value)
 	{
-		this._internalStorage.AutoBlockGuildInvites = value;
-		this.NeedToForcePatchFlags = true;
-		this.Save();
+		_internalStorage.AutoBlockGuildInvites = value;
+		NeedToForcePatchFlags = true;
+		Save();
 	}
 
 	public void PatchFlags(ref PlayerFlags flags)
 	{
-		this._lastCapturedFlags = flags;
-		this.NeedToForcePatchFlags = false;
-		if (this._internalStorage.AutoBlockGuildInvites)
+		_lastCapturedFlags = flags;
+		NeedToForcePatchFlags = false;
+		if (_internalStorage.AutoBlockGuildInvites)
 		{
 			flags |= PlayerFlags.AutoDeclineGuild;
 		}
@@ -45,18 +45,18 @@ public class PlayerSettings
 
 	public PlayerFlags CreateNewFlags()
 	{
-		PlayerFlags flags = this._lastCapturedFlags;
-		this.PatchFlags(ref flags);
+		PlayerFlags flags = _lastCapturedFlags;
+		PatchFlags(ref flags);
 		return flags;
 	}
 
 	private void Save()
 	{
-		this.Session.AccountMetaDataMgr.SaveCharacterSettingsStorage(this.Session.GameState.CurrentPlayerInfo.Realm.Name, this.Session.GameState.CurrentPlayerInfo.Name, this._internalStorage);
+		Session.AccountMetaDataMgr.SaveCharacterSettingsStorage(Session.GameState.CurrentPlayerInfo.Realm.Name, Session.GameState.CurrentPlayerInfo.Name, _internalStorage);
 	}
 
 	public void Reload()
 	{
-		this._internalStorage = this.Session.AccountMetaDataMgr.LoadCharacterSettingsStorage(this.Session.GameState.CurrentPlayerInfo.Realm.Name, this.Session.GameState.CurrentPlayerInfo.Name);
+		_internalStorage = Session.AccountMetaDataMgr.LoadCharacterSettingsStorage(Session.GameState.CurrentPlayerInfo.Realm.Name, Session.GameState.CurrentPlayerInfo.Name);
 	}
 }

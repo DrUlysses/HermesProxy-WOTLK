@@ -11,6 +11,6 @@ public class GameObjUse : ClientPacket
 
 	public override void Read()
 	{
-		this.Guid = base._worldPacket.ReadPackedGuid128();
+		Guid = _worldPacket.ReadPackedGuid128();
 	}
 }

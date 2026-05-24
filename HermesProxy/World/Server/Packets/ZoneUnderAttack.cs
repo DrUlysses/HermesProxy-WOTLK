@@ -13,6 +13,6 @@ public class ZoneUnderAttack : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.AreaID);
+		_worldPacket.WriteInt32(AreaID);
 	}
 }

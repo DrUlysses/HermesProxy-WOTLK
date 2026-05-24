@@ -8,7 +8,7 @@ public struct LFGListBlacklistEntry
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.ActivityID);
-		data.WriteInt32(this.Reason);
+		data.WriteInt32(ActivityID);
+		data.WriteInt32(Reason);
 	}
 }

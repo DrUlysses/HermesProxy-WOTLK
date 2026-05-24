@@ -99,60 +99,60 @@ public sealed class MovementInfo
 	public MovementInfo CopyFromMe()
 	{
 		MovementInfo copy = new MovementInfo();
-		copy.Flags = this.Flags;
-		copy.FlagsExtra = this.FlagsExtra;
-		copy.SwimPitch = this.SwimPitch;
-		copy.FallTime = this.FallTime;
-		copy.JumpHorizontalSpeed = this.JumpHorizontalSpeed;
-		copy.JumpVerticalSpeed = this.JumpVerticalSpeed;
-		copy.JumpCosAngle = this.JumpCosAngle;
-		copy.JumpSinAngle = this.JumpSinAngle;
-		copy.SplineElevation = this.SplineElevation;
-		copy.HasSplineData = this.HasSplineData;
-		copy.Position = this.Position;
-		copy.Orientation = this.Orientation;
-		copy.CorpseOrientation = this.CorpseOrientation;
-		copy.TransportGuid = this.TransportGuid;
-		copy.TransportOffset = this.TransportOffset;
-		copy.TransportOrientation = this.TransportOrientation;
-		copy.TransportTime = this.TransportTime;
-		copy.TransportTime2 = this.TransportTime2;
-		copy.TransportSeat = this.TransportSeat;
-		copy.Rotation = this.Rotation;
-		copy.WalkSpeed = this.WalkSpeed;
-		copy.RunSpeed = this.RunSpeed;
-		copy.RunBackSpeed = this.RunBackSpeed;
-		copy.SwimSpeed = this.SwimSpeed;
-		copy.SwimBackSpeed = this.SwimBackSpeed;
-		copy.FlightSpeed = this.FlightSpeed;
-		copy.FlightBackSpeed = this.FlightBackSpeed;
-		copy.TurnRate = this.TurnRate;
-		copy.PitchRate = this.PitchRate;
-		copy.Hover = this.Hover;
-		copy.VehicleId = this.VehicleId;
-		copy.VehicleOrientation = this.VehicleOrientation;
-		copy.TransportPathTimer = this.TransportPathTimer;
+		copy.Flags = Flags;
+		copy.FlagsExtra = FlagsExtra;
+		copy.SwimPitch = SwimPitch;
+		copy.FallTime = FallTime;
+		copy.JumpHorizontalSpeed = JumpHorizontalSpeed;
+		copy.JumpVerticalSpeed = JumpVerticalSpeed;
+		copy.JumpCosAngle = JumpCosAngle;
+		copy.JumpSinAngle = JumpSinAngle;
+		copy.SplineElevation = SplineElevation;
+		copy.HasSplineData = HasSplineData;
+		copy.Position = Position;
+		copy.Orientation = Orientation;
+		copy.CorpseOrientation = CorpseOrientation;
+		copy.TransportGuid = TransportGuid;
+		copy.TransportOffset = TransportOffset;
+		copy.TransportOrientation = TransportOrientation;
+		copy.TransportTime = TransportTime;
+		copy.TransportTime2 = TransportTime2;
+		copy.TransportSeat = TransportSeat;
+		copy.Rotation = Rotation;
+		copy.WalkSpeed = WalkSpeed;
+		copy.RunSpeed = RunSpeed;
+		copy.RunBackSpeed = RunBackSpeed;
+		copy.SwimSpeed = SwimSpeed;
+		copy.SwimBackSpeed = SwimBackSpeed;
+		copy.FlightSpeed = FlightSpeed;
+		copy.FlightBackSpeed = FlightBackSpeed;
+		copy.TurnRate = TurnRate;
+		copy.PitchRate = PitchRate;
+		copy.Hover = Hover;
+		copy.VehicleId = VehicleId;
+		copy.VehicleOrientation = VehicleOrientation;
+		copy.TransportPathTimer = TransportPathTimer;
 		return copy;
 	}
 
 	public void SetMovementFlags(MovementFlagModern f)
 	{
-		this.Flags = (uint)f;
+		Flags = (uint)f;
 	}
 
 	public void AddMovementFlag(MovementFlagModern f)
 	{
-		this.Flags |= (uint)f;
+		Flags |= (uint)f;
 	}
 
 	public void RemoveMovementFlag(MovementFlagModern f)
 	{
-		this.Flags &= (uint)(~f);
+		Flags &= (uint)(~f);
 	}
 
 	public bool HasMovementFlag(MovementFlagModern f)
 	{
-		return (this.Flags & (uint)f) != 0;
+		return (Flags & (uint)f) != 0;
 	}
 
 	public void ReadMovementInfoLegacy(WorldPacket packet, GameSessionData gameState)
@@ -160,129 +160,129 @@ public sealed class MovementInfo
 		bool hasPitch;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			MovementFlagWotLK flags = (MovementFlagWotLK)(this.Flags = packet.ReadUInt32());
-			this.FlagsExtra = packet.ReadUInt16();
-			hasPitch = flags.HasAnyFlag(MovementFlagWotLK.Swimming | MovementFlagWotLK.Flying) || this.FlagsExtra.HasAnyFlag(MovementFlagExtra.AlwaysAllowPitching);
+			MovementFlagWotLK flags = (MovementFlagWotLK)(Flags = packet.ReadUInt32());
+			FlagsExtra = packet.ReadUInt16();
+			hasPitch = flags.HasAnyFlag(MovementFlagWotLK.Swimming | MovementFlagWotLK.Flying) || FlagsExtra.HasAnyFlag(MovementFlagExtra.AlwaysAllowPitching);
 		}
 		else if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			MovementFlagTBC flags2 = (MovementFlagTBC)packet.ReadUInt32();
-			this.Flags = (uint)flags2.CastFlags<MovementFlagWotLK>();
-			this.FlagsExtra = packet.ReadUInt8();
+			Flags = (uint)flags2.CastFlags<MovementFlagWotLK>();
+			FlagsExtra = packet.ReadUInt8();
 			hasPitch = flags2.HasAnyFlag(MovementFlagTBC.Swimming | MovementFlagTBC.Flying2);
 		}
 		else
 		{
 			MovementFlagVanilla flags3 = (MovementFlagVanilla)packet.ReadUInt32();
-			this.Flags = (uint)flags3.CastFlags<MovementFlagWotLK>();
+			Flags = (uint)flags3.CastFlags<MovementFlagWotLK>();
 			hasPitch = flags3.HasAnyFlag(MovementFlagVanilla.Swimming);
-			this.Hover = flags3.HasAnyFlag(MovementFlagVanilla.FixedZ);
+			Hover = flags3.HasAnyFlag(MovementFlagVanilla.FixedZ);
 		}
-		this.MoveTime = packet.ReadUInt32();
-		this.Position = packet.ReadVector3();
-		this.Orientation = packet.ReadFloat();
-		if (this.Flags.HasAnyFlag(MovementFlagWotLK.OnTransport))
+		MoveTime = packet.ReadUInt32();
+		Position = packet.ReadVector3();
+		Orientation = packet.ReadFloat();
+		if (Flags.HasAnyFlag(MovementFlagWotLK.OnTransport))
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 			{
-				this.TransportGuid = packet.ReadPackedGuid().To128(gameState);
+				TransportGuid = packet.ReadPackedGuid().To128(gameState);
 			}
 			else
 			{
-				this.TransportGuid = packet.ReadGuid().To128(gameState);
+				TransportGuid = packet.ReadGuid().To128(gameState);
 			}
-			this.TransportOffset = packet.ReadVector3();
-			this.TransportOrientation = packet.ReadFloat();
+			TransportOffset = packet.ReadVector3();
+			TransportOrientation = packet.ReadFloat();
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
-				this.TransportTime = packet.ReadUInt32();
+				TransportTime = packet.ReadUInt32();
 			}
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 			{
-				this.TransportSeat = packet.ReadInt8();
+				TransportSeat = packet.ReadInt8();
 			}
-			if (this.FlagsExtra.HasAnyFlag(MovementFlagExtra.InterpolateMove))
+			if (FlagsExtra.HasAnyFlag(MovementFlagExtra.InterpolateMove))
 			{
-				this.TransportTime2 = packet.ReadUInt32();
+				TransportTime2 = packet.ReadUInt32();
 			}
 		}
 		if (hasPitch)
 		{
-			this.SwimPitch = packet.ReadFloat();
+			SwimPitch = packet.ReadFloat();
 		}
-		this.FallTime = packet.ReadUInt32();
-		if (this.Flags.HasAnyFlag(MovementFlagWotLK.Falling))
+		FallTime = packet.ReadUInt32();
+		if (Flags.HasAnyFlag(MovementFlagWotLK.Falling))
 		{
-			this.JumpVerticalSpeed = packet.ReadFloat();
-			this.JumpSinAngle = packet.ReadFloat();
-			this.JumpCosAngle = packet.ReadFloat();
-			this.JumpHorizontalSpeed = packet.ReadFloat();
+			JumpVerticalSpeed = packet.ReadFloat();
+			JumpSinAngle = packet.ReadFloat();
+			JumpCosAngle = packet.ReadFloat();
+			JumpHorizontalSpeed = packet.ReadFloat();
 		}
-		if (this.Flags.HasAnyFlag(MovementFlagWotLK.SplineElevation))
+		if (Flags.HasAnyFlag(MovementFlagWotLK.SplineElevation))
 		{
-			this.SplineElevation = packet.ReadFloat();
+			SplineElevation = packet.ReadFloat();
 		}
 	}
 
 	public void WriteMovementInfoLegacy(WorldPacket data)
 	{
-		uint flags = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? ((uint)((MovementFlagModern)this.Flags).CastFlags<MovementFlagWotLK>()) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? ((uint)((MovementFlagModern)this.Flags).CastFlags<MovementFlagVanilla>()) : ((uint)((MovementFlagModern)this.Flags).CastFlags<MovementFlagTBC>())));
-		if (this.TransportGuid != null)
+		uint flags = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? ((uint)((MovementFlagModern)Flags).CastFlags<MovementFlagWotLK>()) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? ((uint)((MovementFlagModern)Flags).CastFlags<MovementFlagVanilla>()) : ((uint)((MovementFlagModern)Flags).CastFlags<MovementFlagTBC>())));
+		if (TransportGuid != null)
 		{
 			flags = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? (flags | 0x200) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? (flags | 0x2000000) : (flags | 0x200)));
 		}
 		data.WriteUInt32(flags);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			data.WriteUInt16((ushort)this.FlagsExtra);
+			data.WriteUInt16((ushort)FlagsExtra);
 		}
 		else if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			data.WriteUInt8((byte)this.FlagsExtra);
+			data.WriteUInt8((byte)FlagsExtra);
 		}
-		data.WriteUInt32(this.MoveTime);
-		data.WriteVector3(this.Position);
-		data.WriteFloat(this.Orientation);
+		data.WriteUInt32(MoveTime);
+		data.WriteVector3(Position);
+		data.WriteFloat(Orientation);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.OnTransport) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.OnTransport) : flags.HasAnyFlag(MovementFlagTBC.OnTransport)))
 		{
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 			{
-				data.WritePackedGuid(this.TransportGuid.To64());
+				data.WritePackedGuid(TransportGuid.To64());
 			}
 			else
 			{
-				data.WriteGuid(this.TransportGuid.To64());
+				data.WriteGuid(TransportGuid.To64());
 			}
-			data.WriteVector3(this.TransportOffset);
-			data.WriteFloat(this.TransportOrientation);
+			data.WriteVector3(TransportOffset);
+			data.WriteFloat(TransportOrientation);
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
-				data.WriteUInt32(this.TransportTime);
+				data.WriteUInt32(TransportTime);
 			}
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 			{
-				data.WriteInt8(this.TransportSeat);
+				data.WriteInt8(TransportSeat);
 			}
-			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) && this.FlagsExtra.HasAnyFlag(MovementFlagExtra.InterpolateMove))
+			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) && FlagsExtra.HasAnyFlag(MovementFlagExtra.InterpolateMove))
 			{
-				data.WriteUInt32(this.TransportTime2);
+				data.WriteUInt32(TransportTime2);
 			}
 		}
-		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? (flags.HasAnyFlag(MovementFlagWotLK.Swimming | MovementFlagWotLK.Flying) || this.FlagsExtra.HasAnyFlag(MovementFlagExtra.AlwaysAllowPitching)) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.Swimming) : flags.HasAnyFlag(MovementFlagTBC.Swimming | MovementFlagTBC.Flying2)))
+		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? (flags.HasAnyFlag(MovementFlagWotLK.Swimming | MovementFlagWotLK.Flying) || FlagsExtra.HasAnyFlag(MovementFlagExtra.AlwaysAllowPitching)) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.Swimming) : flags.HasAnyFlag(MovementFlagTBC.Swimming | MovementFlagTBC.Flying2)))
 		{
-			data.WriteFloat(this.SwimPitch);
+			data.WriteFloat(SwimPitch);
 		}
-		data.WriteUInt32(this.FallTime);
+		data.WriteUInt32(FallTime);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.Falling) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.Falling) : flags.HasAnyFlag(MovementFlagTBC.Falling)))
 		{
-			data.WriteFloat(this.JumpVerticalSpeed);
-			data.WriteFloat(this.JumpSinAngle);
-			data.WriteFloat(this.JumpCosAngle);
-			data.WriteFloat(this.JumpHorizontalSpeed);
+			data.WriteFloat(JumpVerticalSpeed);
+			data.WriteFloat(JumpSinAngle);
+			data.WriteFloat(JumpCosAngle);
+			data.WriteFloat(JumpHorizontalSpeed);
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056) ? flags.HasAnyFlag(MovementFlagWotLK.SplineElevation) : ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? flags.HasAnyFlag(MovementFlagVanilla.SplineElevation) : flags.HasAnyFlag(MovementFlagTBC.SplineElevation)))
 		{
-			data.WriteFloat(this.SplineElevation);
+			data.WriteFloat(SplineElevation);
 		}
 	}
 
@@ -290,15 +290,15 @@ public sealed class MovementInfo
 	{
 		if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3))
 		{
-			this.Flags = data.ReadUInt32();
-			this.FlagsExtra = data.ReadUInt32();
-			this.FlagsExtra2 = data.ReadUInt32();
+			Flags = data.ReadUInt32();
+			FlagsExtra = data.ReadUInt32();
+			FlagsExtra2 = data.ReadUInt32();
 		}
-		this.MoveTime = data.ReadUInt32();
-		this.Position = data.ReadVector3();
-		this.Orientation = data.ReadFloat();
-		this.SwimPitch = data.ReadFloat();
-		this.SplineElevation = data.ReadFloat();
+		MoveTime = data.ReadUInt32();
+		Position = data.ReadVector3();
+		Orientation = data.ReadFloat();
+		SwimPitch = data.ReadFloat();
+		SplineElevation = data.ReadFloat();
 		uint removeMovementForcesCount = data.ReadUInt32();
 		uint moveIndex = data.ReadUInt32();
 		for (uint i = 0u; i < removeMovementForcesCount; i++)
@@ -307,8 +307,8 @@ public sealed class MovementInfo
 		}
 		if (!ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3))
 		{
-			this.Flags = data.ReadBits<uint>(30);
-			this.FlagsExtra = data.ReadBits<uint>(18);
+			Flags = data.ReadBits<uint>(30);
+			FlagsExtra = data.ReadBits<uint>(18);
 		}
 		bool hasStandingOnGameObjectGUID = ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3) && data.HasBit();
 		bool hasTransport = data.HasBit();
@@ -320,7 +320,7 @@ public sealed class MovementInfo
 		bool hasAdvFlying = ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3) && data.HasBit();
 		if (hasTransport)
 		{
-			this.ReadTransportInfoModern(data);
+			ReadTransportInfoModern(data);
 		}
 		if (hasStandingOnGameObjectGUID)
 		{
@@ -339,67 +339,67 @@ public sealed class MovementInfo
 		}
 		if (hasFall)
 		{
-			this.FallTime = data.ReadUInt32();
-			this.JumpVerticalSpeed = data.ReadFloat();
+			FallTime = data.ReadUInt32();
+			JumpVerticalSpeed = data.ReadFloat();
 			if (data.HasBit())
 			{
-				this.JumpSinAngle = data.ReadFloat();
-				this.JumpCosAngle = data.ReadFloat();
-				this.JumpHorizontalSpeed = data.ReadFloat();
+				JumpSinAngle = data.ReadFloat();
+				JumpCosAngle = data.ReadFloat();
+				JumpHorizontalSpeed = data.ReadFloat();
 			}
 		}
 	}
 
 	public void ReadTransportInfoModern(WorldPacket data)
 	{
-		this.TransportGuid = data.ReadPackedGuid128();
-		this.TransportOffset = data.ReadVector3();
-		this.TransportOrientation = data.ReadFloat();
-		this.TransportSeat = data.ReadInt8();
-		this.TransportTime = data.ReadUInt32();
+		TransportGuid = data.ReadPackedGuid128();
+		TransportOffset = data.ReadVector3();
+		TransportOrientation = data.ReadFloat();
+		TransportSeat = data.ReadInt8();
+		TransportTime = data.ReadUInt32();
 		bool hasPrevTime = data.HasBit();
 		bool hasVehicleId = data.HasBit();
 		if (hasPrevTime)
 		{
-			this.TransportTime2 = data.ReadUInt32();
+			TransportTime2 = data.ReadUInt32();
 		}
 		if (hasVehicleId)
 		{
-			this.VehicleId = data.ReadUInt32();
+			VehicleId = data.ReadUInt32();
 		}
 	}
 
 	public void WriteMovementInfoModern(WorldPacket data, WowGuid128 guid)
 	{
-		bool hasFallDirection = this.Flags.HasAnyFlag(MovementFlagModern.Falling | MovementFlagModern.FallingFar);
-		bool hasFall = hasFallDirection || this.FallTime != 0;
+		bool hasFallDirection = Flags.HasAnyFlag(MovementFlagModern.Falling | MovementFlagModern.FallingFar);
+		bool hasFall = hasFallDirection || FallTime != 0;
 		data.WritePackedGuid128(guid);
 		if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3))
 		{
-			data.WriteUInt32(this.Flags);
-			data.WriteUInt32(this.FlagsExtra);
-			data.WriteUInt32(this.FlagsExtra2);
+			data.WriteUInt32(Flags);
+			data.WriteUInt32(FlagsExtra);
+			data.WriteUInt32(FlagsExtra2);
 		}
-		data.WriteUInt32(this.MoveTime);
-		data.WriteFloat(this.Position.X);
-		data.WriteFloat(this.Position.Y);
-		data.WriteFloat(this.Position.Z);
-		data.WriteFloat(this.Orientation);
-		data.WriteFloat(this.SwimPitch);
-		data.WriteFloat(this.SplineElevation);
+		data.WriteUInt32(MoveTime);
+		data.WriteFloat(Position.X);
+		data.WriteFloat(Position.Y);
+		data.WriteFloat(Position.Z);
+		data.WriteFloat(Orientation);
+		data.WriteFloat(SwimPitch);
+		data.WriteFloat(SplineElevation);
 		data.WriteUInt32(0u);
 		data.WriteUInt32(0u);
 		if (!ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3))
 		{
-			data.WriteBits(this.Flags, 30);
-			data.WriteBits(this.FlagsExtra, 18);
+			data.WriteBits(Flags, 30);
+			data.WriteBits(FlagsExtra, 18);
 		}
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
 			data.WriteBit(bit: false);
-			data.WriteBit(this.TransportGuid != null);
+			data.WriteBit(TransportGuid != null);
 			data.WriteBit(hasFall);
-			data.WriteBit(this.HasSplineData);
+			data.WriteBit(HasSplineData);
 			data.WriteBit(bit: false);
 			data.WriteBit(bit: false);
 			data.WriteBit(bit: false);
@@ -407,9 +407,9 @@ public sealed class MovementInfo
 		}
 		else
 		{
-			data.WriteBit(this.TransportGuid != null);
+			data.WriteBit(TransportGuid != null);
 			data.WriteBit(hasFall);
-			data.WriteBit(this.HasSplineData);
+			data.WriteBit(HasSplineData);
 			data.WriteBit(bit: false);
 			data.WriteBit(bit: false);
 			if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3))
@@ -418,21 +418,21 @@ public sealed class MovementInfo
 			}
 		}
 		data.FlushBits();
-		if (this.TransportGuid != null)
+		if (TransportGuid != null)
 		{
-			this.WriteTransportInfoModern(data);
+			WriteTransportInfoModern(data);
 		}
 		if (hasFall)
 		{
-			data.WriteUInt32(this.FallTime);
-			data.WriteFloat(this.JumpVerticalSpeed);
+			data.WriteUInt32(FallTime);
+			data.WriteFloat(JumpVerticalSpeed);
 			data.WriteBit(hasFallDirection);
 			data.FlushBits();
 			if (hasFallDirection)
 			{
-				data.WriteFloat(this.JumpSinAngle);
-				data.WriteFloat(this.JumpCosAngle);
-				data.WriteFloat(this.JumpHorizontalSpeed);
+				data.WriteFloat(JumpSinAngle);
+				data.WriteFloat(JumpCosAngle);
+				data.WriteFloat(JumpHorizontalSpeed);
 			}
 		}
 	}
@@ -440,14 +440,14 @@ public sealed class MovementInfo
 	public void WriteTransportInfoModern(WorldPacket data)
 	{
 		bool hasPrevTime = false;
-		bool hasVehicleId = this.VehicleId != 0;
-		data.WritePackedGuid128(this.TransportGuid);
-		data.WriteFloat(this.TransportOffset.X);
-		data.WriteFloat(this.TransportOffset.Y);
-		data.WriteFloat(this.TransportOffset.Z);
-		data.WriteFloat(this.TransportOrientation);
-		data.WriteInt8(this.TransportSeat);
-		data.WriteUInt32(this.TransportTime);
+		bool hasVehicleId = VehicleId != 0;
+		data.WritePackedGuid128(TransportGuid);
+		data.WriteFloat(TransportOffset.X);
+		data.WriteFloat(TransportOffset.Y);
+		data.WriteFloat(TransportOffset.Z);
+		data.WriteFloat(TransportOrientation);
+		data.WriteInt8(TransportSeat);
+		data.WriteUInt32(TransportTime);
 		data.WriteBit(hasPrevTime);
 		data.WriteBit(hasVehicleId);
 		data.FlushBits();
@@ -457,7 +457,7 @@ public sealed class MovementInfo
 		}
 		if (hasVehicleId)
 		{
-			data.WriteUInt32(this.VehicleId);
+			data.WriteUInt32(VehicleId);
 		}
 	}
 
@@ -475,27 +475,27 @@ public sealed class MovementInfo
 
 	public void ValidateMovementInfo()
 	{
-		MovementInfo.ClampOrientation(ref this.Orientation);
-		MovementInfo.ClampOrientation(ref this.TransportOrientation);
+		ClampOrientation(ref Orientation);
+		ClampOrientation(ref TransportOrientation);
 		Action<bool, MovementFlagModern> RemoveViolatingFlags = delegate(bool check, MovementFlagModern maskToRemove)
 		{
 			if (check)
 			{
-				Log.Print(LogType.Error, $"Violation of MovementFlags found ({check}). MovementFlags: {this.Flags}, MovementFlags2: {this.FlagsExtra}. Mask {maskToRemove} will be removed.", "ValidateMovementInfo", "World\\Objects\\MovementInfo.cs");
-				this.RemoveMovementFlag(maskToRemove);
+				Log.Print(LogType.Error, $"Violation of MovementFlags found ({check}). MovementFlags: {Flags}, MovementFlags2: {FlagsExtra}. Mask {maskToRemove} will be removed.", "World\\Objects\\MovementInfo.cs");
+				RemoveMovementFlag(maskToRemove);
 			}
 		};
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.Root) && this.HasMovementFlag(MovementFlagModern.MaskMoving), MovementFlagModern.MaskMoving);
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.Ascending) && this.HasMovementFlag(MovementFlagModern.Descending), MovementFlagModern.Ascending | MovementFlagModern.Descending);
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.TurnLeft) && this.HasMovementFlag(MovementFlagModern.TurnRight), MovementFlagModern.TurnLeft | MovementFlagModern.TurnRight);
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.StrafeLeft) && this.HasMovementFlag(MovementFlagModern.StrafeRight), MovementFlagModern.StrafeLeft | MovementFlagModern.StrafeRight);
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.PitchUp) && this.HasMovementFlag(MovementFlagModern.PitchDown), MovementFlagModern.PitchUp | MovementFlagModern.PitchDown);
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.Forward) && this.HasMovementFlag(MovementFlagModern.Backward), MovementFlagModern.Forward | MovementFlagModern.Backward);
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.DisableGravity | MovementFlagModern.CanFly) && this.HasMovementFlag(MovementFlagModern.Falling), MovementFlagModern.Falling);
-		RemoveViolatingFlags(this.HasMovementFlag(MovementFlagModern.SplineElevation) && MathFunctions.fuzzyEq(this.SplineElevation, 0f), MovementFlagModern.SplineElevation);
-		if (MathFunctions.fuzzyNe(this.SplineElevation, 0f))
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.Root) && HasMovementFlag(MovementFlagModern.MaskMoving), MovementFlagModern.MaskMoving);
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.Ascending) && HasMovementFlag(MovementFlagModern.Descending), MovementFlagModern.Ascending | MovementFlagModern.Descending);
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.TurnLeft) && HasMovementFlag(MovementFlagModern.TurnRight), MovementFlagModern.TurnLeft | MovementFlagModern.TurnRight);
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.StrafeLeft) && HasMovementFlag(MovementFlagModern.StrafeRight), MovementFlagModern.StrafeLeft | MovementFlagModern.StrafeRight);
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.PitchUp) && HasMovementFlag(MovementFlagModern.PitchDown), MovementFlagModern.PitchUp | MovementFlagModern.PitchDown);
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.Forward) && HasMovementFlag(MovementFlagModern.Backward), MovementFlagModern.Forward | MovementFlagModern.Backward);
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.DisableGravity | MovementFlagModern.CanFly) && HasMovementFlag(MovementFlagModern.Falling), MovementFlagModern.Falling);
+		RemoveViolatingFlags(HasMovementFlag(MovementFlagModern.SplineElevation) && MathFunctions.fuzzyEq(SplineElevation, 0f), MovementFlagModern.SplineElevation);
+		if (MathFunctions.fuzzyNe(SplineElevation, 0f))
 		{
-			this.AddMovementFlag(MovementFlagModern.SplineElevation);
+			AddMovementFlag(MovementFlagModern.SplineElevation);
 		}
 	}
 }

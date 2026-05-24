@@ -13,6 +13,6 @@ public class PlayMusic : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.SoundEntryID);
+		_worldPacket.WriteUInt32(SoundEntryID);
 	}
 }

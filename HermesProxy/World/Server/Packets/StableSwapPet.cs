@@ -13,7 +13,7 @@ internal class StableSwapPet : ClientPacket
 
 	public override void Read()
 	{
-		this.PetNumber = base._worldPacket.ReadUInt32();
-		this.StableMaster = base._worldPacket.ReadPackedGuid128();
+		PetNumber = _worldPacket.ReadUInt32();
+		StableMaster = _worldPacket.ReadPackedGuid128();
 	}
 }

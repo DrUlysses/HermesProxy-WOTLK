@@ -24,11 +24,11 @@ public class EnumCharactersResult : ServerPacket
 
 			public void Write(WorldPacket data)
 			{
-				data.WriteUInt32(this.DisplayId);
-				data.WriteUInt32(this.DisplayEnchantId);
-				data.WriteUInt32(this.SecondaryItemModifiedAppearanceID);
-				data.WriteUInt8(this.InvType);
-				data.WriteUInt8(this.Subclass);
+				data.WriteUInt32(DisplayId);
+				data.WriteUInt32(DisplayEnchantId);
+				data.WriteUInt32(SecondaryItemModifiedAppearanceID);
+				data.WriteUInt8(InvType);
+				data.WriteUInt8(Subclass);
 			}
 		}
 
@@ -110,67 +110,67 @@ public class EnumCharactersResult : ServerPacket
 		public void Write(WorldPacket data)
 		{
 			long startPos = data.GetSize();
-			data.WritePackedGuid128(this.Guid);
-			data.WriteUInt64(this.GuildClubMemberID);
-			data.WriteUInt8(this.ListPosition);
-			data.WriteUInt8((byte)this.RaceId);
-			data.WriteUInt8((byte)this.ClassId);
-			data.WriteUInt8((byte)this.SexId);
-			data.WriteInt32(this.Customizations.Count);
-			data.WriteUInt8(this.ExperienceLevel);
-			data.WriteUInt32(this.ZoneId);
-			data.WriteUInt32(this.MapId);
-			data.WriteVector3(this.PreloadPos);
-			data.WritePackedGuid128(this.GuildGuid);
-			data.WriteUInt32((uint)this.Flags);
-			data.WriteUInt32(this.Flags2);
-			data.WriteUInt32(this.Flags3);
-			data.WriteUInt32(this.PetCreatureDisplayId);
-			data.WriteUInt32(this.PetExperienceLevel);
-			data.WriteUInt32(this.PetCreatureFamilyId);
-			data.WriteUInt32(this.ProfessionIds[0]);
-			data.WriteUInt32(this.ProfessionIds[1]);
-			int visualItemCount = ((ModernVersion.ExpansionVersion >= 3) ? 34 : this.VisualItems.Length);
+			data.WritePackedGuid128(Guid);
+			data.WriteUInt64(GuildClubMemberID);
+			data.WriteUInt8(ListPosition);
+			data.WriteUInt8((byte)RaceId);
+			data.WriteUInt8((byte)ClassId);
+			data.WriteUInt8((byte)SexId);
+			data.WriteInt32(Customizations.Count);
+			data.WriteUInt8(ExperienceLevel);
+			data.WriteUInt32(ZoneId);
+			data.WriteUInt32(MapId);
+			data.WriteVector3(PreloadPos);
+			data.WritePackedGuid128(GuildGuid);
+			data.WriteUInt32((uint)Flags);
+			data.WriteUInt32(Flags2);
+			data.WriteUInt32(Flags3);
+			data.WriteUInt32(PetCreatureDisplayId);
+			data.WriteUInt32(PetExperienceLevel);
+			data.WriteUInt32(PetCreatureFamilyId);
+			data.WriteUInt32(ProfessionIds[0]);
+			data.WriteUInt32(ProfessionIds[1]);
+			int visualItemCount = ((ModernVersion.ExpansionVersion >= 3) ? 34 : VisualItems.Length);
 			for (int vi = 0; vi < visualItemCount; vi++)
 			{
-				if (vi < this.VisualItems.Length)
+				if (vi < VisualItems.Length)
 				{
-					this.VisualItems[vi].Write(data);
+					VisualItems[vi].Write(data);
 				}
 				else
 				{
 					default(VisualItemInfo).Write(data);
 				}
 			}
-			data.WriteUInt64(this.LastPlayedTime);
-			data.WriteUInt16(this.SpecID);
+			data.WriteUInt64(LastPlayedTime);
+			data.WriteUInt16(SpecID);
 			if (ModernVersion.ExpansionVersion >= 3)
 			{
 				data.WriteInt32(0);
-				data.WriteInt32((int)this.LastLoginVersion);
+				data.WriteInt32((int)LastLoginVersion);
 			}
 			else
 			{
-				data.WriteUInt32(this.Unknown703);
-				data.WriteUInt32(this.LastLoginVersion);
+				data.WriteUInt32(Unknown703);
+				data.WriteUInt32(LastLoginVersion);
 			}
-			data.WriteUInt32(this.Flags4);
-			data.WriteInt32(this.MailSenders.Count);
-			data.WriteInt32(this.MailSenderTypes.Count);
-			data.WriteUInt32(this.OverrideSelectScreenFileDataID);
-			foreach (ChrCustomizationChoice customization in this.Customizations)
+			data.WriteUInt32(Flags4);
+			data.WriteInt32(MailSenders.Count);
+			data.WriteInt32(MailSenderTypes.Count);
+			data.WriteUInt32(OverrideSelectScreenFileDataID);
+			foreach (ChrCustomizationChoice customization in Customizations)
 			{
 				data.WriteUInt32(customization.ChrCustomizationOptionID);
 				data.WriteUInt32(customization.ChrCustomizationChoiceID);
 			}
-			foreach (uint mailSenderType in this.MailSenderTypes)
+			foreach (uint mailSenderType in MailSenderTypes)
 			{
 				data.WriteUInt32(mailSenderType);
 			}
-			data.WriteBits(this.Name.GetByteCount(), 6);
-			data.WriteBit(this.FirstLogin);
-			data.WriteBit(this.BoostInProgress);
-			data.WriteBits(this.unkWod61x, 5);
+			data.WriteBits(Name.GetByteCount(), 6);
+			data.WriteBit(FirstLogin);
+			data.WriteBit(BoostInProgress);
+			data.WriteBits(unkWod61x, 5);
 			if (ModernVersion.ExpansionVersion >= 3)
 			{
 				data.WriteBits(0, 2);
@@ -180,21 +180,21 @@ public class EnumCharactersResult : ServerPacket
 			else
 			{
 				data.WriteBit(bit: false);
-				data.WriteBit(this.ExpansionChosen);
+				data.WriteBit(ExpansionChosen);
 			}
-			foreach (string str in this.MailSenders)
+			foreach (string str in MailSenders)
 			{
 				data.WriteBits(str.GetByteCount() + 1, 6);
 			}
 			data.FlushBits();
-			foreach (string str2 in this.MailSenders)
+			foreach (string str2 in MailSenders)
 			{
 				if (!str2.IsEmpty())
 				{
 					data.WriteCString(str2);
 				}
 			}
-			data.WriteString(this.Name);
+			data.WriteString(Name);
 			long totalSize = data.GetSize() - startPos;
 			byte[] allData = data.GetData();
 			int dumpStart = (int)startPos;
@@ -202,8 +202,8 @@ public class EnumCharactersResult : ServerPacket
 			string hex = BitConverter.ToString(allData, dumpStart, dumpLen);
 			int lastStart = Math.Max(0, (int)totalSize - 30);
 			string lastHex = BitConverter.ToString(allData, dumpStart + lastStart, (int)totalSize - lastStart);
-			Log.Print(LogType.Debug, $"CharacterInfo: name={this.Name} race={this.RaceId} class={this.ClassId} level={this.ExperienceLevel} visItems={visualItemCount} totalBytes={totalSize}", "Write", "CharacterPackets.cs");
-			Log.Print(LogType.Debug, "CharacterInfo LAST 30 bytes: " + lastHex, "Write", "CharacterPackets.cs");
+			Log.Print(LogType.Debug, $"CharacterInfo: name={Name} race={RaceId} class={ClassId} level={ExperienceLevel} visItems={visualItemCount} totalBytes={totalSize}", "CharacterPackets.cs");
+			Log.Print(LogType.Debug, "CharacterInfo LAST 30 bytes: " + lastHex, "CharacterPackets.cs");
 		}
 	}
 
@@ -219,18 +219,18 @@ public class EnumCharactersResult : ServerPacket
 
 		public RaceUnlock(int raceId, bool hasExpansion, bool hasAchievement, bool hasHeritageArmor)
 		{
-			this.RaceID = raceId;
-			this.HasExpansion = hasExpansion;
-			this.HasAchievement = hasAchievement;
-			this.HasHeritageArmor = hasHeritageArmor;
+			RaceID = raceId;
+			HasExpansion = hasExpansion;
+			HasAchievement = hasAchievement;
+			HasHeritageArmor = hasHeritageArmor;
 		}
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteInt32(this.RaceID);
-			data.WriteBit(this.HasExpansion);
-			data.WriteBit(this.HasAchievement);
-			data.WriteBit(this.HasHeritageArmor);
+			data.WriteInt32(RaceID);
+			data.WriteBit(HasExpansion);
+			data.WriteBit(HasAchievement);
+			data.WriteBit(HasHeritageArmor);
 			data.FlushBits();
 		}
 	}
@@ -243,8 +243,8 @@ public class EnumCharactersResult : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteInt32(this.AchievementID);
-			data.WriteInt32(this.Unused);
+			data.WriteInt32(AchievementID);
+			data.WriteInt32(Unused);
 		}
 	}
 
@@ -277,61 +277,61 @@ public class EnumCharactersResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.Success);
-		base._worldPacket.WriteBit(this.IsDeletedCharacters);
-		base._worldPacket.WriteBit(this.IsNewPlayerRestrictionSkipped);
-		base._worldPacket.WriteBit(this.IsNewPlayerRestricted);
-		base._worldPacket.WriteBit(this.IsNewPlayer);
+		_worldPacket.WriteBit(Success);
+		_worldPacket.WriteBit(IsDeletedCharacters);
+		_worldPacket.WriteBit(IsNewPlayerRestrictionSkipped);
+		_worldPacket.WriteBit(IsNewPlayerRestricted);
+		_worldPacket.WriteBit(IsNewPlayer);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteBit(bit: false);
-			base._worldPacket.WriteBit(this.DisabledClassesMask.HasValue);
-			base._worldPacket.WriteUInt32((uint)this.Characters.Count);
-			base._worldPacket.WriteInt32(this.MaxCharacterLevel);
-			base._worldPacket.WriteUInt32((uint)this.RaceUnlockData.Count);
-			base._worldPacket.WriteUInt32((uint)this.UnlockedConditionalAppearances.Count);
-			base._worldPacket.WriteUInt32(0u);
-			if (this.DisabledClassesMask.HasValue)
+			_worldPacket.WriteBit(bit: false);
+			_worldPacket.WriteBit(DisabledClassesMask.HasValue);
+			_worldPacket.WriteUInt32((uint)Characters.Count);
+			_worldPacket.WriteInt32(MaxCharacterLevel);
+			_worldPacket.WriteUInt32((uint)RaceUnlockData.Count);
+			_worldPacket.WriteUInt32((uint)UnlockedConditionalAppearances.Count);
+			_worldPacket.WriteUInt32(0u);
+			if (DisabledClassesMask.HasValue)
 			{
-				base._worldPacket.WriteUInt32(this.DisabledClassesMask.Value);
+				_worldPacket.WriteUInt32(DisabledClassesMask.Value);
 			}
-			foreach (UnlockedConditionalAppearance unlockedConditionalAppearance2 in this.UnlockedConditionalAppearances)
+			foreach (UnlockedConditionalAppearance unlockedConditionalAppearance2 in UnlockedConditionalAppearances)
 			{
-				unlockedConditionalAppearance2.Write(base._worldPacket);
+				unlockedConditionalAppearance2.Write(_worldPacket);
 			}
-			foreach (CharacterInfo charInfo in this.Characters)
+			foreach (CharacterInfo charInfo in Characters)
 			{
-				charInfo.Write(base._worldPacket);
+				charInfo.Write(_worldPacket);
 			}
 			{
-				foreach (RaceUnlock raceUnlockDatum in this.RaceUnlockData)
+				foreach (RaceUnlock raceUnlockDatum in RaceUnlockData)
 				{
-					raceUnlockDatum.Write(base._worldPacket);
+					raceUnlockDatum.Write(_worldPacket);
 				}
 				return;
 			}
 		}
-		base._worldPacket.WriteBit(this.DisabledClassesMask.HasValue);
-		base._worldPacket.WriteBit(this.IsAlliedRacesCreationAllowed);
-		base._worldPacket.WriteInt32(this.Characters.Count);
-		base._worldPacket.WriteInt32(this.MaxCharacterLevel);
-		base._worldPacket.WriteInt32(this.RaceUnlockData.Count);
-		base._worldPacket.WriteInt32(this.UnlockedConditionalAppearances.Count);
-		if (this.DisabledClassesMask.HasValue)
+		_worldPacket.WriteBit(DisabledClassesMask.HasValue);
+		_worldPacket.WriteBit(IsAlliedRacesCreationAllowed);
+		_worldPacket.WriteInt32(Characters.Count);
+		_worldPacket.WriteInt32(MaxCharacterLevel);
+		_worldPacket.WriteInt32(RaceUnlockData.Count);
+		_worldPacket.WriteInt32(UnlockedConditionalAppearances.Count);
+		if (DisabledClassesMask.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.DisabledClassesMask.Value);
+			_worldPacket.WriteUInt32(DisabledClassesMask.Value);
 		}
-		foreach (UnlockedConditionalAppearance unlockedConditionalAppearance3 in this.UnlockedConditionalAppearances)
+		foreach (UnlockedConditionalAppearance unlockedConditionalAppearance3 in UnlockedConditionalAppearances)
 		{
-			unlockedConditionalAppearance3.Write(base._worldPacket);
+			unlockedConditionalAppearance3.Write(_worldPacket);
 		}
-		foreach (CharacterInfo charInfo2 in this.Characters)
+		foreach (CharacterInfo charInfo2 in Characters)
 		{
-			charInfo2.Write(base._worldPacket);
+			charInfo2.Write(_worldPacket);
 		}
-		foreach (RaceUnlock raceUnlockDatum2 in this.RaceUnlockData)
+		foreach (RaceUnlock raceUnlockDatum2 in RaceUnlockData)
 		{
-			raceUnlockDatum2.Write(base._worldPacket);
+			raceUnlockDatum2.Write(_worldPacket);
 		}
 	}
 }

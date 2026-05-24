@@ -17,10 +17,10 @@ public class WrapItem : ClientPacket
 
 	public override void Read()
 	{
-		base._worldPacket.ReadUInt8();
-		this.GiftBag = base._worldPacket.ReadUInt8();
-		this.GiftSlot = base._worldPacket.ReadUInt8();
-		this.ItemBag = base._worldPacket.ReadUInt8();
-		this.ItemSlot = base._worldPacket.ReadUInt8();
+		_worldPacket.ReadUInt8();
+		GiftBag = _worldPacket.ReadUInt8();
+		GiftSlot = _worldPacket.ReadUInt8();
+		ItemBag = _worldPacket.ReadUInt8();
+		ItemSlot = _worldPacket.ReadUInt8();
 	}
 }

@@ -14,7 +14,7 @@ public class AchievementDeleted : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.AchievementID);
-		base._worldPacket.WriteUInt32(this.Immunities);
+		_worldPacket.WriteUInt32(AchievementID);
+		_worldPacket.WriteUInt32(Immunities);
 	}
 }

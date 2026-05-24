@@ -10,8 +10,8 @@ public struct GuildRosterProfessionData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.DbID);
-		data.WriteInt32(this.Rank);
-		data.WriteInt32(this.Step);
+		data.WriteInt32(DbID);
+		data.WriteInt32(Rank);
+		data.WriteInt32(Step);
 	}
 }

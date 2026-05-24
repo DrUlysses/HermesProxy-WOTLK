@@ -15,7 +15,7 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			string[] names = this.Names;
+			string[] names = Names;
 			foreach (string str in names)
 			{
 				data.WriteBits(str.GetByteCount(), 7);
@@ -23,8 +23,8 @@ public class PVPMatchStatisticsMessage : ServerPacket
 			data.FlushBits();
 			for (int j = 0; j < 2; j++)
 			{
-				data.WritePackedGuid128(this.Guids[j]);
-				data.WriteString(this.Names[j]);
+				data.WritePackedGuid128(Guids[j]);
+				data.WriteString(Names[j]);
 			}
 		}
 	}
@@ -39,17 +39,17 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			uint[] prematch = this.Prematch;
+			uint[] prematch = Prematch;
 			foreach (uint id in prematch)
 			{
 				data.WriteUInt32(id);
 			}
-			uint[] postmatch = this.Postmatch;
+			uint[] postmatch = Postmatch;
 			foreach (uint id2 in postmatch)
 			{
 				data.WriteUInt32(id2);
 			}
-			uint[] prematchMMR = this.PrematchMMR;
+			uint[] prematchMMR = PrematchMMR;
 			foreach (uint id3 in prematchMMR)
 			{
 				data.WriteUInt32(id3);
@@ -67,9 +67,9 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteUInt32(this.HonorKills);
-			data.WriteUInt32(this.Deaths);
-			data.WriteUInt32(this.ContributionPoints);
+			data.WriteUInt32(HonorKills);
+			data.WriteUInt32(Deaths);
+			data.WriteUInt32(ContributionPoints);
 		}
 	}
 
@@ -115,49 +115,49 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WritePackedGuid128(this.PlayerGUID);
-			data.WriteUInt32(this.Kills);
-			data.WriteUInt32(this.DamageDone);
-			data.WriteUInt32(this.HealingDone);
-			data.WriteInt32(this.Stats.Count);
-			data.WriteInt32(this.PrimaryTalentTree);
-			data.WriteUInt32((uint)this.Sex);
-			data.WriteUInt32((uint)this.PlayerRace);
-			data.WriteUInt32((uint)this.PlayerClass);
-			data.WriteInt32(this.CreatureID);
-			data.WriteInt32(this.HonorLevel);
-			data.WriteInt32(this.Rank);
-			foreach (uint pvpStat in this.Stats)
+			data.WritePackedGuid128(PlayerGUID);
+			data.WriteUInt32(Kills);
+			data.WriteUInt32(DamageDone);
+			data.WriteUInt32(HealingDone);
+			data.WriteInt32(Stats.Count);
+			data.WriteInt32(PrimaryTalentTree);
+			data.WriteUInt32((uint)Sex);
+			data.WriteUInt32((uint)PlayerRace);
+			data.WriteUInt32((uint)PlayerClass);
+			data.WriteInt32(CreatureID);
+			data.WriteInt32(HonorLevel);
+			data.WriteInt32(Rank);
+			foreach (uint pvpStat in Stats)
 			{
 				data.WriteUInt32(pvpStat);
 			}
-			data.WriteBit(this.Faction);
-			data.WriteBit(this.IsInWorld);
-			data.WriteBit(this.Honor != null);
-			data.WriteBit(this.PreMatchRating.HasValue);
-			data.WriteBit(this.RatingChange.HasValue);
-			data.WriteBit(this.PreMatchMMR.HasValue);
-			data.WriteBit(this.MmrChange.HasValue);
+			data.WriteBit(Faction);
+			data.WriteBit(IsInWorld);
+			data.WriteBit(Honor != null);
+			data.WriteBit(PreMatchRating.HasValue);
+			data.WriteBit(RatingChange.HasValue);
+			data.WriteBit(PreMatchMMR.HasValue);
+			data.WriteBit(MmrChange.HasValue);
 			data.FlushBits();
-			if (this.Honor != null)
+			if (Honor != null)
 			{
-				this.Honor.Write(data);
+				Honor.Write(data);
 			}
-			if (this.PreMatchRating.HasValue)
+			if (PreMatchRating.HasValue)
 			{
-				data.WriteUInt32(this.PreMatchRating.Value);
+				data.WriteUInt32(PreMatchRating.Value);
 			}
-			if (this.RatingChange.HasValue)
+			if (RatingChange.HasValue)
 			{
-				data.WriteInt32(this.RatingChange.Value);
+				data.WriteInt32(RatingChange.Value);
 			}
-			if (this.PreMatchMMR.HasValue)
+			if (PreMatchMMR.HasValue)
 			{
-				data.WriteUInt32(this.PreMatchMMR.Value);
+				data.WriteUInt32(PreMatchMMR.Value);
 			}
-			if (this.MmrChange.HasValue)
+			if (MmrChange.HasValue)
 			{
-				data.WriteInt32(this.MmrChange.Value);
+				data.WriteInt32(MmrChange.Value);
 			}
 		}
 	}
@@ -179,30 +179,30 @@ public class PVPMatchStatisticsMessage : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.Ratings != null);
-		base._worldPacket.WriteBit(this.ArenaTeams != null);
-		base._worldPacket.WriteBit(this.Winner.HasValue);
-		if (this.ArenaTeams != null)
+		_worldPacket.WriteBit(Ratings != null);
+		_worldPacket.WriteBit(ArenaTeams != null);
+		_worldPacket.WriteBit(Winner.HasValue);
+		if (ArenaTeams != null)
 		{
-			this.ArenaTeams.Write(base._worldPacket);
+			ArenaTeams.Write(_worldPacket);
 		}
-		base._worldPacket.WriteInt32(this.Statistics.Count);
-		sbyte[] playerCount = this.PlayerCount;
+		_worldPacket.WriteInt32(Statistics.Count);
+		sbyte[] playerCount = PlayerCount;
 		foreach (sbyte count in playerCount)
 		{
-			base._worldPacket.WriteInt8(count);
+			_worldPacket.WriteInt8(count);
 		}
-		if (this.Ratings != null)
+		if (Ratings != null)
 		{
-			this.Ratings.Write(base._worldPacket);
+			Ratings.Write(_worldPacket);
 		}
-		if (this.Winner.HasValue)
+		if (Winner.HasValue)
 		{
-			base._worldPacket.WriteUInt8(this.Winner.Value);
+			_worldPacket.WriteUInt8(Winner.Value);
 		}
-		foreach (PVPMatchPlayerStatistics player in this.Statistics)
+		foreach (PVPMatchPlayerStatistics player in Statistics)
 		{
-			player.Write(base._worldPacket);
+			player.Write(_worldPacket);
 		}
 	}
 }

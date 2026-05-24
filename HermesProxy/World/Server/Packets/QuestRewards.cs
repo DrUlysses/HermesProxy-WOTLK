@@ -54,53 +54,53 @@ public class QuestRewards
 	{
 		for (int i = 0; i < 6; i++)
 		{
-			this.ChoiceItems[i] = new QuestChoiceItem();
+			ChoiceItems[i] = new QuestChoiceItem();
 		}
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.ChoiceItemCount);
-		data.WriteUInt32(this.ItemCount);
+		data.WriteUInt32(ChoiceItemCount);
+		data.WriteUInt32(ItemCount);
 		for (int i = 0; i < 4; i++)
 		{
-			data.WriteUInt32(this.ItemID[i]);
-			data.WriteUInt32(this.ItemQty[i]);
+			data.WriteUInt32(ItemID[i]);
+			data.WriteUInt32(ItemQty[i]);
 		}
-		data.WriteUInt32(this.Money);
-		data.WriteUInt32(this.XP);
-		data.WriteUInt64(this.ArtifactXP);
-		data.WriteUInt32(this.ArtifactCategoryID);
-		data.WriteUInt32(this.Honor);
-		data.WriteUInt32(this.Title);
-		data.WriteUInt32(this.FactionFlags);
+		data.WriteUInt32(Money);
+		data.WriteUInt32(XP);
+		data.WriteUInt64(ArtifactXP);
+		data.WriteUInt32(ArtifactCategoryID);
+		data.WriteUInt32(Honor);
+		data.WriteUInt32(Title);
+		data.WriteUInt32(FactionFlags);
 		for (int j = 0; j < 5; j++)
 		{
-			data.WriteUInt32(this.FactionID[j]);
-			data.WriteInt32(this.FactionValue[j]);
-			data.WriteInt32(this.FactionOverride[j]);
-			data.WriteInt32(this.FactionCapIn[j]);
+			data.WriteUInt32(FactionID[j]);
+			data.WriteInt32(FactionValue[j]);
+			data.WriteInt32(FactionOverride[j]);
+			data.WriteInt32(FactionCapIn[j]);
 		}
-		int[] spellCompletionDisplayID = this.SpellCompletionDisplayID;
+		int[] spellCompletionDisplayID = SpellCompletionDisplayID;
 		foreach (int id in spellCompletionDisplayID)
 		{
 			data.WriteInt32(id);
 		}
-		data.WriteUInt32(this.SpellCompletionID);
+		data.WriteUInt32(SpellCompletionID);
 		for (int l = 0; l < 4; l++)
 		{
-			data.WriteUInt32(this.CurrencyID[l]);
-			data.WriteUInt32(this.CurrencyQty[l]);
+			data.WriteUInt32(CurrencyID[l]);
+			data.WriteUInt32(CurrencyQty[l]);
 		}
-		data.WriteUInt32(this.SkillLineID);
-		data.WriteUInt32(this.NumSkillUps);
-		data.WriteUInt32(this.TreasurePickerID);
-		QuestChoiceItem[] choiceItems = this.ChoiceItems;
+		data.WriteUInt32(SkillLineID);
+		data.WriteUInt32(NumSkillUps);
+		data.WriteUInt32(TreasurePickerID);
+		QuestChoiceItem[] choiceItems = ChoiceItems;
 		foreach (QuestChoiceItem choice in choiceItems)
 		{
 			choice.Write(data);
 		}
-		data.WriteBit(this.IsBoostSpell);
+		data.WriteBit(IsBoostSpell);
 		data.FlushBits();
 	}
 }

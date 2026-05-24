@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Report.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/report_types.proto</summary>
@@ -367,13 +367,13 @@ namespace Bgs.Protocol.Report.V1 {
         return true;
       }
       if (UserDescription != other.UserDescription) return false;
-      if (!object.Equals(CustomReport, other.CustomReport)) return false;
-      if (!object.Equals(SpamReport, other.SpamReport)) return false;
-      if (!object.Equals(HarassmentReport, other.HarassmentReport)) return false;
-      if (!object.Equals(RealLifeThreatReport, other.RealLifeThreatReport)) return false;
-      if (!object.Equals(InappropriateBattleTagReport, other.InappropriateBattleTagReport)) return false;
-      if (!object.Equals(HackingReport, other.HackingReport)) return false;
-      if (!object.Equals(BottingReport, other.BottingReport)) return false;
+      if (!Equals(CustomReport, other.CustomReport)) return false;
+      if (!Equals(SpamReport, other.SpamReport)) return false;
+      if (!Equals(HarassmentReport, other.HarassmentReport)) return false;
+      if (!Equals(RealLifeThreatReport, other.RealLifeThreatReport)) return false;
+      if (!Equals(InappropriateBattleTagReport, other.InappropriateBattleTagReport)) return false;
+      if (!Equals(HackingReport, other.HackingReport)) return false;
+      if (!Equals(BottingReport, other.BottingReport)) return false;
       if (TypeCase != other.TypeCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -909,7 +909,7 @@ namespace Bgs.Protocol.Report.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Target, other.Target)) return false;
+      if (!Equals(Target, other.Target)) return false;
       if (Source != other.Source) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1108,7 +1108,7 @@ namespace Bgs.Protocol.Report.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Target, other.Target)) return false;
+      if (!Equals(Target, other.Target)) return false;
       if (Text != other.Text) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1293,7 +1293,7 @@ namespace Bgs.Protocol.Report.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Target, other.Target)) return false;
+      if (!Equals(Target, other.Target)) return false;
       if (Text != other.Text) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1478,7 +1478,7 @@ namespace Bgs.Protocol.Report.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Target, other.Target)) return false;
+      if (!Equals(Target, other.Target)) return false;
       if (BattleTag != other.BattleTag) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1639,7 +1639,7 @@ namespace Bgs.Protocol.Report.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Target, other.Target)) return false;
+      if (!Equals(Target, other.Target)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1784,7 +1784,7 @@ namespace Bgs.Protocol.Report.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Target, other.Target)) return false;
+      if (!Equals(Target, other.Target)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2041,8 +2041,8 @@ namespace Bgs.Protocol.Report.V1 {
       if (ReportType != other.ReportType) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (ReportQos != other.ReportQos) return false;
-      if (!object.Equals(ReportingAccount, other.ReportingAccount)) return false;
-      if (!object.Equals(ReportingGameAccount, other.ReportingGameAccount)) return false;
+      if (!Equals(ReportingAccount, other.ReportingAccount)) return false;
+      if (!Equals(ReportingGameAccount, other.ReportingGameAccount)) return false;
       if (ReportTimestamp != other.ReportTimestamp) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

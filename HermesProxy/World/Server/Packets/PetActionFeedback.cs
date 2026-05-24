@@ -15,7 +15,7 @@ public class PetActionFeedback : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.SpellID);
-		base._worldPacket.WriteUInt8(this.Response);
+		_worldPacket.WriteInt32(SpellID);
+		_worldPacket.WriteUInt8(Response);
 	}
 }

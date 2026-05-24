@@ -13,6 +13,6 @@ public class PreRessurect : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
+		_worldPacket.WritePackedGuid128(PlayerGUID);
 	}
 }

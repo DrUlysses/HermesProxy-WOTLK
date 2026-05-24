@@ -11,6 +11,6 @@ public class ChatAddonMessage : ClientPacket
 
 	public override void Read()
 	{
-		this.Params.Read(base._worldPacket);
+		Params.Read(_worldPacket);
 	}
 }

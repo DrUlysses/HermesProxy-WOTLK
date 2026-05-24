@@ -15,7 +15,7 @@ public class ThreatRemove : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.AboutGUID);
-		base._worldPacket.WritePackedGuid128(this.UnitGUID);
+		_worldPacket.WritePackedGuid128(AboutGUID);
+		_worldPacket.WritePackedGuid128(UnitGUID);
 	}
 }

@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
  * Copyright (C) 2003-2004  Eran Kampf	eran@ekampf.com	http://www.ekampf.com
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -216,7 +216,7 @@ namespace Framework.GameMath
         {
             get
             {
-                return (float)System.Math.Sqrt(_w * _w + _x * _x + _y * _y + _z * _z);
+                return (float)Math.Sqrt(_w * _w + _x * _x + _y * _y + _z * _z);
             }
         }
         /// <summary>
@@ -285,10 +285,8 @@ namespace Framework.GameMath
                     float.Parse(m.Result("${w}"))
                     );
             }
-            else
-            {
-                throw new Exception("Unsuccessful Match.");
-            }
+
+            throw new Exception("Unsuccessful Match.");
         }
         /// <summary>
         /// Converts the specified string to its <see cref="Quaternion"/> equivalent.
@@ -316,7 +314,7 @@ namespace Framework.GameMath
                 return true;
             }
 
-            result = Quaternion.Zero;
+            result = Zero;
             return false;
         }
         #endregion
@@ -500,7 +498,7 @@ namespace Framework.GameMath
 
         float dot(Quaternion other)
         {
-            return (float)((X * other.X) + (Y * other.Y) + (Z * other.Z) + (W * other.W));
+            return (X * other.X) + (Y * other.Y) + (Z * other.Z) + (W * other.W);
         }
 
         float rsq(float x)
@@ -553,8 +551,8 @@ namespace Framework.GameMath
 
             if (Math.Abs(quaternion.W) < 1.0)
             {
-                float angle = (float)System.Math.Acos(quaternion.W);
-                float sin = (float)System.Math.Sin(angle);
+                float angle = (float)Math.Acos(quaternion.W);
+                float sin = (float)Math.Sin(angle);
 
                 if (Math.Abs(sin) >= 0)
                 {
@@ -582,8 +580,8 @@ namespace Framework.GameMath
         {
             Quaternion result = new Quaternion(0, 0, 0, 0);
 
-            float angle = (float)System.Math.Sqrt(quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z);
-            float sin = (float)System.Math.Sin(angle);
+            float angle = (float)Math.Sqrt(quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z);
+            float sin = (float)Math.Sin(angle);
 
             if (Math.Abs(sin) > 0)
             {
@@ -727,7 +725,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two quaternions are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Quaternion left, Quaternion right)
         {
-            return ValueType.Equals(left, right);
+            return Equals(left, right);
         }
         /// <summary>
         /// Tests whether two specified quaternions are not equal.
@@ -737,7 +735,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two quaternions are not equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Quaternion left, Quaternion right)
         {
-            return !ValueType.Equals(left, right);
+            return !Equals(left, right);
         }
         #endregion
 
@@ -750,7 +748,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Quaternion"/> instance containing the sum.</returns>
         public static Quaternion operator +(Quaternion left, Quaternion right)
         {
-            return Quaternion.Add(left, right);
+            return Add(left, right);
         }
         /// <summary>
         /// Subtracts a quaternion from a quaternion.
@@ -760,7 +758,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Quaternion"/> instance containing the difference.</returns>
         public static Quaternion operator -(Quaternion left, Quaternion right)
         {
-            return Quaternion.Subtract(left, right);
+            return Subtract(left, right);
         }
         /// <summary>
         /// Multiplies quaternion <paramref name="left"/> by quaternion <paramref name="right"/>.
@@ -770,7 +768,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Quaternion"/> containing the result.</returns>
         public static Quaternion operator *(Quaternion left, Quaternion right)
         {
-            return Quaternion.Multiply(left, right);
+            return Multiply(left, right);
         }
         /// <summary>
         /// Multiplies a quaternion by a scalar.
@@ -780,7 +778,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="Quaternion"/> instance to hold the result.</returns>
         public static Quaternion operator *(Quaternion quaternion, float scalar)
         {
-            return Quaternion.Multiply(quaternion, scalar);
+            return Multiply(quaternion, scalar);
         }
         /// <summary>
         /// Multiplies a quaternion by a scalar.
@@ -790,7 +788,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="Quaternion"/> instance to hold the result.</returns>
         public static Quaternion operator *(float scalar, Quaternion quaternion)
         {
-            return Quaternion.Multiply(quaternion, scalar);
+            return Multiply(quaternion, scalar);
         }
         /// <summary>
         /// Divides a quaternion by a scalar.
@@ -800,7 +798,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="Quaternion"/> instance to hold the result.</returns>
         public static Quaternion operator /(Quaternion quaternion, float scalar)
         {
-            return Quaternion.Divide(quaternion, scalar);
+            return Divide(quaternion, scalar);
         }
         /// <summary>
         /// Divides a scalar by a quaternion.
@@ -810,7 +808,7 @@ namespace Framework.GameMath
         /// <returns>A <see cref="Quaternion"/> instance to hold the result.</returns>
         public static Quaternion operator /(float scalar, Quaternion quaternion)
         {
-            return Quaternion.Multiply(quaternion, (1.0f / scalar));
+            return Multiply(quaternion, (1.0f / scalar));
         }
         #endregion
 
@@ -855,7 +853,6 @@ namespace Framework.GameMath
                     default:
                         throw new IndexOutOfRangeException();
                 }
-                return;
             }
         }
         #endregion

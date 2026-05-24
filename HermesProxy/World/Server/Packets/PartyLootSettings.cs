@@ -12,8 +12,8 @@ public class PartyLootSettings
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8((byte)this.Method);
-		data.WritePackedGuid128(this.LootMaster);
-		data.WriteUInt8(this.Threshold);
+		data.WriteUInt8((byte)Method);
+		data.WritePackedGuid128(LootMaster);
+		data.WriteUInt8(Threshold);
 	}
 }

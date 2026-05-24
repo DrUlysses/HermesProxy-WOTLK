@@ -26,20 +26,20 @@ public class LearnedSpells : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.ClientLearnedSpellData.Count);
-		base._worldPacket.WriteUInt32(this.SpecializationID);
-		base._worldPacket.WriteBit(this.SuppressMessaging);
-		base._worldPacket.FlushBits();
-		foreach (var info in this.ClientLearnedSpellData)
+		_worldPacket.WriteInt32(ClientLearnedSpellData.Count);
+		_worldPacket.WriteUInt32(SpecializationID);
+		_worldPacket.WriteBit(SuppressMessaging);
+		_worldPacket.FlushBits();
+		foreach (var info in ClientLearnedSpellData)
 		{
-			base._worldPacket.WriteInt32(info.SpellID);
-			base._worldPacket.WriteBit(info.IsFavorite);
-			base._worldPacket.WriteBit(false); // field_8
-			base._worldPacket.WriteBit(info.Superceded.HasValue); // Superceded
-			base._worldPacket.WriteBit(false); // TraitDefinitionID
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteInt32(info.SpellID);
+			_worldPacket.WriteBit(info.IsFavorite);
+			_worldPacket.WriteBit(false); // field_8
+			_worldPacket.WriteBit(info.Superceded.HasValue); // Superceded
+			_worldPacket.WriteBit(false); // TraitDefinitionID
+			_worldPacket.FlushBits();
 			if (info.Superceded.HasValue)
-				base._worldPacket.WriteInt32(info.Superceded.Value);
+				_worldPacket.WriteInt32(info.Superceded.Value);
 		}
 	}
 }

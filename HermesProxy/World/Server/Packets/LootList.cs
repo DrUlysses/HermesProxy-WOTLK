@@ -20,18 +20,18 @@ internal class LootList : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Owner);
-		base._worldPacket.WritePackedGuid128(this.LootObj);
-		base._worldPacket.WriteBit(this.Master != null);
-		base._worldPacket.WriteBit(this.RoundRobinWinner != null);
-		base._worldPacket.FlushBits();
-		if (this.Master != null)
+		_worldPacket.WritePackedGuid128(Owner);
+		_worldPacket.WritePackedGuid128(LootObj);
+		_worldPacket.WriteBit(Master != null);
+		_worldPacket.WriteBit(RoundRobinWinner != null);
+		_worldPacket.FlushBits();
+		if (Master != null)
 		{
-			base._worldPacket.WritePackedGuid128(this.Master);
+			_worldPacket.WritePackedGuid128(Master);
 		}
-		if (this.RoundRobinWinner != null)
+		if (RoundRobinWinner != null)
 		{
-			base._worldPacket.WritePackedGuid128(this.RoundRobinWinner);
+			_worldPacket.WritePackedGuid128(RoundRobinWinner);
 		}
 	}
 }

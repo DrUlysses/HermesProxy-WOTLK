@@ -23,16 +23,16 @@ internal class EnvironmentalDamageLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Victim);
-		base._worldPacket.WriteUInt8((byte)this.Type);
-		base._worldPacket.WriteInt32(this.Amount);
-		base._worldPacket.WriteInt32(this.Resisted);
-		base._worldPacket.WriteInt32(this.Absorbed);
-		base._worldPacket.WriteBit(this.LogData != null);
-		base._worldPacket.FlushBits();
-		if (this.LogData != null)
+		_worldPacket.WritePackedGuid128(Victim);
+		_worldPacket.WriteUInt8((byte)Type);
+		_worldPacket.WriteInt32(Amount);
+		_worldPacket.WriteInt32(Resisted);
+		_worldPacket.WriteInt32(Absorbed);
+		_worldPacket.WriteBit(LogData != null);
+		_worldPacket.FlushBits();
+		if (LogData != null)
 		{
-			this.LogData.Write(base._worldPacket);
+			LogData.Write(_worldPacket);
 		}
 	}
 }

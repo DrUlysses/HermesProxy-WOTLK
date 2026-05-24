@@ -26,18 +26,18 @@ public class LfgPlayerReward : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.QueuedSlot);
-		base._worldPacket.WriteUInt32(this.ActualSlot);
-		base._worldPacket.WriteInt32(this.RewardMoney);
-		base._worldPacket.WriteInt32(this.AddedXP);
-		base._worldPacket.WriteUInt32((uint)this.Rewards.Count);
-		foreach (LfgPlayerRewardItem reward in this.Rewards)
+		_worldPacket.WriteUInt32(QueuedSlot);
+		_worldPacket.WriteUInt32(ActualSlot);
+		_worldPacket.WriteInt32(RewardMoney);
+		_worldPacket.WriteInt32(AddedXP);
+		_worldPacket.WriteUInt32((uint)Rewards.Count);
+		foreach (LfgPlayerRewardItem reward in Rewards)
 		{
-			base._worldPacket.WriteUInt32(reward.ItemID);
-			base._worldPacket.WriteUInt32(reward.Quantity);
-			base._worldPacket.WriteInt32(reward.BonusCurrency);
-			base._worldPacket.WriteBit(reward.IsCurrency);
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteUInt32(reward.ItemID);
+			_worldPacket.WriteUInt32(reward.Quantity);
+			_worldPacket.WriteInt32(reward.BonusCurrency);
+			_worldPacket.WriteBit(reward.IsCurrency);
+			_worldPacket.FlushBits();
 		}
 	}
 }

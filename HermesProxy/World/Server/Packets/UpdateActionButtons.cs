@@ -19,8 +19,8 @@ public class UpdateActionButtons : ServerPacket
 	{
 		for (int i = 0; i < 180; i++)
 		{
-			base._worldPacket.WriteInt64((i < this.ActionButtons.Count) ? this.ActionButtons[i] : 0);
+			_worldPacket.WriteInt64((i < ActionButtons.Count) ? ActionButtons[i] : 0);
 		}
-		base._worldPacket.WriteUInt8(this.Reason);
+		_worldPacket.WriteUInt8(Reason);
 	}
 }

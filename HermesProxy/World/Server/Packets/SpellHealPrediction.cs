@@ -10,8 +10,8 @@ public class SpellHealPrediction
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Points);
-		data.WriteUInt8(this.Type);
-		data.WritePackedGuid128(this.BeaconGUID);
+		data.WriteUInt32(Points);
+		data.WriteUInt8(Type);
+		data.WritePackedGuid128(BeaconGUID);
 	}
 }

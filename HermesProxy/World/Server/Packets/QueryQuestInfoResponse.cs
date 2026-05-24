@@ -20,135 +20,135 @@ public class QueryQuestInfoResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.QuestID);
-		base._worldPacket.WriteBit(this.Allow);
-		base._worldPacket.FlushBits();
-		if (!this.Allow)
+		_worldPacket.WriteUInt32(QuestID);
+		_worldPacket.WriteBit(Allow);
+		_worldPacket.FlushBits();
+		if (!Allow)
 		{
 			return;
 		}
-		base._worldPacket.WriteUInt32(this.Info.QuestID);
-		base._worldPacket.WriteInt32(this.Info.QuestType);
-		base._worldPacket.WriteInt32(this.Info.QuestLevel);
-		base._worldPacket.WriteInt32(this.Info.QuestScalingFactionGroup);
-		base._worldPacket.WriteInt32(this.Info.QuestMaxScalingLevel);
-		base._worldPacket.WriteUInt32(this.Info.QuestPackageID);
-		base._worldPacket.WriteInt32(this.Info.MinLevel);
-		base._worldPacket.WriteInt32(this.Info.QuestSortID);
-		base._worldPacket.WriteUInt32(this.Info.QuestInfoID);
-		base._worldPacket.WriteUInt32(this.Info.SuggestedGroupNum);
-		base._worldPacket.WriteUInt32(this.Info.RewardNextQuest);
-		base._worldPacket.WriteUInt32(this.Info.RewardXPDifficulty);
-		base._worldPacket.WriteFloat(this.Info.RewardXPMultiplier);
-		base._worldPacket.WriteInt32(this.Info.RewardMoney);
-		base._worldPacket.WriteUInt32(this.Info.RewardMoneyDifficulty);
-		base._worldPacket.WriteFloat(this.Info.RewardMoneyMultiplier);
-		base._worldPacket.WriteUInt32(this.Info.RewardBonusMoney);
+		_worldPacket.WriteUInt32(Info.QuestID);
+		_worldPacket.WriteInt32(Info.QuestType);
+		_worldPacket.WriteInt32(Info.QuestLevel);
+		_worldPacket.WriteInt32(Info.QuestScalingFactionGroup);
+		_worldPacket.WriteInt32(Info.QuestMaxScalingLevel);
+		_worldPacket.WriteUInt32(Info.QuestPackageID);
+		_worldPacket.WriteInt32(Info.MinLevel);
+		_worldPacket.WriteInt32(Info.QuestSortID);
+		_worldPacket.WriteUInt32(Info.QuestInfoID);
+		_worldPacket.WriteUInt32(Info.SuggestedGroupNum);
+		_worldPacket.WriteUInt32(Info.RewardNextQuest);
+		_worldPacket.WriteUInt32(Info.RewardXPDifficulty);
+		_worldPacket.WriteFloat(Info.RewardXPMultiplier);
+		_worldPacket.WriteInt32(Info.RewardMoney);
+		_worldPacket.WriteUInt32(Info.RewardMoneyDifficulty);
+		_worldPacket.WriteFloat(Info.RewardMoneyMultiplier);
+		_worldPacket.WriteUInt32(Info.RewardBonusMoney);
 		for (uint i = 0u; i < 3; i++)
 		{
-			base._worldPacket.WriteUInt32(this.Info.RewardDisplaySpell[i]);
+			_worldPacket.WriteUInt32(Info.RewardDisplaySpell[i]);
 		}
-		base._worldPacket.WriteUInt32(this.Info.RewardSpell);
-		base._worldPacket.WriteUInt32(this.Info.RewardHonor);
-		base._worldPacket.WriteFloat(this.Info.RewardKillHonor);
-		base._worldPacket.WriteInt32(this.Info.RewardArtifactXPDifficulty);
-		base._worldPacket.WriteFloat(this.Info.RewardArtifactXPMultiplier);
-		base._worldPacket.WriteInt32(this.Info.RewardArtifactCategoryID);
-		base._worldPacket.WriteUInt32(this.Info.StartItem);
-		base._worldPacket.WriteUInt32(this.Info.Flags);
-		base._worldPacket.WriteUInt32(this.Info.FlagsEx);
-		base._worldPacket.WriteUInt32(this.Info.FlagsEx2);
+		_worldPacket.WriteUInt32(Info.RewardSpell);
+		_worldPacket.WriteUInt32(Info.RewardHonor);
+		_worldPacket.WriteFloat(Info.RewardKillHonor);
+		_worldPacket.WriteInt32(Info.RewardArtifactXPDifficulty);
+		_worldPacket.WriteFloat(Info.RewardArtifactXPMultiplier);
+		_worldPacket.WriteInt32(Info.RewardArtifactCategoryID);
+		_worldPacket.WriteUInt32(Info.StartItem);
+		_worldPacket.WriteUInt32(Info.Flags);
+		_worldPacket.WriteUInt32(Info.FlagsEx);
+		_worldPacket.WriteUInt32(Info.FlagsEx2);
 		for (uint i2 = 0u; i2 < 4; i2++)
 		{
-			base._worldPacket.WriteUInt32(this.Info.RewardItems[i2]);
-			base._worldPacket.WriteUInt32(this.Info.RewardAmount[i2]);
-			base._worldPacket.WriteInt32(this.Info.ItemDrop[i2]);
-			base._worldPacket.WriteInt32(this.Info.ItemDropQuantity[i2]);
+			_worldPacket.WriteUInt32(Info.RewardItems[i2]);
+			_worldPacket.WriteUInt32(Info.RewardAmount[i2]);
+			_worldPacket.WriteInt32(Info.ItemDrop[i2]);
+			_worldPacket.WriteInt32(Info.ItemDropQuantity[i2]);
 		}
 		for (uint i3 = 0u; i3 < 6; i3++)
 		{
-			base._worldPacket.WriteUInt32(this.Info.UnfilteredChoiceItems[i3].ItemID);
-			base._worldPacket.WriteUInt32(this.Info.UnfilteredChoiceItems[i3].Quantity);
-			base._worldPacket.WriteUInt32(this.Info.UnfilteredChoiceItems[i3].DisplayID);
+			_worldPacket.WriteUInt32(Info.UnfilteredChoiceItems[i3].ItemID);
+			_worldPacket.WriteUInt32(Info.UnfilteredChoiceItems[i3].Quantity);
+			_worldPacket.WriteUInt32(Info.UnfilteredChoiceItems[i3].DisplayID);
 		}
-		base._worldPacket.WriteUInt32(this.Info.POIContinent);
-		base._worldPacket.WriteFloat(this.Info.POIx);
-		base._worldPacket.WriteFloat(this.Info.POIy);
-		base._worldPacket.WriteUInt32(this.Info.POIPriority);
-		base._worldPacket.WriteUInt32(this.Info.RewardTitle);
-		base._worldPacket.WriteInt32(this.Info.RewardArenaPoints);
-		base._worldPacket.WriteUInt32(this.Info.RewardSkillLineID);
-		base._worldPacket.WriteUInt32(this.Info.RewardNumSkillUps);
-		base._worldPacket.WriteInt32((int)this.Info.PortraitGiver);
-		base._worldPacket.WriteInt32((int)this.Info.PortraitGiverMount);
-		base._worldPacket.WriteInt32((int)this.Info.PortraitGiverModelSceneID);
-		base._worldPacket.WriteInt32((int)this.Info.PortraitTurnIn);
+		_worldPacket.WriteUInt32(Info.POIContinent);
+		_worldPacket.WriteFloat(Info.POIx);
+		_worldPacket.WriteFloat(Info.POIy);
+		_worldPacket.WriteUInt32(Info.POIPriority);
+		_worldPacket.WriteUInt32(Info.RewardTitle);
+		_worldPacket.WriteInt32(Info.RewardArenaPoints);
+		_worldPacket.WriteUInt32(Info.RewardSkillLineID);
+		_worldPacket.WriteUInt32(Info.RewardNumSkillUps);
+		_worldPacket.WriteInt32((int)Info.PortraitGiver);
+		_worldPacket.WriteInt32((int)Info.PortraitGiverMount);
+		_worldPacket.WriteInt32((int)Info.PortraitGiverModelSceneID);
+		_worldPacket.WriteInt32((int)Info.PortraitTurnIn);
 		for (uint i4 = 0u; i4 < 5; i4++)
 		{
-			base._worldPacket.WriteUInt32(this.Info.RewardFactionID[i4]);
-			base._worldPacket.WriteInt32(this.Info.RewardFactionValue[i4]);
-			base._worldPacket.WriteInt32(this.Info.RewardFactionOverride[i4]);
-			base._worldPacket.WriteInt32(this.Info.RewardFactionCapIn[i4]);
+			_worldPacket.WriteUInt32(Info.RewardFactionID[i4]);
+			_worldPacket.WriteInt32(Info.RewardFactionValue[i4]);
+			_worldPacket.WriteInt32(Info.RewardFactionOverride[i4]);
+			_worldPacket.WriteInt32(Info.RewardFactionCapIn[i4]);
 		}
-		base._worldPacket.WriteUInt32(this.Info.RewardFactionFlags);
+		_worldPacket.WriteUInt32(Info.RewardFactionFlags);
 		for (uint i5 = 0u; i5 < 4; i5++)
 		{
-			base._worldPacket.WriteUInt32(this.Info.RewardCurrencyID[i5]);
-			base._worldPacket.WriteUInt32(this.Info.RewardCurrencyQty[i5]);
+			_worldPacket.WriteUInt32(Info.RewardCurrencyID[i5]);
+			_worldPacket.WriteUInt32(Info.RewardCurrencyQty[i5]);
 		}
-		base._worldPacket.WriteUInt32(this.Info.AcceptedSoundKitID);
-		base._worldPacket.WriteUInt32(this.Info.CompleteSoundKitID);
-		base._worldPacket.WriteInt32((int)this.Info.AreaGroupID);
-		base._worldPacket.WriteInt64(this.Info.TimeAllowed);
-		base._worldPacket.WriteInt32(this.Info.Objectives.Count);
-		base._worldPacket.WriteUInt64((ulong)this.Info.AllowableRaces);
-		base._worldPacket.WriteInt32(this.Info.TreasurePickerID);
-		base._worldPacket.WriteInt32(this.Info.Expansion);
+		_worldPacket.WriteUInt32(Info.AcceptedSoundKitID);
+		_worldPacket.WriteUInt32(Info.CompleteSoundKitID);
+		_worldPacket.WriteInt32((int)Info.AreaGroupID);
+		_worldPacket.WriteInt64(Info.TimeAllowed);
+		_worldPacket.WriteInt32(Info.Objectives.Count);
+		_worldPacket.WriteUInt64((ulong)Info.AllowableRaces);
+		_worldPacket.WriteInt32(Info.TreasurePickerID);
+		_worldPacket.WriteInt32(Info.Expansion);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteInt32(this.Info.ManagedWorldStateID);
-			base._worldPacket.WriteInt32(this.Info.QuestSessionBonus);
-			base._worldPacket.WriteInt32(this.Info.QuestGiverCreatureID);
+			_worldPacket.WriteInt32(Info.ManagedWorldStateID);
+			_worldPacket.WriteInt32(Info.QuestSessionBonus);
+			_worldPacket.WriteInt32(Info.QuestGiverCreatureID);
 		}
-		base._worldPacket.WriteBits(this.Info.LogTitle.GetByteCount(), 9);
-		base._worldPacket.WriteBits(this.Info.LogDescription.GetByteCount(), 12);
-		base._worldPacket.WriteBits(this.Info.QuestDescription.GetByteCount(), 12);
-		base._worldPacket.WriteBits(this.Info.AreaDescription.GetByteCount(), 9);
-		base._worldPacket.WriteBits(this.Info.PortraitGiverText.GetByteCount(), 10);
-		base._worldPacket.WriteBits(this.Info.PortraitGiverName.GetByteCount(), 8);
-		base._worldPacket.WriteBits(this.Info.PortraitTurnInText.GetByteCount(), 10);
-		base._worldPacket.WriteBits(this.Info.PortraitTurnInName.GetByteCount(), 8);
-		base._worldPacket.WriteBits(this.Info.QuestCompletionLog.GetByteCount(), 11);
-		base._worldPacket.WriteBit(this.Info.ReadyForTranslation);
-		base._worldPacket.FlushBits();
-		foreach (QuestObjective questObjective in this.Info.Objectives)
+		_worldPacket.WriteBits(Info.LogTitle.GetByteCount(), 9);
+		_worldPacket.WriteBits(Info.LogDescription.GetByteCount(), 12);
+		_worldPacket.WriteBits(Info.QuestDescription.GetByteCount(), 12);
+		_worldPacket.WriteBits(Info.AreaDescription.GetByteCount(), 9);
+		_worldPacket.WriteBits(Info.PortraitGiverText.GetByteCount(), 10);
+		_worldPacket.WriteBits(Info.PortraitGiverName.GetByteCount(), 8);
+		_worldPacket.WriteBits(Info.PortraitTurnInText.GetByteCount(), 10);
+		_worldPacket.WriteBits(Info.PortraitTurnInName.GetByteCount(), 8);
+		_worldPacket.WriteBits(Info.QuestCompletionLog.GetByteCount(), 11);
+		_worldPacket.WriteBit(Info.ReadyForTranslation);
+		_worldPacket.FlushBits();
+		foreach (QuestObjective questObjective in Info.Objectives)
 		{
-			base._worldPacket.WriteUInt32(questObjective.Id);
-			base._worldPacket.WriteUInt8((byte)questObjective.Type);
-			base._worldPacket.WriteInt8(questObjective.StorageIndex);
-			base._worldPacket.WriteInt32(questObjective.ObjectID);
-			base._worldPacket.WriteInt32(questObjective.Amount);
-			base._worldPacket.WriteUInt32((uint)questObjective.Flags);
-			base._worldPacket.WriteUInt32(questObjective.Flags2);
-			base._worldPacket.WriteFloat(questObjective.ProgressBarWeight);
-			base._worldPacket.WriteInt32(questObjective.VisualEffects.Length);
+			_worldPacket.WriteUInt32(questObjective.Id);
+			_worldPacket.WriteUInt8((byte)questObjective.Type);
+			_worldPacket.WriteInt8(questObjective.StorageIndex);
+			_worldPacket.WriteInt32(questObjective.ObjectID);
+			_worldPacket.WriteInt32(questObjective.Amount);
+			_worldPacket.WriteUInt32((uint)questObjective.Flags);
+			_worldPacket.WriteUInt32(questObjective.Flags2);
+			_worldPacket.WriteFloat(questObjective.ProgressBarWeight);
+			_worldPacket.WriteInt32(questObjective.VisualEffects.Length);
 			int[] visualEffects = questObjective.VisualEffects;
 			foreach (int visualEffect in visualEffects)
 			{
-				base._worldPacket.WriteInt32(visualEffect);
+				_worldPacket.WriteInt32(visualEffect);
 			}
-			base._worldPacket.WriteBits(questObjective.Description.GetByteCount(), 8);
-			base._worldPacket.FlushBits();
-			base._worldPacket.WriteString(questObjective.Description);
+			_worldPacket.WriteBits(questObjective.Description.GetByteCount(), 8);
+			_worldPacket.FlushBits();
+			_worldPacket.WriteString(questObjective.Description);
 		}
-		base._worldPacket.WriteString(this.Info.LogTitle);
-		base._worldPacket.WriteString(this.Info.LogDescription);
-		base._worldPacket.WriteString(this.Info.QuestDescription);
-		base._worldPacket.WriteString(this.Info.AreaDescription);
-		base._worldPacket.WriteString(this.Info.PortraitGiverText);
-		base._worldPacket.WriteString(this.Info.PortraitGiverName);
-		base._worldPacket.WriteString(this.Info.PortraitTurnInText);
-		base._worldPacket.WriteString(this.Info.PortraitTurnInName);
-		base._worldPacket.WriteString(this.Info.QuestCompletionLog);
+		_worldPacket.WriteString(Info.LogTitle);
+		_worldPacket.WriteString(Info.LogDescription);
+		_worldPacket.WriteString(Info.QuestDescription);
+		_worldPacket.WriteString(Info.AreaDescription);
+		_worldPacket.WriteString(Info.PortraitGiverText);
+		_worldPacket.WriteString(Info.PortraitGiverName);
+		_worldPacket.WriteString(Info.PortraitTurnInText);
+		_worldPacket.WriteString(Info.PortraitTurnInName);
+		_worldPacket.WriteString(Info.QuestCompletionLog);
 	}
 }

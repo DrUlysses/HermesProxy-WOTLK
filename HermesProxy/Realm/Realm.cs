@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,10 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
-using Framework.Realm;
 using System;
 using System.Net;
+using Framework;
+using Framework.Constants;
+using Framework.Realm;
 
 public class Realm : IEquatable<Realm>
 {
@@ -36,9 +37,9 @@ public class Realm : IEquatable<Realm>
         if (IPAddress.IsLoopback(clientAddr))
             realmIp = IPAddress.Parse("127.0.0.1");
         else
-            realmIp = IPAddress.Parse(Framework.Settings.ExternalAddress);
+            realmIp = IPAddress.Parse(Settings.ExternalAddress);
 
-        IPEndPoint endpoint = new IPEndPoint(realmIp, Framework.Settings.RealmPort);
+        IPEndPoint endpoint = new IPEndPoint(realmIp, Settings.RealmPort);
 
         // Return external IP
         return endpoint;

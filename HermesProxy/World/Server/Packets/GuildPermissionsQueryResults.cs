@@ -19,14 +19,14 @@ public class GuildPermissionsQueryResults : ServerPacket
 
     protected override void Write()
     {
-        base._worldPacket.WriteUInt32(this.GuildID);
-        base._worldPacket.WriteUInt32(this.RankID);
-        base._worldPacket.WriteUInt32(this.Flags);
-        base._worldPacket.WriteUInt32(this.WithdrawGoldLimit);
-        base._worldPacket.WriteUInt32(this.RemainingWithdrawGoldLimit);
+        _worldPacket.WriteUInt32(GuildID);
+        _worldPacket.WriteUInt32(RankID);
+        _worldPacket.WriteUInt32(Flags);
+        _worldPacket.WriteUInt32(WithdrawGoldLimit);
+        _worldPacket.WriteUInt32(RemainingWithdrawGoldLimit);
         for (int i = 0; i < 6; i++)
         {
-            base._worldPacket.WriteUInt32(this.TabPermissions[i]);
+            _worldPacket.WriteUInt32(TabPermissions[i]);
         }
     }
 }

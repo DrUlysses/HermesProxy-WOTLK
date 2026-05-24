@@ -24,11 +24,11 @@ public class QuestUpdateAddCredit : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.VictimGUID);
-		base._worldPacket.WriteUInt32(this.QuestID);
-		base._worldPacket.WriteInt32(this.ObjectID);
-		base._worldPacket.WriteUInt16(this.Count);
-		base._worldPacket.WriteUInt16(this.Required);
-		base._worldPacket.WriteUInt8((byte)this.ObjectiveType);
+		_worldPacket.WritePackedGuid128(VictimGUID);
+		_worldPacket.WriteUInt32(QuestID);
+		_worldPacket.WriteInt32(ObjectID);
+		_worldPacket.WriteUInt16(Count);
+		_worldPacket.WriteUInt16(Required);
+		_worldPacket.WriteUInt8((byte)ObjectiveType);
 	}
 }

@@ -12,35 +12,35 @@ public struct MethodCall
 
 	public uint GetServiceHash()
 	{
-		return (uint)(this.Type >> 32);
+		return (uint)(Type >> 32);
 	}
 
 	public uint GetMethodId()
 	{
-		return (uint)(this.Type & 0xFFFFFFFFu);
+		return (uint)(Type & 0xFFFFFFFFu);
 	}
 
 	public void SetServiceHash(uint serviceHash)
 	{
-		this.Type = (this.Type & 0xFFFFFFFFu) | ((ulong)serviceHash << 32);
+		Type = (Type & 0xFFFFFFFFu) | ((ulong)serviceHash << 32);
 	}
 
 	public void SetMethodId(uint methodId)
 	{
-		this.Type = (this.Type & 0xFFFFFFFF00000000uL) | methodId;
+		Type = (Type & 0xFFFFFFFF00000000uL) | methodId;
 	}
 
 	public void Read(ByteBuffer data)
 	{
-		this.Type = data.ReadUInt64();
-		this.ObjectId = data.ReadUInt64();
-		this.Token = data.ReadUInt32();
+		Type = data.ReadUInt64();
+		ObjectId = data.ReadUInt64();
+		Token = data.ReadUInt32();
 	}
 
 	public void Write(ByteBuffer data)
 	{
-		data.WriteUInt64(this.Type);
-		data.WriteUInt64(this.ObjectId);
-		data.WriteUInt32(this.Token);
+		data.WriteUInt64(Type);
+		data.WriteUInt64(ObjectId);
+		data.WriteUInt32(Token);
 	}
 }

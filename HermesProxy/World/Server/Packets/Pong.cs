@@ -9,11 +9,11 @@ internal class Pong : ServerPacket
 	public Pong(uint serial)
 		: base(Opcode.SMSG_PONG)
 	{
-		this.Serial = serial;
+		Serial = serial;
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Serial);
+		_worldPacket.WriteUInt32(Serial);
 	}
 }

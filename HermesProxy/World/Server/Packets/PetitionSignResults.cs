@@ -17,9 +17,9 @@ public class PetitionSignResults : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Item);
-		base._worldPacket.WritePackedGuid128(this.Player);
-		base._worldPacket.WriteBits(this.Error, 4);
-		base._worldPacket.FlushBits();
+		_worldPacket.WritePackedGuid128(Item);
+		_worldPacket.WritePackedGuid128(Player);
+		_worldPacket.WriteBits(Error, 4);
+		_worldPacket.FlushBits();
 	}
 }

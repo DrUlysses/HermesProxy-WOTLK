@@ -46,47 +46,47 @@ internal class EnterEncryptedMode : ServerPacket
 	public EnterEncryptedMode(byte[] encryptionKey, bool enabled)
 		: base(Opcode.SMSG_ENTER_ENCRYPTED_MODE)
 	{
-		this.EncryptionKey = encryptionKey;
-		this.Enabled = enabled;
+		EncryptionKey = encryptionKey;
+		Enabled = enabled;
 	}
 
 	protected override void Write()
 	{
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			this.WriteEd25519();
+			WriteEd25519();
 		}
 		else
 		{
-			this.WriteRSA();
+			WriteRSA();
 		}
 	}
 
 	private void WriteRSA()
 	{
-		HmacSha256 hash = new HmacSha256(this.EncryptionKey);
-		hash.Process(BitConverter.GetBytes(this.Enabled), 1);
-		hash.Finish(EnterEncryptedMode.EnableEncryptionSeedRSA, 16);
-		base._worldPacket.WriteBytes(RsaCrypt.RSA.SignHash(hash.Digest, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1).Reverse().ToArray());
-		base._worldPacket.WriteBit(this.Enabled);
-		base._worldPacket.FlushBits();
+		HmacSha256 hash = new HmacSha256(EncryptionKey);
+		hash.Process(BitConverter.GetBytes(Enabled), 1);
+		hash.Finish(EnableEncryptionSeedRSA, 16);
+		_worldPacket.WriteBytes(RsaCrypt.RSA.SignHash(hash.Digest, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1).Reverse().ToArray());
+		_worldPacket.WriteBit(Enabled);
+		_worldPacket.FlushBits();
 	}
 
 	private void WriteEd25519()
 	{
-		HmacSha256 hash = new HmacSha256(this.EncryptionKey);
-		hash.Process(BitConverter.GetBytes(this.Enabled), 1);
-		hash.Finish(EnterEncryptedMode.EnableEncryptionSeedRSA, 16);
+		HmacSha256 hash = new HmacSha256(EncryptionKey);
+		hash.Process(BitConverter.GetBytes(Enabled), 1);
+		hash.Finish(EnableEncryptionSeedRSA, 16);
 		byte[] toSign = hash.Digest;
-		Log.Print(LogType.Debug, "EnterEncryptedMode Ed25519: toSign=" + BitConverter.ToString(toSign, 0, 16) + "...", "WriteEd25519", "Packets\\AuthenticationPackets.cs");
-		Ed25519PrivateKeyParameters privateKeyParams = new Ed25519PrivateKeyParameters(EnterEncryptedMode.Ed25519PrivateKey, 0);
-		Ed25519ctxSigner signer = new Ed25519ctxSigner(EnterEncryptedMode.EnableEncryptionContext);
+		Log.Print(LogType.Debug, "EnterEncryptedMode Ed25519: toSign=" + BitConverter.ToString(toSign, 0, 16) + "...", "Packets\\AuthenticationPackets.cs");
+		Ed25519PrivateKeyParameters privateKeyParams = new Ed25519PrivateKeyParameters(Ed25519PrivateKey, 0);
+		Ed25519ctxSigner signer = new Ed25519ctxSigner(EnableEncryptionContext);
 		signer.Init(forSigning: true, privateKeyParams);
 		signer.BlockUpdate(toSign, 0, toSign.Length);
 		byte[] signature = signer.GenerateSignature();
-		Log.Print(LogType.Debug, $"EnterEncryptedMode Ed25519: signature={BitConverter.ToString(signature, 0, 16)}... ({signature.Length} bytes)", "WriteEd25519", "Packets\\AuthenticationPackets.cs");
-		base._worldPacket.WriteBytes(signature);
-		base._worldPacket.WriteBit(this.Enabled);
-		base._worldPacket.FlushBits();
+		Log.Print(LogType.Debug, $"EnterEncryptedMode Ed25519: signature={BitConverter.ToString(signature, 0, 16)}... ({signature.Length} bytes)", "Packets\\AuthenticationPackets.cs");
+		_worldPacket.WriteBytes(signature);
+		_worldPacket.WriteBit(Enabled);
+		_worldPacket.FlushBits();
 	}
 }

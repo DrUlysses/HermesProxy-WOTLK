@@ -13,48 +13,48 @@ public class UpdateMask
 
 	public UpdateMask(uint valuesCount = 0u)
 	{
-		this._fieldCount = valuesCount;
-		this._blockCount = (valuesCount + 32 - 1) / 32;
-		this._mask = new BitArray((int)valuesCount, defaultValue: false);
+		_fieldCount = valuesCount;
+		_blockCount = (valuesCount + 32 - 1) / 32;
+		_mask = new BitArray((int)valuesCount, defaultValue: false);
 	}
 
 	public void SetCount(int valuesCount)
 	{
-		this._fieldCount = (uint)valuesCount;
-		this._blockCount = (uint)(valuesCount + 32 - 1) / 32u;
-		this._mask = new BitArray(valuesCount, defaultValue: false);
+		_fieldCount = (uint)valuesCount;
+		_blockCount = (uint)(valuesCount + 32 - 1) / 32u;
+		_mask = new BitArray(valuesCount, defaultValue: false);
 	}
 
 	public uint GetCount()
 	{
-		return this._fieldCount;
+		return _fieldCount;
 	}
 
 	public virtual void AppendToPacket(ByteBuffer data)
 	{
-		data.WriteUInt8((byte)this._blockCount);
-		byte[] maskArray = new byte[this._blockCount << 2];
-		this._mask.CopyTo(maskArray, 0);
+		data.WriteUInt8((byte)_blockCount);
+		byte[] maskArray = new byte[_blockCount << 2];
+		_mask.CopyTo(maskArray, 0);
 		data.WriteBytes(maskArray);
 	}
 
 	public bool GetBit(int index)
 	{
-		return this._mask.Get(index);
+		return _mask.Get(index);
 	}
 
 	public void SetBit(int index)
 	{
-		this._mask.Set(index, value: true);
+		_mask.Set(index, value: true);
 	}
 
 	private void UnsetBit(int index)
 	{
-		this._mask.Set(index, value: false);
+		_mask.Set(index, value: false);
 	}
 
 	public void Clear()
 	{
-		this._mask.SetAll(value: false);
+		_mask.SetAll(value: false);
 	}
 }

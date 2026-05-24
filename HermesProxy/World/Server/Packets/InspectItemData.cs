@@ -22,28 +22,28 @@ public class InspectItemData
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.CreatorGUID);
-		data.WriteUInt8(this.Index);
-		data.WriteInt32(this.AzeritePowers.Count);
-		data.WriteInt32(this.AzeriteEssences.Count);
-		foreach (int id in this.AzeritePowers)
+		data.WritePackedGuid128(CreatorGUID);
+		data.WriteUInt8(Index);
+		data.WriteInt32(AzeritePowers.Count);
+		data.WriteInt32(AzeriteEssences.Count);
+		foreach (int id in AzeritePowers)
 		{
 			data.WriteInt32(id);
 		}
-		this.Item.Write(data);
-		data.WriteBit(this.Usable);
-		data.WriteBits(this.Enchants.Count, 4);
-		data.WriteBits(this.Gems.Count, 2);
+		Item.Write(data);
+		data.WriteBit(Usable);
+		data.WriteBits(Enchants.Count, 4);
+		data.WriteBits(Gems.Count, 2);
 		data.FlushBits();
-		foreach (AzeriteEssenceData azeriteEssence in this.AzeriteEssences)
+		foreach (AzeriteEssenceData azeriteEssence in AzeriteEssences)
 		{
 			azeriteEssence.Write(data);
 		}
-		foreach (InspectEnchantData enchant in this.Enchants)
+		foreach (InspectEnchantData enchant in Enchants)
 		{
 			enchant.Write(data);
 		}
-		foreach (ItemGemData gem in this.Gems)
+		foreach (ItemGemData gem in Gems)
 		{
 			gem.Write(data);
 		}

@@ -18,9 +18,9 @@ public class EmptyInitWorldStates : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.MapId);
-		base._worldPacket.WriteInt32(this.ZoneId);
-		base._worldPacket.WriteInt32(this.AreaId);
-		base._worldPacket.WriteInt32(0);
+		_worldPacket.WriteUInt32(MapId);
+		_worldPacket.WriteInt32(ZoneId);
+		_worldPacket.WriteInt32(AreaId);
+		_worldPacket.WriteInt32(0);
 	}
 }

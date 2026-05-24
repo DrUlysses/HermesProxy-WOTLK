@@ -15,15 +15,15 @@ internal class AuctionRemoveItem : ClientPacket
 
 	public override void Read()
 	{
-		this.Auctioneer = base._worldPacket.ReadPackedGuid128();
-		this.AuctionID = base._worldPacket.ReadUInt32();
-		if (base._worldPacket.HasBit())
+		Auctioneer = _worldPacket.ReadPackedGuid128();
+		AuctionID = _worldPacket.ReadUInt32();
+		if (_worldPacket.HasBit())
 		{
-			this.TaintedBy = new AddOnInfo();
+			TaintedBy = new AddOnInfo();
 		}
-		if (this.TaintedBy != null)
+		if (TaintedBy != null)
 		{
-			this.TaintedBy.Read(base._worldPacket);
+			TaintedBy.Read(_worldPacket);
 		}
 	}
 }

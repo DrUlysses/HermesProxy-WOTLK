@@ -15,7 +15,7 @@ public class PlayerBound : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.BinderGUID);
-		base._worldPacket.WriteUInt32(this.AreaID);
+		_worldPacket.WritePackedGuid128(BinderGUID);
+		_worldPacket.WriteUInt32(AreaID);
 	}
 }

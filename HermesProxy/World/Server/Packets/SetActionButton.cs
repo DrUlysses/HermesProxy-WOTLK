@@ -15,8 +15,8 @@ public class SetActionButton : ClientPacket
 
 	public override void Read()
 	{
-		this.Action = base._worldPacket.ReadUInt16();
-		this.Type = base._worldPacket.ReadUInt16();
-		this.Index = base._worldPacket.ReadUInt8();
+		Action = _worldPacket.ReadUInt16();
+		Type = _worldPacket.ReadUInt16();
+		Index = _worldPacket.ReadUInt8();
 	}
 }

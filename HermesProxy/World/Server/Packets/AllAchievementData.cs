@@ -14,11 +14,11 @@ public struct EarnedAchievement
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Id);
-		data.WritePackedTime(this.Date);
-		data.WritePackedGuid128(this.Owner);
-		data.WriteUInt32(this.VirtualRealmAddress);
-		data.WriteUInt32(this.NativeRealmAddress);
+		data.WriteUInt32(Id);
+		data.WritePackedTime(Date);
+		data.WritePackedGuid128(Owner);
+		data.WriteUInt32(VirtualRealmAddress);
+		data.WriteUInt32(NativeRealmAddress);
 	}
 }
 
@@ -34,15 +34,15 @@ public class AllAchievementData : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Earned.Count);
-		base._worldPacket.WriteInt32(this.Progress.Count);
-		foreach (EarnedAchievement earned in this.Earned)
+		_worldPacket.WriteInt32(Earned.Count);
+		_worldPacket.WriteInt32(Progress.Count);
+		foreach (EarnedAchievement earned in Earned)
 		{
-			earned.Write(base._worldPacket);
+			earned.Write(_worldPacket);
 		}
-		foreach (CriteriaProgressPkt progress in this.Progress)
+		foreach (CriteriaProgressPkt progress in Progress)
 		{
-			progress.Write(base._worldPacket);
+			progress.Write(_worldPacket);
 		}
 	}
 }

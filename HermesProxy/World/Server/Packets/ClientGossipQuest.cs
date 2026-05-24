@@ -24,32 +24,32 @@ public class ClientGossipQuest
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.QuestID);
-		data.WriteUInt32(this.ContentTuningID);
-		data.WriteInt32(this.QuestType);
-		data.WriteInt32(this.QuestLevel);
-		data.WriteInt32(this.QuestMaxLevel);
-		data.WriteUInt32(this.QuestFlags);
-		data.WriteUInt32(this.QuestFlagsEx);
-		data.WriteBit(this.Repeatable);
-		data.WriteBits(this.QuestTitle.GetByteCount(), 9);
+		data.WriteUInt32(QuestID);
+		data.WriteUInt32(ContentTuningID);
+		data.WriteInt32(QuestType);
+		data.WriteInt32(QuestLevel);
+		data.WriteInt32(QuestMaxLevel);
+		data.WriteUInt32(QuestFlags);
+		data.WriteUInt32(QuestFlagsEx);
+		data.WriteBit(Repeatable);
+		data.WriteBits(QuestTitle.GetByteCount(), 9);
 		data.FlushBits();
-		data.WriteString(this.QuestTitle);
+		data.WriteString(QuestTitle);
 	}
 
 	public void WriteWotLK(WorldPacket data)
 	{
-		data.WriteInt32((int)this.QuestID);
-		data.WriteInt32((int)this.ContentTuningID);
-		data.WriteInt32(this.QuestType);
-		data.WriteInt32(this.QuestLevel);
-		data.WriteInt32(this.QuestMaxLevel);
-		data.WriteInt32((int)this.QuestFlags);
-		data.WriteInt32((int)this.QuestFlagsEx);
-		data.WriteBit(this.Repeatable);
+		data.WriteInt32((int)QuestID);
+		data.WriteInt32((int)ContentTuningID);
+		data.WriteInt32(QuestType);
+		data.WriteInt32(QuestLevel);
+		data.WriteInt32(QuestMaxLevel);
+		data.WriteInt32((int)QuestFlags);
+		data.WriteInt32((int)QuestFlagsEx);
+		data.WriteBit(Repeatable);
 		data.WriteBit(bit: false);
-		data.WriteBits(this.QuestTitle.GetByteCount(), 9);
+		data.WriteBits(QuestTitle.GetByteCount(), 9);
 		data.FlushBits();
-		data.WriteString(this.QuestTitle);
+		data.WriteString(QuestTitle);
 	}
 }

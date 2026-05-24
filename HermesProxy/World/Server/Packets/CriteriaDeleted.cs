@@ -13,6 +13,6 @@ public class CriteriaDeleted : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.CriteriaID);
+		_worldPacket.WriteUInt32(CriteriaID);
 	}
 }

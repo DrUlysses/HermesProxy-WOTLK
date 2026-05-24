@@ -20,13 +20,13 @@ internal class ArenaTeamEvent : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8((byte)this.Event);
-		base._worldPacket.WriteBits(this.Param1.GetByteCount(), 9);
-		base._worldPacket.WriteBits(this.Param2.GetByteCount(), 9);
-		base._worldPacket.WriteBits(this.Param3.GetByteCount(), 9);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.Param1);
-		base._worldPacket.WriteString(this.Param2);
-		base._worldPacket.WriteString(this.Param3);
+		_worldPacket.WriteUInt8((byte)Event);
+		_worldPacket.WriteBits(Param1.GetByteCount(), 9);
+		_worldPacket.WriteBits(Param2.GetByteCount(), 9);
+		_worldPacket.WriteBits(Param3.GetByteCount(), 9);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(Param1);
+		_worldPacket.WriteString(Param2);
+		_worldPacket.WriteString(Param3);
 	}
 }

@@ -12,8 +12,8 @@ public class PartyMemberPhaseStates
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteUInt16(this.PhaseFlags);
-			data.WriteUInt16(this.Id);
+			data.WriteUInt16(PhaseFlags);
+			data.WriteUInt16(Id);
 		}
 	}
 
@@ -25,10 +25,10 @@ public class PartyMemberPhaseStates
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.PhaseShiftFlags);
-		data.WriteInt32(this.Phases.Count);
-		data.WritePackedGuid128(this.PersonalGUID);
-		foreach (PartyMemberPhase phase2 in this.Phases)
+		data.WriteUInt32(PhaseShiftFlags);
+		data.WriteInt32(Phases.Count);
+		data.WritePackedGuid128(PersonalGUID);
+		foreach (PartyMemberPhase phase2 in Phases)
 		{
 			phase2.Write(data);
 		}

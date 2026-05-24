@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_core.proto</summary>
@@ -530,7 +530,7 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if (Content != other.Content) return false;
-      if (!object.Equals(Creator, other.Creator)) return false;
+      if (!Equals(Creator, other.Creator)) return false;
       if (CreationTime != other.CreationTime) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1066,15 +1066,15 @@ namespace Bgs.Protocol.Club.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Type, other.Type)) return false;
+      if (!Equals(Type, other.Type)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (Name != other.Name) return false;
       if (Description != other.Description) return false;
-      if (!object.Equals(Avatar, other.Avatar)) return false;
+      if (!Equals(Avatar, other.Avatar)) return false;
       if (PrivacyLevel != other.PrivacyLevel) return false;
       if (ShortName != other.ShortName) return false;
-      if (!object.Equals(Member, other.Member)) return false;
-      if (!object.Equals(Stream, other.Stream)) return false;
+      if (!Equals(Member, other.Member)) return false;
+      if (!Equals(Stream, other.Stream)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1660,18 +1660,18 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if (Id != other.Id) return false;
-      if (!object.Equals(Type, other.Type)) return false;
+      if (!Equals(Type, other.Type)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       if (Name != other.Name) return false;
       if (Description != other.Description) return false;
-      if (!object.Equals(Broadcast, other.Broadcast)) return false;
-      if (!object.Equals(Avatar, other.Avatar)) return false;
+      if (!Equals(Broadcast, other.Broadcast)) return false;
+      if (!Equals(Avatar, other.Avatar)) return false;
       if (PrivacyLevel != other.PrivacyLevel) return false;
       if (VisibilityLevel != other.VisibilityLevel) return false;
       if (MemberCount != other.MemberCount) return false;
       if (CreationTime != other.CreationTime) return false;
-      if (!object.Equals(StreamPosition, other.StreamPosition)) return false;
-      if (!object.Equals(RoleSet, other.RoleSet)) return false;
+      if (!Equals(StreamPosition, other.StreamPosition)) return false;
+      if (!Equals(RoleSet, other.RoleSet)) return false;
       if(!leader_.Equals(other.leader_)) return false;
       if (ShortName != other.ShortName) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -2247,10 +2247,10 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if (Id != other.Id) return false;
-      if (!object.Equals(Type, other.Type)) return false;
+      if (!Equals(Type, other.Type)) return false;
       if (Name != other.Name) return false;
       if (Description != other.Description) return false;
-      if (!object.Equals(Avatar, other.Avatar)) return false;
+      if (!Equals(Avatar, other.Avatar)) return false;
       if (PrivacyLevel != other.PrivacyLevel) return false;
       if (VisibilityLevel != other.VisibilityLevel) return false;
       if (MemberCount != other.MemberCount) return false;
@@ -2562,7 +2562,7 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if (ClubId != other.ClubId) return false;
-      if (!object.Equals(Marker, other.Marker)) return false;
+      if (!Equals(Marker, other.Marker)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2879,10 +2879,10 @@ namespace Bgs.Protocol.Club.V1 {
       if(!attribute_.Equals(other.attribute_)) return false;
       if (Name != other.Name) return false;
       if (Description != other.Description) return false;
-      if (!object.Equals(Broadcast, other.Broadcast)) return false;
-      if (!object.Equals(Avatar, other.Avatar)) return false;
+      if (!Equals(Broadcast, other.Broadcast)) return false;
+      if (!Equals(Avatar, other.Avatar)) return false;
       if (PrivacyLevel != other.PrivacyLevel) return false;
-      if (!object.Equals(StreamPosition, other.StreamPosition)) return false;
+      if (!Equals(StreamPosition, other.StreamPosition)) return false;
       if (ShortName != other.ShortName) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -3321,10 +3321,10 @@ namespace Bgs.Protocol.Club.V1 {
       if(!attribute_.Equals(other.attribute_)) return false;
       if (Name != other.Name) return false;
       if (Description != other.Description) return false;
-      if (!object.Equals(Broadcast, other.Broadcast)) return false;
-      if (!object.Equals(Avatar, other.Avatar)) return false;
+      if (!Equals(Broadcast, other.Broadcast)) return false;
+      if (!Equals(Avatar, other.Avatar)) return false;
       if (PrivacyLevel != other.PrivacyLevel) return false;
-      if (!object.Equals(StreamPosition, other.StreamPosition)) return false;
+      if (!Equals(StreamPosition, other.StreamPosition)) return false;
       if (ShortName != other.ShortName) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -4045,7 +4045,7 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if(!stream_.Equals(other.stream_)) return false;
-      if (!object.Equals(Settings, other.Settings)) return false;
+      if (!Equals(Settings, other.Settings)) return false;
       if (Version != other.Version) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -4227,7 +4227,7 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if(!stream_.Equals(other.stream_)) return false;
-      if (!object.Equals(Settings, other.Settings)) return false;
+      if (!Equals(Settings, other.Settings)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

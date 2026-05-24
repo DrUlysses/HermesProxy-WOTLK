@@ -10,8 +10,8 @@ public class CreatureXDisplay
 
 	public CreatureXDisplay(uint creatureDisplayID, float displayScale, float probability)
 	{
-		this.CreatureDisplayID = creatureDisplayID;
-		this.Scale = displayScale;
-		this.Probability = probability;
+		CreatureDisplayID = creatureDisplayID;
+		Scale = displayScale;
+		Probability = probability;
 	}
 }

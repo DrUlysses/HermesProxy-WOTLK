@@ -12,8 +12,8 @@ public class PartyDifficultySettings
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32((uint)this.DungeonDifficultyID);
-		data.WriteUInt32((uint)this.RaidDifficultyID);
-		data.WriteUInt32((uint)this.LegacyRaidDifficultyID);
+		data.WriteUInt32((uint)DungeonDifficultyID);
+		data.WriteUInt32((uint)RaidDifficultyID);
+		data.WriteUInt32((uint)LegacyRaidDifficultyID);
 	}
 }

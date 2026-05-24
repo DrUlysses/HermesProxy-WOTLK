@@ -42,83 +42,83 @@ public static class Settings
 
 	public static bool LoadAndVerifyFrom(ConfigurationParser config)
 	{
-		Settings.ClientSeed = config.GetByteArray("ClientSeed", "179D3DC3235629D07113A9B3867F97A7".ParseAsByteArray());
-		Settings.ClientBuild = config.GetEnum("ClientBuild", ClientVersionBuild.V2_5_2_40892);
+		ClientSeed = config.GetByteArray("ClientSeed", "179D3DC3235629D07113A9B3867F97A7".ParseAsByteArray());
+		ClientBuild = config.GetEnum("ClientBuild", ClientVersionBuild.V2_5_2_40892);
 		string serverBuildStr = config.GetString("ServerBuild", "auto");
 		if (serverBuildStr == "auto")
 		{
-			Settings.ServerBuild = VersionChecker.GetBestLegacyVersion(Settings.ClientBuild);
+			ServerBuild = VersionChecker.GetBestLegacyVersion(ClientBuild);
 		}
 		else
 		{
-			Settings.ServerBuild = config.GetEnum("ServerBuild", ClientVersionBuild.Zero);
+			ServerBuild = config.GetEnum("ServerBuild", ClientVersionBuild.Zero);
 		}
-		Settings.ServerAddress = config.GetString("ServerAddress", "127.0.0.1");
-		Settings.ServerPort = config.GetInt("ServerPort", 3724);
-		Settings.ReportedOS = config.GetString("ReportedOS", "OSX");
-		Settings.ReportedPlatform = config.GetString("ReportedPlatform", "x86");
-		Settings.ExternalAddress = config.GetString("ExternalAddress", "127.0.0.1");
-		Settings.RestPort = config.GetInt("RestPort", 8081);
-		Settings.BNetPort = config.GetInt("BNetPort", 1119);
-		Settings.RealmPort = config.GetInt("RealmPort", 8084);
-		Settings.InstancePort = config.GetInt("InstancePort", 8086);
-		Settings.DebugOutput = config.GetBoolean("DebugOutput", defValue: false);
-		Settings.PacketsLog = config.GetBoolean("PacketsLog", defValue: true);
-		Settings.ServerSpellDelay = config.GetInt("ServerSpellDelay", 0);
-		Settings.ClientSpellDelay = config.GetInt("ClientSpellDelay", 0);
-		return Settings.VerifyConfig();
+		ServerAddress = config.GetString("ServerAddress", "127.0.0.1");
+		ServerPort = config.GetInt("ServerPort", 3724);
+		ReportedOS = config.GetString("ReportedOS", "OSX");
+		ReportedPlatform = config.GetString("ReportedPlatform", "x86");
+		ExternalAddress = config.GetString("ExternalAddress", "127.0.0.1");
+		RestPort = config.GetInt("RestPort", 8081);
+		BNetPort = config.GetInt("BNetPort", 1119);
+		RealmPort = config.GetInt("RealmPort", 8084);
+		InstancePort = config.GetInt("InstancePort", 8086);
+		DebugOutput = config.GetBoolean("DebugOutput", defValue: false);
+		PacketsLog = config.GetBoolean("PacketsLog", defValue: true);
+		ServerSpellDelay = config.GetInt("ServerSpellDelay", 0);
+		ClientSpellDelay = config.GetInt("ClientSpellDelay", 0);
+		return VerifyConfig();
 	}
 
 	private static bool VerifyConfig()
 	{
-		if (Settings.ClientSeed.Length != 16)
+		if (ClientSeed.Length != 16)
 		{
-			Log.Print(LogType.Server, "ClientSeed must have byte length of 16 (32 characters)", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, "ClientSeed must have byte length of 16 (32 characters)", "Settings.cs");
 			return false;
 		}
-		if (!VersionChecker.IsSupportedModernVersion(Settings.ClientBuild))
+		if (!VersionChecker.IsSupportedModernVersion(ClientBuild))
 		{
-			Log.Print(LogType.Server, $"Unsupported ClientBuild '{Settings.ClientBuild}'", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, $"Unsupported ClientBuild '{ClientBuild}'", "Settings.cs");
 			return false;
 		}
-		if (!VersionChecker.IsSupportedLegacyVersion(Settings.ServerBuild))
+		if (!VersionChecker.IsSupportedLegacyVersion(ServerBuild))
 		{
-			Log.Print(LogType.Server, $"Unsupported ServerBuild '{Settings.ServerBuild}', use 'auto' to select best", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, $"Unsupported ServerBuild '{ServerBuild}', use 'auto' to select best", "Settings.cs");
 			return false;
 		}
-		if (!IsValidPortNumber(Settings.RestPort))
+		if (!IsValidPortNumber(RestPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.RestPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({RestPort}) out of allowed range (1-65535)", "Settings.cs");
 			return false;
 		}
-		if (!IsValidPortNumber(Settings.ServerPort))
+		if (!IsValidPortNumber(ServerPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.BNetPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({BNetPort}) out of allowed range (1-65535)", "Settings.cs");
 			return false;
 		}
-		if (!IsValidPortNumber(Settings.BNetPort))
+		if (!IsValidPortNumber(BNetPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.BNetPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({BNetPort}) out of allowed range (1-65535)", "Settings.cs");
 			return false;
 		}
-		if (!IsValidPortNumber(Settings.RealmPort))
+		if (!IsValidPortNumber(RealmPort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.RealmPort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({RealmPort}) out of allowed range (1-65535)", "Settings.cs");
 			return false;
 		}
-		if (!IsValidPortNumber(Settings.InstancePort))
+		if (!IsValidPortNumber(InstancePort))
 		{
-			Log.Print(LogType.Server, $"Specified battle.net port ({Settings.InstancePort}) out of allowed range (1-65535)", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, $"Specified battle.net port ({InstancePort}) out of allowed range (1-65535)", "Settings.cs");
 			return false;
 		}
-		if (Settings.ServerSpellDelay < 0)
+		if (ServerSpellDelay < 0)
 		{
-			Log.Print(LogType.Server, "ServerSpellDelay must be larger than or equal to 0", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, "ServerSpellDelay must be larger than or equal to 0", "Settings.cs");
 			return false;
 		}
-		if (Settings.ClientSpellDelay < 0)
+		if (ClientSpellDelay < 0)
 		{
-			Log.Print(LogType.Server, "ClientSpellDelay must be larger than or equal to 0", "VerifyConfig", "Settings.cs");
+			Log.Print(LogType.Server, "ClientSpellDelay must be larger than or equal to 0", "Settings.cs");
 			return false;
 		}
 		return true;

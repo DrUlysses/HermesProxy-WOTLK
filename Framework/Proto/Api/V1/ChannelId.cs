@@ -6,9 +6,8 @@
 #region Designer generated code
 
 using pb = global::Google.Protobuf;
-using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Channel.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/api/client/v1/channel_id.proto</summary>
@@ -165,7 +164,7 @@ namespace Bgs.Protocol.Channel.V1 {
         return true;
       }
       if (Type != other.Type) return false;
-      if (!object.Equals(Host, other.Host)) return false;
+      if (!Equals(Host, other.Host)) return false;
       if (Id != other.Id) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

@@ -18,9 +18,9 @@ public class SupportTicketSubmitComplaint : ClientPacket
 
 		public void Read(WorldPacket worldPacket)
 		{
-			this.SelfPlayerMapId = worldPacket.ReadUInt32();
-			this.SelfPlayerPos = worldPacket.ReadVector3();
-			this.SelfPlayerOrientation = worldPacket.ReadFloat();
+			SelfPlayerMapId = worldPacket.ReadUInt32();
+			SelfPlayerPos = worldPacket.ReadVector3();
+			SelfPlayerOrientation = worldPacket.ReadFloat();
 		}
 	}
 
@@ -47,7 +47,7 @@ public class SupportTicketSubmitComplaint : ClientPacket
 				uint textLength = worldPacket.ReadBits<uint>(12);
 				worldPacket.ResetBitPos();
 				string text = worldPacket.ReadString(textLength);
-				this.ChatLines.Add(new ChatLine
+				ChatLines.Add(new ChatLine
 				{
 					Time = time,
 					Text = text
@@ -55,7 +55,7 @@ public class SupportTicketSubmitComplaint : ClientPacket
 			}
 			if (hasReportedLineIndex)
 			{
-				this.ReportedLineIdx = worldPacket.ReadUInt32();
+				ReportedLineIdx = worldPacket.ReadUInt32();
 			}
 		}
 	}
@@ -70,12 +70,12 @@ public class SupportTicketSubmitComplaint : ClientPacket
 
 		public void Read(WorldPacket worldPacket)
 		{
-			this.MailId = worldPacket.ReadUInt32();
+			MailId = worldPacket.ReadUInt32();
 			uint textBodyLength = worldPacket.ReadBits<uint>(13);
 			uint subjectLength = worldPacket.ReadBits<uint>(9);
 			worldPacket.ResetBitPos();
-			this.MailTextBody = worldPacket.ReadString(textBodyLength);
-			this.MailSubject = worldPacket.ReadString(subjectLength);
+			MailTextBody = worldPacket.ReadString(textBodyLength);
+			MailSubject = worldPacket.ReadString(subjectLength);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class SupportTicketSubmitComplaint : ClientPacket
 
 	public ChatLogInfo ChatLog = new ChatLogInfo();
 
-	public MailInfo? SelectedMailInfo = null;
+	public MailInfo? SelectedMailInfo;
 
 	public GmTicketComplaintType ComplaintType;
 
@@ -98,37 +98,37 @@ public class SupportTicketSubmitComplaint : ClientPacket
 
 	public override void Read()
 	{
-		this.Header.Read(base._worldPacket);
-		this.TargetCharacterGuid = base._worldPacket.ReadPackedGuid128();
-		this.ChatLog.Read(base._worldPacket);
-		this.ComplaintType = (GmTicketComplaintType)base._worldPacket.ReadBits<uint>(5);
-		uint noteLength = base._worldPacket.ReadBits<uint>(10);
-		bool hasMailInfo = base._worldPacket.ReadBit();
-		bool unk2 = base._worldPacket.ReadBit();
-		bool unk3 = base._worldPacket.ReadBit();
-		bool hasGuildInfo = base._worldPacket.ReadBit();
-		bool unk5 = base._worldPacket.ReadBit();
-		bool unk6 = base._worldPacket.ReadBit();
-		bool hasClubMessage = base._worldPacket.ReadBit();
-		bool unk8 = base._worldPacket.ReadBit();
-		bool unk9 = base._worldPacket.ReadBit();
-		base._worldPacket.ResetBitPos();
+		Header.Read(_worldPacket);
+		TargetCharacterGuid = _worldPacket.ReadPackedGuid128();
+		ChatLog.Read(_worldPacket);
+		ComplaintType = (GmTicketComplaintType)_worldPacket.ReadBits<uint>(5);
+		uint noteLength = _worldPacket.ReadBits<uint>(10);
+		bool hasMailInfo = _worldPacket.ReadBit();
+		bool unk2 = _worldPacket.ReadBit();
+		bool unk3 = _worldPacket.ReadBit();
+		bool hasGuildInfo = _worldPacket.ReadBit();
+		bool unk5 = _worldPacket.ReadBit();
+		bool unk6 = _worldPacket.ReadBit();
+		bool hasClubMessage = _worldPacket.ReadBit();
+		bool unk8 = _worldPacket.ReadBit();
+		bool unk9 = _worldPacket.ReadBit();
+		_worldPacket.ResetBitPos();
 		if (hasClubMessage)
 		{
-			bool isUsingVoice = base._worldPacket.ReadBit();
-			base._worldPacket.ResetBitPos();
+			bool isUsingVoice = _worldPacket.ReadBit();
+			_worldPacket.ResetBitPos();
 		}
-		if (base._worldPacket.ReadUInt32() != 0)
+		if (_worldPacket.ReadUInt32() != 0)
 		{
-			Log.Print(LogType.Error, "You reported something that we do not handle (?)", "Read", "Packets\\SupportTicketPackets.cs");
-			Log.Print(LogType.Error, "Please create a new issue on GitHub and tell us what you did", "Read", "Packets\\SupportTicketPackets.cs");
+			Log.Print(LogType.Error, "You reported something that we do not handle (?)", "Packets\\SupportTicketPackets.cs");
+			Log.Print(LogType.Error, "Please create a new issue on GitHub and tell us what you did", "Packets\\SupportTicketPackets.cs");
 			return;
 		}
 		if (hasMailInfo)
 		{
-			this.SelectedMailInfo = new MailInfo();
-			this.SelectedMailInfo.Read(base._worldPacket);
+			SelectedMailInfo = new MailInfo();
+			SelectedMailInfo.Read(_worldPacket);
 		}
-		this.TextNote = base._worldPacket.ReadString(noteLength);
+		TextNote = _worldPacket.ReadString(noteLength);
 	}
 }

@@ -12,9 +12,9 @@ public class SpellChargeEntry
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Category);
-		data.WriteUInt32(this.NextRecoveryTime);
-		data.WriteFloat(this.ChargeModRate);
-		data.WriteUInt8(this.ConsumedCharges);
+		data.WriteUInt32(Category);
+		data.WriteUInt32(NextRecoveryTime);
+		data.WriteFloat(ChargeModRate);
+		data.WriteUInt8(ConsumedCharges);
 	}
 }

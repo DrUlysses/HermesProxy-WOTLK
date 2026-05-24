@@ -11,6 +11,6 @@ public class RemoveGlyph : ClientPacket
 
 	public override void Read()
 	{
-		this.GlyphSlot = base._worldPacket.ReadUInt8();
+		GlyphSlot = _worldPacket.ReadUInt8();
 	}
 }

@@ -6,9 +6,8 @@
 #region Designer generated code
 
 using pb = global::Google.Protobuf;
-using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/entity_types.proto</summary>
@@ -319,8 +318,8 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AccountId, other.AccountId)) return false;
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

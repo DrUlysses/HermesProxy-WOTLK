@@ -8,7 +8,7 @@ public struct PowerUpdatePower
 
 	public PowerUpdatePower(int power, byte powerType)
 	{
-		this.Power = power;
-		this.PowerType = powerType;
+		Power = power;
+		PowerType = powerType;
 	}
 }

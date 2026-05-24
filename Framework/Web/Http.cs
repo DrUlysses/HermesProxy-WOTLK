@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -82,7 +82,7 @@ namespace Framework.Web
 
             using (var sr = new StreamReader(new MemoryStream(data, 0, length)))
             {
-                var info = sr.ReadLine().Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                var info = sr.ReadLine().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (info.Length != 3)
                     return null;
@@ -93,7 +93,7 @@ namespace Framework.Web
 
                 while (!sr.EndOfStream)
                 {
-                    info = sr.ReadLine().Split(new string[] { ": " }, StringSplitOptions.RemoveEmptyEntries);
+                    info = sr.ReadLine().Split(new[] { ": " }, StringSplitOptions.RemoveEmptyEntries);
 
                     if (info.Length == 2)
                         headerValues.Add(info[0].Replace("-", "").ToLower(), info[1]);

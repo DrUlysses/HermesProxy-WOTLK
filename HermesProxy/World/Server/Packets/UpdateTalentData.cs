@@ -31,33 +31,33 @@ public class UpdateTalentData : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.UnspentTalentPoints);
-		base._worldPacket.WriteUInt8(this.ActiveGroup);
-		base._worldPacket.WriteUInt32((uint)this.TalentGroups.Count);
+		_worldPacket.WriteUInt32(UnspentTalentPoints);
+		_worldPacket.WriteUInt8(ActiveGroup);
+		_worldPacket.WriteUInt32((uint)TalentGroups.Count);
 
-		foreach (var group in this.TalentGroups)
+		foreach (var group in TalentGroups)
 		{
-			base._worldPacket.WriteUInt8((byte)group.Talents.Count);
-			base._worldPacket.WriteUInt32((uint)group.Talents.Count);
+			_worldPacket.WriteUInt8((byte)group.Talents.Count);
+			_worldPacket.WriteUInt32((uint)group.Talents.Count);
 
-			base._worldPacket.WriteUInt8((byte)group.GlyphIDs.Count);
-			base._worldPacket.WriteUInt32((uint)group.GlyphIDs.Count);
+			_worldPacket.WriteUInt8((byte)group.GlyphIDs.Count);
+			_worldPacket.WriteUInt32((uint)group.GlyphIDs.Count);
 
-			base._worldPacket.WriteUInt8(group.SpecID);
+			_worldPacket.WriteUInt8(group.SpecID);
 
 			foreach (var talent in group.Talents)
 			{
-				base._worldPacket.WriteUInt32(talent.TalentID);
-				base._worldPacket.WriteUInt8(talent.Rank);
+				_worldPacket.WriteUInt32(talent.TalentID);
+				_worldPacket.WriteUInt8(talent.Rank);
 			}
 
 			foreach (ushort glyphId in group.GlyphIDs)
 			{
-				base._worldPacket.WriteUInt16(glyphId);
+				_worldPacket.WriteUInt16(glyphId);
 			}
 		}
 
-		base._worldPacket.WriteBit(this.IsPetTalents);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(IsPetTalents);
+		_worldPacket.FlushBits();
 	}
 }

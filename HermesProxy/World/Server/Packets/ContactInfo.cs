@@ -29,18 +29,18 @@ public class ContactInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.Guid);
-		data.WritePackedGuid128(this.WowAccountGuid);
-		data.WriteUInt32(this.VirtualRealmAddr);
-		data.WriteUInt32(this.NativeRealmAddr);
-		data.WriteUInt32((uint)this.TypeFlags);
-		data.WriteUInt8((byte)this.Status);
-		data.WriteUInt32(this.AreaID);
-		data.WriteUInt32(this.Level);
-		data.WriteUInt32((uint)this.ClassID);
-		data.WriteBits(this.Note.GetByteCount(), 10);
-		data.WriteBit(this.Mobile);
+		data.WritePackedGuid128(Guid);
+		data.WritePackedGuid128(WowAccountGuid);
+		data.WriteUInt32(VirtualRealmAddr);
+		data.WriteUInt32(NativeRealmAddr);
+		data.WriteUInt32((uint)TypeFlags);
+		data.WriteUInt8((byte)Status);
+		data.WriteUInt32(AreaID);
+		data.WriteUInt32(Level);
+		data.WriteUInt32((uint)ClassID);
+		data.WriteBits(Note.GetByteCount(), 10);
+		data.WriteBit(Mobile);
 		data.FlushBits();
-		data.WriteString(this.Note);
+		data.WriteString(Note);
 	}
 }

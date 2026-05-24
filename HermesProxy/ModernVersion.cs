@@ -7,16 +7,40 @@ using Framework;
 using Framework.Logging;
 using HermesProxy.Enums;
 using HermesProxy.World.Enums;
-using HermesProxy.World.Enums.V1_14_1_40688;
 using HermesProxy.World.Enums.V2_5_2_39570;
+using ActivePlayerDynamicField = HermesProxy.World.Enums.ActivePlayerDynamicField;
+using ActivePlayerField = HermesProxy.World.Enums.ActivePlayerField;
+using AreaTriggerDynamicField = HermesProxy.World.Enums.AreaTriggerDynamicField;
+using AreaTriggerField = HermesProxy.World.Enums.AreaTriggerField;
+using ContainerDynamicField = HermesProxy.World.Enums.ContainerDynamicField;
+using ContainerField = HermesProxy.World.Enums.ContainerField;
+using ConversationDynamicField = HermesProxy.World.Enums.ConversationDynamicField;
+using ConversationField = HermesProxy.World.Enums.ConversationField;
+using CorpseDynamicField = HermesProxy.World.Enums.CorpseDynamicField;
+using CorpseField = HermesProxy.World.Enums.CorpseField;
+using DynamicObjectDynamicField = HermesProxy.World.Enums.DynamicObjectDynamicField;
+using DynamicObjectField = HermesProxy.World.Enums.DynamicObjectField;
+using GameObjectDynamicField = HermesProxy.World.Enums.GameObjectDynamicField;
+using GameObjectField = HermesProxy.World.Enums.GameObjectField;
+using ItemDynamicField = HermesProxy.World.Enums.ItemDynamicField;
+using ItemField = HermesProxy.World.Enums.ItemField;
+using ObjectDynamicField = HermesProxy.World.Enums.ObjectDynamicField;
+using ObjectField = HermesProxy.World.Enums.ObjectField;
+using Opcode = HermesProxy.World.Enums.Opcode;
+using PlayerDynamicField = HermesProxy.World.Enums.PlayerDynamicField;
+using PlayerField = HermesProxy.World.Enums.PlayerField;
+using SceneObjectDynamicField = HermesProxy.World.Enums.SceneObjectDynamicField;
+using SceneObjectField = HermesProxy.World.Enums.SceneObjectField;
+using UnitDynamicField = HermesProxy.World.Enums.UnitDynamicField;
+using UnitField = HermesProxy.World.Enums.UnitField;
 
 namespace HermesProxy;
 
 public static class ModernVersion
 {
-	private static readonly Dictionary<uint, HermesProxy.World.Enums.Opcode> CurrentToUniversalOpcodeDictionary;
+	private static readonly Dictionary<uint, Opcode> CurrentToUniversalOpcodeDictionary;
 
-	private static readonly Dictionary<HermesProxy.World.Enums.Opcode, uint> UniversalToCurrentOpcodeDictionary;
+	private static readonly Dictionary<Opcode, uint> UniversalToCurrentOpcodeDictionary;
 
 	private static readonly Dictionary<Type, SortedList<int, UpdateFieldInfo>> UpdateFieldDictionary;
 
@@ -30,25 +54,25 @@ public static class ModernVersion
 
 	public static ClientVersionBuild Build { get; private set; }
 
-	public static int BuildInt => (int)ModernVersion.Build;
+	public static int BuildInt => (int)Build;
 
-	public static string VersionString => ModernVersion.Build.ToString();
+	public static string VersionString => Build.ToString();
 
 	static ModernVersion()
 	{
-		ModernVersion.CurrentToUniversalOpcodeDictionary = new Dictionary<uint, HermesProxy.World.Enums.Opcode>();
-		ModernVersion.UniversalToCurrentOpcodeDictionary = new Dictionary<HermesProxy.World.Enums.Opcode, uint>();
-		ModernVersion.Build = Settings.ClientBuild;
-		ModernVersion.ExpansionVersion = ModernVersion.GetExpansionVersion();
-		ModernVersion.MajorVersion = ModernVersion.GetMajorPatchVersion();
-		ModernVersion.MinorVersion = ModernVersion.GetMinorPatchVersion();
-		ModernVersion.UpdateFieldDictionary = new Dictionary<Type, SortedList<int, UpdateFieldInfo>>();
-		ModernVersion.UpdateFieldNameDictionary = new Dictionary<Type, Dictionary<string, int>>();
-		if (!ModernVersion.LoadUFDictionariesInto(ModernVersion.UpdateFieldDictionary, ModernVersion.UpdateFieldNameDictionary))
+		CurrentToUniversalOpcodeDictionary = new Dictionary<uint, Opcode>();
+		UniversalToCurrentOpcodeDictionary = new Dictionary<Opcode, uint>();
+		Build = Settings.ClientBuild;
+		ExpansionVersion = GetExpansionVersion();
+		MajorVersion = GetMajorPatchVersion();
+		MinorVersion = GetMinorPatchVersion();
+		UpdateFieldDictionary = new Dictionary<Type, SortedList<int, UpdateFieldInfo>>();
+		UpdateFieldNameDictionary = new Dictionary<Type, Dictionary<string, int>>();
+		if (!LoadUFDictionariesInto(UpdateFieldDictionary, UpdateFieldNameDictionary))
 		{
 			Log.Print(LogType.Error, "Could not load update fields for current modern version.", ".cctor", "VersionChecker.cs");
 		}
-		if (!ModernVersion.LoadOpcodeDictionaries())
+		if (!LoadOpcodeDictionaries())
 		{
 			Log.Print(LogType.Error, "Could not load opcodes for current modern version.", ".cctor", "VersionChecker.cs");
 		}
@@ -56,7 +80,7 @@ public static class ModernVersion
 
 	private static bool LoadOpcodeDictionaries()
 	{
-		Type enumType = Opcodes.GetOpcodesEnumForVersion(ModernVersion.Build);
+		Type enumType = Opcodes.GetOpcodesEnumForVersion(Build);
 		if (enumType == null)
 		{
 			return false;
@@ -69,41 +93,41 @@ public static class ModernVersion
 			{
 				continue;
 			}
-			HermesProxy.World.Enums.Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
-			if (universalOpcode == HermesProxy.World.Enums.Opcode.UNKNOWN_SMSG && oldOpcodeName != "MSG_NULL_ACTION")
+			Opcode universalOpcode = Opcodes.GetUniversalOpcode(oldOpcodeName);
+			if (universalOpcode == Opcode.UNKNOWN_SMSG && oldOpcodeName != "MSG_NULL_ACTION")
 			{
-				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "LoadOpcodeDictionaries", "VersionChecker.cs");
+				Log.Print(LogType.Error, "Opcode " + oldOpcodeName + " is missing from the universal opcode enum!", "VersionChecker.cs");
 				continue;
 			}
-			if (!ModernVersion.CurrentToUniversalOpcodeDictionary.ContainsKey(opcodeValue))
+			if (!CurrentToUniversalOpcodeDictionary.ContainsKey(opcodeValue))
 			{
-				ModernVersion.CurrentToUniversalOpcodeDictionary.Add(opcodeValue, universalOpcode);
+				CurrentToUniversalOpcodeDictionary.Add(opcodeValue, universalOpcode);
 			}
-			if (!ModernVersion.UniversalToCurrentOpcodeDictionary.ContainsKey(universalOpcode))
+			if (!UniversalToCurrentOpcodeDictionary.ContainsKey(universalOpcode))
 			{
-				ModernVersion.UniversalToCurrentOpcodeDictionary.Add(universalOpcode, opcodeValue);
+				UniversalToCurrentOpcodeDictionary.Add(universalOpcode, opcodeValue);
 			}
 		}
-		if (ModernVersion.CurrentToUniversalOpcodeDictionary.Count < 1)
+		if (CurrentToUniversalOpcodeDictionary.Count < 1)
 		{
 			return false;
 		}
-		Log.Print(LogType.Server, $"Loaded {ModernVersion.CurrentToUniversalOpcodeDictionary.Count} modern opcodes ({ModernVersion.UniversalToCurrentOpcodeDictionary.Count} universal mappings).", "LoadOpcodeDictionaries", "VersionChecker.cs");
+		Log.Print(LogType.Server, $"Loaded {CurrentToUniversalOpcodeDictionary.Count} modern opcodes ({UniversalToCurrentOpcodeDictionary.Count} universal mappings).", "VersionChecker.cs");
 		return true;
 	}
 
-	public static HermesProxy.World.Enums.Opcode GetUniversalOpcode(uint opcode)
+	public static Opcode GetUniversalOpcode(uint opcode)
 	{
-		if (ModernVersion.CurrentToUniversalOpcodeDictionary.TryGetValue(opcode, out var universalOpcode))
+		if (CurrentToUniversalOpcodeDictionary.TryGetValue(opcode, out var universalOpcode))
 		{
 			return universalOpcode;
 		}
-		return HermesProxy.World.Enums.Opcode.UNKNOWN_SMSG;
+		return Opcode.UNKNOWN_SMSG;
 	}
 
-	public static uint GetCurrentOpcode(HermesProxy.World.Enums.Opcode universalOpcode)
+	public static uint GetCurrentOpcode(Opcode universalOpcode)
 	{
-		if (ModernVersion.UniversalToCurrentOpcodeDictionary.TryGetValue(universalOpcode, out var opcode))
+		if (UniversalToCurrentOpcodeDictionary.TryGetValue(universalOpcode, out var opcode))
 		{
 			return opcode;
 		}
@@ -112,7 +136,7 @@ public static class ModernVersion
 
 	public static ClientVersionBuild GetUpdateFieldsDefiningBuild()
 	{
-		return ModernVersion.GetUpdateFieldsDefiningBuild(ModernVersion.Build);
+		return GetUpdateFieldsDefiningBuild(Build);
 	}
 
 	public static ClientVersionBuild GetUpdateFieldsDefiningBuild(ClientVersionBuild version)
@@ -184,45 +208,45 @@ public static class ModernVersion
 	{
 		Type[] enumTypes = new Type[28]
 		{
-			typeof(HermesProxy.World.Enums.ObjectField),
-			typeof(HermesProxy.World.Enums.ItemField),
-			typeof(HermesProxy.World.Enums.ContainerField),
+			typeof(ObjectField),
+			typeof(ItemField),
+			typeof(ContainerField),
 			typeof(AzeriteEmpoweredItemField),
 			typeof(AzeriteItemField),
-			typeof(HermesProxy.World.Enums.UnitField),
-			typeof(HermesProxy.World.Enums.PlayerField),
-			typeof(HermesProxy.World.Enums.ActivePlayerField),
-			typeof(HermesProxy.World.Enums.GameObjectField),
-			typeof(HermesProxy.World.Enums.DynamicObjectField),
-			typeof(HermesProxy.World.Enums.CorpseField),
-			typeof(HermesProxy.World.Enums.AreaTriggerField),
-			typeof(HermesProxy.World.Enums.SceneObjectField),
-			typeof(HermesProxy.World.Enums.ConversationField),
-			typeof(HermesProxy.World.Enums.ObjectDynamicField),
-			typeof(HermesProxy.World.Enums.ItemDynamicField),
-			typeof(HermesProxy.World.Enums.ContainerDynamicField),
+			typeof(UnitField),
+			typeof(PlayerField),
+			typeof(ActivePlayerField),
+			typeof(GameObjectField),
+			typeof(DynamicObjectField),
+			typeof(CorpseField),
+			typeof(AreaTriggerField),
+			typeof(SceneObjectField),
+			typeof(ConversationField),
+			typeof(ObjectDynamicField),
+			typeof(ItemDynamicField),
+			typeof(ContainerDynamicField),
 			typeof(AzeriteEmpoweredItemDynamicField),
 			typeof(AzeriteItemDynamicField),
-			typeof(HermesProxy.World.Enums.UnitDynamicField),
-			typeof(HermesProxy.World.Enums.PlayerDynamicField),
-			typeof(HermesProxy.World.Enums.ActivePlayerDynamicField),
-			typeof(HermesProxy.World.Enums.GameObjectDynamicField),
-			typeof(HermesProxy.World.Enums.DynamicObjectDynamicField),
-			typeof(HermesProxy.World.Enums.CorpseDynamicField),
-			typeof(HermesProxy.World.Enums.AreaTriggerDynamicField),
-			typeof(HermesProxy.World.Enums.SceneObjectDynamicField),
-			typeof(HermesProxy.World.Enums.ConversationDynamicField)
+			typeof(UnitDynamicField),
+			typeof(PlayerDynamicField),
+			typeof(ActivePlayerDynamicField),
+			typeof(GameObjectDynamicField),
+			typeof(DynamicObjectDynamicField),
+			typeof(CorpseDynamicField),
+			typeof(AreaTriggerDynamicField),
+			typeof(SceneObjectDynamicField),
+			typeof(ConversationDynamicField)
 		};
-		ClientVersionBuild ufDefiningBuild = ModernVersion.GetUpdateFieldsDefiningBuild(ModernVersion.Build);
+		ClientVersionBuild ufDefiningBuild = GetUpdateFieldsDefiningBuild(Build);
 		bool loaded = false;
 		Type[] array = enumTypes;
 		foreach (Type enumType in array)
 		{
-			string vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild.ToString() + "." + enumType.Name;
+			string vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
 			Type vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
 			if (vEnumType == null)
 			{
-				vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild.ToString() + "." + enumType.Name;
+				vTypeString = "HermesProxy.World.Enums." + ufDefiningBuild + "." + enumType.Name;
 				vEnumType = Assembly.GetExecutingAssembly().GetType(vTypeString);
 				if (vEnumType == null)
 				{
@@ -235,8 +259,8 @@ public static class ModernVersion
 			Dictionary<string, int> namesResult = new Dictionary<string, int>(vNames.Length);
 			for (int j = 0; j < vValues.Length; j++)
 			{
-				UpdateFieldType format = (from attribute in enumType.GetMember(vNames[j]).SelectMany((MemberInfo member) => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
-					where ((UpdateFieldAttribute)attribute).Version <= ModernVersion.Build
+				UpdateFieldType format = (from attribute in enumType.GetMember(vNames[j]).SelectMany(member => member.GetCustomAttributes(typeof(UpdateFieldAttribute), inherit: false))
+					where ((UpdateFieldAttribute)attribute).Version <= Build
 					orderby ((UpdateFieldAttribute)attribute).Version descending
 					select ((UpdateFieldAttribute)attribute).UFAttribute).DefaultIfEmpty(UpdateFieldType.Default).First();
 				result.Add((int)vValues.GetValue(j), new UpdateFieldInfo
@@ -261,7 +285,7 @@ public static class ModernVersion
 
 	public static int GetUpdateField<T>(T field)
 	{
-		if (ModernVersion.UpdateFieldNameDictionary.TryGetValue(typeof(T), out var byNamesDict) && byNamesDict.TryGetValue(field.ToString(), out var fieldValue))
+		if (UpdateFieldNameDictionary.TryGetValue(typeof(T), out var byNamesDict) && byNamesDict.TryGetValue(field.ToString(), out var fieldValue))
 		{
 			return fieldValue;
 		}
@@ -270,7 +294,7 @@ public static class ModernVersion
 
 	public static string GetUpdateFieldName<T>(int field)
 	{
-		if (ModernVersion.UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
+		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
 			int index = infoDict.BinarySearch(field);
 			if (index >= 0)
@@ -286,7 +310,7 @@ public static class ModernVersion
 
 	public static UpdateFieldInfo GetUpdateFieldInfo<T>(int field)
 	{
-		if (ModernVersion.UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
+		if (UpdateFieldDictionary.TryGetValue(typeof(T), out var infoDict) && infoDict.Count != 0)
 		{
 			int index = infoDict.BinarySearch(field);
 			if (index >= 0)
@@ -300,15 +324,15 @@ public static class ModernVersion
 
 	public static Type GetResponseCodesEnum()
 	{
-		switch (Opcodes.GetOpcodesDefiningBuild(ModernVersion.Build))
+		switch (Opcodes.GetOpcodesDefiningBuild(Build))
 		{
 		case ClientVersionBuild.V2_5_2_39570:
-			return typeof(HermesProxy.World.Enums.V2_5_2_39570.ResponseCodes);
+			return typeof(ResponseCodes);
 		case ClientVersionBuild.V1_14_1_40688:
 		case ClientVersionBuild.V2_5_3_41750:
-			return typeof(HermesProxy.World.Enums.V1_14_1_40688.ResponseCodes);
+			return typeof(World.Enums.V1_14_1_40688.ResponseCodes);
 		case ClientVersionBuild.V3_4_3_54261:
-			return typeof(HermesProxy.World.Enums.V3_4_3_54261.ResponseCodes);
+			return typeof(World.Enums.V3_4_3_54261.ResponseCodes);
 		default:
 			return null;
 		}
@@ -316,142 +340,142 @@ public static class ModernVersion
 
 	private static byte GetExpansionVersion()
 	{
-		string str = ModernVersion.VersionString;
+		string str = VersionString;
 		str = str.Replace("V", "");
-		str = str.Substring(0, str.IndexOf("_"));
+		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
 	}
 
 	private static byte GetMajorPatchVersion()
 	{
-		string str = ModernVersion.VersionString;
+		string str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
-		str = str.Substring(0, str.IndexOf("_"));
+		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		return (byte)uint.Parse(str);
 	}
 
 	private static byte GetMinorPatchVersion()
 	{
-		string str = ModernVersion.VersionString;
+		string str = VersionString;
 		str = str.Substring(str.IndexOf('_') + 1);
 		str = str.Substring(str.IndexOf('_') + 1);
-		str = str.Substring(0, str.IndexOf("_"));
+		str = str.Substring(0, str.IndexOf("_", StringComparison.Ordinal));
 		str = new string(str.TakeWhile(char.IsDigit).ToArray());
 		return (byte)uint.Parse(str);
 	}
 
 	public static bool AddedInVersion(byte expansion, byte major, byte minor)
 	{
-		if (ModernVersion.ExpansionVersion < expansion)
+		if (ExpansionVersion < expansion)
 		{
 			return false;
 		}
-		if (ModernVersion.ExpansionVersion > expansion)
+		if (ExpansionVersion > expansion)
 		{
 			return true;
 		}
-		if (ModernVersion.MajorVersion < major)
+		if (MajorVersion < major)
 		{
 			return false;
 		}
-		if (ModernVersion.MajorVersion > major)
+		if (MajorVersion > major)
 		{
 			return true;
 		}
-		return ModernVersion.MinorVersion >= minor;
+		return MinorVersion >= minor;
 	}
 
 	public static bool AddedInVersion(byte retailExpansion, byte retailMajor, byte retailMinor, byte classicEraExpansion, byte classicEraMajor, byte classicEraMinor, byte classicExpansion, byte classicMajor, byte classicMinor)
 	{
-		if (ModernVersion.ExpansionVersion == 1)
+		if (ExpansionVersion == 1)
 		{
-			return ModernVersion.AddedInVersion(classicEraExpansion, classicEraMajor, classicEraMinor);
+			return AddedInVersion(classicEraExpansion, classicEraMajor, classicEraMinor);
 		}
-		if (ModernVersion.ExpansionVersion == 2 || ModernVersion.ExpansionVersion == 3)
+		if (ExpansionVersion == 2 || ExpansionVersion == 3)
 		{
-			return ModernVersion.AddedInVersion(classicExpansion, classicMajor, classicMinor);
+			return AddedInVersion(classicExpansion, classicMajor, classicMinor);
 		}
-		return ModernVersion.AddedInVersion(retailExpansion, retailMajor, retailMinor);
+		return AddedInVersion(retailExpansion, retailMajor, retailMinor);
 	}
 
 	public static bool RemovedInVersion(byte retailExpansion, byte retailMajor, byte retailMinor, byte classicEraExpansion, byte classicEraMajor, byte classicEraMinor, byte classicExpansion, byte classicMajor, byte classicMinor)
 	{
-		return !ModernVersion.AddedInVersion(retailExpansion, retailMajor, retailMinor, classicEraExpansion, classicEraMajor, classicEraMinor, classicExpansion, classicMajor, classicMinor);
+		return !AddedInVersion(retailExpansion, retailMajor, retailMinor, classicEraExpansion, classicEraMajor, classicEraMinor, classicExpansion, classicMajor, classicMinor);
 	}
 
 	public static bool AddedInClassicVersion(byte classicEraExpansion, byte classicEraMajor, byte classicEraMinor, byte classicExpansion, byte classicMajor, byte classicMinor)
 	{
-		if (ModernVersion.ExpansionVersion == 1)
+		if (ExpansionVersion == 1)
 		{
-			return ModernVersion.AddedInVersion(classicEraExpansion, classicEraMajor, classicEraMinor);
+			return AddedInVersion(classicEraExpansion, classicEraMajor, classicEraMinor);
 		}
-		if (ModernVersion.ExpansionVersion == 2 || ModernVersion.ExpansionVersion == 3)
+		if (ExpansionVersion == 2 || ExpansionVersion == 3)
 		{
-			return ModernVersion.AddedInVersion(classicExpansion, classicMajor, classicMinor);
+			return AddedInVersion(classicExpansion, classicMajor, classicMinor);
 		}
 		return false;
 	}
 
 	public static bool RemovedInClassicVersion(byte classicEraExpansion, byte classicEraMajor, byte classicEraMinor, byte classicExpansion, byte classicMajor, byte classicMinor)
 	{
-		return !ModernVersion.AddedInClassicVersion(classicEraExpansion, classicEraMajor, classicEraMinor, classicExpansion, classicMajor, classicMinor);
+		return !AddedInClassicVersion(classicEraExpansion, classicEraMajor, classicEraMinor, classicExpansion, classicMajor, classicMinor);
 	}
 
 	public static bool IsVersion(byte expansion, byte major, byte minor)
 	{
-		return ModernVersion.ExpansionVersion == expansion && ModernVersion.MajorVersion == major && ModernVersion.MinorVersion == minor;
+		return ExpansionVersion == expansion && MajorVersion == major && MinorVersion == minor;
 	}
 
 	public static bool InVersion(ClientVersionBuild build1, ClientVersionBuild build2)
 	{
-		return ModernVersion.AddedInVersion(build1) && ModernVersion.RemovedInVersion(build2);
+		return AddedInVersion(build1) && RemovedInVersion(build2);
 	}
 
 	public static bool AddedInVersion(ClientVersionBuild build)
 	{
-		return ModernVersion.Build >= build;
+		return Build >= build;
 	}
 
 	public static bool RemovedInVersion(ClientVersionBuild build)
 	{
-		return ModernVersion.Build < build;
+		return Build < build;
 	}
 
 	public static bool IsClassicVersionBuild()
 	{
-		return (ModernVersion.ExpansionVersion == 1 && ModernVersion.MajorVersion >= 13) || (ModernVersion.ExpansionVersion == 2 && ModernVersion.MajorVersion >= 5) || (ModernVersion.ExpansionVersion == 3 && ModernVersion.MajorVersion >= 4);
+		return (ExpansionVersion == 1 && MajorVersion >= 13) || (ExpansionVersion == 2 && MajorVersion >= 5) || (ExpansionVersion == 3 && MajorVersion >= 4);
 	}
 
 	public static int GetAccountDataCount()
 	{
-		if (ModernVersion.ExpansionVersion == 1 && ModernVersion.MajorVersion >= 14)
+		if (ExpansionVersion == 1 && MajorVersion >= 14)
 		{
-			if (ModernVersion.AddedInVersion(1, 14, 1))
+			if (AddedInVersion(1, 14, 1))
 			{
 				return 13;
 			}
 			return 10;
 		}
-		if (ModernVersion.ExpansionVersion == 2 && ModernVersion.MajorVersion >= 5)
+		if (ExpansionVersion == 2 && MajorVersion >= 5)
 		{
-			if (ModernVersion.AddedInVersion(2, 5, 3))
+			if (AddedInVersion(2, 5, 3))
 			{
 				return 13;
 			}
 		}
 		else
 		{
-			if (ModernVersion.ExpansionVersion == 3 && ModernVersion.MajorVersion >= 4)
+			if (ExpansionVersion == 3 && MajorVersion >= 4)
 			{
 				return 15;
 			}
-			if (!ModernVersion.IsClassicVersionBuild())
+			if (!IsClassicVersionBuild())
 			{
-				if (ModernVersion.AddedInVersion(9, 2, 0))
+				if (AddedInVersion(9, 2, 0))
 				{
 					return 13;
 				}
-				if (ModernVersion.AddedInVersion(9, 1, 5))
+				if (AddedInVersion(9, 1, 5))
 				{
 					return 12;
 				}
@@ -462,27 +486,27 @@ public static class ModernVersion
 
 	public static int GetPowerCountForClientVersion()
 	{
-		if (ModernVersion.IsClassicVersionBuild())
+		if (IsClassicVersionBuild())
 		{
-			if (ModernVersion.AddedInClassicVersion(1, 14, 1, 2, 5, 3))
+			if (AddedInClassicVersion(1, 14, 1, 2, 5, 3))
 			{
 				return 7;
 			}
 			return 6;
 		}
-		if (ModernVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
+		if (RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			return 5;
 		}
-		if (ModernVersion.RemovedInVersion(ClientVersionBuild.V4_0_6_13596))
+		if (RemovedInVersion(ClientVersionBuild.V4_0_6_13596))
 		{
 			return 7;
 		}
-		if (ModernVersion.RemovedInVersion(ClientVersionBuild.V6_0_2_19033))
+		if (RemovedInVersion(ClientVersionBuild.V6_0_2_19033))
 		{
 			return 5;
 		}
-		if (ModernVersion.RemovedInVersion(ClientVersionBuild.V9_1_5_40772))
+		if (RemovedInVersion(ClientVersionBuild.V9_1_5_40772))
 		{
 			return 6;
 		}
@@ -491,19 +515,19 @@ public static class ModernVersion
 
 	public static uint GetGameObjectStateAnimId()
 	{
-		if (ModernVersion.IsVersion(1, 14, 0) || ModernVersion.IsVersion(2, 5, 2))
+		if (IsVersion(1, 14, 0) || IsVersion(2, 5, 2))
 		{
 			return 1556u;
 		}
-		if (ModernVersion.IsVersion(1, 14, 1))
+		if (IsVersion(1, 14, 1))
 		{
 			return 1618u;
 		}
-		if (ModernVersion.IsVersion(1, 14, 2) || ModernVersion.IsVersion(2, 5, 3))
+		if (IsVersion(1, 14, 2) || IsVersion(2, 5, 3))
 		{
 			return 1672u;
 		}
-		if (ModernVersion.IsVersion(3, 4, 3))
+		if (IsVersion(3, 4, 3))
 		{
 			return 1772u;
 		}
@@ -661,7 +685,7 @@ public static class ModernVersion
 	public static byte ConvertResponseCodesValue(byte legacyValue)
 	{
 		string legacyName = Enum.ToObject(LegacyVersion.GetResponseCodesEnum(), legacyValue).ToString();
-		return (byte)Enum.Parse(ModernVersion.GetResponseCodesEnum(), legacyName);
+		return (byte)Enum.Parse(GetResponseCodesEnum(), legacyName);
 	}
 
 	public static byte ConvertSocketColor(byte legacyValue)

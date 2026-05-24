@@ -26,14 +26,14 @@ internal class ResurrectRequest : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.CasterVirtualRealmAddress);
-		base._worldPacket.WriteUInt32(this.PetNumber);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteBits(this.Name.GetByteCount(), 11);
-		base._worldPacket.WriteBit(this.UseTimer);
-		base._worldPacket.WriteBit(this.Sickness);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.Name);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(CasterVirtualRealmAddress);
+		_worldPacket.WriteUInt32(PetNumber);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteBits(Name.GetByteCount(), 11);
+		_worldPacket.WriteBit(UseTimer);
+		_worldPacket.WriteBit(Sickness);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(Name);
 	}
 }

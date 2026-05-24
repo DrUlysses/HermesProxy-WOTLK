@@ -11,6 +11,6 @@ internal class SetWatchedFaction : ClientPacket
 
 	public override void Read()
 	{
-		this.FactionIndex = base._worldPacket.ReadUInt32();
+		FactionIndex = _worldPacket.ReadUInt32();
 	}
 }

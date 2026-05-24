@@ -11,6 +11,6 @@ public class AttackSwing : ClientPacket
 
 	public override void Read()
 	{
-		this.Victim = base._worldPacket.ReadPackedGuid128();
+		Victim = _worldPacket.ReadPackedGuid128();
 	}
 }

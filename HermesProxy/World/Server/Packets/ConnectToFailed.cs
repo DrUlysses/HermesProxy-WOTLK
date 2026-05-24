@@ -15,7 +15,7 @@ internal class ConnectToFailed : ClientPacket
 
 	public override void Read()
 	{
-		this.Serial = (ConnectToSerial)base._worldPacket.ReadUInt32();
-		this.Con = base._worldPacket.ReadUInt8();
+		Serial = (ConnectToSerial)_worldPacket.ReadUInt32();
+		Con = _worldPacket.ReadUInt8();
 	}
 }

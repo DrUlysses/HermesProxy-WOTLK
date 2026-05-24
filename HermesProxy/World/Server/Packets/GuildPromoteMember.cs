@@ -11,6 +11,6 @@ public class GuildPromoteMember : ClientPacket
 
 	public override void Read()
 	{
-		this.Promotee = base._worldPacket.ReadPackedGuid128();
+		Promotee = _worldPacket.ReadPackedGuid128();
 	}
 }

@@ -15,7 +15,7 @@ internal class ConfirmRespecWipe : ClientPacket
 
 	public override void Read()
 	{
-		this.TrainerGUID = base._worldPacket.ReadPackedGuid128();
-		this.RespecType = (SpecResetType)base._worldPacket.ReadUInt8();
+		TrainerGUID = _worldPacket.ReadPackedGuid128();
+		RespecType = (SpecResetType)_worldPacket.ReadUInt8();
 	}
 }

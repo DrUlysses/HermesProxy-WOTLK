@@ -20,19 +20,19 @@ public class QueryNPCTextResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.TextID);
-		base._worldPacket.WriteBit(this.Allow);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteInt32(this.Allow ? 64 : 0);
-		if (this.Allow)
+		_worldPacket.WriteUInt32(TextID);
+		_worldPacket.WriteBit(Allow);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteInt32(Allow ? 64 : 0);
+		if (Allow)
 		{
 			for (uint i = 0u; i < 8; i++)
 			{
-				base._worldPacket.WriteFloat(this.Probabilities[i]);
+				_worldPacket.WriteFloat(Probabilities[i]);
 			}
 			for (uint i2 = 0u; i2 < 8; i2++)
 			{
-				base._worldPacket.WriteUInt32(this.BroadcastTextID[i2]);
+				_worldPacket.WriteUInt32(BroadcastTextID[i2]);
 			}
 		}
 	}

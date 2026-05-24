@@ -19,20 +19,20 @@ public class SupercededSpells : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.SpellID.Count);
-		base._worldPacket.WriteInt32(this.Superceded.Count);
-		base._worldPacket.WriteInt32(this.FavoriteSpellID.Count);
-		foreach (uint spellId in this.SpellID)
+		_worldPacket.WriteInt32(SpellID.Count);
+		_worldPacket.WriteInt32(Superceded.Count);
+		_worldPacket.WriteInt32(FavoriteSpellID.Count);
+		foreach (uint spellId in SpellID)
 		{
-			base._worldPacket.WriteUInt32(spellId);
+			_worldPacket.WriteUInt32(spellId);
 		}
-		foreach (uint spellId2 in this.Superceded)
+		foreach (uint spellId2 in Superceded)
 		{
-			base._worldPacket.WriteUInt32(spellId2);
+			_worldPacket.WriteUInt32(spellId2);
 		}
-		foreach (int spellId3 in this.FavoriteSpellID)
+		foreach (int spellId3 in FavoriteSpellID)
 		{
-			base._worldPacket.WriteInt32(spellId3);
+			_worldPacket.WriteInt32(spellId3);
 		}
 	}
 }

@@ -19,19 +19,19 @@ public class CTextEmote : ClientPacket
 
 	public override void Read()
 	{
-		this.Target = base._worldPacket.ReadPackedGuid128();
-		this.EmoteID = base._worldPacket.ReadInt32();
-		this.SoundIndex = base._worldPacket.ReadInt32();
+		Target = _worldPacket.ReadPackedGuid128();
+		EmoteID = _worldPacket.ReadInt32();
+		SoundIndex = _worldPacket.ReadInt32();
 		if (ModernVersion.AddedInVersion(9, 0, 5, 1, 14, 0, 2, 5, 1))
 		{
-			this.SpellVisualKitIDs = new uint[base._worldPacket.ReadUInt32()];
+			SpellVisualKitIDs = new uint[_worldPacket.ReadUInt32()];
 			if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 2, 2, 5, 3))
 			{
-				this.SequenceVariation = base._worldPacket.ReadInt32();
+				SequenceVariation = _worldPacket.ReadInt32();
 			}
-			for (int i = 0; i < this.SpellVisualKitIDs.Length; i++)
+			for (int i = 0; i < SpellVisualKitIDs.Length; i++)
 			{
-				this.SpellVisualKitIDs[i] = base._worldPacket.ReadUInt32();
+				SpellVisualKitIDs[i] = _worldPacket.ReadUInt32();
 			}
 		}
 	}

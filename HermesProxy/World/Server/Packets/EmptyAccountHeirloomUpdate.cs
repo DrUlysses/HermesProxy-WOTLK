@@ -12,10 +12,10 @@ public class EmptyAccountHeirloomUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(bit: true);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteInt32(0);
-		base._worldPacket.WriteUInt32(0u);
-		base._worldPacket.WriteUInt32(0u);
+		_worldPacket.WriteBit(bit: true);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteInt32(0);
+		_worldPacket.WriteUInt32(0u);
+		_worldPacket.WriteUInt32(0u);
 	}
 }

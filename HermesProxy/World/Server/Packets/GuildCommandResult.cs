@@ -18,9 +18,9 @@ public class GuildCommandResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Result);
-		base._worldPacket.WriteUInt32((uint)this.Command);
-		base._worldPacket.WriteBits(this.Name.GetByteCount(), 8);
-		base._worldPacket.WriteString(this.Name);
+		_worldPacket.WriteUInt32((uint)Result);
+		_worldPacket.WriteUInt32((uint)Command);
+		_worldPacket.WriteBits(Name.GetByteCount(), 8);
+		_worldPacket.WriteString(Name);
 	}
 }

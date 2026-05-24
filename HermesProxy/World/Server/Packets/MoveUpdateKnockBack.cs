@@ -16,6 +16,6 @@ public class MoveUpdateKnockBack : ServerPacket
 
 	protected override void Write()
 	{
-		this.MoveInfo.WriteMovementInfoModern(base._worldPacket, this.MoverGUID);
+		MoveInfo.WriteMovementInfoModern(_worldPacket, MoverGUID);
 	}
 }

@@ -2,7 +2,7 @@ namespace HermesProxy.World.Server.Packets;
 
 public class ChatMessageWhisper : ClientPacket
 {
-	public uint Language = 0u;
+	public uint Language;
 
 	public string Text;
 
@@ -15,10 +15,10 @@ public class ChatMessageWhisper : ClientPacket
 
 	public override void Read()
 	{
-		this.Language = base._worldPacket.ReadUInt32();
-		uint targetLen = base._worldPacket.ReadBits<uint>(9);
-		uint textLen = base._worldPacket.ReadBits<uint>(9);
-		this.Target = base._worldPacket.ReadString(targetLen);
-		this.Text = base._worldPacket.ReadString(textLen);
+		Language = _worldPacket.ReadUInt32();
+		uint targetLen = _worldPacket.ReadBits<uint>(9);
+		uint textLen = _worldPacket.ReadBits<uint>(9);
+		Target = _worldPacket.ReadString(targetLen);
+		Text = _worldPacket.ReadString(textLen);
 	}
 }

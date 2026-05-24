@@ -18,8 +18,8 @@ public class MoveSetSpeed : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.MoverGUID);
-		base._worldPacket.WriteUInt32(this.MoveCounter);
-		base._worldPacket.WriteFloat(this.Speed);
+		_worldPacket.WritePackedGuid128(MoverGUID);
+		_worldPacket.WriteUInt32(MoveCounter);
+		_worldPacket.WriteFloat(Speed);
 	}
 }

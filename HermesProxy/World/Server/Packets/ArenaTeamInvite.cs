@@ -22,13 +22,13 @@ internal class ArenaTeamInvite : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PlayerGuid);
-		base._worldPacket.WriteUInt32(this.PlayerVirtualAddress);
-		base._worldPacket.WritePackedGuid128(this.TeamGuid);
-		base._worldPacket.WriteBits(this.PlayerName.GetByteCount(), 6);
-		base._worldPacket.WriteBits(this.TeamName.GetByteCount(), 7);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.PlayerName);
-		base._worldPacket.WriteString(this.TeamName);
+		_worldPacket.WritePackedGuid128(PlayerGuid);
+		_worldPacket.WriteUInt32(PlayerVirtualAddress);
+		_worldPacket.WritePackedGuid128(TeamGuid);
+		_worldPacket.WriteBits(PlayerName.GetByteCount(), 6);
+		_worldPacket.WriteBits(TeamName.GetByteCount(), 7);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(PlayerName);
+		_worldPacket.WriteString(TeamName);
 	}
 }

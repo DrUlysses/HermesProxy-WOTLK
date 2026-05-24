@@ -17,12 +17,12 @@ public class UnlearnedSpells : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Spells.Count);
-		foreach (uint spellId in this.Spells)
+		_worldPacket.WriteInt32(Spells.Count);
+		foreach (uint spellId in Spells)
 		{
-			base._worldPacket.WriteUInt32(spellId);
+			_worldPacket.WriteUInt32(spellId);
 		}
-		base._worldPacket.WriteBit(this.SuppressMessaging);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(SuppressMessaging);
+		_worldPacket.FlushBits();
 	}
 }

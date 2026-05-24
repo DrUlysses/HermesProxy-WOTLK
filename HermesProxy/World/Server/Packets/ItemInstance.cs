@@ -14,32 +14,32 @@ public class ItemInstance
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.ItemID);
-		data.WriteUInt32(this.RandomPropertiesSeed);
-		data.WriteUInt32(this.RandomPropertiesID);
-		data.WriteBit(this.ItemBonus != null);
+		data.WriteUInt32(ItemID);
+		data.WriteUInt32(RandomPropertiesSeed);
+		data.WriteUInt32(RandomPropertiesID);
+		data.WriteBit(ItemBonus != null);
 		data.FlushBits();
-		this.Modifications.Write(data);
-		if (this.ItemBonus != null)
+		Modifications.Write(data);
+		if (ItemBonus != null)
 		{
-			this.ItemBonus.Write(data);
+			ItemBonus.Write(data);
 		}
 	}
 
 	public void Read(WorldPacket data)
 	{
-		this.ItemID = data.ReadUInt32();
-		this.RandomPropertiesSeed = data.ReadUInt32();
-		this.RandomPropertiesID = data.ReadUInt32();
+		ItemID = data.ReadUInt32();
+		RandomPropertiesSeed = data.ReadUInt32();
+		RandomPropertiesID = data.ReadUInt32();
 		if (data.HasBit())
 		{
-			this.ItemBonus = new ItemBonuses();
+			ItemBonus = new ItemBonuses();
 		}
 		data.ResetBitPos();
-		this.Modifications.Read(data);
-		if (this.ItemBonus != null)
+		Modifications.Read(data);
+		if (ItemBonus != null)
 		{
-			this.ItemBonus.Read(data);
+			ItemBonus.Read(data);
 		}
 	}
 }

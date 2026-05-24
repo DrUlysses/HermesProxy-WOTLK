@@ -16,7 +16,7 @@ public class SAttackStart : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Attacker);
-		base._worldPacket.WritePackedGuid128(this.Victim);
+		_worldPacket.WritePackedGuid128(Attacker);
+		_worldPacket.WritePackedGuid128(Victim);
 	}
 }

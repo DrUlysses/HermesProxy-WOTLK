@@ -18,14 +18,14 @@ public class CharacterRenameResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8(this.Result);
-		base._worldPacket.WriteBit(this.Guid != null);
-		base._worldPacket.WriteBits(this.Name.GetByteCount(), 6);
-		base._worldPacket.FlushBits();
-		if (this.Guid != null)
+		_worldPacket.WriteUInt8(Result);
+		_worldPacket.WriteBit(Guid != null);
+		_worldPacket.WriteBits(Name.GetByteCount(), 6);
+		_worldPacket.FlushBits();
+		if (Guid != null)
 		{
-			base._worldPacket.WritePackedGuid128(this.Guid);
+			_worldPacket.WritePackedGuid128(Guid);
 		}
-		base._worldPacket.WriteString(this.Name);
+		_worldPacket.WriteString(Name);
 	}
 }

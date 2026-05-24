@@ -19,11 +19,11 @@ public class LoginVerifyWorld : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.MapID);
-		base._worldPacket.WriteFloat(this.Pos.X);
-		base._worldPacket.WriteFloat(this.Pos.Y);
-		base._worldPacket.WriteFloat(this.Pos.Z);
-		base._worldPacket.WriteFloat(this.Pos.Orientation);
-		base._worldPacket.WriteUInt32(this.Reason);
+		_worldPacket.WriteUInt32(MapID);
+		_worldPacket.WriteFloat(Pos.X);
+		_worldPacket.WriteFloat(Pos.Y);
+		_worldPacket.WriteFloat(Pos.Z);
+		_worldPacket.WriteFloat(Pos.Orientation);
+		_worldPacket.WriteUInt32(Reason);
 	}
 }

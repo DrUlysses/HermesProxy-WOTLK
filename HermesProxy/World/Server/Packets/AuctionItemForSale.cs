@@ -8,7 +8,7 @@ public struct AuctionItemForSale
 
 	public AuctionItemForSale(WorldPacket data)
 	{
-		this.Guid = data.ReadPackedGuid128();
-		this.UseCount = data.ReadUInt32();
+		Guid = data.ReadPackedGuid128();
+		UseCount = data.ReadUInt32();
 	}
 }

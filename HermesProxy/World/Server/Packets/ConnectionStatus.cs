@@ -15,8 +15,8 @@ internal class ConnectionStatus : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits(this.State, 2);
-		base._worldPacket.WriteBit(this.SuppressNotification);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBits(State, 2);
+		_worldPacket.WriteBit(SuppressNotification);
+		_worldPacket.FlushBits();
 	}
 }

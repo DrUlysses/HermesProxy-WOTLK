@@ -14,7 +14,7 @@ public class PrintNotification : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits(this.NotifyText.GetByteCount(), 12);
-		base._worldPacket.WriteString(this.NotifyText);
+		_worldPacket.WriteBits(NotifyText.GetByteCount(), 12);
+		_worldPacket.WriteString(NotifyText);
 	}
 }

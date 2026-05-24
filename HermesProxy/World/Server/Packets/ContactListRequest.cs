@@ -13,6 +13,6 @@ public class ContactListRequest : ClientPacket
 
 	public override void Read()
 	{
-		this.Flags = (SocialFlag)base._worldPacket.ReadUInt32();
+		Flags = (SocialFlag)_worldPacket.ReadUInt32();
 	}
 }

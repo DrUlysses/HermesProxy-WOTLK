@@ -13,14 +13,14 @@ internal class MountSpecial : ClientPacket
 
 	public override void Read()
 	{
-		this.SpellVisualKitIDs = new int[base._worldPacket.ReadUInt32()];
+		SpellVisualKitIDs = new int[_worldPacket.ReadUInt32()];
 		if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 2, 2, 5, 3))
 		{
-			this.SequenceVariation = base._worldPacket.ReadInt32();
+			SequenceVariation = _worldPacket.ReadInt32();
 		}
-		for (int i = 0; i < this.SpellVisualKitIDs.Length; i++)
+		for (int i = 0; i < SpellVisualKitIDs.Length; i++)
 		{
-			this.SpellVisualKitIDs[i] = base._worldPacket.ReadInt32();
+			SpellVisualKitIDs[i] = _worldPacket.ReadInt32();
 		}
 	}
 }

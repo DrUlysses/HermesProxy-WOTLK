@@ -17,9 +17,9 @@ internal class ReadyCheckResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PartyGUID);
-		base._worldPacket.WritePackedGuid128(this.Player);
-		base._worldPacket.WriteBit(this.IsReady);
-		base._worldPacket.FlushBits();
+		_worldPacket.WritePackedGuid128(PartyGUID);
+		_worldPacket.WritePackedGuid128(Player);
+		_worldPacket.WriteBit(IsReady);
+		_worldPacket.FlushBits();
 	}
 }

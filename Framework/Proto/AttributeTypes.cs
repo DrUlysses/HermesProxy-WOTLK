@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/attribute_types.proto</summary>
@@ -325,7 +325,7 @@ namespace Bgs.Protocol {
       if (MessageValue != other.MessageValue) return false;
       if (FourccValue != other.FourccValue) return false;
       if (UintValue != other.UintValue) return false;
-      if (!object.Equals(EntityIdValue, other.EntityIdValue)) return false;
+      if (!Equals(EntityIdValue, other.EntityIdValue)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -615,7 +615,7 @@ namespace Bgs.Protocol {
         return true;
       }
       if (Name != other.Name) return false;
-      if (!object.Equals(Value, other.Value)) return false;
+      if (!Equals(Value, other.Value)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

@@ -15,7 +15,7 @@ internal class RaidGroupOnly : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Delay);
-		base._worldPacket.WriteUInt32((uint)this.Reason);
+		_worldPacket.WriteInt32(Delay);
+		_worldPacket.WriteUInt32((uint)Reason);
 	}
 }

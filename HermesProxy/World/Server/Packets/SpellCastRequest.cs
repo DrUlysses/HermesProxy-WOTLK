@@ -33,34 +33,34 @@ public class SpellCastRequest
 
 	public void Read(WorldPacket data)
 	{
-		this.CastID = data.ReadPackedGuid128();
-		this.Misc[0] = data.ReadUInt32();
-		this.Misc[1] = data.ReadUInt32();
-		this.SpellID = data.ReadUInt32();
-		this.SpellXSpellVisualID = data.ReadUInt32();
-		this.MissileTrajectory.Read(data);
-		this.CraftingNPC = data.ReadPackedGuid128();
+		CastID = data.ReadPackedGuid128();
+		Misc[0] = data.ReadUInt32();
+		Misc[1] = data.ReadUInt32();
+		SpellID = data.ReadUInt32();
+		SpellXSpellVisualID = data.ReadUInt32();
+		MissileTrajectory.Read(data);
+		CraftingNPC = data.ReadPackedGuid128();
 		uint optionalReagents = data.ReadUInt32();
 		uint optionalCurrencies = data.ReadUInt32();
 		for (int i = 0; i < optionalReagents; i++)
 		{
-			this.OptionalReagents[i].Read(data);
+			OptionalReagents[i].Read(data);
 		}
 		for (int j = 0; j < optionalCurrencies; j++)
 		{
-			this.OptionalCurrencies[j].Read(data);
+			OptionalCurrencies[j].Read(data);
 		}
-		this.SendCastFlags = data.ReadBits<uint>(5);
+		SendCastFlags = data.ReadBits<uint>(5);
 		if (data.HasBit())
 		{
-			this.MoveUpdate = new MovementInfo();
+			MoveUpdate = new MovementInfo();
 		}
 		uint weightCount = data.ReadBits<uint>(2);
-		this.Target.Read(data);
-		if (this.MoveUpdate != null)
+		Target.Read(data);
+		if (MoveUpdate != null)
 		{
-			this.MoverGUID = data.ReadPackedGuid128();
-			this.MoveUpdate.ReadMovementInfoModern(data);
+			MoverGUID = data.ReadPackedGuid128();
+			MoveUpdate.ReadMovementInfoModern(data);
 		}
 		SpellWeight weight = default(SpellWeight);
 		for (int k = 0; k < weightCount; k++)
@@ -69,7 +69,7 @@ public class SpellCastRequest
 			weight.Type = data.ReadBits<uint>(2);
 			weight.ID = data.ReadInt32();
 			weight.Quantity = data.ReadUInt32();
-			this.Weight.Add(weight);
+			Weight.Add(weight);
 		}
 	}
 }

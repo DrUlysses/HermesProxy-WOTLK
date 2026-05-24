@@ -11,6 +11,6 @@ internal class SetFactionNotAtWar : ClientPacket
 
 	public override void Read()
 	{
-		this.FactionIndex = base._worldPacket.ReadUInt8();
+		FactionIndex = _worldPacket.ReadUInt8();
 	}
 }

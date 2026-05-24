@@ -27,24 +27,24 @@ public class MoveTeleport : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.MoverGUID);
-		base._worldPacket.WriteUInt32(this.MoveCounter);
-		base._worldPacket.WriteVector3(this.Position);
-		base._worldPacket.WriteFloat(this.Orientation);
-		base._worldPacket.WriteUInt8(this.PreloadWorld);
-		base._worldPacket.WriteBit(this.TransportGUID != null);
-		base._worldPacket.WriteBit(this.Vehicle != null);
-		base._worldPacket.FlushBits();
-		if (this.Vehicle != null)
+		_worldPacket.WritePackedGuid128(MoverGUID);
+		_worldPacket.WriteUInt32(MoveCounter);
+		_worldPacket.WriteVector3(Position);
+		_worldPacket.WriteFloat(Orientation);
+		_worldPacket.WriteUInt8(PreloadWorld);
+		_worldPacket.WriteBit(TransportGUID != null);
+		_worldPacket.WriteBit(Vehicle != null);
+		_worldPacket.FlushBits();
+		if (Vehicle != null)
 		{
-			base._worldPacket.WriteInt8(this.Vehicle.VehicleSeatIndex);
-			base._worldPacket.WriteBit(this.Vehicle.VehicleExitVoluntary);
-			base._worldPacket.WriteBit(this.Vehicle.VehicleExitTeleport);
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteInt8(Vehicle.VehicleSeatIndex);
+			_worldPacket.WriteBit(Vehicle.VehicleExitVoluntary);
+			_worldPacket.WriteBit(Vehicle.VehicleExitTeleport);
+			_worldPacket.FlushBits();
 		}
-		if (this.TransportGUID != null)
+		if (TransportGUID != null)
 		{
-			base._worldPacket.WritePackedGuid128(this.TransportGUID);
+			_worldPacket.WritePackedGuid128(TransportGUID);
 		}
 	}
 }

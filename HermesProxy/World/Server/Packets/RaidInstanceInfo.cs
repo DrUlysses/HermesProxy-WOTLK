@@ -14,10 +14,10 @@ internal class RaidInstanceInfo : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.LockList.Count);
-		foreach (InstanceLock lockInfos in this.LockList)
+		_worldPacket.WriteInt32(LockList.Count);
+		foreach (InstanceLock lockInfos in LockList)
 		{
-			lockInfos.Write(base._worldPacket);
+			lockInfos.Write(_worldPacket);
 		}
 	}
 }

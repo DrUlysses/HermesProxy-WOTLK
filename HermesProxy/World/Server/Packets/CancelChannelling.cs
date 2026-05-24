@@ -13,7 +13,7 @@ internal class CancelChannelling : ClientPacket
 
 	public override void Read()
 	{
-		this.SpellID = base._worldPacket.ReadInt32();
-		this.Reason = base._worldPacket.ReadInt32();
+		SpellID = _worldPacket.ReadInt32();
+		Reason = _worldPacket.ReadInt32();
 	}
 }

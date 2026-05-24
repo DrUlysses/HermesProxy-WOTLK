@@ -10,8 +10,8 @@ public class SpellCooldownStruct
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.SpellID);
-		data.WriteUInt32(this.ForcedCooldown);
-		data.WriteFloat(this.ModRate);
+		data.WriteUInt32(SpellID);
+		data.WriteUInt32(ForcedCooldown);
+		data.WriteFloat(ModRate);
 	}
 }

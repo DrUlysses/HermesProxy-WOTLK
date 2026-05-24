@@ -19,12 +19,12 @@ public class SpellCooldownPkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Caster);
-		base._worldPacket.WriteUInt8(this.Flags);
-		base._worldPacket.WriteInt32(this.SpellCooldowns.Count);
-		foreach (SpellCooldownStruct cd in this.SpellCooldowns)
+		_worldPacket.WritePackedGuid128(Caster);
+		_worldPacket.WriteUInt8(Flags);
+		_worldPacket.WriteInt32(SpellCooldowns.Count);
+		foreach (SpellCooldownStruct cd in SpellCooldowns)
 		{
-			cd.Write(base._worldPacket);
+			cd.Write(_worldPacket);
 		}
 	}
 }

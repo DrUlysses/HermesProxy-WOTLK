@@ -13,6 +13,6 @@ public class NotifyReceivedMail : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteFloat(this.Delay);
+		_worldPacket.WriteFloat(Delay);
 	}
 }

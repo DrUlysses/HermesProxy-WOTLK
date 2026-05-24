@@ -55,24 +55,24 @@ internal class ItemPushResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
-		base._worldPacket.WriteUInt8(this.Slot);
-		base._worldPacket.WriteInt32(this.SlotInBag);
-		base._worldPacket.WriteInt32(this.QuestLogItemID);
-		base._worldPacket.WriteUInt32(this.Quantity);
-		base._worldPacket.WriteUInt32(this.QuantityInInventory);
-		base._worldPacket.WriteInt32(this.DungeonEncounterID);
-		base._worldPacket.WriteInt32(this.BattlePetSpeciesID);
-		base._worldPacket.WriteInt32(this.BattlePetBreedID);
-		base._worldPacket.WriteUInt32(this.BattlePetBreedQuality);
-		base._worldPacket.WriteInt32(this.BattlePetLevel);
-		base._worldPacket.WritePackedGuid128(this.ItemGUID);
-		base._worldPacket.WriteBit(this.Pushed);
-		base._worldPacket.WriteBit(this.Created);
-		base._worldPacket.WriteBits((uint)this.DisplayText, 3);
-		base._worldPacket.WriteBit(this.IsBonusRoll);
-		base._worldPacket.WriteBit(this.IsEncounterLoot);
-		base._worldPacket.FlushBits();
-		this.Item.Write(base._worldPacket);
+		_worldPacket.WritePackedGuid128(PlayerGUID);
+		_worldPacket.WriteUInt8(Slot);
+		_worldPacket.WriteInt32(SlotInBag);
+		_worldPacket.WriteInt32(QuestLogItemID);
+		_worldPacket.WriteUInt32(Quantity);
+		_worldPacket.WriteUInt32(QuantityInInventory);
+		_worldPacket.WriteInt32(DungeonEncounterID);
+		_worldPacket.WriteInt32(BattlePetSpeciesID);
+		_worldPacket.WriteInt32(BattlePetBreedID);
+		_worldPacket.WriteUInt32(BattlePetBreedQuality);
+		_worldPacket.WriteInt32(BattlePetLevel);
+		_worldPacket.WritePackedGuid128(ItemGUID);
+		_worldPacket.WriteBit(Pushed);
+		_worldPacket.WriteBit(Created);
+		_worldPacket.WriteBits((uint)DisplayText, 3);
+		_worldPacket.WriteBit(IsBonusRoll);
+		_worldPacket.WriteBit(IsEncounterLoot);
+		_worldPacket.FlushBits();
+		Item.Write(_worldPacket);
 	}
 }

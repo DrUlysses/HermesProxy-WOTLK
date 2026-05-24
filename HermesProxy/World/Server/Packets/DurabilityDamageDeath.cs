@@ -13,6 +13,6 @@ internal class DurabilityDamageDeath : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Percent);
+		_worldPacket.WriteUInt32(Percent);
 	}
 }

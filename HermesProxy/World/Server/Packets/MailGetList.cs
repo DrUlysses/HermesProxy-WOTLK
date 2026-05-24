@@ -11,6 +11,6 @@ public class MailGetList : ClientPacket
 
 	public override void Read()
 	{
-		this.Mailbox = base._worldPacket.ReadPackedGuid128();
+		Mailbox = _worldPacket.ReadPackedGuid128();
 	}
 }

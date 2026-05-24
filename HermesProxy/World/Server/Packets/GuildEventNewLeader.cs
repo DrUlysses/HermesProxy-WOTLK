@@ -26,14 +26,14 @@ public class GuildEventNewLeader : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.SelfPromoted);
-		base._worldPacket.WriteBits(this.OldLeaderName.GetByteCount(), 6);
-		base._worldPacket.WriteBits(this.NewLeaderName.GetByteCount(), 6);
-		base._worldPacket.WritePackedGuid128(this.OldLeaderGUID);
-		base._worldPacket.WriteUInt32(this.OldLeaderVirtualRealmAddress);
-		base._worldPacket.WritePackedGuid128(this.NewLeaderGUID);
-		base._worldPacket.WriteUInt32(this.NewLeaderVirtualRealmAddress);
-		base._worldPacket.WriteString(this.OldLeaderName);
-		base._worldPacket.WriteString(this.NewLeaderName);
+		_worldPacket.WriteBit(SelfPromoted);
+		_worldPacket.WriteBits(OldLeaderName.GetByteCount(), 6);
+		_worldPacket.WriteBits(NewLeaderName.GetByteCount(), 6);
+		_worldPacket.WritePackedGuid128(OldLeaderGUID);
+		_worldPacket.WriteUInt32(OldLeaderVirtualRealmAddress);
+		_worldPacket.WritePackedGuid128(NewLeaderGUID);
+		_worldPacket.WriteUInt32(NewLeaderVirtualRealmAddress);
+		_worldPacket.WriteString(OldLeaderName);
+		_worldPacket.WriteString(NewLeaderName);
 	}
 }

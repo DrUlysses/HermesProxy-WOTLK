@@ -15,9 +15,9 @@ public class PetitionBuy : ClientPacket
 
 	public override void Read()
 	{
-		uint titleLen = base._worldPacket.ReadBits<uint>(7);
-		this.Unit = base._worldPacket.ReadPackedGuid128();
-		this.Index = base._worldPacket.ReadUInt32();
-		this.Title = base._worldPacket.ReadString(titleLen);
+		uint titleLen = _worldPacket.ReadBits<uint>(7);
+		Unit = _worldPacket.ReadPackedGuid128();
+		Index = _worldPacket.ReadUInt32();
+		Title = _worldPacket.ReadString(titleLen);
 	}
 }

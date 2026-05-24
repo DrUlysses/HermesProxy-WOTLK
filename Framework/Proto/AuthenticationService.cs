@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Authentication.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/authentication_service.proto</summary>
@@ -249,7 +249,7 @@ namespace Bgs.Protocol.Authentication.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ModuleHandle, other.ModuleHandle)) return false;
+      if (!Equals(ModuleHandle, other.ModuleHandle)) return false;
       if (Message != other.Message) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1585,7 +1585,7 @@ namespace Bgs.Protocol.Authentication.V1 {
         return true;
       }
       if (ErrorCode != other.ErrorCode) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       if(!gameAccountId_.Equals(other.gameAccountId_)) return false;
       if (Email != other.Email) return false;
       if(!availableRegion_.Equals(other.availableRegion_)) return false;
@@ -3309,7 +3309,7 @@ namespace Bgs.Protocol.Authentication.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(VersionInfo, other.VersionInfo)) return false;
+      if (!Equals(VersionInfo, other.VersionInfo)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3502,7 +3502,7 @@ namespace Bgs.Protocol.Authentication.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Handle, other.Handle)) return false;
+      if (!Equals(Handle, other.Handle)) return false;
       if (Key != other.Key) return false;
       if (Input != other.Input) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -3820,7 +3820,7 @@ namespace Bgs.Protocol.Authentication.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3993,7 +3993,7 @@ namespace Bgs.Protocol.Authentication.V1 {
         return true;
       }
       if (Result != other.Result) return false;
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

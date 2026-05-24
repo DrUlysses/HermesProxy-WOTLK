@@ -15,8 +15,8 @@ public class OverrideLight : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.AreaLightID);
-		base._worldPacket.WriteInt32(this.OverrideLightID);
-		base._worldPacket.WriteInt32(this.TransitionMilliseconds);
+		_worldPacket.WriteInt32(AreaLightID);
+		_worldPacket.WriteInt32(OverrideLightID);
+		_worldPacket.WriteInt32(TransitionMilliseconds);
 	}
 }

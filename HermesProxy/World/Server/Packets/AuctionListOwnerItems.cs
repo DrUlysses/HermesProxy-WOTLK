@@ -13,7 +13,7 @@ internal class AuctionListOwnerItems : ClientPacket
 
 	public override void Read()
 	{
-		this.Auctioneer = base._worldPacket.ReadPackedGuid128();
-		this.Offset = base._worldPacket.ReadUInt32();
+		Auctioneer = _worldPacket.ReadPackedGuid128();
+		Offset = _worldPacket.ReadUInt32();
 	}
 }

@@ -16,13 +16,13 @@ public class SpellCastLogData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt64(this.Health);
-		data.WriteInt32(this.AttackPower);
-		data.WriteInt32(this.SpellPower);
-		data.WriteUInt32(this.Armor);
-		data.WriteBits(this.PowerData.Count, 9);
+		data.WriteInt64(Health);
+		data.WriteInt32(AttackPower);
+		data.WriteInt32(SpellPower);
+		data.WriteUInt32(Armor);
+		data.WriteBits(PowerData.Count, 9);
 		data.FlushBits();
-		foreach (SpellLogPowerData powerData in this.PowerData)
+		foreach (SpellLogPowerData powerData in PowerData)
 		{
 			data.WriteInt32(powerData.PowerType);
 			data.WriteInt32(powerData.Amount);

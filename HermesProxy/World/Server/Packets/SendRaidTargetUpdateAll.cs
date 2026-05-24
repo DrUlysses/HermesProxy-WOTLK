@@ -17,12 +17,12 @@ internal class SendRaidTargetUpdateAll : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt8(this.PartyIndex);
-		base._worldPacket.WriteInt32(this.TargetIcons.Count);
-		foreach (Tuple<sbyte, WowGuid128> pair in this.TargetIcons)
+		_worldPacket.WriteInt8(PartyIndex);
+		_worldPacket.WriteInt32(TargetIcons.Count);
+		foreach (Tuple<sbyte, WowGuid128> pair in TargetIcons)
 		{
-			base._worldPacket.WritePackedGuid128(pair.Item2);
-			base._worldPacket.WriteInt8(pair.Item1);
+			_worldPacket.WritePackedGuid128(pair.Item2);
+			_worldPacket.WriteInt8(pair.Item1);
 		}
 	}
 }

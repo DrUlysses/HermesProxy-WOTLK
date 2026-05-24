@@ -34,25 +34,25 @@ public class SendMail : ClientPacket
 
 	public override void Read()
 	{
-		this.Mailbox = base._worldPacket.ReadPackedGuid128();
-		this.StationeryID = base._worldPacket.ReadInt32();
-		this.SendMoney = base._worldPacket.ReadInt64();
-		this.Cod = base._worldPacket.ReadInt64();
-		uint targetLength = base._worldPacket.ReadBits<uint>(9);
-		uint subjectLength = base._worldPacket.ReadBits<uint>(9);
-		uint bodyLength = base._worldPacket.ReadBits<uint>(11);
-		uint count = base._worldPacket.ReadBits<uint>(5);
-		this.Target = base._worldPacket.ReadString(targetLength);
-		this.Subject = base._worldPacket.ReadString(subjectLength);
-		this.Body = base._worldPacket.ReadString(bodyLength);
+		Mailbox = _worldPacket.ReadPackedGuid128();
+		StationeryID = _worldPacket.ReadInt32();
+		SendMoney = _worldPacket.ReadInt64();
+		Cod = _worldPacket.ReadInt64();
+		uint targetLength = _worldPacket.ReadBits<uint>(9);
+		uint subjectLength = _worldPacket.ReadBits<uint>(9);
+		uint bodyLength = _worldPacket.ReadBits<uint>(11);
+		uint count = _worldPacket.ReadBits<uint>(5);
+		Target = _worldPacket.ReadString(targetLength);
+		Subject = _worldPacket.ReadString(subjectLength);
+		Body = _worldPacket.ReadString(bodyLength);
 		for (int i = 0; i < count; i++)
 		{
 			MailAttachment att = new MailAttachment
 			{
-				AttachPosition = base._worldPacket.ReadUInt8(),
-				ItemGUID = base._worldPacket.ReadPackedGuid128()
+				AttachPosition = _worldPacket.ReadUInt8(),
+				ItemGUID = _worldPacket.ReadPackedGuid128()
 			};
-			this.Attachments.Add(att);
+			Attachments.Add(att);
 		}
 	}
 }

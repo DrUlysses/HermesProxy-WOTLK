@@ -20,13 +20,13 @@ public class QueryPageTextResponse : ServerPacket
 
 		public void Write(WorldPacket data)
 		{
-			data.WriteUInt32(this.Id);
-			data.WriteUInt32(this.NextPageID);
-			data.WriteInt32(this.PlayerConditionID);
-			data.WriteUInt8(this.Flags);
-			data.WriteBits(this.Text.GetByteCount(), 12);
+			data.WriteUInt32(Id);
+			data.WriteUInt32(NextPageID);
+			data.WriteInt32(PlayerConditionID);
+			data.WriteUInt8(Flags);
+			data.WriteBits(Text.GetByteCount(), 12);
 			data.FlushBits();
-			data.WriteString(this.Text);
+			data.WriteString(Text);
 		}
 	}
 
@@ -43,17 +43,17 @@ public class QueryPageTextResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.PageTextID);
-		base._worldPacket.WriteBit(this.Allow);
-		base._worldPacket.FlushBits();
-		if (!this.Allow)
+		_worldPacket.WriteUInt32(PageTextID);
+		_worldPacket.WriteBit(Allow);
+		_worldPacket.FlushBits();
+		if (!Allow)
 		{
 			return;
 		}
-		base._worldPacket.WriteInt32(this.Pages.Count);
-		foreach (PageTextInfo page in this.Pages)
+		_worldPacket.WriteInt32(Pages.Count);
+		foreach (PageTextInfo page in Pages)
 		{
-			page.Write(base._worldPacket);
+			page.Write(_worldPacket);
 		}
 	}
 }

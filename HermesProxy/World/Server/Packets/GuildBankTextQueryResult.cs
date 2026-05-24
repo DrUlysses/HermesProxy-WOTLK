@@ -16,8 +16,8 @@ public class GuildBankTextQueryResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Tab);
-		base._worldPacket.WriteBits(this.Text.GetByteCount(), 14);
-		base._worldPacket.WriteString(this.Text);
+		_worldPacket.WriteInt32(Tab);
+		_worldPacket.WriteBits(Text.GetByteCount(), 14);
+		_worldPacket.WriteString(Text);
 	}
 }

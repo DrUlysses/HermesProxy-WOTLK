@@ -41,18 +41,18 @@ internal class ContentTuningParams
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteFloat(this.PlayerItemLevel);
-		data.WriteFloat(this.TargetItemLevel);
-		data.WriteInt16(this.PlayerLevelDelta);
-		data.WriteUInt32(this.ScalingHealthItemLevelCurveID);
-		data.WriteUInt8(this.TargetLevel);
-		data.WriteUInt8(this.Expansion);
-		data.WriteInt8(this.TargetScalingLevelDelta);
-		data.WriteUInt32((uint)this.Flags);
-		data.WriteInt32(this.PlayerContentTuningID);
-		data.WriteInt32(this.TargetContentTuningID);
+		data.WriteFloat(PlayerItemLevel);
+		data.WriteFloat(TargetItemLevel);
+		data.WriteInt16(PlayerLevelDelta);
+		data.WriteUInt32(ScalingHealthItemLevelCurveID);
+		data.WriteUInt8(TargetLevel);
+		data.WriteUInt8(Expansion);
+		data.WriteInt8(TargetScalingLevelDelta);
+		data.WriteUInt32((uint)Flags);
+		data.WriteInt32(PlayerContentTuningID);
+		data.WriteInt32(TargetContentTuningID);
 		data.WriteInt32(0); // Unused927
-		data.WriteBits(this.TuningType, 4);
+		data.WriteBits(TuningType, 4);
 		data.FlushBits();
 	}
 }

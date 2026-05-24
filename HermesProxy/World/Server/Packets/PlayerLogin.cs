@@ -15,15 +15,15 @@ public class PlayerLogin : ClientPacket
 
 	public override void Read()
 	{
-		this.Guid = base._worldPacket.ReadPackedGuid128();
-		this.FarClip = base._worldPacket.ReadFloat();
+		Guid = _worldPacket.ReadPackedGuid128();
+		FarClip = _worldPacket.ReadFloat();
 		try
 		{
-			this.UnkBit = base._worldPacket.HasBit();
+			UnkBit = _worldPacket.HasBit();
 		}
 		catch
 		{
-			this.UnkBit = false;
+			UnkBit = false;
 		}
 	}
 }

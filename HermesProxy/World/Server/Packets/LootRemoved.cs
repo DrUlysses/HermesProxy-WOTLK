@@ -18,8 +18,8 @@ internal class LootRemoved : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Owner);
-		base._worldPacket.WritePackedGuid128(this.LootObj);
-		base._worldPacket.WriteUInt8(this.LootListID);
+		_worldPacket.WritePackedGuid128(Owner);
+		_worldPacket.WritePackedGuid128(LootObj);
+		_worldPacket.WriteUInt8(LootListID);
 	}
 }

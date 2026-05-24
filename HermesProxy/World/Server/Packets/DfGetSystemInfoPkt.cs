@@ -11,7 +11,7 @@ public class DfGetSystemInfoPkt : ClientPacket
 
 	public override void Read()
 	{
-		this.Player = base._worldPacket.HasBit();
+		Player = _worldPacket.HasBit();
 		// PartyIndex optional - skip
 	}
 }

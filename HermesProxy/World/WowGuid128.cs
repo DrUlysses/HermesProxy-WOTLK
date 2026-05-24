@@ -13,16 +13,16 @@ public class WowGuid128 : WowGuid
 
 	public WowGuid128()
 	{
-		base.Low = 0uL;
-		base.High = 0uL;
-		base.HighGuid = new HighGuid703((byte)((base.High >> 58) & 0x3F));
+		Low = 0uL;
+		High = 0uL;
+		HighGuid = new HighGuid703((byte)((High >> 58) & 0x3F));
 	}
 
 	public WowGuid128(ulong high, ulong low)
 	{
-		base.Low = low;
-		base.High = high;
-		base.HighGuid = new HighGuid703((byte)((base.High >> 58) & 0x3F));
+		Low = low;
+		High = high;
+		HighGuid = new HighGuid703((byte)((High >> 58) & 0x3F));
 	}
 
 	public static WowGuid128 Create(WowGuid64 guid, GameSessionData gamestate)
@@ -30,28 +30,28 @@ public class WowGuid128 : WowGuid
 		switch (guid.GetHighType())
 		{
 		case HighGuidType.Player:
-			return WowGuid128.Create(HighGuidType703.Player, guid.GetCounter());
+			return Create(HighGuidType703.Player, guid.GetCounter());
 		case HighGuidType.Item:
-			return WowGuid128.Create(HighGuidType703.Item, guid.GetCounter());
+			return Create(HighGuidType703.Item, guid.GetCounter());
 		case HighGuidType.Transport:
 		case HighGuidType.MOTransport:
-			return WowGuid128.TransportCreate(guid.GetCounter(), guid.GetEntry());
+			return TransportCreate(guid.GetCounter(), guid.GetEntry());
 		case HighGuidType.RaidGroup:
-			return WowGuid128.Create(HighGuidType703.RaidGroup, guid.GetCounter());
+			return Create(HighGuidType703.RaidGroup, guid.GetCounter());
 		case HighGuidType.GameObject:
-			return WowGuid128.Create(HighGuidType703.GameObject, gamestate.GetObjectSpawnCounter(guid), guid.GetEntry(), guid.GetCounter());
+			return Create(HighGuidType703.GameObject, gamestate.GetObjectSpawnCounter(guid), guid.GetEntry(), guid.GetCounter());
 		case HighGuidType.Creature:
-			return WowGuid128.Create(HighGuidType703.Creature, gamestate.GetObjectSpawnCounter(guid), guid.GetEntry(), guid.GetCounter());
+			return Create(HighGuidType703.Creature, gamestate.GetObjectSpawnCounter(guid), guid.GetEntry(), guid.GetCounter());
 		case HighGuidType.Pet:
-			return WowGuid128.Create(HighGuidType703.Pet, 0u, guid.GetEntry(), guid.GetCounter());
+			return Create(HighGuidType703.Pet, 0u, guid.GetEntry(), guid.GetCounter());
 		case HighGuidType.Vehicle:
-			return WowGuid128.Create(HighGuidType703.Vehicle, 0u, guid.GetEntry(), guid.GetCounter());
+			return Create(HighGuidType703.Vehicle, 0u, guid.GetEntry(), guid.GetCounter());
 		case HighGuidType.DynamicObject:
-			return WowGuid128.Create(HighGuidType703.DynamicObject, 0u, guid.GetEntry(), guid.GetCounter());
+			return Create(HighGuidType703.DynamicObject, 0u, guid.GetEntry(), guid.GetCounter());
 		case HighGuidType.Corpse:
-			return WowGuid128.Create(HighGuidType703.Corpse, 0u, guid.GetEntry(), guid.GetCounter());
+			return Create(HighGuidType703.Corpse, 0u, guid.GetEntry(), guid.GetCounter());
 		default:
-			return WowGuid128.Empty;
+			return Empty;
 		}
 	}
 
@@ -75,36 +75,36 @@ public class WowGuid128 : WowGuid
 		case HighGuidType703.CommerceObj:
 		case HighGuidType703.ClientSession:
 		case HighGuidType703.ArenaTeam:
-			return WowGuid128.GlobalCreate(type, counter);
+			return GlobalCreate(type, counter);
 		case HighGuidType703.Player:
 		case HighGuidType703.Item:
 		case HighGuidType703.Transport:
 		case HighGuidType703.Guild:
-			return WowGuid128.RealmSpecificCreate(type, counter);
+			return RealmSpecificCreate(type, counter);
 		default:
-			Log.Print(LogType.Error, $"This guid type cannot be constructed using Create(HighGuid: {type} ulong counter).", "Create", "WowGuid.cs");
-			return WowGuid128.Empty;
+			Log.Print(LogType.Error, $"This guid type cannot be constructed using Create(HighGuid: {type} ulong counter).", "WowGuid.cs");
+			return Empty;
 		}
 	}
 
 	public static WowGuid128 Create(HighGuidType703 type, uint mapId, uint entry, ulong counter)
 	{
-		return WowGuid128.MapSpecificCreate(type, 0, (ushort)mapId, 0u, entry, counter);
+		return MapSpecificCreate(type, 0, (ushort)mapId, 0u, entry, counter);
 	}
 
 	public static WowGuid128 Create(HighGuidType703 type, SpellCastSource subType, uint mapId, uint entry, ulong counter)
 	{
-		return WowGuid128.MapSpecificCreate(type, (byte)subType, (ushort)mapId, 0u, entry, counter);
+		return MapSpecificCreate(type, (byte)subType, (ushort)mapId, 0u, entry, counter);
 	}
 
 	public static WowGuid128 CreateLootGuid(HighGuidTypeLegacy type, uint entry, ulong counter)
 	{
-		return WowGuid128.MapSpecificCreate(HighGuidType703.LootObject, 0, 0, (uint)type, entry, counter);
+		return MapSpecificCreate(HighGuidType703.LootObject, 0, 0, (uint)type, entry, counter);
 	}
 
 	public static WowGuid128 CreateUnknownPlayerGuid()
 	{
-		return WowGuid128.Create(HighGuidType703.Player, WowGuid128._nextUnknownTmpGuid++);
+		return Create(HighGuidType703.Player, _nextUnknownTmpGuid++);
 	}
 
 	public static bool IsUnknownPlayerGuid(WowGuid128 playerGuid)
@@ -133,12 +133,12 @@ public class WowGuid128 : WowGuid
 
 	private static WowGuid128 MapSpecificCreate(HighGuidType703 type, byte subType, ushort mapId, uint serverId, uint entry, ulong counter)
 	{
-		return new WowGuid128((ulong)(((long)type << 58) | 0x40000000000L | ((long)(mapId & 0x1FFF) << 29)) | ((ulong)(entry & 0x7FFFFF) << 6) | ((ulong)subType & 0x3FuL), ((ulong)(serverId & 0xFFFFFF) << 40) | (counter & 0xFFFFFFFFFFL));
+		return new WowGuid128((ulong)(((long)type << 58) | 0x40000000000L | ((long)(mapId & 0x1FFF) << 29)) | ((ulong)(entry & 0x7FFFFF) << 6) | (subType & 0x3FuL), ((ulong)(serverId & 0xFFFFFF) << 40) | (counter & 0xFFFFFFFFFFL));
 	}
 
 	public override bool HasEntry()
 	{
-		HighGuidType highType = base.GetHighType();
+		HighGuidType highType = GetHighType();
 		HighGuidType highGuidType = highType;
 		if ((uint)(highGuidType - 9) <= 3u || highGuidType == HighGuidType.AreaTrigger)
 		{
@@ -149,53 +149,53 @@ public class WowGuid128 : WowGuid
 
 	public byte GetSubType()
 	{
-		return (byte)(base.High & 0x3F);
+		return (byte)(High & 0x3F);
 	}
 
 	public ushort GetRealmId()
 	{
-		return (ushort)((base.High >> 42) & 0x1FFF);
+		return (ushort)((High >> 42) & 0x1FFF);
 	}
 
 	public uint GetServerId()
 	{
-		return (uint)((base.Low >> 40) & 0xFFFFFF);
+		return (uint)((Low >> 40) & 0xFFFFFF);
 	}
 
 	public ushort GetMapId()
 	{
-		return (ushort)((base.High >> 29) & 0x1FFF);
+		return (ushort)((High >> 29) & 0x1FFF);
 	}
 
 	public override uint GetEntry()
 	{
-		if (base.GetHighType() == HighGuidType.Transport)
+		if (GetHighType() == HighGuidType.Transport)
 		{
-			return (uint)(base.High & 0xFFFFFFFFu);
+			return (uint)(High & 0xFFFFFFFFu);
 		}
-		return (uint)((base.High >> 6) & 0x7FFFFF);
+		return (uint)((High >> 6) & 0x7FFFFF);
 	}
 
 	public override ulong GetCounter()
 	{
-		if (base.GetHighType() == HighGuidType.Transport)
+		if (GetHighType() == HighGuidType.Transport)
 		{
-			return (base.High >> 38) & 0xFFFFF;
+			return (High >> 38) & 0xFFFFF;
 		}
-		return base.Low & 0xFFFFFFFFFFL;
+		return Low & 0xFFFFFFFFFFL;
 	}
 
 	public override string ToString()
 	{
-		if (base.Low == 0L && base.High == 0)
+		if (Low == 0L && High == 0)
 		{
 			return "Full: 0x0";
 		}
-		if (!this.HasEntry())
+		if (!HasEntry())
 		{
-			return $"Full: 0x{base.High:X16}{base.Low:X16} {base.GetHighType()}/{this.GetSubType()} R{this.GetRealmId()}/S{this.GetServerId()} Map: {this.GetMapId()} Low: {this.GetCounter()}";
+			return $"Full: 0x{High:X16}{Low:X16} {GetHighType()}/{GetSubType()} R{GetRealmId()}/S{GetServerId()} Map: {GetMapId()} Low: {GetCounter()}";
 		}
-		return $"Full: 0x{base.High:X16}{base.Low:X16} {base.GetHighType()}/{this.GetSubType()} R{this.GetRealmId()}/S{this.GetServerId()} Map: {this.GetMapId()} Entry: {this.GetEntry()} Low: {this.GetCounter()}";
+		return $"Full: 0x{High:X16}{Low:X16} {GetHighType()}/{GetSubType()} R{GetRealmId()}/S{GetServerId()} Map: {GetMapId()} Entry: {GetEntry()} Low: {GetCounter()}";
 	}
 
 	public override WowGuid64 To64()

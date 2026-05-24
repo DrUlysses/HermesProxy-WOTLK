@@ -15,10 +15,10 @@ public class SendUnlearnSpells : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Spells.Count);
-		foreach (uint spell in this.Spells)
+		_worldPacket.WriteInt32(Spells.Count);
+		foreach (uint spell in Spells)
 		{
-			base._worldPacket.WriteUInt32(spell);
+			_worldPacket.WriteUInt32(spell);
 		}
 	}
 }

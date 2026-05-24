@@ -15,8 +15,8 @@ internal class SetAssistantLeader : ClientPacket
 
 	public override void Read()
 	{
-		this.PartyIndex = base._worldPacket.ReadUInt8();
-		this.TargetGUID = base._worldPacket.ReadPackedGuid128();
-		this.Apply = base._worldPacket.HasBit();
+		PartyIndex = _worldPacket.ReadUInt8();
+		TargetGUID = _worldPacket.ReadPackedGuid128();
+		Apply = _worldPacket.HasBit();
 	}
 }

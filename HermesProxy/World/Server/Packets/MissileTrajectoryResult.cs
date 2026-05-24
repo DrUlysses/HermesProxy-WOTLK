@@ -8,7 +8,7 @@ public struct MissileTrajectoryResult
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.TravelTime);
-		data.WriteFloat(this.Pitch);
+		data.WriteUInt32(TravelTime);
+		data.WriteFloat(Pitch);
 	}
 }

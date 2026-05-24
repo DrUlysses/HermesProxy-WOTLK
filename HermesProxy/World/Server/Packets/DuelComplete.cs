@@ -14,7 +14,7 @@ public class DuelComplete : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.Started);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(Started);
+		_worldPacket.FlushBits();
 	}
 }

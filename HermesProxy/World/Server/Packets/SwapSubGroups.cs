@@ -15,8 +15,8 @@ internal class SwapSubGroups : ClientPacket
 
 	public override void Read()
 	{
-		this.PartyIndex = base._worldPacket.ReadInt8();
-		this.FirstTarget = base._worldPacket.ReadPackedGuid128();
-		this.SecondTarget = base._worldPacket.ReadPackedGuid128();
+		PartyIndex = _worldPacket.ReadInt8();
+		FirstTarget = _worldPacket.ReadPackedGuid128();
+		SecondTarget = _worldPacket.ReadPackedGuid128();
 	}
 }

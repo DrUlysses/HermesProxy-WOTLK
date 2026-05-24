@@ -15,10 +15,10 @@ public class TriggerCinematic : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.CinematicID);
+		_worldPacket.WriteUInt32(CinematicID);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WritePackedGuid128(this.ConversationGuid);
+			_worldPacket.WritePackedGuid128(ConversationGuid);
 		}
 	}
 }

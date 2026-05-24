@@ -17,9 +17,9 @@ internal class AuthContinuedSession : ClientPacket
 
 	public override void Read()
 	{
-		this.DosResponse = base._worldPacket.ReadUInt64();
-		this.Key = base._worldPacket.ReadUInt64();
-		this.LocalChallenge = base._worldPacket.ReadBytes(16u);
-		this.Digest = base._worldPacket.ReadBytes(24u);
+		DosResponse = _worldPacket.ReadUInt64();
+		Key = _worldPacket.ReadUInt64();
+		LocalChallenge = _worldPacket.ReadBytes(16u);
+		Digest = _worldPacket.ReadBytes(24u);
 	}
 }

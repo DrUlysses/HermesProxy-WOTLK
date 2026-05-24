@@ -11,6 +11,6 @@ public class ObjectUpdateFailed : ClientPacket
 
 	public override void Read()
 	{
-		this.ObjectGuid = base._worldPacket.ReadPackedGuid128();
+		ObjectGuid = _worldPacket.ReadPackedGuid128();
 	}
 }

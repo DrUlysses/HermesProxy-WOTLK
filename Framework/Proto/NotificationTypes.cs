@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Notification.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/notification_types.proto</summary>
@@ -157,7 +157,7 @@ namespace Bgs.Protocol.Notification.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Identity, other.Identity)) return false;
+      if (!Equals(Identity, other.Identity)) return false;
       if (Type != other.Type) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -340,8 +340,8 @@ namespace Bgs.Protocol.Notification.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Account, other.Account)) return false;
-      if (!object.Equals(GameAccount, other.GameAccount)) return false;
+      if (!Equals(Account, other.Account)) return false;
+      if (!Equals(GameAccount, other.GameAccount)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -549,7 +549,7 @@ namespace Bgs.Protocol.Notification.V1 {
         return true;
       }
       if(!target_.Equals(other.target_)) return false;
-      if (!object.Equals(Subscriber, other.Subscriber)) return false;
+      if (!Equals(Subscriber, other.Subscriber)) return false;
       if (DeliveryRequired != other.DeliveryRequired) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -889,15 +889,15 @@ namespace Bgs.Protocol.Notification.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(SenderId, other.SenderId)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(SenderId, other.SenderId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       if (Type != other.Type) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
-      if (!object.Equals(SenderAccountId, other.SenderAccountId)) return false;
-      if (!object.Equals(TargetAccountId, other.TargetAccountId)) return false;
+      if (!Equals(SenderAccountId, other.SenderAccountId)) return false;
+      if (!Equals(TargetAccountId, other.TargetAccountId)) return false;
       if (SenderBattleTag != other.SenderBattleTag) return false;
       if (TargetBattleTag != other.TargetBattleTag) return false;
-      if (!object.Equals(ForwardingIdentity, other.ForwardingIdentity)) return false;
+      if (!Equals(ForwardingIdentity, other.ForwardingIdentity)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

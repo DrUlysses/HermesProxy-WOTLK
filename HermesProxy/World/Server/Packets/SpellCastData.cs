@@ -50,60 +50,60 @@ public class SpellCastData
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.CasterGUID);
-		data.WritePackedGuid128(this.CasterUnit);
-		data.WritePackedGuid128(this.CastID);
-		data.WritePackedGuid128(this.OriginalCastID);
-		data.WriteInt32(this.SpellID);
-		data.WriteUInt32(this.SpellXSpellVisualID);
-		data.WriteUInt32(this.CastFlags);
-		data.WriteUInt32(this.CastFlagsEx);
-		data.WriteUInt32(this.CastTime);
-		this.MissileTrajectory.Write(data);
-		data.WriteUInt8(this.DestLocSpellCastIndex);
-		this.Immunities.Write(data);
-		this.Predict.Write(data);
-		data.WriteBits(this.HitTargets.Count, 16);
-		data.WriteBits(this.MissTargets.Count, 16);
-		data.WriteBits(this.MissStatus.Count, 16);
-		data.WriteBits(this.RemainingPower.Count, 9);
-		data.WriteBit(this.RemainingRunes != null);
-		data.WriteBits(this.TargetPoints.Count, 16);
-		data.WriteBit(this.AmmoDisplayId.HasValue);
-		data.WriteBit(this.AmmoInventoryType.HasValue);
+		data.WritePackedGuid128(CasterGUID);
+		data.WritePackedGuid128(CasterUnit);
+		data.WritePackedGuid128(CastID);
+		data.WritePackedGuid128(OriginalCastID);
+		data.WriteInt32(SpellID);
+		data.WriteUInt32(SpellXSpellVisualID);
+		data.WriteUInt32(CastFlags);
+		data.WriteUInt32(CastFlagsEx);
+		data.WriteUInt32(CastTime);
+		MissileTrajectory.Write(data);
+		data.WriteUInt8(DestLocSpellCastIndex);
+		Immunities.Write(data);
+		Predict.Write(data);
+		data.WriteBits(HitTargets.Count, 16);
+		data.WriteBits(MissTargets.Count, 16);
+		data.WriteBits(MissStatus.Count, 16);
+		data.WriteBits(RemainingPower.Count, 9);
+		data.WriteBit(RemainingRunes != null);
+		data.WriteBits(TargetPoints.Count, 16);
+		data.WriteBit(AmmoDisplayId.HasValue);
+		data.WriteBit(AmmoInventoryType.HasValue);
 		data.FlushBits();
-		this.Target.Write(data);
-		foreach (WowGuid128 hitTarget in this.HitTargets)
+		Target.Write(data);
+		foreach (WowGuid128 hitTarget in HitTargets)
 		{
 			data.WritePackedGuid128(hitTarget);
 		}
-		foreach (WowGuid128 missTarget in this.MissTargets)
+		foreach (WowGuid128 missTarget in MissTargets)
 		{
 			data.WritePackedGuid128(missTarget);
 		}
-		foreach (SpellMissStatus item in this.MissStatus)
+		foreach (SpellMissStatus item in MissStatus)
 		{
 			item.Write(data);
 		}
-		foreach (SpellPowerData item2 in this.RemainingPower)
+		foreach (SpellPowerData item2 in RemainingPower)
 		{
 			item2.Write(data);
 		}
-		if (this.RemainingRunes != null)
+		if (RemainingRunes != null)
 		{
-			this.RemainingRunes.Write(data);
+			RemainingRunes.Write(data);
 		}
-		foreach (TargetLocation targetLoc in this.TargetPoints)
+		foreach (TargetLocation targetLoc in TargetPoints)
 		{
 			targetLoc.Write(data);
 		}
-		if (this.AmmoDisplayId.HasValue)
+		if (AmmoDisplayId.HasValue)
 		{
-			data.WriteInt32(this.AmmoDisplayId.Value);
+			data.WriteInt32(AmmoDisplayId.Value);
 		}
-		if (this.AmmoInventoryType.HasValue)
+		if (AmmoInventoryType.HasValue)
 		{
-			data.WriteInt32(this.AmmoInventoryType.Value);
+			data.WriteInt32(AmmoInventoryType.Value);
 		}
 	}
 }

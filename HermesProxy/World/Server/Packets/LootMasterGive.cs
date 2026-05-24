@@ -15,16 +15,16 @@ internal class LootMasterGive : ClientPacket
 
 	public override void Read()
 	{
-		uint Count = base._worldPacket.ReadUInt32();
-		this.TargetGUID = base._worldPacket.ReadPackedGuid128();
+		uint Count = _worldPacket.ReadUInt32();
+		TargetGUID = _worldPacket.ReadPackedGuid128();
 		for (int i = 0; i < Count; i++)
 		{
 			LootRequest lootRequest = new LootRequest
 			{
-				LootObj = base._worldPacket.ReadPackedGuid128(),
-				LootListID = base._worldPacket.ReadUInt8()
+				LootObj = _worldPacket.ReadPackedGuid128(),
+				LootListID = _worldPacket.ReadUInt8()
 			};
-			this.Loot.Add(lootRequest);
+			Loot.Add(lootRequest);
 		}
 	}
 }

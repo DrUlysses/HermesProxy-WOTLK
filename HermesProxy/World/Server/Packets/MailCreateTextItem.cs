@@ -13,7 +13,7 @@ public class MailCreateTextItem : ClientPacket
 
 	public override void Read()
 	{
-		this.Mailbox = base._worldPacket.ReadPackedGuid128();
-		this.MailID = (uint)base._worldPacket.ReadUInt64();
+		Mailbox = _worldPacket.ReadPackedGuid128();
+		MailID = (uint)_worldPacket.ReadUInt64();
 	}
 }

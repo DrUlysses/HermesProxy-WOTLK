@@ -7,11 +7,11 @@ public class CastSpell : ClientPacket
 	public CastSpell(WorldPacket packet)
 		: base(packet)
 	{
-		this.Cast = new SpellCastRequest();
+		Cast = new SpellCastRequest();
 	}
 
 	public override void Read()
 	{
-		this.Cast.Read(base._worldPacket);
+		Cast.Read(_worldPacket);
 	}
 }

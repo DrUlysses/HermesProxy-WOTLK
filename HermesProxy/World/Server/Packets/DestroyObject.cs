@@ -11,21 +11,21 @@ public class DestroyObject : ServerPacket
     public DestroyObject(WowGuid128 guid, bool isOutOfRange = false)
         : base(Opcode.SMSG_DESTROY_OBJECT, ConnectionType.Instance)
     {
-        this.Guid = guid;
-        this.IsOutOfRange = isOutOfRange;
+        Guid = guid;
+        IsOutOfRange = isOutOfRange;
     }
 
     protected override void Write()
     {
         if (ModernVersion.ExpansionVersion >= 3)
         {
-            this._worldPacket.WritePackedGuid128(this.Guid);
-            this._worldPacket.WriteBit(this.IsOutOfRange);
-            this._worldPacket.FlushBits();
+            _worldPacket.WritePackedGuid128(Guid);
+            _worldPacket.WriteBit(IsOutOfRange);
+            _worldPacket.FlushBits();
         }
         else
         {
-            this._worldPacket.WriteGuid(this.Guid.To64());
+            _worldPacket.WriteGuid(Guid.To64());
         }
     }
 }

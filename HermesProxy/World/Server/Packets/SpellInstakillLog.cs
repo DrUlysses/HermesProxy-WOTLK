@@ -18,8 +18,8 @@ public class SpellInstakillLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.TargetGUID);
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.SpellID);
+		_worldPacket.WritePackedGuid128(TargetGUID);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(SpellID);
 	}
 }

@@ -15,8 +15,8 @@ public class SellItem : ClientPacket
 
 	public override void Read()
 	{
-		this.VendorGUID = base._worldPacket.ReadPackedGuid128();
-		this.ItemGUID = base._worldPacket.ReadPackedGuid128();
-		this.Amount = base._worldPacket.ReadUInt32();
+		VendorGUID = _worldPacket.ReadPackedGuid128();
+		ItemGUID = _worldPacket.ReadPackedGuid128();
+		Amount = _worldPacket.ReadUInt32();
 	}
 }

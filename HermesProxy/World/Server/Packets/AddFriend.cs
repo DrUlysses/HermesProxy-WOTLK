@@ -13,9 +13,9 @@ public class AddFriend : ClientPacket
 
 	public override void Read()
 	{
-		uint nameLength = base._worldPacket.ReadBits<uint>(9);
-		uint noteslength = base._worldPacket.ReadBits<uint>(10);
-		this.Name = base._worldPacket.ReadString(nameLength);
-		this.Note = base._worldPacket.ReadString(noteslength);
+		uint nameLength = _worldPacket.ReadBits<uint>(9);
+		uint noteslength = _worldPacket.ReadBits<uint>(10);
+		Name = _worldPacket.ReadString(nameLength);
+		Note = _worldPacket.ReadString(noteslength);
 	}
 }

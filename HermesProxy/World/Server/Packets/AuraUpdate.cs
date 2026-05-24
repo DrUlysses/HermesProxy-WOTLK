@@ -15,18 +15,18 @@ public class AuraUpdate : ServerPacket
 	public AuraUpdate(WowGuid128 guid, bool all)
 		: base(Opcode.SMSG_AURA_UPDATE, ConnectionType.Instance)
 	{
-		this.UnitGUID = guid;
-		this.UpdateAll = all;
+		UnitGUID = guid;
+		UpdateAll = all;
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.UpdateAll);
-		base._worldPacket.WriteBits(this.Auras.Count, 9);
-		foreach (AuraInfo aura2 in this.Auras)
+		_worldPacket.WriteBit(UpdateAll);
+		_worldPacket.WriteBits(Auras.Count, 9);
+		foreach (AuraInfo aura2 in Auras)
 		{
-			aura2.Write(base._worldPacket);
+			aura2.Write(_worldPacket);
 		}
-		base._worldPacket.WritePackedGuid128(this.UnitGUID);
+		_worldPacket.WritePackedGuid128(UnitGUID);
 	}
 }

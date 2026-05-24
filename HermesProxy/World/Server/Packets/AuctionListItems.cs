@@ -35,70 +35,70 @@ internal class AuctionListItems : ClientPacket
 
 	public override void Read()
 	{
-		this.Auctioneer = base._worldPacket.ReadPackedGuid128();
-		this.Offset = base._worldPacket.ReadUInt32();
-		this.MinLevel = base._worldPacket.ReadUInt8();
-		this.MaxLevel = base._worldPacket.ReadUInt8();
-		this.Quality = base._worldPacket.ReadInt32();
-		byte sortCount = base._worldPacket.ReadUInt8();
-		uint knownPetsCount = base._worldPacket.ReadUInt32();
-		this.MaxPetLevel = base._worldPacket.ReadUInt8();
+		Auctioneer = _worldPacket.ReadPackedGuid128();
+		Offset = _worldPacket.ReadUInt32();
+		MinLevel = _worldPacket.ReadUInt8();
+		MaxLevel = _worldPacket.ReadUInt8();
+		Quality = _worldPacket.ReadInt32();
+		byte sortCount = _worldPacket.ReadUInt8();
+		uint knownPetsCount = _worldPacket.ReadUInt32();
+		MaxPetLevel = _worldPacket.ReadUInt8();
 		for (int i = 0; i < knownPetsCount; i++)
 		{
-			this.KnownPets.Add(base._worldPacket.ReadUInt8());
+			KnownPets.Add(_worldPacket.ReadUInt8());
 		}
 
 		// 3.4.3: TaintedBy bit is present when an addon initiates the search.
 		// Detect by peeking the first bit byte's MSB — if set, TaintedBy is present
 		// (search names are always < 128 chars so nameLength MSB would be 0 in old format).
-		byte peekByte = base._worldPacket.PeekByte();
+		byte peekByte = _worldPacket.PeekByte();
 		bool hasTaintedBy = (peekByte & 0x80) != 0;
 
 		if (hasTaintedBy)
-			base._worldPacket.HasBit(); // consume TaintedBy bit
+			_worldPacket.HasBit(); // consume TaintedBy bit
 
-		uint nameLength = base._worldPacket.ReadBits<uint>(8);
-		uint classFiltersCount = base._worldPacket.ReadBits<uint>(3);
-		this.OnlyUsable = base._worldPacket.HasBit();
-		this.ExactMatch = base._worldPacket.HasBit();
-		base._worldPacket.ResetBitPos();
+		uint nameLength = _worldPacket.ReadBits<uint>(8);
+		uint classFiltersCount = _worldPacket.ReadBits<uint>(3);
+		OnlyUsable = _worldPacket.HasBit();
+		ExactMatch = _worldPacket.HasBit();
+		_worldPacket.ResetBitPos();
 
-		this.Name = base._worldPacket.ReadString(nameLength);
+		Name = _worldPacket.ReadString(nameLength);
 
 		for (int j = 0; j < classFiltersCount; j++)
 		{
 			ClassFilter classFilter = new ClassFilter();
-			classFilter.ItemClass = base._worldPacket.ReadInt32();
-			uint subClassFiltersCount = base._worldPacket.ReadBits<uint>(5);
+			classFilter.ItemClass = _worldPacket.ReadInt32();
+			uint subClassFiltersCount = _worldPacket.ReadBits<uint>(5);
 			for (uint j2 = 0u; j2 < subClassFiltersCount; j2++)
 			{
 				SubClassFilter filter = new SubClassFilter
 				{
-					InvTypeMask = (uint)base._worldPacket.ReadUInt64(), // 3.4.3 uses uint64
-					ItemSubclass = base._worldPacket.ReadInt32()
+					InvTypeMask = (uint)_worldPacket.ReadUInt64(), // 3.4.3 uses uint64
+					ItemSubclass = _worldPacket.ReadInt32()
 				};
 				classFilter.SubClassFilters.Add(filter);
 			}
-			this.ClassFilters.Add(classFilter);
+			ClassFilters.Add(classFilter);
 		}
 
 		// Skip TaintedBy (AddOnInfo) if present
 		if (hasTaintedBy)
 		{
-			base._worldPacket.ResetBitPos();
-			uint taintNameLen = base._worldPacket.ReadBits<uint>(10);
-			uint taintVersionLen = base._worldPacket.ReadBits<uint>(10);
-			base._worldPacket.HasBit(); // Loaded
-			base._worldPacket.HasBit(); // Disabled
+			_worldPacket.ResetBitPos();
+			uint taintNameLen = _worldPacket.ReadBits<uint>(10);
+			uint taintVersionLen = _worldPacket.ReadBits<uint>(10);
+			_worldPacket.HasBit(); // Loaded
+			_worldPacket.HasBit(); // Disabled
 			if (taintNameLen > 0)
-				base._worldPacket.ReadBytes(taintNameLen);
+				_worldPacket.ReadBytes(taintNameLen);
 			if (taintVersionLen > 0)
-				base._worldPacket.ReadBytes(taintVersionLen);
+				_worldPacket.ReadBytes(taintVersionLen);
 		}
 
-		uint size = base._worldPacket.ReadUInt32();
-		byte[] data = base._worldPacket.ReadBytes(size);
-		WorldPacket sorts = new WorldPacket(base._worldPacket.GetOpcode(), data);
+		uint size = _worldPacket.ReadUInt32();
+		byte[] data = _worldPacket.ReadBytes(size);
+		WorldPacket sorts = new WorldPacket(_worldPacket.GetOpcode(), data);
 		for (int k = 0; k < sortCount; k++)
 		{
 			AuctionSort sort = new AuctionSort
@@ -106,7 +106,7 @@ internal class AuctionListItems : ClientPacket
 				Type = sorts.ReadUInt8(),
 				Direction = sorts.ReadUInt8()
 			};
-			this.Sorts.Add(sort);
+			Sorts.Add(sort);
 		}
 	}
 }

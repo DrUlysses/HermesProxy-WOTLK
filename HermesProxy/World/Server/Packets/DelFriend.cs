@@ -13,7 +13,7 @@ public class DelFriend : ClientPacket
 
 	public override void Read()
 	{
-		this.VirtualRealmAddress = base._worldPacket.ReadUInt32();
-		this.Guid = base._worldPacket.ReadPackedGuid128();
+		VirtualRealmAddress = _worldPacket.ReadUInt32();
+		Guid = _worldPacket.ReadPackedGuid128();
 	}
 }

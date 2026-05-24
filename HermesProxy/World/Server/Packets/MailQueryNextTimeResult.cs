@@ -29,15 +29,15 @@ public class MailQueryNextTimeResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteFloat(this.NextMailTime);
-		base._worldPacket.WriteInt32(this.Mails.Count);
-		foreach (MailNextTimeEntry entry in this.Mails)
+		_worldPacket.WriteFloat(NextMailTime);
+		_worldPacket.WriteInt32(Mails.Count);
+		foreach (MailNextTimeEntry entry in Mails)
 		{
-			base._worldPacket.WritePackedGuid128(entry.SenderGuid);
-			base._worldPacket.WriteFloat(entry.TimeLeft);
-			base._worldPacket.WriteInt32(entry.AltSenderID);
-			base._worldPacket.WriteInt8(entry.AltSenderType);
-			base._worldPacket.WriteInt32(entry.StationeryID);
+			_worldPacket.WritePackedGuid128(entry.SenderGuid);
+			_worldPacket.WriteFloat(entry.TimeLeft);
+			_worldPacket.WriteInt32(entry.AltSenderID);
+			_worldPacket.WriteInt8(entry.AltSenderType);
+			_worldPacket.WriteInt32(entry.StationeryID);
 		}
 	}
 }

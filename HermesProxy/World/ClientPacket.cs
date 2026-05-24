@@ -10,24 +10,24 @@ public abstract class ClientPacket : IDisposable
 
 	protected ClientPacket(WorldPacket worldPacket)
 	{
-		this._worldPacket = worldPacket;
+		_worldPacket = worldPacket;
 	}
 
 	public abstract void Read();
 
 	public void Dispose()
 	{
-		this._worldPacket.Dispose();
+		_worldPacket.Dispose();
 	}
 
 	public uint GetOpcode()
 	{
-		return this._worldPacket.GetOpcode();
+		return _worldPacket.GetOpcode();
 	}
 
 	public Opcode GetUniversalOpcode()
 	{
-		return ModernVersion.GetUniversalOpcode(this.GetOpcode());
+		return ModernVersion.GetUniversalOpcode(GetOpcode());
 	}
 
 	public void LogPacket(ref SniffFile sniffFile)
@@ -39,7 +39,7 @@ public abstract class ClientPacket : IDisposable
 				sniffFile = new SniffFile("modern", (ushort)Settings.ClientBuild);
 				sniffFile.WriteHeader();
 			}
-			sniffFile.WritePacket(this.GetOpcode(), isFromClient: true, this._worldPacket.GetData());
+			sniffFile.WritePacket(GetOpcode(), isFromClient: true, _worldPacket.GetData());
 		}
 	}
 }

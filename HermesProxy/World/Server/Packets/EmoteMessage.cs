@@ -21,13 +21,13 @@ public class EmoteMessage : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WriteUInt32(this.EmoteID);
-		base._worldPacket.WriteInt32(this.SpellVisualKitIDs.Count);
-		base._worldPacket.WriteInt32(this.SequenceVariation);
-		foreach (uint id in this.SpellVisualKitIDs)
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WriteUInt32(EmoteID);
+		_worldPacket.WriteInt32(SpellVisualKitIDs.Count);
+		_worldPacket.WriteInt32(SequenceVariation);
+		foreach (uint id in SpellVisualKitIDs)
 		{
-			base._worldPacket.WriteUInt32(id);
+			_worldPacket.WriteUInt32(id);
 		}
 	}
 }

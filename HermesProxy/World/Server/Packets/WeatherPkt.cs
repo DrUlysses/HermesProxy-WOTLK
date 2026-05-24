@@ -18,9 +18,9 @@ public class WeatherPkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.WeatherID);
-		base._worldPacket.WriteFloat(this.Intensity);
-		base._worldPacket.WriteBit(this.Abrupt);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt32((uint)WeatherID);
+		_worldPacket.WriteFloat(Intensity);
+		_worldPacket.WriteBit(Abrupt);
+		_worldPacket.FlushBits();
 	}
 }

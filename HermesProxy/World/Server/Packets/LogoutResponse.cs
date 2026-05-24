@@ -16,8 +16,8 @@ public class LogoutResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.LogoutResult);
-		base._worldPacket.WriteBit(this.Instant);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteInt32(LogoutResult);
+		_worldPacket.WriteBit(Instant);
+		_worldPacket.FlushBits();
 	}
 }

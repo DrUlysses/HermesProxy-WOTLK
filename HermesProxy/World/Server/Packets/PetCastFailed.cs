@@ -22,10 +22,10 @@ internal class PetCastFailed : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.CastID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteUInt32(this.Reason);
-		base._worldPacket.WriteInt32(this.FailedArg1);
-		base._worldPacket.WriteInt32(this.FailedArg2);
+		_worldPacket.WritePackedGuid128(CastID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteUInt32(Reason);
+		_worldPacket.WriteInt32(FailedArg1);
+		_worldPacket.WriteInt32(FailedArg2);
 	}
 }

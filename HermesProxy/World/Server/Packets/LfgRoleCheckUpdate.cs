@@ -28,26 +28,26 @@ public class LfgRoleCheckUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8(this.PartyIndex);
-		base._worldPacket.WriteUInt8(this.RoleCheckStatus);
-		base._worldPacket.WriteUInt32((uint)this.JoinSlots.Count);
-		base._worldPacket.WriteUInt32(0); // BgQueueIDs count
-		base._worldPacket.WriteInt32(this.GroupFinderActivityID);
-		base._worldPacket.WriteUInt32((uint)this.Members.Count);
-		foreach (uint slot in this.JoinSlots)
+		_worldPacket.WriteUInt8(PartyIndex);
+		_worldPacket.WriteUInt8(RoleCheckStatus);
+		_worldPacket.WriteUInt32((uint)JoinSlots.Count);
+		_worldPacket.WriteUInt32(0); // BgQueueIDs count
+		_worldPacket.WriteInt32(GroupFinderActivityID);
+		_worldPacket.WriteUInt32((uint)Members.Count);
+		foreach (uint slot in JoinSlots)
 		{
-			base._worldPacket.WriteUInt32(slot);
+			_worldPacket.WriteUInt32(slot);
 		}
-		base._worldPacket.WriteBit(this.IsBeginning);
-		base._worldPacket.WriteBit(this.IsRequeue);
-		base._worldPacket.FlushBits();
-		foreach (LfgRoleCheckMember member in this.Members)
+		_worldPacket.WriteBit(IsBeginning);
+		_worldPacket.WriteBit(IsRequeue);
+		_worldPacket.FlushBits();
+		foreach (LfgRoleCheckMember member in Members)
 		{
-			base._worldPacket.WritePackedGuid128(member.Guid);
-			base._worldPacket.WriteUInt32(member.RolesDesired);
-			base._worldPacket.WriteUInt8(member.Level);
-			base._worldPacket.WriteBit(member.RoleCheckComplete);
-			base._worldPacket.FlushBits();
+			_worldPacket.WritePackedGuid128(member.Guid);
+			_worldPacket.WriteUInt32(member.RolesDesired);
+			_worldPacket.WriteUInt8(member.Level);
+			_worldPacket.WriteBit(member.RoleCheckComplete);
+			_worldPacket.FlushBits();
 		}
 	}
 }

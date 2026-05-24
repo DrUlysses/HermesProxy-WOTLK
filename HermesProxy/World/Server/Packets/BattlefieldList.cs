@@ -28,18 +28,18 @@ internal class BattlefieldList : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.BattlemasterGuid);
-		base._worldPacket.WriteInt32(this.Verification);
-		base._worldPacket.WriteUInt32(this.BattlemasterListID);
-		base._worldPacket.WriteUInt8(this.MinLevel);
-		base._worldPacket.WriteUInt8(this.MaxLevel);
-		base._worldPacket.WriteInt32(this.BattlefieldInstances.Count);
-		foreach (int field in this.BattlefieldInstances)
+		_worldPacket.WritePackedGuid128(BattlemasterGuid);
+		_worldPacket.WriteInt32(Verification);
+		_worldPacket.WriteUInt32(BattlemasterListID);
+		_worldPacket.WriteUInt8(MinLevel);
+		_worldPacket.WriteUInt8(MaxLevel);
+		_worldPacket.WriteInt32(BattlefieldInstances.Count);
+		foreach (int field in BattlefieldInstances)
 		{
-			base._worldPacket.WriteInt32(field);
+			_worldPacket.WriteInt32(field);
 		}
-		base._worldPacket.WriteBit(this.PvpAnywhere);
-		base._worldPacket.WriteBit(this.HasRandomWinToday);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(PvpAnywhere);
+		_worldPacket.WriteBit(HasRandomWinToday);
+		_worldPacket.FlushBits();
 	}
 }

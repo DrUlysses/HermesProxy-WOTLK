@@ -8,7 +8,7 @@ public class SpellTargetedHealPrediction
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.TargetGUID);
-		this.Predict.Write(data);
+		data.WritePackedGuid128(TargetGUID);
+		Predict.Write(data);
 	}
 }

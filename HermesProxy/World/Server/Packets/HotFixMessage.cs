@@ -15,17 +15,17 @@ public class HotFixMessage : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Hotfixes.Count);
+		_worldPacket.WriteInt32(Hotfixes.Count);
 		uint totalDataSize = 0u;
-		foreach (HotfixRecord hotfix in this.Hotfixes)
+		foreach (HotfixRecord hotfix in Hotfixes)
 		{
 			totalDataSize += hotfix.HotfixContent.GetSize();
-			hotfix.WriteHotFixMessageContent(base._worldPacket);
+			hotfix.WriteHotFixMessageContent(_worldPacket);
 		}
-		base._worldPacket.WriteUInt32(totalDataSize);
-		foreach (HotfixRecord hotfix2 in this.Hotfixes)
+		_worldPacket.WriteUInt32(totalDataSize);
+		foreach (HotfixRecord hotfix2 in Hotfixes)
 		{
-			base._worldPacket.WriteBytes(hotfix2.HotfixContent);
+			_worldPacket.WriteBytes(hotfix2.HotfixContent);
 		}
 	}
 }

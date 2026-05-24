@@ -16,25 +16,25 @@ public class DynamicUpdateFieldsArray
 
 	public DynamicUpdateFieldsArray(uint size, UpdateTypeModern updateType)
 	{
-		this.ValuesCount = size;
-		this.m_updateType = updateType;
-		this.m_updateMask = new UpdateMask(size);
-		this.m_fieldBuffer = new ByteBuffer();
+		ValuesCount = size;
+		m_updateType = updateType;
+		m_updateMask = new UpdateMask(size);
+		m_fieldBuffer = new ByteBuffer();
 	}
 
 	public void WriteToPacket(ByteBuffer buffer)
 	{
-		this.m_updateMask.AppendToPacket(buffer);
-		buffer.WriteBytes(this.m_fieldBuffer);
+		m_updateMask.AppendToPacket(buffer);
+		buffer.WriteBytes(m_fieldBuffer);
 	}
 
 	public void SetUpdateField(int index, uint[] values, DynamicFieldChangeType changeType)
 	{
 		ByteBuffer valueBuffer = new ByteBuffer();
-		this.m_updateMask.SetBit(index);
+		m_updateMask.SetBit(index);
 		DynamicUpdateMask arrayMask = new DynamicUpdateMask((uint)values.Length);
-		arrayMask.EncodeDynamicFieldChangeType(changeType, this.m_updateType);
-		if (this.m_updateType == UpdateTypeModern.Values && changeType == DynamicFieldChangeType.ValueAndSizeChanged)
+		arrayMask.EncodeDynamicFieldChangeType(changeType, m_updateType);
+		if (m_updateType == UpdateTypeModern.Values && changeType == DynamicFieldChangeType.ValueAndSizeChanged)
 		{
 			arrayMask.ValueCount = values.Length;
 			arrayMask.SetCount(values.Length);
@@ -44,8 +44,8 @@ public class DynamicUpdateFieldsArray
 			arrayMask.SetBit(v);
 			valueBuffer.WriteUInt32(values[v]);
 		}
-		arrayMask.AppendToPacket(this.m_fieldBuffer);
-		this.m_fieldBuffer.WriteBytes(valueBuffer);
+		arrayMask.AppendToPacket(m_fieldBuffer);
+		m_fieldBuffer.WriteBytes(valueBuffer);
 	}
 
 	public void SetUpdateField<T>(object index, T value, DynamicFieldChangeType changeType) where T : new()
@@ -58,12 +58,12 @@ public class DynamicUpdateFieldsArray
 				SignedValue = intValue
 			};
 			values[0] = union.UnsignedValue;
-			this.SetUpdateField((int)index, values, changeType);
+			SetUpdateField((int)index, values, changeType);
 			return;
 		}
 		if (value is uint uintValue)
 		{
-			this.SetUpdateField(values: new uint[1] { uintValue }, index: (int)index, changeType: changeType);
+			SetUpdateField(values: new uint[1] { uintValue }, index: (int)index, changeType: changeType);
 			return;
 		}
 		if (value is float floatValue)
@@ -74,12 +74,12 @@ public class DynamicUpdateFieldsArray
 				FloatValue = floatValue
 			};
 			values2[0] = union2.UnsignedValue;
-			this.SetUpdateField((int)index, values2, changeType);
+			SetUpdateField((int)index, values2, changeType);
 			return;
 		}
 		if (value is ulong ulongValue)
 		{
-			this.SetUpdateField(values: new uint[2]
+			SetUpdateField(values: new uint[2]
 			{
 				MathFunctions.Pair64_LoPart(ulongValue),
 				MathFunctions.Pair64_HiPart(ulongValue)
@@ -88,9 +88,9 @@ public class DynamicUpdateFieldsArray
 		}
 		if (!(value is WowGuid128 guid))
 		{
-			throw new Exception("Unhandled type " + typeof(T).ToString() + " in SetUpdateField!");
+			throw new Exception("Unhandled type " + typeof(T) + " in SetUpdateField!");
 		}
-		this.SetUpdateField(values: new uint[4]
+		SetUpdateField(values: new uint[4]
 		{
 			MathFunctions.Pair64_LoPart(guid.GetLowValue()),
 			MathFunctions.Pair64_HiPart(guid.GetLowValue()),

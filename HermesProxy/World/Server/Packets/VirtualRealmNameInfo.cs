@@ -14,20 +14,20 @@ internal struct VirtualRealmNameInfo
 
 	public VirtualRealmNameInfo(bool isHomeRealm, bool isInternalRealm, string realmNameActual, string realmNameNormalized)
 	{
-		this.IsLocal = isHomeRealm;
-		this.IsInternalRealm = isInternalRealm;
-		this.RealmNameActual = realmNameActual;
-		this.RealmNameNormalized = realmNameNormalized;
+		IsLocal = isHomeRealm;
+		IsInternalRealm = isInternalRealm;
+		RealmNameActual = realmNameActual;
+		RealmNameNormalized = realmNameNormalized;
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBit(this.IsLocal);
-		data.WriteBit(this.IsInternalRealm);
-		data.WriteBits(this.RealmNameActual.GetByteCount(), 8);
-		data.WriteBits(this.RealmNameNormalized.GetByteCount(), 8);
+		data.WriteBit(IsLocal);
+		data.WriteBit(IsInternalRealm);
+		data.WriteBits(RealmNameActual.GetByteCount(), 8);
+		data.WriteBits(RealmNameNormalized.GetByteCount(), 8);
 		data.FlushBits();
-		data.WriteString(this.RealmNameActual);
-		data.WriteString(this.RealmNameNormalized);
+		data.WriteString(RealmNameActual);
+		data.WriteString(RealmNameNormalized);
 	}
 }

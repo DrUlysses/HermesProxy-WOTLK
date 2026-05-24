@@ -27,25 +27,25 @@ public class InventoryChangeFailure : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32((int)this.BagResult);
-		base._worldPacket.WritePackedGuid128(this.Item[0]);
-		base._worldPacket.WritePackedGuid128(this.Item[1]);
-		base._worldPacket.WriteUInt8(this.ContainerBSlot);
-		switch (this.BagResult)
+		_worldPacket.WriteInt32((int)BagResult);
+		_worldPacket.WritePackedGuid128(Item[0]);
+		_worldPacket.WritePackedGuid128(Item[1]);
+		_worldPacket.WriteUInt8(ContainerBSlot);
+		switch (BagResult)
 		{
 		case InventoryResult.CantEquipLevel:
 		case InventoryResult.PurchaseLevelTooLow:
-			base._worldPacket.WriteInt32(this.Level);
+			_worldPacket.WriteInt32(Level);
 			break;
 		case InventoryResult.EventAutoEquipBindConfirm:
-			base._worldPacket.WritePackedGuid128(this.SrcContainer);
-			base._worldPacket.WriteInt32(this.SrcSlot);
-			base._worldPacket.WritePackedGuid128(this.DstContainer);
+			_worldPacket.WritePackedGuid128(SrcContainer);
+			_worldPacket.WriteInt32(SrcSlot);
+			_worldPacket.WritePackedGuid128(DstContainer);
 			break;
 		case InventoryResult.ItemMaxLimitCategoryCountExceeded:
 		case InventoryResult.ItemMaxLimitCategorySocketedExceeded:
 		case InventoryResult.ItemMaxLimitCategoryEquippedExceeded:
-			base._worldPacket.WriteInt32(this.LimitCategory);
+			_worldPacket.WriteInt32(LimitCategory);
 			break;
 		}
 	}

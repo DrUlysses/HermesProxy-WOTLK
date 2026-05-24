@@ -21,14 +21,14 @@ public class TurnInPetition : ClientPacket
 
 	public override void Read()
 	{
-		this.Item = base._worldPacket.ReadPackedGuid128();
-		if (base._worldPacket.CanRead())
+		Item = _worldPacket.ReadPackedGuid128();
+		if (_worldPacket.CanRead())
 		{
-			this.BackgroundColor = base._worldPacket.ReadUInt32();
-			this.EmblemStyle = base._worldPacket.ReadUInt32();
-			this.EmblemColor = base._worldPacket.ReadUInt32();
-			this.BorderStyle = base._worldPacket.ReadUInt32();
-			this.BorderColor = base._worldPacket.ReadUInt32();
+			BackgroundColor = _worldPacket.ReadUInt32();
+			EmblemStyle = _worldPacket.ReadUInt32();
+			EmblemColor = _worldPacket.ReadUInt32();
+			BorderStyle = _worldPacket.ReadUInt32();
+			BorderColor = _worldPacket.ReadUInt32();
 		}
 	}
 }

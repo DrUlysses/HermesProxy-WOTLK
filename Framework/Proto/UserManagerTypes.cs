@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.UserManager.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/user_manager_types.proto</summary>
@@ -202,7 +202,7 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if (Program != other.Program) return false;
       if (TimestampPlayed != other.TimestampPlayed) return false;
       if(!attributes_.Equals(other.attributes_)) return false;
@@ -470,7 +470,7 @@ namespace Bgs.Protocol.UserManager.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       if (BattleTag != other.BattleTag) return false;
       if(!role_.Equals(other.role_)) return false;
       if (Privileges != other.Privileges) return false;

@@ -12,9 +12,9 @@ internal class AuctionBidderNotification
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Command);
-		data.WriteUInt32(this.AuctionID);
-		data.WritePackedGuid128(this.Bidder);
-		this.Item.Write(data);
+		data.WriteUInt32(Command);
+		data.WriteUInt32(AuctionID);
+		data.WritePackedGuid128(Bidder);
+		Item.Write(data);
 	}
 }

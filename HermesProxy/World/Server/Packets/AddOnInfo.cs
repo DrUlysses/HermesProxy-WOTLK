@@ -15,16 +15,16 @@ public class AddOnInfo
 		data.ResetBitPos();
 		uint nameLength = data.ReadBits<uint>(10);
 		uint versionLength = data.ReadBits<uint>(10);
-		this.Loaded = data.HasBit();
-		this.Disabled = data.HasBit();
+		Loaded = data.HasBit();
+		Disabled = data.HasBit();
 		if (nameLength > 1)
 		{
-			this.Name = data.ReadString(nameLength - 1);
+			Name = data.ReadString(nameLength - 1);
 			data.ReadUInt8();
 		}
 		if (versionLength > 1)
 		{
-			this.Version = data.ReadString(versionLength - 1);
+			Version = data.ReadString(versionLength - 1);
 			data.ReadUInt8();
 		}
 	}

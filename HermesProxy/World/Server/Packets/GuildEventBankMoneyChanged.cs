@@ -13,6 +13,6 @@ public class GuildEventBankMoneyChanged : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt64(this.Money);
+		_worldPacket.WriteUInt64(Money);
 	}
 }

@@ -11,6 +11,6 @@ public class InstanceLockResponse : ClientPacket
 
 	public override void Read()
 	{
-		this.AcceptLock = base._worldPacket.ReadBit();
+		AcceptLock = _worldPacket.ReadBit();
 	}
 }

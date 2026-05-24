@@ -26,21 +26,21 @@ public class ChannelListResponse : ServerPacket
 	public ChannelListResponse()
 		: base(Opcode.SMSG_CHANNEL_LIST)
 	{
-		this.Members = new List<ChannelPlayer>();
+		Members = new List<ChannelPlayer>();
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.Display);
-		base._worldPacket.WriteBits(this.ChannelName.GetByteCount(), 7);
-		base._worldPacket.WriteUInt32((uint)this.ChannelFlags);
-		base._worldPacket.WriteInt32(this.Members.Count);
-		base._worldPacket.WriteString(this.ChannelName);
-		foreach (ChannelPlayer player in this.Members)
+		_worldPacket.WriteBit(Display);
+		_worldPacket.WriteBits(ChannelName.GetByteCount(), 7);
+		_worldPacket.WriteUInt32((uint)ChannelFlags);
+		_worldPacket.WriteInt32(Members.Count);
+		_worldPacket.WriteString(ChannelName);
+		foreach (ChannelPlayer player in Members)
 		{
-			base._worldPacket.WritePackedGuid128(player.Guid);
-			base._worldPacket.WriteUInt32(player.VirtualRealmAddress);
-			base._worldPacket.WriteUInt8(player.Flags);
+			_worldPacket.WritePackedGuid128(player.Guid);
+			_worldPacket.WriteUInt32(player.VirtualRealmAddress);
+			_worldPacket.WriteUInt8(player.Flags);
 		}
 	}
 }

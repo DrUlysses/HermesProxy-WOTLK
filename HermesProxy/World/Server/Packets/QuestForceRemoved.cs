@@ -9,11 +9,11 @@ public class QuestForceRemoved : ServerPacket
 	public QuestForceRemoved(uint questId)
 		: base(Opcode.SMSG_QUEST_FORCE_REMOVED)
 	{
-		this.QuestID = questId;
+		QuestID = questId;
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32((int)this.QuestID);
+		_worldPacket.WriteInt32((int)QuestID);
 	}
 }

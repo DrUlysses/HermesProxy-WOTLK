@@ -13,7 +13,7 @@ public class SetSheathed : ClientPacket
 
 	public override void Read()
 	{
-		this.SheathState = base._worldPacket.ReadInt32();
-		this.Animate = base._worldPacket.HasBit();
+		SheathState = _worldPacket.ReadInt32();
+		Animate = _worldPacket.HasBit();
 	}
 }

@@ -11,6 +11,6 @@ public class SetActiveMover : ClientPacket
 
 	public override void Read()
 	{
-		this.MoverGUID = base._worldPacket.ReadPackedGuid128();
+		MoverGUID = _worldPacket.ReadPackedGuid128();
 	}
 }

@@ -20,13 +20,13 @@ public class AchievementEarnedPkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Sender);
-		base._worldPacket.WritePackedGuid128(this.Earner);
-		base._worldPacket.WriteUInt32(this.AchievementID);
-		base._worldPacket.WritePackedTime(this.Time);
-		base._worldPacket.WriteUInt32(this.EarnerNativeRealm);
-		base._worldPacket.WriteUInt32(this.EarnerVirtualRealm);
-		base._worldPacket.WriteBit(this.Initial);
-		base._worldPacket.FlushBits();
+		_worldPacket.WritePackedGuid128(Sender);
+		_worldPacket.WritePackedGuid128(Earner);
+		_worldPacket.WriteUInt32(AchievementID);
+		_worldPacket.WritePackedTime(Time);
+		_worldPacket.WriteUInt32(EarnerNativeRealm);
+		_worldPacket.WriteUInt32(EarnerVirtualRealm);
+		_worldPacket.WriteBit(Initial);
+		_worldPacket.FlushBits();
 	}
 }

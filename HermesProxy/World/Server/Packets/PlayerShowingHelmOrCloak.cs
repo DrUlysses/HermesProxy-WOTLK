@@ -11,7 +11,7 @@ internal class PlayerShowingHelmOrCloak : ClientPacket
 
 	public override void Read()
 	{
-		base._worldPacket.ResetBitPos();
-		this.Showing = base._worldPacket.HasBit();
+		_worldPacket.ResetBitPos();
+		Showing = _worldPacket.HasBit();
 	}
 }

@@ -13,6 +13,6 @@ internal class QuestUpdateStatus : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.QuestID);
+		_worldPacket.WriteUInt32(QuestID);
 	}
 }

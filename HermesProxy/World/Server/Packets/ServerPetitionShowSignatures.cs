@@ -25,20 +25,20 @@ public class ServerPetitionShowSignatures : ServerPacket
 	public ServerPetitionShowSignatures()
 		: base(Opcode.SMSG_PETITION_SHOW_SIGNATURES)
 	{
-		this.Signatures = new List<PetitionSignature>();
+		Signatures = new List<PetitionSignature>();
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Item);
-		base._worldPacket.WritePackedGuid128(this.Owner);
-		base._worldPacket.WritePackedGuid128(this.OwnerAccountID);
-		base._worldPacket.WriteInt32(this.PetitionID);
-		base._worldPacket.WriteInt32(this.Signatures.Count);
-		foreach (PetitionSignature signature in this.Signatures)
+		_worldPacket.WritePackedGuid128(Item);
+		_worldPacket.WritePackedGuid128(Owner);
+		_worldPacket.WritePackedGuid128(OwnerAccountID);
+		_worldPacket.WriteInt32(PetitionID);
+		_worldPacket.WriteInt32(Signatures.Count);
+		foreach (PetitionSignature signature in Signatures)
 		{
-			base._worldPacket.WritePackedGuid128(signature.Signer);
-			base._worldPacket.WriteInt32(signature.Choice);
+			_worldPacket.WritePackedGuid128(signature.Signer);
+			_worldPacket.WriteInt32(signature.Choice);
 		}
 	}
 }

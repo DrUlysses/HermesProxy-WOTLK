@@ -17,12 +17,12 @@ public class AccountDataTimes : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.PlayerGuid);
-		base._worldPacket.WriteInt64(this.ServerTime);
-		long[] accountTimes = this.AccountTimes;
+		_worldPacket.WritePackedGuid128(PlayerGuid);
+		_worldPacket.WriteInt64(ServerTime);
+		long[] accountTimes = AccountTimes;
 		foreach (long accounttime in accountTimes)
 		{
-			base._worldPacket.WriteInt64(accounttime);
+			_worldPacket.WriteInt64(accounttime);
 		}
 	}
 }

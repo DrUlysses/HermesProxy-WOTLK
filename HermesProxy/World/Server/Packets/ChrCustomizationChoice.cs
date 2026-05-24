@@ -10,24 +10,24 @@ public class ChrCustomizationChoice : IComparable<ChrCustomizationChoice>
 
 	public ChrCustomizationChoice(uint optionId, uint chocieId)
 	{
-		this.ChrCustomizationOptionID = optionId;
-		this.ChrCustomizationChoiceID = chocieId;
+		ChrCustomizationOptionID = optionId;
+		ChrCustomizationChoiceID = chocieId;
 	}
 
 	public void WriteCreate(WorldPacket data)
 	{
-		data.WriteUInt32(this.ChrCustomizationOptionID);
-		data.WriteUInt32(this.ChrCustomizationChoiceID);
+		data.WriteUInt32(ChrCustomizationOptionID);
+		data.WriteUInt32(ChrCustomizationChoiceID);
 	}
 
 	public void WriteUpdate(WorldPacket data)
 	{
-		data.WriteUInt32(this.ChrCustomizationOptionID);
-		data.WriteUInt32(this.ChrCustomizationChoiceID);
+		data.WriteUInt32(ChrCustomizationOptionID);
+		data.WriteUInt32(ChrCustomizationChoiceID);
 	}
 
 	public int CompareTo(ChrCustomizationChoice other)
 	{
-		return this.ChrCustomizationOptionID.CompareTo(other.ChrCustomizationOptionID);
+		return ChrCustomizationOptionID.CompareTo(other.ChrCustomizationOptionID);
 	}
 }

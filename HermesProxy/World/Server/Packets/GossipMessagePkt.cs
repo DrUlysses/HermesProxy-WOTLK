@@ -27,81 +27,81 @@ public class GossipMessagePkt : ServerPacket
 	{
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			this.WriteWotLK();
+			WriteWotLK();
 			return;
 		}
-		base._worldPacket.WritePackedGuid128(this.GossipGUID);
-		base._worldPacket.WriteInt32(this.GossipID);
-		base._worldPacket.WriteInt32(this.FriendshipFactionID);
-		base._worldPacket.WriteInt32(this.TextID);
-		base._worldPacket.WriteInt32(this.GossipOptions.Count);
-		base._worldPacket.WriteInt32(this.GossipQuests.Count);
-		foreach (ClientGossipOption options in this.GossipOptions)
+		_worldPacket.WritePackedGuid128(GossipGUID);
+		_worldPacket.WriteInt32(GossipID);
+		_worldPacket.WriteInt32(FriendshipFactionID);
+		_worldPacket.WriteInt32(TextID);
+		_worldPacket.WriteInt32(GossipOptions.Count);
+		_worldPacket.WriteInt32(GossipQuests.Count);
+		foreach (ClientGossipOption options in GossipOptions)
 		{
-			base._worldPacket.WriteInt32(options.OptionIndex);
-			base._worldPacket.WriteUInt8(options.OptionIcon);
-			base._worldPacket.WriteUInt8(options.OptionFlags);
-			base._worldPacket.WriteInt32(options.OptionCost);
+			_worldPacket.WriteInt32(options.OptionIndex);
+			_worldPacket.WriteUInt8(options.OptionIcon);
+			_worldPacket.WriteUInt8(options.OptionFlags);
+			_worldPacket.WriteInt32(options.OptionCost);
 			if (ModernVersion.AddedInVersion(9, 2, 0, 1, 14, 1, 2, 5, 3))
 			{
-				base._worldPacket.WriteUInt32(options.Language);
+				_worldPacket.WriteUInt32(options.Language);
 			}
-			base._worldPacket.WriteBits(options.Text.GetByteCount(), 12);
-			base._worldPacket.WriteBits(options.Confirm.GetByteCount(), 12);
-			base._worldPacket.WriteBits((byte)options.Status, 2);
-			base._worldPacket.WriteBit(options.SpellID.HasValue);
-			base._worldPacket.FlushBits();
-			options.Treasure.Write(base._worldPacket);
-			base._worldPacket.WriteString(options.Text);
-			base._worldPacket.WriteString(options.Confirm);
+			_worldPacket.WriteBits(options.Text.GetByteCount(), 12);
+			_worldPacket.WriteBits(options.Confirm.GetByteCount(), 12);
+			_worldPacket.WriteBits((byte)options.Status, 2);
+			_worldPacket.WriteBit(options.SpellID.HasValue);
+			_worldPacket.FlushBits();
+			options.Treasure.Write(_worldPacket);
+			_worldPacket.WriteString(options.Text);
+			_worldPacket.WriteString(options.Confirm);
 			if (options.SpellID.HasValue)
 			{
-				base._worldPacket.WriteInt32(options.SpellID.Value);
+				_worldPacket.WriteInt32(options.SpellID.Value);
 			}
 		}
-		foreach (ClientGossipQuest text in this.GossipQuests)
+		foreach (ClientGossipQuest text in GossipQuests)
 		{
-			text.Write(base._worldPacket);
+			text.Write(_worldPacket);
 		}
 	}
 
 	private void WriteWotLK()
 	{
-		base._worldPacket.WritePackedGuid128(this.GossipGUID);
-		base._worldPacket.WriteInt32(this.GossipID);
-		base._worldPacket.WriteInt32(this.FriendshipFactionID);
-		base._worldPacket.WriteUInt32((uint)this.GossipOptions.Count);
-		base._worldPacket.WriteUInt32((uint)this.GossipQuests.Count);
-		base._worldPacket.WriteBit(bit: true);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.FlushBits();
-		foreach (ClientGossipOption options in this.GossipOptions)
+		_worldPacket.WritePackedGuid128(GossipGUID);
+		_worldPacket.WriteInt32(GossipID);
+		_worldPacket.WriteInt32(FriendshipFactionID);
+		_worldPacket.WriteUInt32((uint)GossipOptions.Count);
+		_worldPacket.WriteUInt32((uint)GossipQuests.Count);
+		_worldPacket.WriteBit(bit: true);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.FlushBits();
+		foreach (ClientGossipOption options in GossipOptions)
 		{
-			base._worldPacket.WriteInt32(options.OptionIndex);
-			base._worldPacket.WriteUInt8(options.OptionIcon);
-			base._worldPacket.WriteInt8((sbyte)options.OptionFlags);
-			base._worldPacket.WriteInt32(options.OptionCost);
-			base._worldPacket.WriteUInt32(options.Language);
-			base._worldPacket.WriteInt32(0);
-			base._worldPacket.WriteInt32(options.OptionIndex);
-			base._worldPacket.WriteBits(options.Text.GetByteCount(), 12);
-			base._worldPacket.WriteBits(options.Confirm.GetByteCount(), 12);
-			base._worldPacket.WriteBits((byte)options.Status, 2);
-			base._worldPacket.WriteBit(options.SpellID.HasValue);
-			base._worldPacket.WriteBit(bit: false);
-			base._worldPacket.FlushBits();
-			options.Treasure.Write(base._worldPacket);
-			base._worldPacket.WriteString(options.Text);
-			base._worldPacket.WriteString(options.Confirm);
+			_worldPacket.WriteInt32(options.OptionIndex);
+			_worldPacket.WriteUInt8(options.OptionIcon);
+			_worldPacket.WriteInt8((sbyte)options.OptionFlags);
+			_worldPacket.WriteInt32(options.OptionCost);
+			_worldPacket.WriteUInt32(options.Language);
+			_worldPacket.WriteInt32(0);
+			_worldPacket.WriteInt32(options.OptionIndex);
+			_worldPacket.WriteBits(options.Text.GetByteCount(), 12);
+			_worldPacket.WriteBits(options.Confirm.GetByteCount(), 12);
+			_worldPacket.WriteBits((byte)options.Status, 2);
+			_worldPacket.WriteBit(options.SpellID.HasValue);
+			_worldPacket.WriteBit(bit: false);
+			_worldPacket.FlushBits();
+			options.Treasure.Write(_worldPacket);
+			_worldPacket.WriteString(options.Text);
+			_worldPacket.WriteString(options.Confirm);
 			if (options.SpellID.HasValue)
 			{
-				base._worldPacket.WriteInt32(options.SpellID.Value);
+				_worldPacket.WriteInt32(options.SpellID.Value);
 			}
 		}
-		base._worldPacket.WriteInt32(this.TextID);
-		foreach (ClientGossipQuest quest in this.GossipQuests)
+		_worldPacket.WriteInt32(TextID);
+		foreach (ClientGossipQuest quest in GossipQuests)
 		{
-			quest.WriteWotLK(base._worldPacket);
+			quest.WriteWotLK(_worldPacket);
 		}
 	}
 }

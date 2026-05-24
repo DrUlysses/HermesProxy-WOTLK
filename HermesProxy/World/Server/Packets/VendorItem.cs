@@ -30,37 +30,37 @@ public class VendorItem
 	{
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			this.WriteWotLK(data);
+			WriteWotLK(data);
 			return;
 		}
-		data.WriteInt32(this.Slot);
-		data.WriteInt32(this.Type);
-		data.WriteInt32(this.Quantity);
-		data.WriteUInt64(this.Price);
-		data.WriteInt32(this.Durability);
-		data.WriteUInt32(this.StackCount);
-		data.WriteInt32(this.ExtendedCostID);
-		data.WriteInt32(this.PlayerConditionFailed);
-		this.Item.Write(data);
-		data.WriteBit(this.DoNotFilterOnVendor);
-		data.WriteBit(this.Refundable);
+		data.WriteInt32(Slot);
+		data.WriteInt32(Type);
+		data.WriteInt32(Quantity);
+		data.WriteUInt64(Price);
+		data.WriteInt32(Durability);
+		data.WriteUInt32(StackCount);
+		data.WriteInt32(ExtendedCostID);
+		data.WriteInt32(PlayerConditionFailed);
+		Item.Write(data);
+		data.WriteBit(DoNotFilterOnVendor);
+		data.WriteBit(Refundable);
 		data.FlushBits();
 	}
 
 	private void WriteWotLK(WorldPacket data)
 	{
-		data.WriteUInt64(this.Price);
-		data.WriteUInt32(this.MuID);
-		data.WriteInt32(this.Type);
-		data.WriteInt32(this.Durability);
-		data.WriteInt32((int)this.StackCount);
-		data.WriteInt32(this.Quantity);
-		data.WriteInt32(this.ExtendedCostID);
-		data.WriteInt32(this.PlayerConditionFailed);
+		data.WriteUInt64(Price);
+		data.WriteUInt32(MuID);
+		data.WriteInt32(Type);
+		data.WriteInt32(Durability);
+		data.WriteInt32((int)StackCount);
+		data.WriteInt32(Quantity);
+		data.WriteInt32(ExtendedCostID);
+		data.WriteInt32(PlayerConditionFailed);
 		data.WriteBit(bit: false);
-		data.WriteBit(this.DoNotFilterOnVendor);
-		data.WriteBit(this.Refundable);
+		data.WriteBit(DoNotFilterOnVendor);
+		data.WriteBit(Refundable);
 		data.FlushBits();
-		this.Item.Write(data);
+		Item.Write(data);
 	}
 }

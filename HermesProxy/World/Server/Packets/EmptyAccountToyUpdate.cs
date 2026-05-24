@@ -12,10 +12,10 @@ public class EmptyAccountToyUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(bit: true);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteInt32(0);
-		base._worldPacket.WriteInt32(0);
-		base._worldPacket.WriteInt32(0);
+		_worldPacket.WriteBit(bit: true);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteInt32(0);
+		_worldPacket.WriteInt32(0);
+		_worldPacket.WriteInt32(0);
 	}
 }

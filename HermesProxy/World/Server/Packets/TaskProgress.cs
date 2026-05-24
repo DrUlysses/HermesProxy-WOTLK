@@ -16,12 +16,12 @@ public class TaskProgress
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.TaskID);
-		data.WriteUInt32(this.FailureTime);
-		data.WriteUInt32(this.Flags);
-		data.WriteUInt32(this.Unk);
-		data.WriteInt32(this.Progress.Count);
-		foreach (ushort progress in this.Progress)
+		data.WriteUInt32(TaskID);
+		data.WriteUInt32(FailureTime);
+		data.WriteUInt32(Flags);
+		data.WriteUInt32(Unk);
+		data.WriteInt32(Progress.Count);
+		foreach (ushort progress in Progress)
 		{
 			data.WriteUInt16(progress);
 		}

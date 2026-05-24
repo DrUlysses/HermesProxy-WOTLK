@@ -24,25 +24,25 @@ public class TrainerList : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.TrainerGUID);
-		base._worldPacket.WriteInt32(this.TrainerType);
-		base._worldPacket.WriteUInt32(this.TrainerID);
-		base._worldPacket.WriteInt32(this.Spells.Count);
-		foreach (TrainerListSpell spell in this.Spells)
+		_worldPacket.WritePackedGuid128(TrainerGUID);
+		_worldPacket.WriteInt32(TrainerType);
+		_worldPacket.WriteUInt32(TrainerID);
+		_worldPacket.WriteInt32(Spells.Count);
+		foreach (TrainerListSpell spell in Spells)
 		{
-			base._worldPacket.WriteUInt32(spell.SpellID);
-			base._worldPacket.WriteUInt32(spell.MoneyCost);
-			base._worldPacket.WriteUInt32(spell.ReqSkillLine);
-			base._worldPacket.WriteUInt32(spell.ReqSkillRank);
+			_worldPacket.WriteUInt32(spell.SpellID);
+			_worldPacket.WriteUInt32(spell.MoneyCost);
+			_worldPacket.WriteUInt32(spell.ReqSkillLine);
+			_worldPacket.WriteUInt32(spell.ReqSkillRank);
 			for (uint i = 0u; i < 3; i++)
 			{
-				base._worldPacket.WriteUInt32(spell.ReqAbility[i]);
+				_worldPacket.WriteUInt32(spell.ReqAbility[i]);
 			}
-			base._worldPacket.WriteUInt8((byte)spell.Usable);
-			base._worldPacket.WriteUInt8(spell.ReqLevel);
+			_worldPacket.WriteUInt8((byte)spell.Usable);
+			_worldPacket.WriteUInt8(spell.ReqLevel);
 		}
-		base._worldPacket.WriteBits(this.Greeting.GetByteCount(), 11);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.Greeting);
+		_worldPacket.WriteBits(Greeting.GetByteCount(), 11);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(Greeting);
 	}
 }

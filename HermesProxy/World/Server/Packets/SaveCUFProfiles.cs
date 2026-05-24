@@ -11,6 +11,6 @@ internal class SaveCUFProfiles : ClientPacket
 
 	public override void Read()
 	{
-		this.Data = base._worldPacket.ReadToEnd();
+		Data = _worldPacket.ReadToEnd();
 	}
 }

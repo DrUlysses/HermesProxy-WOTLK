@@ -22,10 +22,10 @@ public class NewWorld : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.MapID);
-		base._worldPacket.WriteVector3(this.Position);
-		base._worldPacket.WriteFloat(this.Orientation);
-		base._worldPacket.WriteUInt32(this.Reason);
-		base._worldPacket.WriteVector3(this.MovementOffset);
+		_worldPacket.WriteUInt32(MapID);
+		_worldPacket.WriteVector3(Position);
+		_worldPacket.WriteFloat(Orientation);
+		_worldPacket.WriteUInt32(Reason);
+		_worldPacket.WriteVector3(MovementOffset);
 	}
 }

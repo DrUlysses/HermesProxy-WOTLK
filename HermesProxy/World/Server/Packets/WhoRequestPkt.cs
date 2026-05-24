@@ -17,12 +17,12 @@ public class WhoRequestPkt : ClientPacket
 
 	public override void Read()
 	{
-		uint areasCount = base._worldPacket.ReadBits<uint>(4);
-		this.Request.Read(base._worldPacket);
-		this.RequestID = base._worldPacket.ReadUInt32();
+		uint areasCount = _worldPacket.ReadBits<uint>(4);
+		Request.Read(_worldPacket);
+		RequestID = _worldPacket.ReadUInt32();
 		for (int i = 0; i < areasCount; i++)
 		{
-			this.Areas.Add(base._worldPacket.ReadInt32());
+			Areas.Add(_worldPacket.ReadInt32());
 		}
 	}
 }

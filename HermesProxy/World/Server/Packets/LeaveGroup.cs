@@ -11,6 +11,6 @@ internal class LeaveGroup : ClientPacket
 
 	public override void Read()
 	{
-		this.PartyIndex = base._worldPacket.ReadInt8();
+		PartyIndex = _worldPacket.ReadInt8();
 	}
 }

@@ -16,11 +16,11 @@ public class ServerPetitionShowList : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Unit);
-		base._worldPacket.WriteInt32(this.Petitions.Count);
-		foreach (PetitionEntry petition2 in this.Petitions)
+		_worldPacket.WritePackedGuid128(Unit);
+		_worldPacket.WriteInt32(Petitions.Count);
+		foreach (PetitionEntry petition2 in Petitions)
 		{
-			petition2.Write(base._worldPacket);
+			petition2.Write(_worldPacket);
 		}
 	}
 }

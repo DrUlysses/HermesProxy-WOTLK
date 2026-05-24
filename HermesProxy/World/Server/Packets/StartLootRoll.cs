@@ -23,11 +23,11 @@ internal class StartLootRoll : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.LootObj);
-		base._worldPacket.WriteUInt32(this.MapID);
-		base._worldPacket.WriteUInt32(this.RollTime);
-		base._worldPacket.WriteUInt8((byte)this.ValidRolls);
-		base._worldPacket.WriteUInt8((byte)this.Method);
-		this.Item.Write(base._worldPacket);
+		_worldPacket.WritePackedGuid128(LootObj);
+		_worldPacket.WriteUInt32(MapID);
+		_worldPacket.WriteUInt32(RollTime);
+		_worldPacket.WriteUInt8((byte)ValidRolls);
+		_worldPacket.WriteUInt8((byte)Method);
+		Item.Write(_worldPacket);
 	}
 }

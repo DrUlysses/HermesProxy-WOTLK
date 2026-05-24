@@ -10,11 +10,11 @@ public class SpellStart : ServerPacket
 	public SpellStart()
 		: base(Opcode.SMSG_SPELL_START, ConnectionType.Instance)
 	{
-		this.Cast = new SpellCastData();
+		Cast = new SpellCastData();
 	}
 
 	protected override void Write()
 	{
-		this.Cast.Write(base._worldPacket);
+		Cast.Write(_worldPacket);
 	}
 }

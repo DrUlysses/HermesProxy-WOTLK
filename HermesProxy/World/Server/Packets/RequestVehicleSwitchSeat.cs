@@ -1,5 +1,3 @@
-using HermesProxy.World.Objects;
-
 namespace HermesProxy.World.Server.Packets;
 
 public class RequestVehicleSwitchSeat : ClientPacket
@@ -14,7 +12,7 @@ public class RequestVehicleSwitchSeat : ClientPacket
 
 	public override void Read()
 	{
-		this.Vehicle = base._worldPacket.ReadPackedGuid128();
-		this.SeatIndex = base._worldPacket.ReadUInt8();
+		Vehicle = _worldPacket.ReadPackedGuid128();
+		SeatIndex = _worldPacket.ReadUInt8();
 	}
 }

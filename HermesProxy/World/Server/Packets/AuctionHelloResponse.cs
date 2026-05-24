@@ -19,10 +19,10 @@ internal class AuctionHelloResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WriteUInt32(this.PurchasedItemDeliveryDelay);
-		base._worldPacket.WriteUInt32(this.CancelledItemDeliveryDelay);
-		base._worldPacket.WriteBit(this.OpenForBusiness);
-		base._worldPacket.FlushBits();
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WriteUInt32(PurchasedItemDeliveryDelay);
+		_worldPacket.WriteUInt32(CancelledItemDeliveryDelay);
+		_worldPacket.WriteBit(OpenForBusiness);
+		_worldPacket.FlushBits();
 	}
 }

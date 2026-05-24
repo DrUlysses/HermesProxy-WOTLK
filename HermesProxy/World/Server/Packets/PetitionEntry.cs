@@ -14,10 +14,10 @@ public struct PetitionEntry
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Index);
-		data.WriteUInt32(this.CharterCost);
-		data.WriteUInt32(this.CharterEntry);
-		data.WriteUInt32(this.IsArena);
-		data.WriteUInt32(this.RequiredSignatures);
+		data.WriteUInt32(Index);
+		data.WriteUInt32(CharterCost);
+		data.WriteUInt32(CharterEntry);
+		data.WriteUInt32(IsArena);
+		data.WriteUInt32(RequiredSignatures);
 	}
 }

@@ -25,23 +25,23 @@ internal class QueryPetNameResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.UnitGUID);
-		base._worldPacket.WriteBit(this.Allow);
-		if (this.Allow)
+		_worldPacket.WritePackedGuid128(UnitGUID);
+		_worldPacket.WriteBit(Allow);
+		if (Allow)
 		{
-			base._worldPacket.WriteBits(this.Name.GetByteCount(), 8);
-			base._worldPacket.WriteBit(this.HasDeclined);
+			_worldPacket.WriteBits(Name.GetByteCount(), 8);
+			_worldPacket.WriteBit(HasDeclined);
 			for (byte i = 0; i < 5; i++)
 			{
-				base._worldPacket.WriteBits(this.DeclinedNames.name[i].GetByteCount(), 7);
+				_worldPacket.WriteBits(DeclinedNames.name[i].GetByteCount(), 7);
 			}
 			for (byte i2 = 0; i2 < 5; i2++)
 			{
-				base._worldPacket.WriteString(this.DeclinedNames.name[i2]);
+				_worldPacket.WriteString(DeclinedNames.name[i2]);
 			}
-			base._worldPacket.WriteInt64(this.Timestamp);
-			base._worldPacket.WriteString(this.Name);
+			_worldPacket.WriteInt64(Timestamp);
+			_worldPacket.WriteString(Name);
 		}
-		base._worldPacket.FlushBits();
+		_worldPacket.FlushBits();
 	}
 }

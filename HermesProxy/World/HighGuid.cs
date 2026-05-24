@@ -8,6 +8,6 @@ public abstract class HighGuid
 
 	public HighGuidType GetHighGuidType()
 	{
-		return this.highGuidType;
+		return highGuidType;
 	}
 }

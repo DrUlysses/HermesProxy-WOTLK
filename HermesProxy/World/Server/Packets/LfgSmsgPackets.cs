@@ -17,26 +17,26 @@ public class DfJoinResult : ServerPacket
 
 	protected override void Write()
 	{
-		this.Ticket.Write(base._worldPacket);
-		base._worldPacket.WriteUInt8(this.Result);
-		base._worldPacket.WriteUInt8(this.ResultDetail);
-		base._worldPacket.WriteUInt32((uint)this.BlackList.Count);
-		base._worldPacket.WriteUInt32(0u); // BlackListNames count
-		foreach (DfJoinBlackList entry in this.BlackList)
+		Ticket.Write(_worldPacket);
+		_worldPacket.WriteUInt8(Result);
+		_worldPacket.WriteUInt8(ResultDetail);
+		_worldPacket.WriteUInt32((uint)BlackList.Count);
+		_worldPacket.WriteUInt32(0u); // BlackListNames count
+		foreach (DfJoinBlackList entry in BlackList)
 		{
-			base._worldPacket.WriteBit(entry.PlayerGuid != null);
-			base._worldPacket.WriteUInt32((uint)entry.Slots.Count);
+			_worldPacket.WriteBit(entry.PlayerGuid != null);
+			_worldPacket.WriteUInt32((uint)entry.Slots.Count);
 			if (entry.PlayerGuid != null)
 			{
-				base._worldPacket.WritePackedGuid128(entry.PlayerGuid);
+				_worldPacket.WritePackedGuid128(entry.PlayerGuid);
 			}
 			foreach (DfJoinBlackListSlot slot in entry.Slots)
 			{
-				base._worldPacket.WriteUInt32(slot.Slot);
-				base._worldPacket.WriteUInt32(slot.Reason);
-				base._worldPacket.WriteInt32(slot.SubReason1);
-				base._worldPacket.WriteInt32(slot.SubReason2);
-				base._worldPacket.WriteUInt32(slot.SoftLock);
+				_worldPacket.WriteUInt32(slot.Slot);
+				_worldPacket.WriteUInt32(slot.Reason);
+				_worldPacket.WriteInt32(slot.SubReason1);
+				_worldPacket.WriteInt32(slot.SubReason2);
+				_worldPacket.WriteUInt32(slot.SoftLock);
 			}
 		}
 	}
@@ -79,28 +79,28 @@ public class DfUpdateStatus : ServerPacket
 
 	protected override void Write()
 	{
-		this.Ticket.Write(base._worldPacket);
-		base._worldPacket.WriteUInt8(this.SubType);
-		base._worldPacket.WriteUInt8(this.Reason);
-		base._worldPacket.WriteUInt32((uint)this.Slots.Count);
-		base._worldPacket.WriteUInt8(this.RequestedRoles);
-		base._worldPacket.WriteUInt32((uint)this.SuspendedPlayers.Count);
-		base._worldPacket.WriteUInt32(this.QueueMapID);
-		foreach (uint slot in this.Slots)
+		Ticket.Write(_worldPacket);
+		_worldPacket.WriteUInt8(SubType);
+		_worldPacket.WriteUInt8(Reason);
+		_worldPacket.WriteUInt32((uint)Slots.Count);
+		_worldPacket.WriteUInt8(RequestedRoles);
+		_worldPacket.WriteUInt32((uint)SuspendedPlayers.Count);
+		_worldPacket.WriteUInt32(QueueMapID);
+		foreach (uint slot in Slots)
 		{
-			base._worldPacket.WriteUInt32(slot);
+			_worldPacket.WriteUInt32(slot);
 		}
-		foreach (WowGuid128 guid in this.SuspendedPlayers)
+		foreach (WowGuid128 guid in SuspendedPlayers)
 		{
-			base._worldPacket.WritePackedGuid128(guid);
+			_worldPacket.WritePackedGuid128(guid);
 		}
-		base._worldPacket.WriteBit(this.IsParty);
-		base._worldPacket.WriteBit(this.NotifyUI);
-		base._worldPacket.WriteBit(this.Joined);
-		base._worldPacket.WriteBit(this.LfgJoined);
-		base._worldPacket.WriteBit(this.Queued);
-		base._worldPacket.WriteBit(false); // Unused
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(IsParty);
+		_worldPacket.WriteBit(NotifyUI);
+		_worldPacket.WriteBit(Joined);
+		_worldPacket.WriteBit(LfgJoined);
+		_worldPacket.WriteBit(Queued);
+		_worldPacket.WriteBit(false); // Unused
+		_worldPacket.FlushBits();
 	}
 }
 
@@ -125,28 +125,28 @@ public class DfProposalUpdate : ServerPacket
 
 	protected override void Write()
 	{
-		this.Ticket.Write(base._worldPacket);
-		base._worldPacket.WriteUInt64(this.InstanceID);
-		base._worldPacket.WriteUInt32(this.ProposalID);
-		base._worldPacket.WriteUInt32(this.Slot);
-		base._worldPacket.WriteInt8(this.State);
-		base._worldPacket.WriteUInt32(this.CompletedMask);
-		base._worldPacket.WriteUInt32(this.EncounterMask);
-		base._worldPacket.WriteUInt32((uint)this.Players.Count);
-		base._worldPacket.WriteUInt8(0); // Unused
-		base._worldPacket.WriteBit(this.ValidCompletedMask);
-		base._worldPacket.WriteBit(this.ProposalSilent);
-		base._worldPacket.WriteBit(this.IsRequeue);
-		base._worldPacket.FlushBits();
-		foreach (DfProposalPlayer player in this.Players)
+		Ticket.Write(_worldPacket);
+		_worldPacket.WriteUInt64(InstanceID);
+		_worldPacket.WriteUInt32(ProposalID);
+		_worldPacket.WriteUInt32(Slot);
+		_worldPacket.WriteInt8(State);
+		_worldPacket.WriteUInt32(CompletedMask);
+		_worldPacket.WriteUInt32(EncounterMask);
+		_worldPacket.WriteUInt32((uint)Players.Count);
+		_worldPacket.WriteUInt8(0); // Unused
+		_worldPacket.WriteBit(ValidCompletedMask);
+		_worldPacket.WriteBit(ProposalSilent);
+		_worldPacket.WriteBit(IsRequeue);
+		_worldPacket.FlushBits();
+		foreach (DfProposalPlayer player in Players)
 		{
-			base._worldPacket.WriteUInt8(player.Roles);
-			base._worldPacket.WriteBit(player.Me);
-			base._worldPacket.WriteBit(player.SameParty);
-			base._worldPacket.WriteBit(player.MyParty);
-			base._worldPacket.WriteBit(player.Responded);
-			base._worldPacket.WriteBit(player.Accepted);
-			base._worldPacket.FlushBits();
+			_worldPacket.WriteUInt8(player.Roles);
+			_worldPacket.WriteBit(player.Me);
+			_worldPacket.WriteBit(player.SameParty);
+			_worldPacket.WriteBit(player.MyParty);
+			_worldPacket.WriteBit(player.Responded);
+			_worldPacket.WriteBit(player.Accepted);
+			_worldPacket.FlushBits();
 		}
 	}
 }
@@ -178,16 +178,16 @@ public class DfQueueStatus : ServerPacket
 
 	protected override void Write()
 	{
-		this.Ticket.Write(base._worldPacket);
-		base._worldPacket.WriteUInt32(this.Slot);
-		base._worldPacket.WriteUInt32(this.AvgWaitTimeMe);
-		base._worldPacket.WriteUInt32(this.AvgWaitTime);
+		Ticket.Write(_worldPacket);
+		_worldPacket.WriteUInt32(Slot);
+		_worldPacket.WriteUInt32(AvgWaitTimeMe);
+		_worldPacket.WriteUInt32(AvgWaitTime);
 		for (int i = 0; i < 3; i++)
 		{
-			base._worldPacket.WriteUInt32(this.AvgWaitTimeByRole[i]);
-			base._worldPacket.WriteUInt8(this.LastNeeded[i]);
+			_worldPacket.WriteUInt32(AvgWaitTimeByRole[i]);
+			_worldPacket.WriteUInt8(LastNeeded[i]);
 		}
-		base._worldPacket.WriteUInt32(this.QueuedTime);
+		_worldPacket.WriteUInt32(QueuedTime);
 	}
 }
 
@@ -205,9 +205,9 @@ public class DfProposalResponsePkt : ClientPacket
 
 	public override void Read()
 	{
-		this.Ticket.Read(base._worldPacket);
-		this.InstanceID = base._worldPacket.ReadUInt64();
-		this.ProposalID = base._worldPacket.ReadUInt32();
-		this.Accepted = base._worldPacket.HasBit();
+		Ticket.Read(_worldPacket);
+		InstanceID = _worldPacket.ReadUInt64();
+		ProposalID = _worldPacket.ReadUInt32();
+		Accepted = _worldPacket.HasBit();
 	}
 }

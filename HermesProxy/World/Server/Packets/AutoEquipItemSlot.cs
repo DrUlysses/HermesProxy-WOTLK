@@ -15,8 +15,8 @@ internal class AutoEquipItemSlot : ClientPacket
 
 	public override void Read()
 	{
-		this.Inv = new InvUpdate(base._worldPacket);
-		this.Item = base._worldPacket.ReadPackedGuid128();
-		this.ItemDstSlot = base._worldPacket.ReadUInt8();
+		Inv = new InvUpdate(_worldPacket);
+		Item = _worldPacket.ReadPackedGuid128();
+		ItemDstSlot = _worldPacket.ReadUInt8();
 	}
 }

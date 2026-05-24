@@ -15,7 +15,7 @@ internal class LootReleaseResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.LootObj);
-		base._worldPacket.WritePackedGuid128(this.Owner);
+		_worldPacket.WritePackedGuid128(LootObj);
+		_worldPacket.WritePackedGuid128(Owner);
 	}
 }

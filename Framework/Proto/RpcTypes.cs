@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/rpc_types.proto</summary>
@@ -639,7 +639,7 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Host, other.Host)) return false;
+      if (!Equals(Host, other.Host)) return false;
       if (ObjectId != other.ObjectId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -978,7 +978,7 @@ namespace Bgs.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ObjectAddress, other.ObjectAddress)) return false;
+      if (!Equals(ObjectAddress, other.ObjectAddress)) return false;
       if (Status != other.Status) return false;
       if (ServiceHash != other.ServiceHash) return false;
       if (MethodId != other.MethodId) return false;
@@ -2421,7 +2421,7 @@ namespace Bgs.Protocol {
       if (Size != other.Size) return false;
       if (Status != other.Status) return false;
       if (Timeout != other.Timeout) return false;
-      if (!object.Equals(ForwardTarget, other.ForwardTarget)) return false;
+      if (!Equals(ForwardTarget, other.ForwardTarget)) return false;
       if (ReturnTopic != other.ReturnTopic) return false;
       if (ClientId != other.ClientId) return false;
       return Equals(_unknownFields, other._unknownFields);

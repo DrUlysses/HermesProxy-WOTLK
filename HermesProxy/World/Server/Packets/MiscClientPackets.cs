@@ -1,6 +1,3 @@
-using Framework;
-using HermesProxy.World;
-
 namespace HermesProxy.World.Server.Packets;
 
 public class ZoneUpdatePkt : ClientPacket
@@ -9,7 +6,7 @@ public class ZoneUpdatePkt : ClientPacket
     public ZoneUpdatePkt(WorldPacket packet) : base(packet) { }
     public override void Read()
     {
-        this.ZoneId = base._worldPacket.ReadUInt32();
+        ZoneId = _worldPacket.ReadUInt32();
     }
 }
 
@@ -19,6 +16,6 @@ public class GMTicketUpdateTextPkt : ClientPacket
     public GMTicketUpdateTextPkt(WorldPacket packet) : base(packet) { }
     public override void Read()
     {
-        this.Message = base._worldPacket.ReadCString();
+        Message = _worldPacket.ReadCString();
     }
 }

@@ -138,23 +138,23 @@ public static class GameData
 
 	public static void StoreItemName(uint entry, string name)
 	{
-		if (GameData.ItemNames.ContainsKey(entry))
+		if (ItemNames.ContainsKey(entry))
 		{
-			GameData.ItemNames[entry] = name;
+			ItemNames[entry] = name;
 		}
 		else
 		{
-			GameData.ItemNames.Add(entry, name);
+			ItemNames.Add(entry, name);
 		}
 	}
 
 	public static string GetItemName(uint entry)
 	{
-		if (GameData.ItemNames.TryGetValue(entry, out var data))
+		if (ItemNames.TryGetValue(entry, out var data))
 		{
 			return data;
 		}
-		ItemTemplate template = GameData.GetItemTemplate(entry);
+		ItemTemplate template = GetItemTemplate(entry);
 		if (template != null)
 		{
 			return template.Name[0];
@@ -164,19 +164,19 @@ public static class GameData
 
 	public static void StoreItemTemplate(uint entry, ItemTemplate template)
 	{
-		if (GameData.ItemTemplates.ContainsKey(entry))
+		if (ItemTemplates.ContainsKey(entry))
 		{
-			GameData.ItemTemplates[entry] = template;
+			ItemTemplates[entry] = template;
 		}
 		else
 		{
-			GameData.ItemTemplates.Add(entry, template);
+			ItemTemplates.Add(entry, template);
 		}
 	}
 
 	public static ItemTemplate GetItemTemplate(uint entry)
 	{
-		if (GameData.ItemTemplates.TryGetValue(entry, out var data))
+		if (ItemTemplates.TryGetValue(entry, out var data))
 		{
 			return data;
 		}
@@ -185,19 +185,19 @@ public static class GameData
 
 	public static void StoreQuestTemplate(uint entry, QuestTemplate template)
 	{
-		if (GameData.QuestTemplates.ContainsKey(entry))
+		if (QuestTemplates.ContainsKey(entry))
 		{
-			GameData.QuestTemplates[entry] = template;
+			QuestTemplates[entry] = template;
 		}
 		else
 		{
-			GameData.QuestTemplates.Add(entry, template);
+			QuestTemplates.Add(entry, template);
 		}
 	}
 
 	public static QuestTemplate GetQuestTemplate(uint entry)
 	{
-		if (GameData.QuestTemplates.TryGetValue(entry, out var data))
+		if (QuestTemplates.TryGetValue(entry, out var data))
 		{
 			return data;
 		}
@@ -206,7 +206,7 @@ public static class GameData
 
 	public static QuestObjective GetQuestObjectiveForItem(uint entry)
 	{
-		foreach (KeyValuePair<uint, QuestTemplate> questTemplate in GameData.QuestTemplates)
+		foreach (KeyValuePair<uint, QuestTemplate> questTemplate in QuestTemplates)
 		{
 			foreach (QuestObjective objective in questTemplate.Value.Objectives)
 			{
@@ -221,7 +221,7 @@ public static class GameData
 
 	public static uint? GetUniqueQuestBit(uint questId)
 	{
-		if (!GameData.QuestBits.TryGetValue(questId, out var result))
+		if (!QuestBits.TryGetValue(questId, out var result))
 		{
 			return null;
 		}
@@ -230,19 +230,19 @@ public static class GameData
 
 	public static void StoreCreatureTemplate(uint entry, CreatureTemplate template)
 	{
-		if (GameData.CreatureTemplates.ContainsKey(entry))
+		if (CreatureTemplates.ContainsKey(entry))
 		{
-			GameData.CreatureTemplates[entry] = template;
+			CreatureTemplates[entry] = template;
 		}
 		else
 		{
-			GameData.CreatureTemplates.Add(entry, template);
+			CreatureTemplates.Add(entry, template);
 		}
 	}
 
 	public static CreatureTemplate GetCreatureTemplate(uint entry)
 	{
-		if (GameData.CreatureTemplates.TryGetValue(entry, out var data))
+		if (CreatureTemplates.TryGetValue(entry, out var data))
 		{
 			return data;
 		}
@@ -251,7 +251,7 @@ public static class GameData
 
 	public static uint GetItemDisplayId(uint entry)
 	{
-		if (GameData.ItemDisplayIdStore.TryGetValue(entry, out var displayId))
+		if (ItemDisplayIdStore.TryGetValue(entry, out var displayId))
 		{
 			return displayId;
 		}
@@ -260,7 +260,7 @@ public static class GameData
 
 	public static uint GetItemIdWithDisplayId(uint displayId)
 	{
-		foreach (KeyValuePair<uint, uint> item in GameData.ItemDisplayIdStore)
+		foreach (KeyValuePair<uint, uint> item in ItemDisplayIdStore)
 		{
 			if (item.Value == displayId)
 			{
@@ -272,7 +272,7 @@ public static class GameData
 
 	public static ItemAppearance GetItemAppearanceByDisplayId(uint displayId)
 	{
-		foreach (KeyValuePair<uint, ItemAppearance> item in GameData.ItemAppearanceStore)
+		foreach (KeyValuePair<uint, ItemAppearance> item in ItemAppearanceStore)
 		{
 			if (item.Value.ItemDisplayInfoID == (int)displayId)
 			{
@@ -284,12 +284,12 @@ public static class GameData
 
 	public static ItemAppearance GetItemAppearanceByItemId(uint itemId)
 	{
-		ItemModifiedAppearance modAppearance = GameData.GetItemModifiedAppearanceByItemId(itemId);
+		ItemModifiedAppearance modAppearance = GetItemModifiedAppearanceByItemId(itemId);
 		if (modAppearance == null)
 		{
 			return null;
 		}
-		if (GameData.ItemAppearanceStore.TryGetValue((uint)modAppearance.ItemAppearanceID, out var data))
+		if (ItemAppearanceStore.TryGetValue((uint)modAppearance.ItemAppearanceID, out var data))
 		{
 			return data;
 		}
@@ -298,7 +298,7 @@ public static class GameData
 
 	public static uint GetItemIconFileDataIdByDisplayId(uint displayId)
 	{
-		if (GameData.ItemDisplayIdToFileDataIdStore.TryGetValue(displayId, out var fileDataId))
+		if (ItemDisplayIdToFileDataIdStore.TryGetValue(displayId, out var fileDataId))
 		{
 			return fileDataId;
 		}
@@ -307,10 +307,10 @@ public static class GameData
 
 	public static ItemModifiedAppearance GetItemModifiedAppearanceByDisplayId(uint displayId)
 	{
-		ItemAppearance appearance = GameData.GetItemAppearanceByDisplayId(displayId);
+		ItemAppearance appearance = GetItemAppearanceByDisplayId(displayId);
 		if (appearance != null)
 		{
-			foreach (KeyValuePair<uint, ItemModifiedAppearance> item in GameData.ItemModifiedAppearanceStore)
+			foreach (KeyValuePair<uint, ItemModifiedAppearance> item in ItemModifiedAppearanceStore)
 			{
 				if (item.Value.ItemAppearanceID == appearance.Id)
 				{
@@ -323,7 +323,7 @@ public static class GameData
 
 	public static ItemModifiedAppearance GetItemModifiedAppearanceByItemId(uint itemId)
 	{
-		foreach (KeyValuePair<uint, ItemModifiedAppearance> item in GameData.ItemModifiedAppearanceStore)
+		foreach (KeyValuePair<uint, ItemModifiedAppearance> item in ItemModifiedAppearanceStore)
 		{
 			if (item.Value.ItemID == (int)itemId)
 			{
@@ -335,7 +335,7 @@ public static class GameData
 
 	public static ItemEffect GetItemEffectByItemId(uint itemId, byte slot)
 	{
-		foreach (KeyValuePair<uint, ItemEffect> item in GameData.ItemEffectStore)
+		foreach (KeyValuePair<uint, ItemEffect> item in ItemEffectStore)
 		{
 			if (item.Value.ParentItemID == itemId && item.Value.LegacySlotIndex == slot)
 			{
@@ -368,37 +368,37 @@ public static class GameData
 
 	public static void SaveItemEffectSlot(uint itemId, uint spellId, byte slot)
 	{
-		if (GameData.ItemEffects.ContainsKey(itemId))
+		if (ItemEffects.ContainsKey(itemId))
 		{
-			if (GameData.ItemEffects[itemId].ContainsKey(spellId))
+			if (ItemEffects[itemId].ContainsKey(spellId))
 			{
-				GameData.ItemEffects[itemId][spellId] = slot;
+				ItemEffects[itemId][spellId] = slot;
 			}
 			else
 			{
-				GameData.ItemEffects[itemId].Add(spellId, slot);
+				ItemEffects[itemId].Add(spellId, slot);
 			}
 		}
 		else
 		{
 			Dictionary<uint, byte> dict = new Dictionary<uint, byte>();
 			dict.Add(spellId, slot);
-			GameData.ItemEffects.Add(itemId, dict);
+			ItemEffects.Add(itemId, dict);
 		}
 	}
 
 	public static byte GetItemEffectSlot(uint itemId, uint spellId)
 	{
-		if (GameData.ItemEffects.ContainsKey(itemId) && GameData.ItemEffects[itemId].ContainsKey(spellId))
+		if (ItemEffects.ContainsKey(itemId) && ItemEffects[itemId].ContainsKey(spellId))
 		{
-			return GameData.ItemEffects[itemId][spellId];
+			return ItemEffects[itemId][spellId];
 		}
 		return 0;
 	}
 
 	public static uint GetItemEnchantVisual(uint enchantId)
 	{
-		if (GameData.ItemEnchantVisuals.TryGetValue(enchantId, out var visualId))
+		if (ItemEnchantVisuals.TryGetValue(enchantId, out var visualId))
 		{
 			return visualId;
 		}
@@ -407,7 +407,7 @@ public static class GameData
 
 	public static uint GetSpellVisual(uint spellId)
 	{
-		if (GameData.SpellVisuals.TryGetValue(spellId, out var visual))
+		if (SpellVisuals.TryGetValue(spellId, out var visual))
 		{
 			return visual;
 		}
@@ -416,7 +416,7 @@ public static class GameData
 
 	public static uint GetSpellIdFromVisual(uint visualId)
 	{
-		foreach (var kvp in GameData.SpellVisuals)
+		foreach (var kvp in SpellVisuals)
 		{
 			if (kvp.Value == visualId)
 				return kvp.Key;
@@ -426,7 +426,7 @@ public static class GameData
 
 	public static int GetTotemSlotForSpell(uint spellId)
 	{
-		if (GameData.TotemSpells.TryGetValue(spellId, out var slot))
+		if (TotemSpells.TryGetValue(spellId, out var slot))
 		{
 			return (int)slot;
 		}
@@ -435,7 +435,7 @@ public static class GameData
 
 	public static uint GetRealSpell(uint learnSpellId)
 	{
-		if (GameData.LearnSpells.TryGetValue(learnSpellId, out var realSpellId))
+		if (LearnSpells.TryGetValue(learnSpellId, out var realSpellId))
 		{
 			return realSpellId;
 		}
@@ -444,7 +444,7 @@ public static class GameData
 
 	public static uint GetGemFromEnchantId(uint enchantId)
 	{
-		if (GameData.Gems.TryGetValue(enchantId, out var itemId))
+		if (Gems.TryGetValue(enchantId, out var itemId))
 		{
 			return itemId;
 		}
@@ -453,7 +453,7 @@ public static class GameData
 
 	public static uint GetEnchantIdFromGem(uint itemId)
 	{
-		foreach (KeyValuePair<uint, uint> itr in GameData.Gems)
+		foreach (KeyValuePair<uint, uint> itr in Gems)
 		{
 			if (itr.Value == itemId)
 			{
@@ -465,18 +465,18 @@ public static class GameData
 
 	public static float GetUnitCompleteDisplayScale(uint displayId)
 	{
-		CreatureDisplayInfo displayData = GameData.GetDisplayInfo(displayId);
+		CreatureDisplayInfo displayData = GetDisplayInfo(displayId);
 		if (displayData.ModelId == 0)
 		{
 			return 1f;
 		}
-		CreatureModelCollisionHeight modelData = GameData.GetModelData(displayId);
+		CreatureModelCollisionHeight modelData = GetModelData(displayId);
 		return displayData.DisplayScale * modelData.ModelScale;
 	}
 
 	public static CreatureDisplayInfo GetDisplayInfo(uint displayId)
 	{
-		if (GameData.CreatureDisplayInfos.TryGetValue(displayId, out var info))
+		if (CreatureDisplayInfos.TryGetValue(displayId, out var info))
 		{
 			return info;
 		}
@@ -485,7 +485,7 @@ public static class GameData
 
 	public static CreatureModelCollisionHeight GetModelData(uint modelId)
 	{
-		if (GameData.CreatureModelCollisionHeights.TryGetValue(modelId, out var info))
+		if (CreatureModelCollisionHeights.TryGetValue(modelId, out var info))
 		{
 			return info;
 		}
@@ -494,7 +494,7 @@ public static class GameData
 
 	public static uint GetTransportPeriod(uint entry)
 	{
-		if (GameData.TransportPeriods.TryGetValue(entry, out var period))
+		if (TransportPeriods.TryGetValue(entry, out var period))
 		{
 			return period;
 		}
@@ -503,7 +503,7 @@ public static class GameData
 
 	public static string GetAreaName(uint id)
 	{
-		if (GameData.AreaNames.TryGetValue(id, out var name))
+		if (AreaNames.TryGetValue(id, out var name))
 		{
 			return name;
 		}
@@ -512,7 +512,7 @@ public static class GameData
 
 	public static uint GetFactionForRace(uint race)
 	{
-		if (GameData.RaceFaction.TryGetValue(race, out var faction))
+		if (RaceFaction.TryGetValue(race, out var faction))
 		{
 			return faction;
 		}
@@ -521,7 +521,7 @@ public static class GameData
 
 	public static uint GetBattlegroundIdFromMapId(uint mapId)
 	{
-		foreach (KeyValuePair<uint, Battleground> bg in GameData.Battlegrounds)
+		foreach (KeyValuePair<uint, Battleground> bg in Battlegrounds)
 		{
 			if (bg.Value.MapIds.Contains(mapId))
 			{
@@ -533,7 +533,7 @@ public static class GameData
 
 	public static uint GetMapIdFromBattlegroundId(uint bgId)
 	{
-		if (GameData.Battlegrounds.TryGetValue(bgId, out var bg))
+		if (Battlegrounds.TryGetValue(bgId, out var bg))
 		{
 			return bg.MapIds[0];
 		}
@@ -542,7 +542,7 @@ public static class GameData
 
 	public static uint GetChatChannelIdFromName(string name)
 	{
-		foreach (KeyValuePair<uint, ChatChannel> channel in GameData.ChatChannels)
+		foreach (KeyValuePair<uint, ChatChannel> channel in ChatChannels)
 		{
 			if (name.Contains(channel.Value.Name))
 			{
@@ -555,7 +555,7 @@ public static class GameData
 	public static List<ChatChannel> GetChatChannelsWithFlags(ChannelFlags flags)
 	{
 		List<ChatChannel> channels = new List<ChatChannel>();
-		foreach (KeyValuePair<uint, ChatChannel> channel in GameData.ChatChannels)
+		foreach (KeyValuePair<uint, ChatChannel> channel in ChatChannels)
 		{
 			if ((channel.Value.Flags & flags) == flags)
 			{
@@ -599,11 +599,11 @@ public static class GameData
 
 	public static int GetFactionByRace(Race race)
 	{
-		if (GameData.IsAllianceRace(race))
+		if (IsAllianceRace(race))
 		{
 			return 1;
 		}
-		if (GameData.IsHordeRace(race))
+		if (IsHordeRace(race))
 		{
 			return 2;
 		}
@@ -612,7 +612,7 @@ public static class GameData
 
 	public static BroadcastText GetBroadcastText(uint entry)
 	{
-		if (GameData.BroadcastTextStore.TryGetValue(entry, out var data))
+		if (BroadcastTextStore.TryGetValue(entry, out var data))
 		{
 			return data;
 		}
@@ -621,7 +621,7 @@ public static class GameData
 
 	public static uint GetBroadcastTextId(string maleText, string femaleText, uint language, ushort[] emoteDelays, ushort[] emotes)
 	{
-		foreach (KeyValuePair<uint, BroadcastText> itr in GameData.BroadcastTextStore)
+		foreach (KeyValuePair<uint, BroadcastText> itr in BroadcastTextStore)
 		{
 			if (((!string.IsNullOrEmpty(maleText) && itr.Value.MaleText == maleText) || (!string.IsNullOrEmpty(femaleText) && itr.Value.FemaleText == femaleText)) && itr.Value.Language == language && itr.Value.EmoteDelays.SequenceEqual(emoteDelays) && itr.Value.Emotes.SequenceEqual(emotes))
 			{
@@ -629,54 +629,54 @@ public static class GameData
 			}
 		}
 		BroadcastText broadcastText = new BroadcastText();
-		broadcastText.Entry = GameData.BroadcastTextStore.Keys.Last() + 1;
+		broadcastText.Entry = BroadcastTextStore.Keys.Last() + 1;
 		broadcastText.MaleText = maleText;
 		broadcastText.FemaleText = femaleText;
 		broadcastText.Language = language;
 		broadcastText.EmoteDelays = emoteDelays;
 		broadcastText.Emotes = emotes;
-		GameData.BroadcastTextStore.Add(broadcastText.Entry, broadcastText);
+		BroadcastTextStore.Add(broadcastText.Entry, broadcastText);
 		return broadcastText.Entry;
 	}
 
 	public static void LoadEverything()
 	{
-		Log.Print(LogType.Storage, "Loading data files...", "LoadEverything", "GameData.cs");
-		GameData.LoadBuildAuthSeeds();
-		GameData.LoadBroadcastTexts();
-		GameData.LoadItemDisplayIds();
-		GameData.LoadItemRecords();
-		GameData.LoadItemSparseRecords();
-		GameData.LoadItemAppearance();
-		GameData.LoadItemModifiedAppearance();
-		GameData.LoadItemEffect();
-		GameData.LoadItemSpellsData();
-		GameData.LoadItemDisplayIdToFileDataId();
-		GameData.LoadBattlegrounds();
-		GameData.LoadChatChannels();
-		GameData.LoadItemEnchantVisuals();
-		GameData.LoadSpellVisuals();
-		GameData.LoadLearnSpells();
-		GameData.LoadTotemSpells();
-		GameData.LoadGems();
-		GameData.LoadCreatureDisplayInfo();
-		GameData.LoadCreatureModelCollisionHeights();
-		GameData.LoadTransports();
-		GameData.LoadAreaNames();
-		GameData.LoadRaceFaction();
-		GameData.LoadDispellSpells();
-		GameData.LoadSpellEffectPoints();
-		GameData.LoadStackableAuras();
-		GameData.LoadMountAuras();
-		GameData.LoadMountSpells();
-		GameData.LoadMeleeSpells();
-		GameData.LoadAutoRepeatSpells();
-		GameData.LoadAuraSpells();
-		GameData.LoadTaxiPaths();
-		GameData.LoadTaxiPathNodesGraph();
-		GameData.LoadQuestBits();
-		GameData.LoadHotfixes();
-		Log.Print(LogType.Storage, "Finished loading data.", "LoadEverything", "GameData.cs");
+		Log.Print(LogType.Storage, "Loading data files...", "GameData.cs");
+		LoadBuildAuthSeeds();
+		LoadBroadcastTexts();
+		LoadItemDisplayIds();
+		LoadItemRecords();
+		LoadItemSparseRecords();
+		LoadItemAppearance();
+		LoadItemModifiedAppearance();
+		LoadItemEffect();
+		LoadItemSpellsData();
+		LoadItemDisplayIdToFileDataId();
+		LoadBattlegrounds();
+		LoadChatChannels();
+		LoadItemEnchantVisuals();
+		LoadSpellVisuals();
+		LoadLearnSpells();
+		LoadTotemSpells();
+		LoadGems();
+		LoadCreatureDisplayInfo();
+		LoadCreatureModelCollisionHeights();
+		LoadTransports();
+		LoadAreaNames();
+		LoadRaceFaction();
+		LoadDispellSpells();
+		LoadSpellEffectPoints();
+		LoadStackableAuras();
+		LoadMountAuras();
+		LoadMountSpells();
+		LoadMeleeSpells();
+		LoadAutoRepeatSpells();
+		LoadAuraSpells();
+		LoadTaxiPaths();
+		LoadTaxiPathNodesGraph();
+		LoadQuestBits();
+		LoadHotfixes();
+		Log.Print(LogType.Storage, "Finished loading data.", "GameData.cs");
 	}
 
 	public static void LoadBuildAuthSeeds()
@@ -693,10 +693,10 @@ public static class GameData
 			uint build = uint.Parse(fields[0]);
 			string platform = fields[1];
 			byte[] seed = fields[2].ParseAsByteArray();
-			if (!GameData.BuildAuthSeeds.TryGetValue(build, out var seeds))
+			if (!BuildAuthSeeds.TryGetValue(build, out var seeds))
 			{
 				seeds = new Dictionary<string, byte[]>();
-				GameData.BuildAuthSeeds.Add(build, seeds);
+				BuildAuthSeeds.Add(build, seeds);
 			}
 			seeds.Add(platform, seed);
 		}
@@ -724,7 +724,7 @@ public static class GameData
 			broadcastText.EmoteDelays[0] = ushort.Parse(fields[7]);
 			broadcastText.EmoteDelays[1] = ushort.Parse(fields[8]);
 			broadcastText.EmoteDelays[2] = ushort.Parse(fields[9]);
-			GameData.BroadcastTextStore.Add(broadcastText.Entry, broadcastText);
+			BroadcastTextStore.Add(broadcastText.Entry, broadcastText);
 		}
 	}
 
@@ -741,7 +741,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint entry = uint.Parse(fields[0]);
 			uint displayId = uint.Parse(fields[1]);
-			GameData.ItemDisplayIdStore.Add(entry, displayId);
+			ItemDisplayIdStore.Add(entry, displayId);
 		}
 	}
 
@@ -797,7 +797,7 @@ public static class GameData
 			row.MaxDamage[2] = ushort.Parse(fields[35]);
 			row.MaxDamage[3] = ushort.Parse(fields[36]);
 			row.MaxDamage[4] = ushort.Parse(fields[37]);
-			GameData.ItemRecordsStore.Add((uint)row.Id, row);
+			ItemRecordsStore.Add((uint)row.Id, row);
 		}
 	}
 
@@ -942,7 +942,7 @@ public static class GameData
 			row.StatModifierBonusAmount[8] = sbyte.Parse(fields[124]);
 			row.StatModifierBonusAmount[9] = sbyte.Parse(fields[125]);
 			row.RequiredLevel = sbyte.Parse(fields[126]);
-			GameData.ItemSparseRecordsStore.Add((uint)row.Id, row);
+			ItemSparseRecordsStore.Add((uint)row.Id, row);
 		}
 	}
 
@@ -963,7 +963,7 @@ public static class GameData
 			appearance.ItemDisplayInfoID = int.Parse(fields[2]);
 			appearance.DefaultIconFileDataID = int.Parse(fields[3]);
 			appearance.UiOrder = int.Parse(fields[4]);
-			GameData.ItemAppearanceStore.Add((uint)appearance.Id, appearance);
+			ItemAppearanceStore.Add((uint)appearance.Id, appearance);
 		}
 	}
 
@@ -985,7 +985,7 @@ public static class GameData
 			modifiedAppearance.ItemAppearanceID = int.Parse(fields[3]);
 			modifiedAppearance.OrderIndex = int.Parse(fields[4]);
 			modifiedAppearance.TransmogSourceTypeEnum = int.Parse(fields[5]);
-			GameData.ItemModifiedAppearanceStore.Add((uint)modifiedAppearance.Id, modifiedAppearance);
+			ItemModifiedAppearanceStore.Add((uint)modifiedAppearance.Id, modifiedAppearance);
 		}
 	}
 
@@ -1011,7 +1011,7 @@ public static class GameData
 			effect.SpellID = int.Parse(fields[7]);
 			effect.ChrSpecializationID = ushort.Parse(fields[8]);
 			effect.ParentItemID = int.Parse(fields[9]);
-			GameData.ItemEffectStore.Add((uint)effect.Id, effect);
+			ItemEffectStore.Add((uint)effect.Id, effect);
 		}
 	}
 
@@ -1031,7 +1031,7 @@ public static class GameData
 			data.Category = int.Parse(fields[1]);
 			data.RecoveryTime = int.Parse(fields[2]);
 			data.CategoryRecoveryTime = int.Parse(fields[3]);
-			GameData.ItemSpellsDataStore.Add((uint)data.Id, data);
+			ItemSpellsDataStore.Add((uint)data.Id, data);
 		}
 	}
 
@@ -1048,7 +1048,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint displayId = uint.Parse(fields[0]);
 			uint fileDataId = uint.Parse(fields[1]);
-			GameData.ItemDisplayIdToFileDataIdStore.Add(displayId, fileDataId);
+			ItemDisplayIdToFileDataIdStore.Add(displayId, fileDataId);
 		}
 	}
 
@@ -1074,7 +1074,7 @@ public static class GameData
 					bg.MapIds.Add(mapId);
 				}
 			}
-			GameData.Battlegrounds.Add(bgId, bg);
+			Battlegrounds.Add(bgId, bg);
 		}
 	}
 
@@ -1093,7 +1093,7 @@ public static class GameData
 			channel.Id = uint.Parse(fields[0]);
 			channel.Flags = (ChannelFlags)uint.Parse(fields[1]);
 			channel.Name = fields[2];
-			GameData.ChatChannels.Add(channel.Id, channel);
+			ChatChannels.Add(channel.Id, channel);
 		}
 	}
 
@@ -1110,7 +1110,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint enchantId = uint.Parse(fields[0]);
 			uint visualId = uint.Parse(fields[1]);
-			GameData.ItemEnchantVisuals.Add(enchantId, visualId);
+			ItemEnchantVisuals.Add(enchantId, visualId);
 		}
 	}
 
@@ -1127,7 +1127,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
 			uint visualId = uint.Parse(fields[1]);
-			GameData.SpellVisuals.Add(spellId, visualId);
+			SpellVisuals.Add(spellId, visualId);
 		}
 	}
 
@@ -1144,9 +1144,9 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint learnSpellId = uint.Parse(fields[0]);
 			uint realSpellId = uint.Parse(fields[1]);
-			if (!GameData.LearnSpells.ContainsKey(learnSpellId))
+			if (!LearnSpells.ContainsKey(learnSpellId))
 			{
-				GameData.LearnSpells.Add(learnSpellId, realSpellId);
+				LearnSpells.Add(learnSpellId, realSpellId);
 			}
 		}
 	}
@@ -1168,7 +1168,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
 			uint totemSlot = uint.Parse(fields[1]);
-			GameData.TotemSpells.Add(spellId, totemSlot);
+			TotemSpells.Add(spellId, totemSlot);
 		}
 	}
 
@@ -1189,7 +1189,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint enchantId = uint.Parse(fields[0]);
 			uint itemId = uint.Parse(fields[1]);
-			GameData.Gems.Add(enchantId, itemId);
+			Gems.Add(enchantId, itemId);
 		}
 	}
 
@@ -1207,7 +1207,7 @@ public static class GameData
 			uint displayId = uint.Parse(fields[0]);
 			uint modelId = uint.Parse(fields[1]);
 			float scale = float.Parse(fields[2]);
-			GameData.CreatureDisplayInfos.Add(displayId, new CreatureDisplayInfo(modelId, scale));
+			CreatureDisplayInfos.Add(displayId, new CreatureDisplayInfo(modelId, scale));
 		}
 	}
 
@@ -1226,7 +1226,7 @@ public static class GameData
 			float modelScale = float.Parse(fields[1]);
 			float collisionHeight = float.Parse(fields[2]);
 			float collisionHeightMounted = float.Parse(fields[3]);
-			GameData.CreatureModelCollisionHeights.Add(modelId, new CreatureModelCollisionHeight(modelScale, collisionHeight, collisionHeightMounted));
+			CreatureModelCollisionHeights.Add(modelId, new CreatureModelCollisionHeight(modelScale, collisionHeight, collisionHeightMounted));
 		}
 	}
 
@@ -1243,12 +1243,12 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint entry = uint.Parse(fields[0]);
 			uint period = uint.Parse(fields[1]);
-			GameData.TransportPeriods.Add(entry, period);
+			TransportPeriods.Add(entry, period);
 		}
 
 		// Load TransportAnimation DB2 entries (elevators the client knows about)
 		string animPath = Path.Combine("CSV", "TransportAnimation.3.4.3.54261.csv");
-		if (System.IO.File.Exists(animPath))
+		if (File.Exists(animPath))
 		{
 			using TextFieldParser animParser = new TextFieldParser(animPath);
 			animParser.CommentTokens = new string[1] { "#" };
@@ -1259,9 +1259,9 @@ public static class GameData
 			{
 				string[] fields = animParser.ReadFields();
 				uint transportId = uint.Parse(fields[6]); // TransportID column
-				GameData.TransportAnimationEntries.Add(transportId);
+				TransportAnimationEntries.Add(transportId);
 			}
-			Framework.Logging.Log.Print(Framework.Logging.LogType.Network, $"Loaded {GameData.TransportAnimationEntries.Count} TransportAnimation entries");
+			Log.Print(LogType.Network, $"Loaded {TransportAnimationEntries.Count} TransportAnimation entries");
 		}
 	}
 
@@ -1278,7 +1278,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint id = uint.Parse(fields[0]);
 			string name = fields[1];
-			GameData.AreaNames.Add(id, name);
+			AreaNames.Add(id, name);
 		}
 	}
 
@@ -1295,7 +1295,7 @@ public static class GameData
 			string[] fields = csvParser.ReadFields();
 			uint id = uint.Parse(fields[0]);
 			uint faction = uint.Parse(fields[1]);
-			GameData.RaceFaction.Add(id, faction);
+			RaceFaction.Add(id, faction);
 		}
 	}
 
@@ -1315,7 +1315,7 @@ public static class GameData
 		{
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
-			GameData.DispellSpells.Add(spellId);
+			DispellSpells.Add(spellId);
 		}
 	}
 
@@ -1346,7 +1346,7 @@ public static class GameData
 			{
 				basePointsEff3++;
 			}
-			GameData.SpellEffectPoints.Add(spellId, new List<float> { basePointsEff1, basePointsEff2, basePointsEff3 });
+			SpellEffectPoints.Add(spellId, new List<float> { basePointsEff1, basePointsEff2, basePointsEff3 });
 		}
 	}
 
@@ -1366,7 +1366,7 @@ public static class GameData
 		{
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
-			GameData.StackableAuras.Add(spellId);
+			StackableAuras.Add(spellId);
 		}
 	}
 
@@ -1386,14 +1386,14 @@ public static class GameData
 		{
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
-			GameData.MountAuras.Add(spellId);
+			MountAuras.Add(spellId);
 		}
 	}
 
 	public static void LoadMountSpells()
 	{
 		string path = Path.Combine("CSV", $"MountSpells{ModernVersion.ExpansionVersion}.csv");
-		if (!System.IO.File.Exists(path))
+		if (!File.Exists(path))
 			return;
 		using TextFieldParser csvParser = new TextFieldParser(path);
 		csvParser.CommentTokens = new string[1] { "#" };
@@ -1404,9 +1404,9 @@ public static class GameData
 		{
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0].Trim());
-			GameData.MountSpells.Add(spellId);
+			MountSpells.Add(spellId);
 		}
-		Log.Print(LogType.Storage, $"Loaded {GameData.MountSpells.Count} mount spells.", "LoadMountSpells", "");
+		Log.Print(LogType.Storage, $"Loaded {MountSpells.Count} mount spells.", "");
 	}
 
 	public static void LoadMeleeSpells()
@@ -1421,7 +1421,7 @@ public static class GameData
 		{
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
-			GameData.NextMeleeSpells.Add(spellId);
+			NextMeleeSpells.Add(spellId);
 		}
 	}
 
@@ -1437,7 +1437,7 @@ public static class GameData
 		{
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
-			GameData.AutoRepeatSpells.Add(spellId);
+			AutoRepeatSpells.Add(spellId);
 		}
 	}
 
@@ -1453,7 +1453,7 @@ public static class GameData
 		{
 			string[] fields = csvParser.ReadFields();
 			uint spellId = uint.Parse(fields[0]);
-			GameData.AuraSpells.Add(spellId);
+			AuraSpells.Add(spellId);
 		}
 	}
 
@@ -1474,7 +1474,7 @@ public static class GameData
 			taxiPath.From = uint.Parse(fields[1]);
 			taxiPath.To = uint.Parse(fields[2]);
 			taxiPath.Cost = int.Parse(fields[3]);
-			GameData.TaxiPaths.Add(counter, taxiPath);
+			TaxiPaths.Add(counter, taxiPath);
 			counter++;
 		}
 	}
@@ -1525,16 +1525,16 @@ public static class GameData
 				TaxiPathNodes.Add(taxiPathNode.Id, taxiPathNode);
 			}
 		}
-		for (uint i = 0u; i < GameData.TaxiPaths.Count; i++)
+		for (uint i = 0u; i < TaxiPaths.Count; i++)
 		{
-			if (!GameData.TaxiPaths.ContainsKey(i))
+			if (!TaxiPaths.ContainsKey(i))
 			{
 				continue;
 			}
 			float dist = 0f;
-			TaxiPath taxiPath = GameData.TaxiPaths[i];
-			TaxiNode nodeFrom = TaxiNodes[GameData.TaxiPaths[i].From];
-			TaxiNode nodeTo = TaxiNodes[GameData.TaxiPaths[i].To];
+			TaxiPath taxiPath = TaxiPaths[i];
+			TaxiNode nodeFrom = TaxiNodes[TaxiPaths[i].From];
+			TaxiNode nodeTo = TaxiNodes[TaxiPaths[i].To];
 			if ((nodeFrom.x == 0f && nodeFrom.x == 0f && nodeFrom.z == 0f) || (nodeTo.x == 0f && nodeTo.x == 0f && nodeTo.z == 0f))
 			{
 				continue;
@@ -1548,7 +1548,7 @@ public static class GameData
 					pathNodeList.Add(pNode.Id);
 				}
 			}
-			IEnumerable<uint> query = pathNodeList.OrderBy((uint node) => TaxiPathNodes[node].nodeIndex);
+			IEnumerable<uint> query = pathNodeList.OrderBy(node => TaxiPathNodes[node].nodeIndex);
 			uint curNode = 0u;
 			foreach (uint itr in query)
 			{
@@ -1576,7 +1576,7 @@ public static class GameData
 				TaxiPathNode lastNode = TaxiPathNodes[curNode];
 				dist += (float)Math.Sqrt(Math.Pow(nodeTo.x - lastNode.x, 2.0) + Math.Pow(nodeTo.y - lastNode.y, 2.0));
 			}
-			GameData.TaxiNodesGraph[GameData.TaxiPaths[i].From, GameData.TaxiPaths[i].To] = ((dist > 0f) ? ((int)dist) : 0);
+			TaxiNodesGraph[TaxiPaths[i].From, TaxiPaths[i].To] = ((dist > 0f) ? ((int)dist) : 0);
 		}
 	}
 
@@ -1595,31 +1595,31 @@ public static class GameData
 			if (!fields[1].StartsWith("-"))
 			{
 				uint uniqueBitFlag = uint.Parse(fields[1]);
-				GameData.QuestBits.Add(questId, uniqueBitFlag);
+				QuestBits.Add(questId, uniqueBitFlag);
 			}
 		}
 	}
 
 	public static void LoadHotfixes()
 	{
-		GameData.LoadAreaTriggerHotfixes();
-		GameData.LoadSkillLineHotfixes();
-		GameData.LoadSkillRaceClassInfoHotfixes();
-		GameData.LoadSkillLineAbilityHotfixes();
-		GameData.LoadSpellHotfixes();
-		GameData.LoadSpellNameHotfixes();
-		GameData.LoadSpellLevelsHotfixes();
-		GameData.LoadSpellAuraOptionsHotfixes();
-		GameData.LoadSpellMiscHotfixes();
-		GameData.LoadSpellEffectHotfixes();
-		GameData.LoadSpellXSpellVisualHotfixes();
-		GameData.LoadItemSparseHotfixes();
-		GameData.LoadItemHotfixes();
-		GameData.LoadItemEffectHotfixes();
-		GameData.LoadItemDisplayInfoHotfixes();
-		GameData.LoadCreatureDisplayInfoHotfixes();
-		GameData.LoadCreatureDisplayInfoExtraHotfixes();
-		GameData.LoadCreatureDisplayInfoOptionHotfixes();
+		LoadAreaTriggerHotfixes();
+		LoadSkillLineHotfixes();
+		LoadSkillRaceClassInfoHotfixes();
+		LoadSkillLineAbilityHotfixes();
+		LoadSpellHotfixes();
+		LoadSpellNameHotfixes();
+		LoadSpellLevelsHotfixes();
+		LoadSpellAuraOptionsHotfixes();
+		LoadSpellMiscHotfixes();
+		LoadSpellEffectHotfixes();
+		LoadSpellXSpellVisualHotfixes();
+		LoadItemSparseHotfixes();
+		LoadItemHotfixes();
+		LoadItemEffectHotfixes();
+		LoadItemDisplayInfoHotfixes();
+		LoadCreatureDisplayInfoHotfixes();
+		LoadCreatureDisplayInfoExtraHotfixes();
+		LoadCreatureDisplayInfoOptionHotfixes();
 	}
 
 	public static void LoadAreaTriggerHotfixes()
@@ -1678,7 +1678,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt16(at.ShapeId);
 			record.HotfixContent.WriteUInt16(at.ActionSetId);
 			record.HotfixContent.WriteUInt8(at.Flags);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -1727,7 +1727,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt32(parentTierIndex);
 			record.HotfixContent.WriteUInt16(flags);
 			record.HotfixContent.WriteUInt32(spellBookSpellID);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -1765,7 +1765,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt8(availability);
 			record.HotfixContent.WriteUInt8(minLevel);
 			record.HotfixContent.WriteUInt16(skillTierId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -1822,7 +1822,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt16(skillUpSkillLineId);
 			record.HotfixContent.WriteUInt32(characterPoints1);
 			record.HotfixContent.WriteUInt32(characterPoints2);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -1852,7 +1852,7 @@ public static class GameData
 			record.HotfixContent.WriteCString(nameSubText);
 			record.HotfixContent.WriteCString(description);
 			record.HotfixContent.WriteCString(auraDescription);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -1878,7 +1878,7 @@ public static class GameData
 			record.RecordId = id;
 			record.Status = HotfixStatus.Valid;
 			record.HotfixContent.WriteCString(name);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -1914,7 +1914,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt16(spellLevel);
 			record.HotfixContent.WriteUInt8(maxPassiveAuraLevel);
 			record.HotfixContent.WriteUInt32(spellId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -1956,7 +1956,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt32(procTypeMask0);
 			record.HotfixContent.WriteUInt32(procTypeMask1);
 			record.HotfixContent.WriteUInt32(spellId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -2030,7 +2030,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt32(attributes13);
 			record.HotfixContent.WriteUInt32(attributes14);
 			record.HotfixContent.WriteUInt32(spellId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -2124,7 +2124,7 @@ public static class GameData
 			record.HotfixContent.WriteInt16(implicitTarget1);
 			record.HotfixContent.WriteInt16(implicitTarget2);
 			record.HotfixContent.WriteUInt32(spellId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -2154,13 +2154,13 @@ public static class GameData
 			ushort casterUnitConditionId = ushort.Parse(fields[10]);
 			uint casterPlayerConditionId = uint.Parse(fields[11]);
 			uint spellId = uint.Parse(fields[12]);
-			if (GameData.SpellVisuals.ContainsKey(spellId))
+			if (SpellVisuals.ContainsKey(spellId))
 			{
-				GameData.SpellVisuals[spellId] = id;
+				SpellVisuals[spellId] = id;
 			}
 			else
 			{
-				GameData.SpellVisuals.Add(spellId, id);
+				SpellVisuals.Add(spellId, id);
 			}
 			HotfixRecord record = new HotfixRecord();
 			record.TableHash = DB2Hash.SpellXSpellVisual;
@@ -2181,7 +2181,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt16(casterUnitConditionId);
 			record.HotfixContent.WriteUInt32(casterPlayerConditionId);
 			record.HotfixContent.WriteUInt32(spellId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -2462,7 +2462,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt8(overallQualityId);
 			record.HotfixContent.WriteUInt8(ammoType);
 			record.HotfixContent.WriteInt8(requiredLevel);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -2801,13 +2801,13 @@ public static class GameData
 			record.HotfixContent.WriteUInt16(MaxDamage3);
 			record.HotfixContent.WriteUInt16(MaxDamage4);
 			record.HotfixContent.WriteUInt16(MaxDamage5);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
 	public static void WriteItemHotfix(ItemTemplate item, ByteBuffer buffer)
 	{
-		int fileDataId = (int)GameData.GetItemIconFileDataIdByDisplayId(item.DisplayID);
+		int fileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
 		buffer.WriteUInt8((byte)item.Class);
 		buffer.WriteUInt8((byte)item.SubClass);
 		buffer.WriteUInt8((byte)item.Material);
@@ -2921,7 +2921,7 @@ public static class GameData
 
 	public static List<HotfixRecord> FindHotfixesByRecordIdAndTable(uint id, DB2Hash table, uint startId = 0u)
 	{
-		return GameData.Hotfixes.Values.Where((HotfixRecord hotfix) => hotfix.HotfixId >= startId && hotfix.TableHash == table && hotfix.RecordId == id).ToList();
+		return Hotfixes.Values.Where(hotfix => hotfix.HotfixId >= startId && hotfix.TableHash == table && hotfix.RecordId == id).ToList();
 	}
 
 	public static void UpdateHotfix(object obj, bool remove = false)
@@ -2931,7 +2931,7 @@ public static class GameData
 			ItemRecord item = (ItemRecord)obj;
 			DoStuff((uint)item.Id, DB2Hash.Item, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
-				GameData.WriteItemHotfix(item, hotfixContentTargetBuffer);
+				WriteItemHotfix(item, hotfixContentTargetBuffer);
 			});
 		}
 		if (obj is ItemSparseRecord)
@@ -2939,7 +2939,7 @@ public static class GameData
 			ItemSparseRecord itemSparse = (ItemSparseRecord)obj;
 			DoStuff((uint)itemSparse.Id, DB2Hash.ItemSparse, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
-				GameData.WriteItemSparseHotfix(itemSparse, hotfixContentTargetBuffer);
+				WriteItemSparseHotfix(itemSparse, hotfixContentTargetBuffer);
 			});
 		}
 		if (obj is ItemEffect)
@@ -2947,7 +2947,7 @@ public static class GameData
 			ItemEffect effect = (ItemEffect)obj;
 			DoStuff((uint)effect.Id, DB2Hash.ItemEffect, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
-				GameData.WriteItemEffectHotfix(effect, hotfixContentTargetBuffer);
+				WriteItemEffectHotfix(effect, hotfixContentTargetBuffer);
 			});
 		}
 		if (obj is ItemAppearance)
@@ -2955,7 +2955,7 @@ public static class GameData
 			ItemAppearance appearance = (ItemAppearance)obj;
 			DoStuff((uint)appearance.Id, DB2Hash.ItemAppearance, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
-				GameData.WriteItemAppearanceHotfix(appearance, hotfixContentTargetBuffer);
+				WriteItemAppearanceHotfix(appearance, hotfixContentTargetBuffer);
 			});
 		}
 		if (obj is ItemModifiedAppearance)
@@ -2963,22 +2963,22 @@ public static class GameData
 			ItemModifiedAppearance modAppearance = (ItemModifiedAppearance)obj;
 			DoStuff((uint)modAppearance.Id, DB2Hash.ItemModifiedAppearance, delegate(ByteBuffer hotfixContentTargetBuffer)
 			{
-				GameData.WriteItemModifiedAppearanceHotfix(modAppearance, hotfixContentTargetBuffer);
+				WriteItemModifiedAppearanceHotfix(modAppearance, hotfixContentTargetBuffer);
 			});
 		}
 		static void DoStuff(uint recordId, DB2Hash table, Action<ByteBuffer> writer)
 		{
-			List<HotfixRecord> oldRecords = GameData.FindHotfixesByRecordIdAndTable(recordId, table, 210000u);
+			List<HotfixRecord> oldRecords = FindHotfixesByRecordIdAndTable(recordId, table, 210000u);
 			if (oldRecords.Count == 0)
 			{
 				HotfixRecord record = new HotfixRecord();
 				record.Status = HotfixStatus.Valid;
 				record.TableHash = table;
-				record.HotfixId = GameData.GetFirstFreeId(GameData.Hotfixes, 210000u);
+				record.HotfixId = GetFirstFreeId(Hotfixes, 210000u);
 				record.UniqueId = record.HotfixId;
 				record.RecordId = recordId;
 				writer(record.HotfixContent);
-				GameData.Hotfixes.Add(record.HotfixId, record);
+				Hotfixes.Add(record.HotfixId, record);
 			}
 			else
 			{
@@ -2987,366 +2987,366 @@ public static class GameData
 				{
 					record2.Status = HotfixStatus.Invalid;
 					record2.HotfixContent = new ByteBuffer();
-					Log.Print(LogType.Storage, $"Got duplicate record for record {record2.RecordId} in {record2.TableHash}", "UpdateHotfix", "GameData.cs");
+					Log.Print(LogType.Storage, $"Got duplicate record for record {record2.RecordId} in {record2.TableHash}", "GameData.cs");
 				}
 				HotfixRecord recordToOverwrite = oldRecords.Last();
 				recordToOverwrite.HotfixContent = new ByteBuffer();
 				writer(recordToOverwrite.HotfixContent);
-				GameData.Hotfixes[recordToOverwrite.HotfixId] = recordToOverwrite;
+				Hotfixes[recordToOverwrite.HotfixId] = recordToOverwrite;
 			}
 		}
 	}
 
 	public static HotFixMessage? GenerateItemUpdateIfNeeded(ItemTemplate item)
 	{
-		GameData.ItemRecordsStore.TryGetValue(item.Entry, out var row);
+		ItemRecordsStore.TryGetValue(item.Entry, out var row);
 		if (row != null)
 		{
-			int iconFileDataId = (int)GameData.GetItemIconFileDataIdByDisplayId(item.DisplayID);
+			int iconFileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
 			if (row.ClassId != (byte)item.Class || row.SubclassId != (byte)item.SubClass || row.Material != (byte)item.Material || row.InventoryType != (sbyte)item.InventoryType || row.RequiredLevel != (int)item.RequiredLevel || row.SheatheType != (byte)item.SheathType || row.RandomProperty != (ushort)item.RandomProperty || row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix || (row.IconFileDataId != iconFileDataId && iconFileDataId != 0) || row.MaxDurability != item.MaxDurability || row.AmmoType != (byte)item.AmmoType || row.DamageType[0] != (byte)item.DamageTypes[0] || row.DamageType[1] != (byte)item.DamageTypes[1] || row.DamageType[2] != (byte)item.DamageTypes[2] || row.DamageType[3] != (byte)item.DamageTypes[3] || row.DamageType[4] != (byte)item.DamageTypes[4] || row.Resistances[1] != (short)item.HolyResistance || row.Resistances[2] != (short)item.FireResistance || row.Resistances[3] != (short)item.NatureResistance || row.Resistances[4] != (short)item.FrostResistance || row.Resistances[5] != (short)item.ShadowResistance || row.Resistances[6] != (short)item.ArcaneResistance)
 			{
-				Log.Print(LogType.Storage, $"Item #{item.Entry} needs to be updated.", "GenerateItemUpdateIfNeeded", "GameData.cs");
+				Log.Print(LogType.Storage, $"Item #{item.Entry} needs to be updated.", "GameData.cs");
 				if (row.ClassId != (byte)item.Class)
 				{
-					Log.Print(LogType.Storage, $"ClassId {row.ClassId} vs {item.Class}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ClassId {row.ClassId} vs {item.Class}", "GameData.cs");
 				}
 				if (row.SubclassId != (byte)item.SubClass)
 				{
-					Log.Print(LogType.Storage, $"SubclassId {row.SubclassId} vs {item.SubClass}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"SubclassId {row.SubclassId} vs {item.SubClass}", "GameData.cs");
 				}
 				if (row.Material != (byte)item.Material)
 				{
-					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GameData.cs");
 				}
 				if (row.InventoryType != (sbyte)item.InventoryType)
 				{
-					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GameData.cs");
 				}
 				if (row.RequiredLevel != (int)item.RequiredLevel)
 				{
-					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GameData.cs");
 				}
 				if (row.SheatheType != (byte)item.SheathType)
 				{
-					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GameData.cs");
 				}
 				if (row.RandomProperty != (ushort)item.RandomProperty)
 				{
-					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GameData.cs");
 				}
 				if (row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix)
 				{
-					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GameData.cs");
 				}
 				if (row.IconFileDataId != iconFileDataId)
 				{
-					Log.Print(LogType.Storage, $"IconFileDataId {row.IconFileDataId} vs {iconFileDataId}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"IconFileDataId {row.IconFileDataId} vs {iconFileDataId}", "GameData.cs");
 				}
 				if (row.MaxDurability != item.MaxDurability)
 				{
-					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GameData.cs");
 				}
 				if (row.AmmoType != (byte)item.AmmoType)
 				{
-					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GameData.cs");
 				}
 				for (int i = 0; i < 5; i++)
 				{
 					if (row.DamageType[i] != (byte)item.DamageTypes[i])
 					{
-						Log.Print(LogType.Storage, $"DamageType[{i}] {row.DamageType[i]} vs {item.DamageTypes[i]}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"DamageType[{i}] {row.DamageType[i]} vs {item.DamageTypes[i]}", "GameData.cs");
 					}
 				}
 				if (row.Resistances[1] != (short)item.HolyResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GameData.cs");
 				}
 				if (row.Resistances[2] != (short)item.FireResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GameData.cs");
 				}
 				if (row.Resistances[3] != (short)item.NatureResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[3] {row.Resistances[3]} vs {item.NatureResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[3] {row.Resistances[3]} vs {item.NatureResistance}", "GameData.cs");
 				}
 				if (row.Resistances[4] != (short)item.FrostResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GameData.cs");
 				}
 				if (row.Resistances[5] != (short)item.ShadowResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GameData.cs");
 				}
 				if (row.Resistances[6] != (short)item.ArcaneResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GenerateItemUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GameData.cs");
 				}
-				GameData.UpdateItemRecord(row, item);
-				GameData.UpdateHotfix(row);
-				return GameData.GenerateHotFixMessage(row);
+				UpdateItemRecord(row, item);
+				UpdateHotfix(row);
+				return GenerateHotFixMessage(row);
 			}
 			return null;
 		}
-		row = GameData.AddItemRecord(item);
+		row = AddItemRecord(item);
 		if (row == null)
 		{
 			return null;
 		}
-		GameData.UpdateHotfix(row);
-		return GameData.GenerateHotFixMessage(row);
+		UpdateHotfix(row);
+		return GenerateHotFixMessage(row);
 	}
 
 	public static HotFixMessage? GenerateItemSparseUpdateIfNeeded(ItemTemplate item)
 	{
-		GameData.ItemSparseRecordsStore.TryGetValue(item.Entry, out var row);
+		ItemSparseRecordsStore.TryGetValue(item.Entry, out var row);
 		if (row != null)
 		{
 			if (!row.Description.Equals(item.Description) || !row.Name4.Equals(item.Name[3]) || !row.Name3.Equals(item.Name[2]) || !row.Name2.Equals(item.Name[1]) || !row.Name1.Equals(item.Name[0]) || row.DurationInInventory != item.Duration || row.BagFamily != item.BagFamily || row.RangeMod != item.RangedMod || row.RequiredAbility != item.RequiredSpell || row.SellPrice != item.SellPrice || row.BuyPrice != item.BuyPrice || row.MaxDurability != item.MaxDurability || row.RequiredHoliday != (ushort)item.HolidayID || row.LimitCategory != (ushort)item.ItemLimitCategory || row.GemProperties != (ushort)item.GemProperties || row.SocketMatchEnchantmentId != (ushort)item.SocketBonus || row.TotemCategoryId != (ushort)item.TotemCategory || row.InstanceBound != (ushort)item.MapID || row.ZoneBound[0] != (ushort)item.AreaID || row.ItemSet != (ushort)item.ItemSet || row.LockId != (ushort)item.LockId || row.StartQuestId != (ushort)item.StartQuestId || row.PageText != (ushort)item.PageText || row.Delay != (ushort)item.Delay || row.RequiredReputationId != (ushort)item.RequiredRepFaction || row.RequiredSkillRank != (ushort)item.RequiredSkillLevel || row.RequiredSkill != (ushort)item.RequiredSkillId || row.ItemLevel != (ushort)item.ItemLevel || row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix || row.RandomProperty != (ushort)item.RandomProperty || row.Resistances[1] != (short)item.HolyResistance || row.Resistances[2] != (short)item.FireResistance || row.Resistances[3] != (short)item.NatureResistance || row.Resistances[4] != (short)item.FrostResistance || row.Resistances[5] != (short)item.ShadowResistance || row.Resistances[6] != (short)item.ArcaneResistance || row.ScalingStatDistributionId != (ushort)item.ScalingStatDistribution || row.SocketType[0] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[0]) || row.SocketType[1] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[1]) || row.SocketType[2] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[2]) || row.SheatheType != (byte)item.SheathType || row.Material != (byte)item.Material || row.PageMaterial != (byte)item.PageMaterial || row.PageLanguage != (byte)item.Language || row.Bonding != (byte)item.Bonding || row.DamageType != (byte)item.DamageTypes[0] || (row.StatType[0] != (sbyte)item.StatTypes[0] && (row.StatModifierBonusAmount[0] != 0 || item.StatValues[0] != 0)) || (row.StatType[1] != (sbyte)item.StatTypes[1] && (row.StatModifierBonusAmount[1] != 0 || item.StatValues[1] != 0)) || (row.StatType[2] != (sbyte)item.StatTypes[2] && (row.StatModifierBonusAmount[2] != 0 || item.StatValues[2] != 0)) || (row.StatType[3] != (sbyte)item.StatTypes[3] && (row.StatModifierBonusAmount[3] != 0 || item.StatValues[3] != 0)) || (row.StatType[4] != (sbyte)item.StatTypes[4] && (row.StatModifierBonusAmount[4] != 0 || item.StatValues[4] != 0)) || (row.StatType[5] != (sbyte)item.StatTypes[5] && (row.StatModifierBonusAmount[5] != 0 || item.StatValues[5] != 0)) || (row.StatType[6] != (sbyte)item.StatTypes[6] && (row.StatModifierBonusAmount[6] != 0 || item.StatValues[6] != 0)) || (row.StatType[7] != (sbyte)item.StatTypes[7] && (row.StatModifierBonusAmount[7] != 0 || item.StatValues[7] != 0)) || (row.StatType[8] != (sbyte)item.StatTypes[8] && (row.StatModifierBonusAmount[8] != 0 || item.StatValues[8] != 0)) || (row.StatType[9] != (sbyte)item.StatTypes[9] && (row.StatModifierBonusAmount[9] != 0 || item.StatValues[9] != 0)) || row.ContainerSlots != (byte)item.ContainerSlots || row.RequiredReputationRank != (byte)item.RequiredRepValue || row.RequiredCityRank != (byte)item.RequiredCityRank || row.RequiredHonorRank != (byte)item.RequiredHonorRank || row.InventoryType != (byte)item.InventoryType || row.OverallQualityId != (byte)item.Quality || row.AmmoType != (byte)item.AmmoType || row.StatModifierBonusAmount[0] != (sbyte)item.StatValues[0] || row.StatModifierBonusAmount[1] != (sbyte)item.StatValues[1] || row.StatModifierBonusAmount[2] != (sbyte)item.StatValues[2] || row.StatModifierBonusAmount[3] != (sbyte)item.StatValues[3] || row.StatModifierBonusAmount[4] != (sbyte)item.StatValues[4] || row.StatModifierBonusAmount[5] != (sbyte)item.StatValues[5] || row.StatModifierBonusAmount[6] != (sbyte)item.StatValues[6] || row.StatModifierBonusAmount[7] != (sbyte)item.StatValues[7] || row.StatModifierBonusAmount[8] != (sbyte)item.StatValues[8] || row.StatModifierBonusAmount[9] != (sbyte)item.StatValues[9] || row.RequiredLevel != (sbyte)item.RequiredLevel)
 			{
-				Log.Print(LogType.Storage, $"ItemSparse #{item.Entry} needs to be updated.", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+				Log.Print(LogType.Storage, $"ItemSparse #{item.Entry} needs to be updated.", "GameData.cs");
 				if (!row.Description.Equals(item.Description))
 				{
-					Log.Print(LogType.Storage, $"Description \"{row.Description}\" vs \"{item.Description}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Description \"{row.Description}\" vs \"{item.Description}\"", "GameData.cs");
 				}
 				if (!row.Name4.Equals(item.Name[3]))
 				{
-					Log.Print(LogType.Storage, $"Name4 \"{row.Name4}\" vs \"{item.Name[3]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Name4 \"{row.Name4}\" vs \"{item.Name[3]}\"", "GameData.cs");
 				}
 				if (!row.Name3.Equals(item.Name[2]))
 				{
-					Log.Print(LogType.Storage, $"Name3 \"{row.Name3}\" vs \"{item.Name[2]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Name3 \"{row.Name3}\" vs \"{item.Name[2]}\"", "GameData.cs");
 				}
 				if (!row.Name2.Equals(item.Name[1]))
 				{
-					Log.Print(LogType.Storage, $"Name2 \"{row.Name2}\" vs \"{item.Name[1]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Name2 \"{row.Name2}\" vs \"{item.Name[1]}\"", "GameData.cs");
 				}
 				if (!row.Name1.Equals(item.Name[0]))
 				{
-					Log.Print(LogType.Storage, $"Name1 \"{row.Name1}\" vs \"{item.Name[0]}\"", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Name1 \"{row.Name1}\" vs \"{item.Name[0]}\"", "GameData.cs");
 				}
 				if (row.DurationInInventory != item.Duration)
 				{
-					Log.Print(LogType.Storage, $"DurationInInventory {row.DurationInInventory} vs {item.Duration}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"DurationInInventory {row.DurationInInventory} vs {item.Duration}", "GameData.cs");
 				}
 				if (row.BagFamily != item.BagFamily)
 				{
-					Log.Print(LogType.Storage, $"BagFamily {row.BagFamily} vs {item.BagFamily}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"BagFamily {row.BagFamily} vs {item.BagFamily}", "GameData.cs");
 				}
 				if (row.RangeMod != item.RangedMod)
 				{
-					Log.Print(LogType.Storage, $"RangeMod {row.RangeMod} vs {item.RangedMod}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RangeMod {row.RangeMod} vs {item.RangedMod}", "GameData.cs");
 				}
 				if (row.RequiredAbility != item.RequiredSpell)
 				{
-					Log.Print(LogType.Storage, $"RequiredAbility {row.RequiredAbility} vs {item.RequiredSpell}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredAbility {row.RequiredAbility} vs {item.RequiredSpell}", "GameData.cs");
 				}
 				if (row.SellPrice != item.SellPrice)
 				{
-					Log.Print(LogType.Storage, $"SellPrice {row.SellPrice} vs {item.SellPrice}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"SellPrice {row.SellPrice} vs {item.SellPrice}", "GameData.cs");
 				}
 				if (row.BuyPrice != item.BuyPrice)
 				{
-					Log.Print(LogType.Storage, $"BuyPrice {row.BuyPrice} vs {item.BuyPrice}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"BuyPrice {row.BuyPrice} vs {item.BuyPrice}", "GameData.cs");
 				}
 				if (row.MaxDurability != item.MaxDurability)
 				{
-					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"MaxDurability {row.MaxDurability} vs {item.MaxDurability}", "GameData.cs");
 				}
 				if (row.RequiredHoliday != (ushort)item.HolidayID)
 				{
-					Log.Print(LogType.Storage, $"RequiredHoliday {row.RequiredHoliday} vs {item.HolidayID}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredHoliday {row.RequiredHoliday} vs {item.HolidayID}", "GameData.cs");
 				}
 				if (row.LimitCategory != (ushort)item.ItemLimitCategory)
 				{
-					Log.Print(LogType.Storage, $"LimitCategory {row.LimitCategory} vs {item.ItemLimitCategory}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"LimitCategory {row.LimitCategory} vs {item.ItemLimitCategory}", "GameData.cs");
 				}
 				if (row.GemProperties != (ushort)item.GemProperties)
 				{
-					Log.Print(LogType.Storage, $"GemProperties {row.GemProperties} vs {item.GemProperties}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"GemProperties {row.GemProperties} vs {item.GemProperties}", "GameData.cs");
 				}
 				if (row.SocketMatchEnchantmentId != (ushort)item.SocketBonus)
 				{
-					Log.Print(LogType.Storage, $"SocketMatchEnchantmentId {row.SocketMatchEnchantmentId} vs {item.SocketBonus}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"SocketMatchEnchantmentId {row.SocketMatchEnchantmentId} vs {item.SocketBonus}", "GameData.cs");
 				}
 				if (row.TotemCategoryId != (ushort)item.TotemCategory)
 				{
-					Log.Print(LogType.Storage, $"TotemCategoryId {row.TotemCategoryId} vs {item.TotemCategory}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"TotemCategoryId {row.TotemCategoryId} vs {item.TotemCategory}", "GameData.cs");
 				}
 				if (row.InstanceBound != (ushort)item.MapID)
 				{
-					Log.Print(LogType.Storage, $"InstanceBound {row.InstanceBound} vs {item.MapID}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"InstanceBound {row.InstanceBound} vs {item.MapID}", "GameData.cs");
 				}
 				if (row.ZoneBound[0] != (ushort)item.AreaID)
 				{
-					Log.Print(LogType.Storage, $"ZoneBound[0] {row.ZoneBound[0]} vs {item.AreaID}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ZoneBound[0] {row.ZoneBound[0]} vs {item.AreaID}", "GameData.cs");
 				}
 				if (row.ItemSet != (ushort)item.ItemSet)
 				{
-					Log.Print(LogType.Storage, $"ItemSet {row.ItemSet} vs {item.ItemSet}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ItemSet {row.ItemSet} vs {item.ItemSet}", "GameData.cs");
 				}
 				if (row.LockId != (ushort)item.LockId)
 				{
-					Log.Print(LogType.Storage, $"LockId {row.LockId} vs {item.LockId}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"LockId {row.LockId} vs {item.LockId}", "GameData.cs");
 				}
 				if (row.StartQuestId != (ushort)item.StartQuestId)
 				{
-					Log.Print(LogType.Storage, $"StartQuestId {row.StartQuestId} vs {item.StartQuestId}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"StartQuestId {row.StartQuestId} vs {item.StartQuestId}", "GameData.cs");
 				}
 				if (row.PageText != (ushort)item.PageText)
 				{
-					Log.Print(LogType.Storage, $"PageText {row.PageText} vs {item.PageText}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"PageText {row.PageText} vs {item.PageText}", "GameData.cs");
 				}
 				if (row.Delay != (ushort)item.Delay)
 				{
-					Log.Print(LogType.Storage, $"Delay {row.Delay} vs {item.Delay}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Delay {row.Delay} vs {item.Delay}", "GameData.cs");
 				}
 				if (row.RequiredReputationId != (ushort)item.RequiredRepFaction)
 				{
-					Log.Print(LogType.Storage, $"RequiredReputationId {row.RequiredReputationId} vs {item.RequiredRepFaction}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredReputationId {row.RequiredReputationId} vs {item.RequiredRepFaction}", "GameData.cs");
 				}
 				if (row.RequiredSkillRank != (ushort)item.RequiredSkillLevel)
 				{
-					Log.Print(LogType.Storage, $"RequiredSkillRank {row.RequiredSkillRank} vs {item.RequiredSkillLevel}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredSkillRank {row.RequiredSkillRank} vs {item.RequiredSkillLevel}", "GameData.cs");
 				}
 				if (row.RequiredSkill != (ushort)item.RequiredSkillId)
 				{
-					Log.Print(LogType.Storage, $"RequiredSkill {row.RequiredSkill} vs {item.RequiredSkillId}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredSkill {row.RequiredSkill} vs {item.RequiredSkillId}", "GameData.cs");
 				}
 				if (row.ItemLevel != (ushort)item.ItemLevel)
 				{
-					Log.Print(LogType.Storage, $"ItemLevel {row.ItemLevel} vs {item.ItemLevel}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ItemLevel {row.ItemLevel} vs {item.ItemLevel}", "GameData.cs");
 				}
 				if (row.ItemRandomSuffixGroupId != (ushort)item.RandomSuffix)
 				{
-					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ItemRandomSuffixGroupId {row.ItemRandomSuffixGroupId} vs {item.RandomSuffix}", "GameData.cs");
 				}
 				if (row.RandomProperty != (ushort)item.RandomProperty)
 				{
-					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RandomProperty {row.RandomProperty} vs {item.RandomProperty}", "GameData.cs");
 				}
 				if (row.Resistances[1] != (short)item.HolyResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[1] {row.Resistances[1]} vs {item.HolyResistance}", "GameData.cs");
 				}
 				if (row.Resistances[2] != (short)item.FireResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[2] {row.Resistances[2]} vs {item.FireResistance}", "GameData.cs");
 				}
 				if (row.Resistances[3] != (short)item.NatureResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[3]  {row.Resistances[3]} vs {item.NatureResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[3]  {row.Resistances[3]} vs {item.NatureResistance}", "GameData.cs");
 				}
 				if (row.Resistances[4] != (short)item.FrostResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[4] {row.Resistances[4]} vs {item.FrostResistance}", "GameData.cs");
 				}
 				if (row.Resistances[5] != (short)item.ShadowResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[5] {row.Resistances[5]} vs {item.ShadowResistance}", "GameData.cs");
 				}
 				if (row.Resistances[6] != (short)item.ArcaneResistance)
 				{
-					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Resistances[6] {row.Resistances[6]} vs {item.ArcaneResistance}", "GameData.cs");
 				}
 				if (row.ScalingStatDistributionId != (ushort)item.ScalingStatDistribution)
 				{
-					Log.Print(LogType.Storage, $"ScalingStatDistributionId {row.ScalingStatDistributionId} vs {item.ScalingStatDistribution}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ScalingStatDistributionId {row.ScalingStatDistributionId} vs {item.ScalingStatDistribution}", "GameData.cs");
 				}
 				for (int i = 0; i < 3; i++)
 				{
 					if (row.SocketType[i] != ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[i]))
 					{
-						Log.Print(LogType.Storage, $"SocketType[{i}] {row.SocketType[i]} vs {ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[i])}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"SocketType[{i}] {row.SocketType[i]} vs {ModernVersion.ConvertSocketColor((byte)item.ItemSocketColors[i])}", "GameData.cs");
 					}
 				}
 				if (row.SheatheType != (byte)item.SheathType)
 				{
-					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"SheatheType {row.SheatheType} vs {item.SheathType}", "GameData.cs");
 				}
 				if (row.Material != (byte)item.Material)
 				{
-					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Material {row.Material} vs {item.Material}", "GameData.cs");
 				}
 				if (row.PageMaterial != (byte)item.PageMaterial)
 				{
-					Log.Print(LogType.Storage, $"PageMaterial {row.PageMaterial} vs {item.PageMaterial}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"PageMaterial {row.PageMaterial} vs {item.PageMaterial}", "GameData.cs");
 				}
 				if (row.PageLanguage != (byte)item.Language)
 				{
-					Log.Print(LogType.Storage, $"PageLanguage {row.PageLanguage} vs {item.Language}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"PageLanguage {row.PageLanguage} vs {item.Language}", "GameData.cs");
 				}
 				if (row.Bonding != (byte)item.Bonding)
 				{
-					Log.Print(LogType.Storage, $"Bonding {row.Bonding} vs {item.Bonding}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"Bonding {row.Bonding} vs {item.Bonding}", "GameData.cs");
 				}
 				if (row.DamageType != (byte)item.DamageTypes[0])
 				{
-					Log.Print(LogType.Storage, $"DamageType {row.DamageType} vs {item.DamageTypes[0]}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"DamageType {row.DamageType} vs {item.DamageTypes[0]}", "GameData.cs");
 				}
 				for (int j = 0; j < 10; j++)
 				{
 					if (row.StatType[j] != (sbyte)item.StatTypes[j] && (row.StatModifierBonusAmount[j] != 0 || item.StatValues[j] != 0))
 					{
-						Log.Print(LogType.Storage, $"StatType[{j}] {row.StatType[j]} vs {item.StatTypes[j]}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"StatType[{j}] {row.StatType[j]} vs {item.StatTypes[j]}", "GameData.cs");
 					}
 				}
 				if (row.ContainerSlots != (byte)item.ContainerSlots)
 				{
-					Log.Print(LogType.Storage, $"ContainerSlots {row.ContainerSlots} vs {item.ContainerSlots}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ContainerSlots {row.ContainerSlots} vs {item.ContainerSlots}", "GameData.cs");
 				}
 				if (row.RequiredReputationRank != (byte)item.RequiredRepValue)
 				{
-					Log.Print(LogType.Storage, $"RequiredReputationRank {row.RequiredReputationRank} vs {item.RequiredRepValue}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredReputationRank {row.RequiredReputationRank} vs {item.RequiredRepValue}", "GameData.cs");
 				}
 				if (row.RequiredCityRank != (byte)item.RequiredCityRank)
 				{
-					Log.Print(LogType.Storage, $"RequiredCityRank {row.RequiredCityRank} vs {item.RequiredCityRank}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredCityRank {row.RequiredCityRank} vs {item.RequiredCityRank}", "GameData.cs");
 				}
 				if (row.RequiredHonorRank != (byte)item.RequiredHonorRank)
 				{
-					Log.Print(LogType.Storage, $"RequiredHonorRank {row.RequiredHonorRank} vs {item.RequiredHonorRank}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredHonorRank {row.RequiredHonorRank} vs {item.RequiredHonorRank}", "GameData.cs");
 				}
 				if (row.InventoryType != (byte)item.InventoryType)
 				{
-					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"InventoryType {row.InventoryType} vs {item.InventoryType}", "GameData.cs");
 				}
 				if (row.OverallQualityId != (byte)item.Quality)
 				{
-					Log.Print(LogType.Storage, $"OverallQualityId {row.OverallQualityId} vs {item.Quality}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"OverallQualityId {row.OverallQualityId} vs {item.Quality}", "GameData.cs");
 				}
 				if (row.AmmoType != (byte)item.AmmoType)
 				{
-					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"AmmoType {row.AmmoType} vs {item.AmmoType}", "GameData.cs");
 				}
 				for (int k = 0; k < 10; k++)
 				{
 					if (row.StatModifierBonusAmount[0] != (sbyte)item.StatValues[0])
 					{
-						Log.Print(LogType.Storage, $"StatValue[{k}] {row.StatModifierBonusAmount[k]} vs {item.StatValues[k]}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"StatValue[{k}] {row.StatModifierBonusAmount[k]} vs {item.StatValues[k]}", "GameData.cs");
 					}
 				}
 				if (row.RequiredLevel != (sbyte)item.RequiredLevel)
 				{
-					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GenerateItemSparseUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"RequiredLevel {row.RequiredLevel} vs {item.RequiredLevel}", "GameData.cs");
 				}
-				GameData.UpdateItemSparseRecord(row, item);
-				GameData.UpdateHotfix(row);
+				UpdateItemSparseRecord(row, item);
+				UpdateHotfix(row);
 				return null;
 			}
 			return null;
 		}
-		row = GameData.AddItemSparseRecord(item);
+		row = AddItemSparseRecord(item);
 		if (row == null)
 		{
 			return null;
 		}
-		GameData.UpdateHotfix(row);
-		return GameData.GenerateHotFixMessage(row);
+		UpdateHotfix(row);
+		return GenerateHotFixMessage(row);
 	}
 
 	public static HotFixMessage? GenerateItemEffectUpdateIfNeeded(ItemTemplate item, byte slot)
 	{
-		ItemEffect effect = GameData.GetItemEffectByItemId(item.Entry, slot);
+		ItemEffect effect = GetItemEffectByItemId(item.Entry, slot);
 		if (effect != null)
 		{
 			bool wrongCategory = false;
@@ -3354,7 +3354,7 @@ public static class GameData
 			bool wrongCatCooldown = false;
 			if (item.TriggeredSpellIds[slot] > 0)
 			{
-				GameData.ItemSpellsDataStore.TryGetValue((uint)item.TriggeredSpellIds[slot], out var data);
+				ItemSpellsDataStore.TryGetValue((uint)item.TriggeredSpellIds[slot], out var data);
 				if (data != null)
 				{
 					if (effect.SpellCategoryID != item.TriggeredSpellCategories[slot])
@@ -3375,30 +3375,30 @@ public static class GameData
 			{
 				if (item.TriggeredSpellIds[slot] > 0)
 				{
-					Log.Print(LogType.Storage, $"ItemEffect for item #{item.Entry} slot #{slot} needs to be updated.", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ItemEffect for item #{item.Entry} slot #{slot} needs to be updated.", "GameData.cs");
 					if (effect.TriggerType != item.TriggeredSpellTypes[slot])
 					{
-						Log.Print(LogType.Storage, $"TriggerType {effect.TriggerType} vs {item.TriggeredSpellTypes[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"TriggerType {effect.TriggerType} vs {item.TriggeredSpellTypes[slot]}", "GameData.cs");
 					}
 					if (effect.Charges != item.TriggeredSpellCharges[slot])
 					{
-						Log.Print(LogType.Storage, $"Charges {effect.Charges} vs {item.TriggeredSpellCharges[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"Charges {effect.Charges} vs {item.TriggeredSpellCharges[slot]}", "GameData.cs");
 					}
 					if (wrongCooldown)
 					{
-						Log.Print(LogType.Storage, $"CoolDownMSec {effect.CoolDownMSec} vs {item.TriggeredSpellCooldowns[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"CoolDownMSec {effect.CoolDownMSec} vs {item.TriggeredSpellCooldowns[slot]}", "GameData.cs");
 					}
 					if (wrongCatCooldown)
 					{
-						Log.Print(LogType.Storage, $"CategoryCoolDownMSec {effect.CategoryCoolDownMSec} vs {item.TriggeredSpellCategoryCooldowns[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"CategoryCoolDownMSec {effect.CategoryCoolDownMSec} vs {item.TriggeredSpellCategoryCooldowns[slot]}", "GameData.cs");
 					}
 					if (wrongCategory)
 					{
-						Log.Print(LogType.Storage, $"SpellCategoryId {effect.SpellCategoryID} vs {item.TriggeredSpellCategories[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"SpellCategoryId {effect.SpellCategoryID} vs {item.TriggeredSpellCategories[slot]}", "GameData.cs");
 					}
 					if (effect.SpellID != item.TriggeredSpellIds[slot])
 					{
-						Log.Print(LogType.Storage, $"SpellId {effect.SpellID} vs {item.TriggeredSpellIds[slot]}", "GenerateItemEffectUpdateIfNeeded", "GameData.cs");
+						Log.Print(LogType.Storage, $"SpellId {effect.SpellID} vs {item.TriggeredSpellIds[slot]}", "GameData.cs");
 					}
 					effect.TriggerType = (sbyte)item.TriggeredSpellTypes[slot];
 					effect.Charges = (short)item.TriggeredSpellCharges[slot];
@@ -3406,74 +3406,74 @@ public static class GameData
 					effect.CategoryCoolDownMSec = (wrongCatCooldown ? item.TriggeredSpellCategoryCooldowns[slot] : (-1));
 					effect.SpellCategoryID = (ushort)(wrongCategory ? ((ushort)item.TriggeredSpellCategories[slot]) : 0);
 					effect.SpellID = item.TriggeredSpellIds[slot];
-					GameData.UpdateItemEffectRecord(effect, item);
-					GameData.UpdateHotfix(effect);
-					return GameData.GenerateHotFixMessage(effect);
+					UpdateItemEffectRecord(effect, item);
+					UpdateHotfix(effect);
+					return GenerateHotFixMessage(effect);
 				}
-				GameData.RemoveItemEffectRecord(effect);
-				GameData.UpdateHotfix(effect, remove: true);
-				return GameData.GenerateHotFixMessage(effect, remove: true);
+				RemoveItemEffectRecord(effect);
+				UpdateHotfix(effect, remove: true);
+				return GenerateHotFixMessage(effect, remove: true);
 			}
 		}
 		else if (item.TriggeredSpellIds[slot] > 0)
 		{
-			effect = GameData.AddItemEffectRecord(item, slot);
+			effect = AddItemEffectRecord(item, slot);
 			if (effect == null)
 			{
 				return null;
 			}
-			GameData.UpdateHotfix(effect);
-			return GameData.GenerateHotFixMessage(effect);
+			UpdateHotfix(effect);
+			return GenerateHotFixMessage(effect);
 		}
 		return null;
 	}
 
 	public static HotFixMessage? GenerateItemAppearanceUpdateIfNeeded(ItemTemplate item)
 	{
-		ItemAppearance appearance = GameData.GetItemAppearanceByDisplayId(item.DisplayID);
+		ItemAppearance appearance = GetItemAppearanceByDisplayId(item.DisplayID);
 		if (appearance == null)
 		{
-			appearance = GameData.AddItemAppearanceRecord(item);
+			appearance = AddItemAppearanceRecord(item);
 			if (appearance == null)
 			{
 				return null;
 			}
-			GameData.UpdateHotfix(appearance);
-			return GameData.GenerateHotFixMessage(appearance);
+			UpdateHotfix(appearance);
+			return GenerateHotFixMessage(appearance);
 		}
 		return null;
 	}
 
 	public static HotFixMessage? GenerateItemModifiedAppearanceUpdateIfNeeded(ItemTemplate item)
 	{
-		ItemModifiedAppearance modAppearance = GameData.GetItemModifiedAppearanceByItemId(item.Entry);
+		ItemModifiedAppearance modAppearance = GetItemModifiedAppearanceByItemId(item.Entry);
 		if (modAppearance != null)
 		{
-			GameData.ItemAppearanceStore.TryGetValue((uint)modAppearance.ItemAppearanceID, out var appearance);
+			ItemAppearanceStore.TryGetValue((uint)modAppearance.ItemAppearanceID, out var appearance);
 			if (appearance == null || appearance.ItemDisplayInfoID != item.DisplayID)
 			{
-				Log.Print(LogType.Storage, $"ItemModifiedAppearance #{modAppearance.Id} for item #{item.Entry} needs to be updated.", "GenerateItemModifiedAppearanceUpdateIfNeeded", "GameData.cs");
+				Log.Print(LogType.Storage, $"ItemModifiedAppearance #{modAppearance.Id} for item #{item.Entry} needs to be updated.", "GameData.cs");
 				if (appearance == null)
 				{
-					Log.Print(LogType.Storage, $"ItemAppearance #{modAppearance.ItemAppearanceID} missing.", "GenerateItemModifiedAppearanceUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"ItemAppearance #{modAppearance.ItemAppearanceID} missing.", "GameData.cs");
 				}
 				else if (appearance.ItemDisplayInfoID != item.DisplayID)
 				{
-					Log.Print(LogType.Storage, $"DisplayID {appearance.ItemDisplayInfoID} vs {item.DisplayID}", "GenerateItemModifiedAppearanceUpdateIfNeeded", "GameData.cs");
+					Log.Print(LogType.Storage, $"DisplayID {appearance.ItemDisplayInfoID} vs {item.DisplayID}", "GameData.cs");
 				}
-				GameData.UpdateItemModifiedAppearanceRecord(modAppearance, item);
-				GameData.UpdateHotfix(modAppearance);
-				return GameData.GenerateHotFixMessage(modAppearance);
+				UpdateItemModifiedAppearanceRecord(modAppearance, item);
+				UpdateHotfix(modAppearance);
+				return GenerateHotFixMessage(modAppearance);
 			}
 			return null;
 		}
-		modAppearance = GameData.AddItemModifiedAppearanceRecord(item);
+		modAppearance = AddItemModifiedAppearanceRecord(item);
 		if (modAppearance == null)
 		{
 			return null;
 		}
-		GameData.UpdateHotfix(modAppearance);
-		return GameData.GenerateHotFixMessage(modAppearance);
+		UpdateHotfix(modAppearance);
+		return GenerateHotFixMessage(modAppearance);
 	}
 
 	public static HotFixMessage? GenerateHotFixMessage(object obj, bool remove = false)
@@ -3481,38 +3481,38 @@ public static class GameData
 		HotFixMessage reply = new HotFixMessage();
 		if (obj == null)
 		{
-			Log.Print(LogType.Error, "DBReply for NULL object requested!", "GenerateHotFixMessage", "GameData.cs");
+			Log.Print(LogType.Error, "DBReply for NULL object requested!", "GameData.cs");
 			return null;
 		}
 		Type type = obj.GetType();
 		if (obj is ItemRecord)
 		{
-			List<HotfixRecord> records = GameData.FindHotfixesByRecordIdAndTable((uint)((ItemRecord)obj).Id, DB2Hash.Item);
+			List<HotfixRecord> records = FindHotfixesByRecordIdAndTable((uint)((ItemRecord)obj).Id, DB2Hash.Item);
 			reply.Hotfixes.AddRange(records);
 		}
 		else if (obj is ItemSparseRecord)
 		{
-			List<HotfixRecord> records2 = GameData.FindHotfixesByRecordIdAndTable((uint)((ItemSparseRecord)obj).Id, DB2Hash.ItemSparse);
+			List<HotfixRecord> records2 = FindHotfixesByRecordIdAndTable((uint)((ItemSparseRecord)obj).Id, DB2Hash.ItemSparse);
 			reply.Hotfixes.AddRange(records2);
 		}
 		else if (obj is ItemEffect)
 		{
-			List<HotfixRecord> records3 = GameData.FindHotfixesByRecordIdAndTable((uint)((ItemEffect)obj).Id, DB2Hash.ItemEffect);
+			List<HotfixRecord> records3 = FindHotfixesByRecordIdAndTable((uint)((ItemEffect)obj).Id, DB2Hash.ItemEffect);
 			reply.Hotfixes.AddRange(records3);
 		}
 		else if (obj is ItemAppearance)
 		{
-			List<HotfixRecord> records4 = GameData.FindHotfixesByRecordIdAndTable((uint)((ItemAppearance)obj).Id, DB2Hash.ItemAppearance);
+			List<HotfixRecord> records4 = FindHotfixesByRecordIdAndTable((uint)((ItemAppearance)obj).Id, DB2Hash.ItemAppearance);
 			reply.Hotfixes.AddRange(records4);
 		}
 		else
 		{
 			if (!(obj is ItemModifiedAppearance))
 			{
-				Log.Print(LogType.Error, $"Unsupported DBReply requested! ({type})", "GenerateHotFixMessage", "GameData.cs");
+				Log.Print(LogType.Error, $"Unsupported DBReply requested! ({type})", "GameData.cs");
 				return null;
 			}
-			List<HotfixRecord> records5 = GameData.FindHotfixesByRecordIdAndTable((uint)((ItemModifiedAppearance)obj).Id, DB2Hash.ItemModifiedAppearance);
+			List<HotfixRecord> records5 = FindHotfixesByRecordIdAndTable((uint)((ItemModifiedAppearance)obj).Id, DB2Hash.ItemModifiedAppearance);
 			reply.Hotfixes.AddRange(records5);
 		}
 		return reply;
@@ -3522,9 +3522,9 @@ public static class GameData
 	{
 		ItemRecord record = new ItemRecord();
 		record.Id = (int)item.Entry;
-		GameData.UpdateItemRecord(record, item);
-		GameData.ItemRecordsStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"Item #{record.Id} created.", "AddItemRecord", "GameData.cs");
+		UpdateItemRecord(record, item);
+		ItemRecordsStore.Add((uint)record.Id, record);
+		Log.Print(LogType.Storage, $"Item #{record.Id} created.", "GameData.cs");
 		return record;
 	}
 
@@ -3540,7 +3540,7 @@ public static class GameData
 		row.ItemRandomSuffixGroupId = (ushort)item.RandomSuffix;
 		row.SoundOverrideSubclassId = -1;
 		row.ScalingStatDistributionId = 0;
-		row.IconFileDataId = (int)GameData.GetItemIconFileDataIdByDisplayId(item.DisplayID);
+		row.IconFileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
 		row.ItemGroupSoundsId = 0;
 		row.ContentTuningId = 0;
 		row.MaxDurability = item.MaxDurability;
@@ -3567,9 +3567,9 @@ public static class GameData
 		row.MaxDamage[2] = (ushort)item.DamageMaxs[2];
 		row.MaxDamage[3] = (ushort)item.DamageMaxs[3];
 		row.MaxDamage[4] = (ushort)item.DamageMaxs[4];
-		if (GameData.ItemRecordsStore.ContainsKey(item.Entry))
+		if (ItemRecordsStore.ContainsKey(item.Entry))
 		{
-			GameData.ItemRecordsStore[item.Entry] = row;
+			ItemRecordsStore[item.Entry] = row;
 		}
 	}
 
@@ -3577,9 +3577,9 @@ public static class GameData
 	{
 		ItemSparseRecord record = new ItemSparseRecord();
 		record.Id = (int)item.Entry;
-		GameData.UpdateItemSparseRecord(record, item);
-		GameData.ItemSparseRecordsStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemSparse #{record.Id} created.", "AddItemSparseRecord", "GameData.cs");
+		UpdateItemSparseRecord(record, item);
+		ItemSparseRecordsStore.Add((uint)record.Id, record);
+		Log.Print(LogType.Storage, $"ItemSparse #{record.Id} created.", "GameData.cs");
 		return record;
 	}
 
@@ -3670,20 +3670,20 @@ public static class GameData
 		for (int i = 0; i < item.StatsCount && i < 10; i++)
 			row.StatModifierBonusAmount[i] = (short)Math.Clamp(item.StatValues[i], short.MinValue, short.MaxValue);
 		row.RequiredLevel = (sbyte)item.RequiredLevel;
-		if (GameData.ItemSparseRecordsStore.ContainsKey(item.Entry))
+		if (ItemSparseRecordsStore.ContainsKey(item.Entry))
 		{
-			GameData.ItemSparseRecordsStore[item.Entry] = row;
+			ItemSparseRecordsStore[item.Entry] = row;
 		}
 	}
 
 	public static ItemEffect AddItemEffectRecord(ItemTemplate item, byte slot)
 	{
 		ItemEffect record = new ItemEffect();
-		record.Id = (int)GameData.GetFirstFreeId(GameData.ItemEffectStore);
+		record.Id = (int)GetFirstFreeId(ItemEffectStore);
 		record.LegacySlotIndex = slot;
-		GameData.UpdateItemEffectRecord(record, item);
-		GameData.ItemEffectStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemEffect #{record.Id} created for item #{item.Entry} slot #{slot}.", "AddItemEffectRecord", "GameData.cs");
+		UpdateItemEffectRecord(record, item);
+		ItemEffectStore.Add((uint)record.Id, record);
+		Log.Print(LogType.Storage, $"ItemEffect #{record.Id} created for item #{item.Entry} slot #{slot}.", "GameData.cs");
 		return record;
 	}
 
@@ -3698,62 +3698,62 @@ public static class GameData
 		effect.SpellID = item.TriggeredSpellIds[i];
 		effect.ChrSpecializationID = 0;
 		effect.ParentItemID = (int)item.Entry;
-		if (GameData.ItemEffectStore.ContainsKey((uint)effect.Id))
+		if (ItemEffectStore.ContainsKey((uint)effect.Id))
 		{
-			GameData.ItemEffectStore[(uint)effect.Id] = effect;
+			ItemEffectStore[(uint)effect.Id] = effect;
 		}
 	}
 
 	public static void RemoveItemEffectRecord(ItemEffect effect)
 	{
-		GameData.ItemEffectStore.Remove((uint)effect.Id);
-		Log.Print(LogType.Storage, $"ItemEffect #{effect.Id} removed for item #{effect.ParentItemID} slot #{effect.LegacySlotIndex}.", "RemoveItemEffectRecord", "GameData.cs");
+		ItemEffectStore.Remove((uint)effect.Id);
+		Log.Print(LogType.Storage, $"ItemEffect #{effect.Id} removed for item #{effect.ParentItemID} slot #{effect.LegacySlotIndex}.", "GameData.cs");
 	}
 
 	public static ItemAppearance AddItemAppearanceRecord(ItemTemplate item)
 	{
 		ItemAppearance record = new ItemAppearance();
-		record.Id = (int)GameData.GetFirstFreeId(GameData.ItemAppearanceStore);
-		GameData.UpdateItemAppearanceRecord(record, item);
-		GameData.ItemAppearanceStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemAppearance #{record.Id} created for DisplayID #{item.DisplayID}.", "AddItemAppearanceRecord", "GameData.cs");
+		record.Id = (int)GetFirstFreeId(ItemAppearanceStore);
+		UpdateItemAppearanceRecord(record, item);
+		ItemAppearanceStore.Add((uint)record.Id, record);
+		Log.Print(LogType.Storage, $"ItemAppearance #{record.Id} created for DisplayID #{item.DisplayID}.", "GameData.cs");
 		return record;
 	}
 
 	public static void UpdateItemAppearanceRecord(ItemAppearance appearance, ItemTemplate item)
 	{
-		int fileDataId = (int)GameData.GetItemIconFileDataIdByDisplayId(item.DisplayID);
+		int fileDataId = (int)GetItemIconFileDataIdByDisplayId(item.DisplayID);
 		appearance.DisplayType = 11;
 		appearance.ItemDisplayInfoID = (int)item.DisplayID;
 		appearance.DefaultIconFileDataID = fileDataId;
 		appearance.UiOrder = 0;
-		if (GameData.ItemAppearanceStore.ContainsKey((uint)appearance.Id))
+		if (ItemAppearanceStore.ContainsKey((uint)appearance.Id))
 		{
-			GameData.ItemAppearanceStore[(uint)appearance.Id] = appearance;
+			ItemAppearanceStore[(uint)appearance.Id] = appearance;
 		}
 	}
 
 	public static ItemModifiedAppearance AddItemModifiedAppearanceRecord(ItemTemplate item)
 	{
 		ItemModifiedAppearance record = new ItemModifiedAppearance();
-		record.Id = (int)GameData.GetFirstFreeId(GameData.ItemModifiedAppearanceStore);
-		GameData.UpdateItemModifiedAppearanceRecord(record, item);
+		record.Id = (int)GetFirstFreeId(ItemModifiedAppearanceStore);
+		UpdateItemModifiedAppearanceRecord(record, item);
 		if (record.ItemID != item.Entry)
 		{
-			Log.Print(LogType.Error, $"ItemModifiedAppearance #{record.Id} create failed for item #{record.ItemID}.", "AddItemModifiedAppearanceRecord", "GameData.cs");
+			Log.Print(LogType.Error, $"ItemModifiedAppearance #{record.Id} create failed for item #{record.ItemID}.", "GameData.cs");
 			return null;
 		}
-		GameData.ItemModifiedAppearanceStore.Add((uint)record.Id, record);
-		Log.Print(LogType.Storage, $"ItemModifiedAppearance #{record.Id} created for item #{record.ItemID}.", "AddItemModifiedAppearanceRecord", "GameData.cs");
+		ItemModifiedAppearanceStore.Add((uint)record.Id, record);
+		Log.Print(LogType.Storage, $"ItemModifiedAppearance #{record.Id} created for item #{record.ItemID}.", "GameData.cs");
 		return record;
 	}
 
 	public static void UpdateItemModifiedAppearanceRecord(ItemModifiedAppearance modAppearance, ItemTemplate item)
 	{
-		ItemAppearance appearance = GameData.GetItemAppearanceByDisplayId(item.DisplayID);
+		ItemAppearance appearance = GetItemAppearanceByDisplayId(item.DisplayID);
 		if (appearance == null)
 		{
-			Log.Print(LogType.Error, $"ItemModifiedAppearance #{modAppearance.Id} update failed: no ItemAppearance for DisplayID #{item.DisplayID}", "UpdateItemModifiedAppearanceRecord", "GameData.cs");
+			Log.Print(LogType.Error, $"ItemModifiedAppearance #{modAppearance.Id} update failed: no ItemAppearance for DisplayID #{item.DisplayID}", "GameData.cs");
 			return;
 		}
 		modAppearance.ItemID = (int)item.Entry;
@@ -3761,9 +3761,9 @@ public static class GameData
 		modAppearance.ItemAppearanceID = appearance.Id;
 		modAppearance.OrderIndex = 0;
 		modAppearance.TransmogSourceTypeEnum = 0;
-		if (GameData.ItemModifiedAppearanceStore.ContainsKey((uint)modAppearance.Id))
+		if (ItemModifiedAppearanceStore.ContainsKey((uint)modAppearance.Id))
 		{
-			GameData.ItemModifiedAppearanceStore[(uint)modAppearance.Id] = modAppearance;
+			ItemModifiedAppearanceStore[(uint)modAppearance.Id] = modAppearance;
 		}
 	}
 
@@ -3857,7 +3857,7 @@ public static class GameData
 			record.HotfixContent.WriteInt32(textureVariationFileDataId1);
 			record.HotfixContent.WriteInt32(textureVariationFileDataId2);
 			record.HotfixContent.WriteInt32(textureVariationFileDataId3);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -3910,7 +3910,7 @@ public static class GameData
 			record.HotfixContent.WriteUInt8(customDisplayOption1);
 			record.HotfixContent.WriteUInt8(customDisplayOption2);
 			record.HotfixContent.WriteUInt8(customDisplayOption3);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -3940,7 +3940,7 @@ public static class GameData
 			record.HotfixContent.WriteInt32(chrCustomizationOptionId);
 			record.HotfixContent.WriteInt32(chrCustomizationChoiceId);
 			record.HotfixContent.WriteInt32(creatureDisplayInfoExtraId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -3982,7 +3982,7 @@ public static class GameData
 			record.HotfixContent.WriteInt32(spellId);
 			record.HotfixContent.WriteInt16(chrSpecializationId);
 			record.HotfixContent.WriteInt32(parentItemId);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 
@@ -4064,7 +4064,7 @@ public static class GameData
 			record.HotfixContent.WriteInt32(attachmentGeosetGroup6);
 			record.HotfixContent.WriteInt32(helmetGeosetVis1);
 			record.HotfixContent.WriteInt32(helmetGeosetVis2);
-			GameData.Hotfixes.Add(record.HotfixId, record);
+			Hotfixes.Add(record.HotfixId, record);
 		}
 	}
 }

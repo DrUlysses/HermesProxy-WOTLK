@@ -13,7 +13,7 @@ public class ArenaTeamRemove : ClientPacket
 
 	public override void Read()
 	{
-		this.TeamId = base._worldPacket.ReadUInt32();
-		this.PlayerGuid = base._worldPacket.ReadPackedGuid128();
+		TeamId = _worldPacket.ReadUInt32();
+		PlayerGuid = _worldPacket.ReadPackedGuid128();
 	}
 }

@@ -10,8 +10,8 @@ public class AuctionOwnerNotification
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.AuctionID);
-		data.WriteUInt64(this.BidAmount);
-		this.Item.Write(data);
+		data.WriteUInt32(AuctionID);
+		data.WriteUInt64(BidAmount);
+		Item.Write(data);
 	}
 }

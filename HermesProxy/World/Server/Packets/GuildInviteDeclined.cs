@@ -18,10 +18,10 @@ public class GuildInviteDeclined : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits(this.InviterName.GetByteCount(), 6);
-		base._worldPacket.WriteBit(this.AutoDecline);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteUInt32(this.InviterVirtualRealmAddress);
-		base._worldPacket.WriteString(this.InviterName);
+		_worldPacket.WriteBits(InviterName.GetByteCount(), 6);
+		_worldPacket.WriteBit(AutoDecline);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteUInt32(InviterVirtualRealmAddress);
+		_worldPacket.WriteString(InviterName);
 	}
 }

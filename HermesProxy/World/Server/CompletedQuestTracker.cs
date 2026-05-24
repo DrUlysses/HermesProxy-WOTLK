@@ -12,33 +12,33 @@ public class CompletedQuestTracker
 
 	public CompletedQuestTracker(GlobalSessionData globalSession)
 	{
-		this.Session = globalSession;
+		Session = globalSession;
 	}
 
 	public void MarkQuestAsNotCompleted(uint questQuestId)
 	{
-		this.Session.AccountMetaDataMgr.MarkQuestAsNotCompleted(this.Session.GameState.CurrentPlayerInfo.Realm.Name, this.Session.GameState.CurrentPlayerInfo.Name, questQuestId);
+		Session.AccountMetaDataMgr.MarkQuestAsNotCompleted(Session.GameState.CurrentPlayerInfo.Realm.Name, Session.GameState.CurrentPlayerInfo.Name, questQuestId);
 		uint? questBit = GameData.GetUniqueQuestBit(questQuestId);
 		if (questBit.HasValue)
 		{
-			this.SendSingleUpdateToClient(questBit.Value, isSet: false);
+			SendSingleUpdateToClient(questBit.Value, isSet: false);
 		}
 	}
 
 	public void MarkQuestAsCompleted(uint questQuestId)
 	{
-		this.Session.AccountMetaDataMgr.MarkQuestAsCompleted(this.Session.GameState.CurrentPlayerInfo.Realm.Name, this.Session.GameState.CurrentPlayerInfo.Name, questQuestId);
+		Session.AccountMetaDataMgr.MarkQuestAsCompleted(Session.GameState.CurrentPlayerInfo.Realm.Name, Session.GameState.CurrentPlayerInfo.Name, questQuestId);
 		uint? questBit = GameData.GetUniqueQuestBit(questQuestId);
 		if (questBit.HasValue)
 		{
-			this.SendSingleUpdateToClient(questBit.Value, isSet: true);
+			SendSingleUpdateToClient(questBit.Value, isSet: true);
 		}
 	}
 
 	public void Reload()
 	{
-		List<uint> questIds = this.Session.AccountMetaDataMgr.GetAllCompletedQuests(this.Session.GameState.CurrentPlayerInfo.Realm.Name, this.Session.GameState.CurrentPlayerInfo.Name);
-		this._cachedQuestCompleted = new Dictionary<int, ulong>();
+		List<uint> questIds = Session.AccountMetaDataMgr.GetAllCompletedQuests(Session.GameState.CurrentPlayerInfo.Realm.Name, Session.GameState.CurrentPlayerInfo.Name);
+		_cachedQuestCompleted = new Dictionary<int, ulong>();
 		foreach (uint questId in questIds)
 		{
 			uint? questBit = GameData.GetUniqueQuestBit(questId);
@@ -46,8 +46,8 @@ public class CompletedQuestTracker
 			{
 				int idx = (int)(questBit - 1 >> 6).Value;
 				int bitIdx = (int)((questBit - 1) & 0x3F).Value;
-				this._cachedQuestCompleted.TryAdd(idx, 0uL);
-				this._cachedQuestCompleted[idx] |= (ulong)(1L << bitIdx);
+				_cachedQuestCompleted.TryAdd(idx, 0uL);
+				_cachedQuestCompleted[idx] |= (ulong)(1L << bitIdx);
 			}
 		}
 	}
@@ -56,25 +56,25 @@ public class CompletedQuestTracker
 	{
 		int idx = (int)(questBit - 1 >> 6);
 		int bitIdx = (int)((questBit - 1) & 0x3F);
-		this._cachedQuestCompleted.TryAdd(idx, 0uL);
+		_cachedQuestCompleted.TryAdd(idx, 0uL);
 		if (isSet)
 		{
-			this._cachedQuestCompleted[idx] |= (ulong)(1L << bitIdx);
+			_cachedQuestCompleted[idx] |= (ulong)(1L << bitIdx);
 		}
 		else
 		{
-			this._cachedQuestCompleted[idx] &= (ulong)(~(1L << bitIdx));
+			_cachedQuestCompleted[idx] &= (ulong)(~(1L << bitIdx));
 		}
-		ObjectUpdate updateData = new ObjectUpdate(this.Session.GameState.CurrentPlayerGuid, UpdateTypeModern.Values, this.Session);
-		updateData.ActivePlayerData.QuestCompleted[idx] = this._cachedQuestCompleted[idx];
-		UpdateObject updatePacket = new UpdateObject(this.Session.GameState);
+		ObjectUpdate updateData = new ObjectUpdate(Session.GameState.CurrentPlayerGuid, UpdateTypeModern.Values, Session);
+		updateData.ActivePlayerData.QuestCompleted[idx] = _cachedQuestCompleted[idx];
+		UpdateObject updatePacket = new UpdateObject(Session.GameState);
 		updatePacket.ObjectUpdates.Add(updateData);
-		this.Session.WorldClient.SendPacketToClient(updatePacket);
+		Session.WorldClient.SendPacketToClient(updatePacket);
 	}
 
 	public void WriteAllCompletedIntoArray(ulong?[] dest)
 	{
-		foreach (KeyValuePair<int, ulong> kv in this._cachedQuestCompleted)
+		foreach (KeyValuePair<int, ulong> kv in _cachedQuestCompleted)
 		{
 			dest[kv.Key] = kv.Value;
 		}

@@ -13,7 +13,7 @@ internal class SetEveryoneIsAssistant : ClientPacket
 
 	public override void Read()
 	{
-		this.PartyIndex = base._worldPacket.ReadUInt8();
-		this.Apply = base._worldPacket.HasBit();
+		PartyIndex = _worldPacket.ReadUInt8();
+		Apply = _worldPacket.HasBit();
 	}
 }

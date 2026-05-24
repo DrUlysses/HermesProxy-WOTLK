@@ -11,6 +11,6 @@ public class SetTradeGold : ClientPacket
 
 	public override void Read()
 	{
-		this.Coinage = base._worldPacket.ReadUInt64();
+		Coinage = _worldPacket.ReadUInt64();
 	}
 }

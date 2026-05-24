@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Friends.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/friends_service.proto</summary>
@@ -265,7 +265,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ObjectId != other.ObjectId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -453,7 +453,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (ObjectId != other.ObjectId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -658,9 +658,9 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentIdentity, other.AgentIdentity)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
-      if (!object.Equals(Params, other.Params)) return false;
+      if (!Equals(AgentIdentity, other.AgentIdentity)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(Params, other.Params)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -874,7 +874,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (InvitationId != other.InvitationId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1084,9 +1084,9 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (InvitationId != other.InvitationId) return false;
-      if (!object.Equals(Options, other.Options)) return false;
+      if (!Equals(Options, other.Options)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1294,7 +1294,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (InvitationId != other.InvitationId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1482,7 +1482,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (InvitationId != other.InvitationId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1665,8 +1665,8 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1832,7 +1832,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1999,8 +1999,8 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2320,8 +2320,8 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       if(!attribute_.Equals(other.attribute_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2496,7 +2496,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2795,8 +2795,8 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       if(!role_.Equals(other.role_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2994,8 +2994,8 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Target, other.Target)) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(Target, other.Target)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3183,8 +3183,8 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ChangedFriend, other.ChangedFriend)) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(ChangedFriend, other.ChangedFriend)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3399,9 +3399,9 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Invitation, other.Invitation)) return false;
+      if (!Equals(Invitation, other.Invitation)) return false;
       if (Reason != other.Reason) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3604,8 +3604,8 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AccountId, other.AccountId)) return false;
-      if (!object.Equals(Invitation, other.Invitation)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(Invitation, other.Invitation)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3823,7 +3823,7 @@ namespace Bgs.Protocol.Friends.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
       if (InvitationId != other.InvitationId) return false;
       if (Reason != other.Reason) return false;
       return Equals(_unknownFields, other._unknownFields);

@@ -15,8 +15,8 @@ internal class UpdateRaidTarget : ClientPacket
 
 	public override void Read()
 	{
-		this.PartyIndex = base._worldPacket.ReadInt8();
-		this.Target = base._worldPacket.ReadPackedGuid128();
-		this.Symbol = base._worldPacket.ReadInt8();
+		PartyIndex = _worldPacket.ReadInt8();
+		Target = _worldPacket.ReadPackedGuid128();
+		Symbol = _worldPacket.ReadInt8();
 	}
 }

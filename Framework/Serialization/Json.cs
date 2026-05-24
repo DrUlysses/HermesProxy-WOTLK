@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using Framework.IO;
 
 namespace Framework.Serialization
 {
@@ -71,7 +72,7 @@ namespace Framework.Serialization
         public static byte[] Deflate<T>(string name, T data)
         {
             var jsonData = Encoding.UTF8.GetBytes(name + ":" + CreateString(data) + "\0");
-            var compressedData = IO.ZLib.Compress(jsonData);
+            var compressedData = ZLib.Compress(jsonData);
 
             return BitConverter.GetBytes(jsonData.Length).Combine(compressedData);
         }

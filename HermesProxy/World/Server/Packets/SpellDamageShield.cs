@@ -30,19 +30,19 @@ internal class SpellDamageShield : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.VictimGUID);
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteInt32(this.Damage);
-		base._worldPacket.WriteInt32(this.OriginalDamage);
-		base._worldPacket.WriteUInt32(this.OverKill);
-		base._worldPacket.WriteUInt32(this.SchoolMask);
-		base._worldPacket.WriteUInt32(this.LogAbsorbed);
-		base._worldPacket.WriteBit(this.LogData != null);
-		base._worldPacket.FlushBits();
-		if (this.LogData != null)
+		_worldPacket.WritePackedGuid128(VictimGUID);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteInt32(Damage);
+		_worldPacket.WriteInt32(OriginalDamage);
+		_worldPacket.WriteUInt32(OverKill);
+		_worldPacket.WriteUInt32(SchoolMask);
+		_worldPacket.WriteUInt32(LogAbsorbed);
+		_worldPacket.WriteBit(LogData != null);
+		_worldPacket.FlushBits();
+		if (LogData != null)
 		{
-			this.LogData.Write(base._worldPacket);
+			LogData.Write(_worldPacket);
 		}
 	}
 }

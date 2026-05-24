@@ -15,10 +15,10 @@ public class SendSpellHistory : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Entries.Count);
-		this.Entries.ForEach(delegate(SpellHistoryEntry p)
+		_worldPacket.WriteInt32(Entries.Count);
+		Entries.ForEach(delegate(SpellHistoryEntry p)
 		{
-			p.Write(base._worldPacket);
+			p.Write(_worldPacket);
 		});
 	}
 }

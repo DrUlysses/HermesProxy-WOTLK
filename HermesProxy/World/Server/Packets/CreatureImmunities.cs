@@ -8,7 +8,7 @@ public struct CreatureImmunities
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.School);
-		data.WriteUInt32(this.Value);
+		data.WriteUInt32(School);
+		data.WriteUInt32(Value);
 	}
 }

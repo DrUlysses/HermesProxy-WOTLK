@@ -9,7 +9,7 @@ public class AddonInfoPacket : ServerPacket
     public AddonInfoPacket(uint count = 0)
         : base(Opcode.SMSG_ADDON_INFO, ConnectionType.Realm)
     {
-        this.AddonCount = count;
+        AddonCount = count;
     }
 
     protected override void Write()
@@ -17,28 +17,25 @@ public class AddonInfoPacket : ServerPacket
         if (ModernVersion.ExpansionVersion >= 3)
         {
             // SMSG_ADDON_INFO for 3.4.x
-            bool hasAddons = this.AddonCount > 0;
-            this._worldPacket.WriteBit(hasAddons);
-            this._worldPacket.WriteBit(false); // Unk bit
-            this._worldPacket.FlushBits();
+            bool hasAddons = AddonCount > 0;
+            _worldPacket.WriteBit(hasAddons);
+            _worldPacket.WriteBit(false); // Unk bit
+            _worldPacket.FlushBits();
             
             if (hasAddons)
             {
-                this._worldPacket.WriteUInt32(this.AddonCount);
-                for (int i = 0; i < this.AddonCount; i++)
+                _worldPacket.WriteUInt32(AddonCount);
+                for (int i = 0; i < AddonCount; i++)
                 {
-                    this._worldPacket.WriteBits(2, 8); // State: Authenticated
-                    this._worldPacket.WriteBit(false); // Has public key
-                    this._worldPacket.WriteBit(false); // Has signature
+                    _worldPacket.WriteBits(2, 8); // State: Authenticated
+                    _worldPacket.WriteBit(false); // Has public key
+                    _worldPacket.WriteBit(false); // Has signature
                 }
             }
-            this._worldPacket.FlushBits();
-            this._worldPacket.WriteBit(false); // Has some list?
-            this._worldPacket.FlushBits();
+            _worldPacket.FlushBits();
+            _worldPacket.WriteBit(false); // Has some list?
+            _worldPacket.FlushBits();
         }
-        else
-        {
-            // Legacy 3.3.5 structure is different.
-        }
+        // Legacy 3.3.5 structure is different.
     }
 }

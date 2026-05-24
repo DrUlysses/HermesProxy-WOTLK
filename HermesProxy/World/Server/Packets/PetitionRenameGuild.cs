@@ -13,9 +13,9 @@ public class PetitionRenameGuild : ClientPacket
 
 	public override void Read()
 	{
-		this.PetitionGuid = base._worldPacket.ReadPackedGuid128();
-		base._worldPacket.ResetBitPos();
-		uint nameLen = base._worldPacket.ReadBits<uint>(7);
-		this.NewGuildName = base._worldPacket.ReadString(nameLen);
+		PetitionGuid = _worldPacket.ReadPackedGuid128();
+		_worldPacket.ResetBitPos();
+		uint nameLen = _worldPacket.ReadBits<uint>(7);
+		NewGuildName = _worldPacket.ReadString(nameLen);
 	}
 }

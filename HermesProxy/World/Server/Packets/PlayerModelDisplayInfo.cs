@@ -24,21 +24,21 @@ public class PlayerModelDisplayInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.GUID);
-		data.WriteUInt32(this.SpecializationID);
-		data.WriteInt32(this.Items.Count);
-		data.WriteBits(this.Name.GetByteCount(), 6);
-		data.WriteUInt8((byte)this.SexId);
-		data.WriteUInt8((byte)this.RaceId);
-		data.WriteUInt8((byte)this.ClassId);
-		data.WriteInt32(this.Customizations.Count);
-		data.WriteString(this.Name);
-		foreach (ChrCustomizationChoice customization in this.Customizations)
+		data.WritePackedGuid128(GUID);
+		data.WriteUInt32(SpecializationID);
+		data.WriteInt32(Items.Count);
+		data.WriteBits(Name.GetByteCount(), 6);
+		data.WriteUInt8((byte)SexId);
+		data.WriteUInt8((byte)RaceId);
+		data.WriteUInt8((byte)ClassId);
+		data.WriteInt32(Customizations.Count);
+		data.WriteString(Name);
+		foreach (ChrCustomizationChoice customization in Customizations)
 		{
 			data.WriteUInt32(customization.ChrCustomizationOptionID);
 			data.WriteUInt32(customization.ChrCustomizationChoiceID);
 		}
-		foreach (InspectItemData item in this.Items)
+		foreach (InspectItemData item in Items)
 		{
 			item.Write(data);
 		}

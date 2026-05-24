@@ -20,15 +20,15 @@ public class CriteriaUpdatePkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.CriteriaID);
-		base._worldPacket.WriteUInt64(this.Quantity);
-		base._worldPacket.WritePackedGuid128(this.PlayerGUID);
-		base._worldPacket.WriteUInt32(0); // Unused_10_1_5
-		base._worldPacket.WriteUInt32(this.Flags);
-		base._worldPacket.WritePackedTime(this.CurrentTime);
-		base._worldPacket.WriteInt64(this.ElapsedTime); // Duration<Seconds> = int64
-		base._worldPacket.WriteUInt32(this.CreationTime); // Timestamp<> = uint32
-		base._worldPacket.WriteBit(false); // RafAcceptanceID
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt32(CriteriaID);
+		_worldPacket.WriteUInt64(Quantity);
+		_worldPacket.WritePackedGuid128(PlayerGUID);
+		_worldPacket.WriteUInt32(0); // Unused_10_1_5
+		_worldPacket.WriteUInt32(Flags);
+		_worldPacket.WritePackedTime(CurrentTime);
+		_worldPacket.WriteInt64(ElapsedTime); // Duration<Seconds> = int64
+		_worldPacket.WriteUInt32(CreationTime); // Timestamp<> = uint32
+		_worldPacket.WriteBit(false); // RafAcceptanceID
+		_worldPacket.FlushBits();
 	}
 }

@@ -8,7 +8,7 @@ public class GameRuleValuePair
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.Rule);
-		data.WriteInt32(this.Value);
+		data.WriteInt32(Rule);
+		data.WriteInt32(Value);
 	}
 }

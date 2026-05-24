@@ -13,7 +13,7 @@ public class QueryNPCText : ClientPacket
 
 	public override void Read()
 	{
-		this.TextID = base._worldPacket.ReadUInt32();
-		this.Guid = base._worldPacket.ReadPackedGuid128();
+		TextID = _worldPacket.ReadUInt32();
+		Guid = _worldPacket.ReadPackedGuid128();
 	}
 }

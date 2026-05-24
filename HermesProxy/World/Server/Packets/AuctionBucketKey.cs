@@ -17,40 +17,40 @@ public class AuctionBucketKey
 	public AuctionBucketKey(WorldPacket data)
 	{
 		data.ResetBitPos();
-		this.ItemID = data.ReadBits<uint>(20);
+		ItemID = data.ReadBits<uint>(20);
 		if (data.HasBit())
 		{
-			this.BattlePetSpeciesID = 0;
+			BattlePetSpeciesID = 0;
 		}
-		this.ItemLevel = data.ReadBits<ushort>(11);
+		ItemLevel = data.ReadBits<ushort>(11);
 		if (data.HasBit())
 		{
-			this.SuffixItemNameDescriptionID = 0;
+			SuffixItemNameDescriptionID = 0;
 		}
-		if (this.BattlePetSpeciesID.HasValue)
+		if (BattlePetSpeciesID.HasValue)
 		{
-			this.BattlePetSpeciesID = data.ReadUInt16();
+			BattlePetSpeciesID = data.ReadUInt16();
 		}
-		if (this.SuffixItemNameDescriptionID.HasValue)
+		if (SuffixItemNameDescriptionID.HasValue)
 		{
-			this.SuffixItemNameDescriptionID = data.ReadUInt16();
+			SuffixItemNameDescriptionID = data.ReadUInt16();
 		}
 	}
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteBits(this.ItemID, 20);
-		data.WriteBit(this.BattlePetSpeciesID.HasValue);
-		data.WriteBits(this.ItemLevel, 11);
-		data.WriteBit(this.SuffixItemNameDescriptionID.HasValue);
+		data.WriteBits(ItemID, 20);
+		data.WriteBit(BattlePetSpeciesID.HasValue);
+		data.WriteBits(ItemLevel, 11);
+		data.WriteBit(SuffixItemNameDescriptionID.HasValue);
 		data.FlushBits();
-		if (this.BattlePetSpeciesID.HasValue)
+		if (BattlePetSpeciesID.HasValue)
 		{
-			data.WriteUInt16(this.BattlePetSpeciesID.Value);
+			data.WriteUInt16(BattlePetSpeciesID.Value);
 		}
-		if (this.SuffixItemNameDescriptionID.HasValue)
+		if (SuffixItemNameDescriptionID.HasValue)
 		{
-			data.WriteUInt16(this.SuffixItemNameDescriptionID.Value);
+			data.WriteUInt16(SuffixItemNameDescriptionID.Value);
 		}
 	}
 }

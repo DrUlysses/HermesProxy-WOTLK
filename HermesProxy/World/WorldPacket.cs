@@ -31,32 +31,32 @@ public class WorldPacket : ByteBuffer
 	public WorldPacket(byte[] data)
 		: base(data)
 	{
-		this.opcode = base.ReadUInt16();
+		opcode = ReadUInt16();
 	}
 
 	public KeyValuePair<int, bool> ReadEntry()
 	{
-		uint entry = base.ReadUInt32();
+		uint entry = ReadUInt32();
 		uint realEntry = entry & 0x7FFFFFFF;
 		return new KeyValuePair<int, bool>((int)realEntry, realEntry != entry);
 	}
 
 	public WowGuid64 ReadGuid()
 	{
-		return new WowGuid64(base.ReadUInt64());
+		return new WowGuid64(ReadUInt64());
 	}
 
 	public WowGuid64 ReadPackedGuid()
 	{
-		return new WowGuid64(this.ReadPackedUInt64(base.ReadUInt8()));
+		return new WowGuid64(ReadPackedUInt64(ReadUInt8()));
 	}
 
 	public WowGuid128 ReadPackedGuid128()
 	{
-		byte loLength = base.ReadUInt8();
-		byte hiLength = base.ReadUInt8();
-		ulong low = this.ReadPackedUInt64(loLength);
-		return new WowGuid128(this.ReadPackedUInt64(hiLength), low);
+		byte loLength = ReadUInt8();
+		byte hiLength = ReadUInt8();
+		ulong low = ReadPackedUInt64(loLength);
+		return new WowGuid128(ReadPackedUInt64(hiLength), low);
 	}
 
 	private ulong ReadPackedUInt64(byte length)
@@ -70,7 +70,7 @@ public class WorldPacket : ByteBuffer
 		{
 			if (((1 << i) & length) != 0)
 			{
-				guid |= (ulong)base.ReadUInt8() << i * 8;
+				guid |= (ulong)ReadUInt8() << i * 8;
 			}
 		}
 		return guid;
@@ -78,13 +78,13 @@ public class WorldPacket : ByteBuffer
 
 	public UpdateField ReadUpdateField()
 	{
-		uint val = base.ReadUInt32();
+		uint val = ReadUInt32();
 		return new UpdateField(val);
 	}
 
 	public WorldPacket Inflate(int inflatedSize)
 	{
-		byte[] arr = base.ReadToEnd();
+		byte[] arr = ReadToEnd();
 		byte[] newarr = new byte[inflatedSize];
 		ZlibCodec stream = new ZlibCodec(CompressionMode.Decompress)
 		{
@@ -98,37 +98,37 @@ public class WorldPacket : ByteBuffer
 		stream.Inflate(FlushType.None);
 		stream.Inflate(FlushType.Finish);
 		stream.EndInflate();
-		WorldPacket pkt = new WorldPacket(this.GetOpcode(), newarr);
-		pkt.SetReceiveTime(this.GetReceivedTime());
+		WorldPacket pkt = new WorldPacket(GetOpcode(), newarr);
+		pkt.SetReceiveTime(GetReceivedTime());
 		return pkt;
 	}
 
 	public void WriteGuid(WowGuid64 guid)
 	{
-		base.WriteUInt64(guid.GetLowValue());
+		WriteUInt64(guid.GetLowValue());
 	}
 
 	public void WritePackedGuid(WowGuid64 guid)
 	{
-		this.WritePackedUInt64(guid.Low);
+		WritePackedUInt64(guid.Low);
 	}
 
 	public void WritePackedGuid128(WowGuid128 guid)
 	{
 		if (guid.IsEmpty())
 		{
-			base.WriteUInt8(0);
-			base.WriteUInt8(0);
+			WriteUInt8(0);
+			WriteUInt8(0);
 			return;
 		}
 		byte lowMask;
 		byte[] lowPacked;
-		uint loSize = this.PackUInt64(guid.GetLowValue(), out lowMask, out lowPacked);
+		uint loSize = PackUInt64(guid.GetLowValue(), out lowMask, out lowPacked);
 		byte highMask;
 		byte[] highPacked;
-		uint hiSize = this.PackUInt64(guid.GetHighValue(), out highMask, out highPacked);
-		base.WriteUInt8(lowMask);
-		base.WriteUInt8(highMask);
+		uint hiSize = PackUInt64(guid.GetHighValue(), out highMask, out highPacked);
+		WriteUInt8(lowMask);
+		WriteUInt8(highMask);
 		base.WriteBytes(lowPacked, loSize);
 		base.WriteBytes(highPacked, hiSize);
 	}
@@ -137,8 +137,8 @@ public class WorldPacket : ByteBuffer
 	{
 		byte mask;
 		byte[] packed;
-		uint packedSize = this.PackUInt64(guid, out mask, out packed);
-		base.WriteUInt8(mask);
+		uint packedSize = PackUInt64(guid, out mask, out packed);
+		WriteUInt8(mask);
 		base.WriteBytes(packed, packedSize);
 	}
 
@@ -152,7 +152,7 @@ public class WorldPacket : ByteBuffer
 		{
 			if ((value & 0xFF) != 0)
 			{
-				mask |= (byte)(1 << (int)i);
+				mask |= (byte)(1 << i);
 				result[resultSize++] = (byte)(value & 0xFF);
 			}
 			value >>= 8;
@@ -163,31 +163,31 @@ public class WorldPacket : ByteBuffer
 
 	public void WriteBytes(WorldPacket data)
 	{
-		base.FlushBits();
+		FlushBits();
 		base.WriteBytes(data.GetData());
 	}
 
 	public uint GetOpcode()
 	{
-		return this.opcode;
+		return opcode;
 	}
 
 	public Opcode GetUniversalOpcode(bool isModern)
 	{
 		if (isModern)
 		{
-			return ModernVersion.GetUniversalOpcode(this.GetOpcode());
+			return ModernVersion.GetUniversalOpcode(GetOpcode());
 		}
-		return LegacyVersion.GetUniversalOpcode(this.GetOpcode());
+		return LegacyVersion.GetUniversalOpcode(GetOpcode());
 	}
 
 	public long GetReceivedTime()
 	{
-		return this.m_receivedTime;
+		return m_receivedTime;
 	}
 
 	public void SetReceiveTime(long receivedTime)
 	{
-		this.m_receivedTime = receivedTime;
+		m_receivedTime = receivedTime;
 	}
 }

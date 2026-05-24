@@ -14,7 +14,7 @@ public class GuildEventMotd : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits(this.MotdText.GetByteCount(), 11);
-		base._worldPacket.WriteString(this.MotdText);
+		_worldPacket.WriteBits(MotdText.GetByteCount(), 11);
+		_worldPacket.WriteString(MotdText);
 	}
 }

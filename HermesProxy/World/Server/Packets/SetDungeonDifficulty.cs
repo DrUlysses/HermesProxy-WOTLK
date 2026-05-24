@@ -11,6 +11,6 @@ public class SetDungeonDifficulty : ClientPacket
 
 	public override void Read()
 	{
-		this.DifficultyID = base._worldPacket.ReadUInt32();
+		DifficultyID = _worldPacket.ReadUInt32();
 	}
 }

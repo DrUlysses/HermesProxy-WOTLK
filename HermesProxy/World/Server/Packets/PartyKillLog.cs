@@ -15,7 +15,7 @@ internal class PartyKillLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Player);
-		base._worldPacket.WritePackedGuid128(this.Victim);
+		_worldPacket.WritePackedGuid128(Player);
+		_worldPacket.WritePackedGuid128(Victim);
 	}
 }

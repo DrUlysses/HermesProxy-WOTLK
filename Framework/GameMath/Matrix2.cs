@@ -1,7 +1,7 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
  * Copyright (C) 2003-2004  Eran Kampf	eran@ekampf.com	http://www.ekampf.com
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -198,10 +198,8 @@ namespace Framework.GameMath
                     float.Parse(m.Result("${m22}"))
                     );
             }
-            else
-            {
-                throw new Exception("Unsuccessful Match.");
-            }
+
+            throw new Exception("Unsuccessful Match.");
         }
         /// <summary>
         /// Converts the specified string to its <see cref="Matrix2"/> equivalent.
@@ -234,7 +232,7 @@ namespace Framework.GameMath
                 return true;
             }
 
-            result = Matrix2.Zero;
+            result = Zero;
             return false;
         }
         #endregion
@@ -480,7 +478,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two matrices are equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator ==(Matrix2 left, Matrix2 right)
         {
-            return ValueType.Equals(left, right);
+            return Equals(left, right);
         }
         /// <summary>
         /// Tests whether two specified matrices are not equal.
@@ -490,7 +488,7 @@ namespace Framework.GameMath
         /// <returns><see langword="true"/> if the two matrices are not equal; otherwise, <see langword="false"/>.</returns>
         public static bool operator !=(Matrix2 left, Matrix2 right)
         {
-            return !ValueType.Equals(left, right);
+            return !Equals(left, right);
         }
         #endregion
 
@@ -503,7 +501,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix2"/> instance containing the sum.</returns>
         public static Matrix2 operator +(Matrix2 left, Matrix2 right)
         {
-            return Matrix2.Add(left, right);
+            return Add(left, right);
         }
         /// <summary>
         /// Adds a matrix and a scalar.
@@ -513,7 +511,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix2"/> instance containing the sum.</returns>
         public static Matrix2 operator +(Matrix2 matrix, float scalar)
         {
-            return Matrix2.Add(matrix, scalar);
+            return Add(matrix, scalar);
         }
         /// <summary>
         /// Adds a matrix and a scalar.
@@ -523,7 +521,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix2"/> instance containing the sum.</returns>
         public static Matrix2 operator +(float scalar, Matrix2 matrix)
         {
-            return Matrix2.Add(matrix, scalar);
+            return Add(matrix, scalar);
         }
         /// <summary>
         /// Subtracts a matrix from a matrix.
@@ -533,7 +531,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix2"/> instance containing the difference.</returns>
         public static Matrix2 operator -(Matrix2 left, Matrix2 right)
         {
-            return Matrix2.Subtract(left, right);
+            return Subtract(left, right);
         }
         /// <summary>
         /// Subtracts a scalar from a matrix.
@@ -543,7 +541,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix2"/> instance containing the difference.</returns>
         public static Matrix2 operator -(Matrix2 matrix, float scalar)
         {
-            return Matrix2.Subtract(matrix, scalar);
+            return Subtract(matrix, scalar);
         }
         /// <summary>
         /// Multiplies two matrices.
@@ -553,7 +551,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Matrix2"/> instance containing the result.</returns>
         public static Matrix2 operator *(Matrix2 left, Matrix2 right)
         {
-            return Matrix2.Multiply(left, right);
+            return Multiply(left, right);
         }
         /// <summary>
         /// Transforms a given vector by a matrix.
@@ -563,7 +561,7 @@ namespace Framework.GameMath
         /// <returns>A new <see cref="Vector2"/> instance containing the result.</returns>
         public static Vector2 operator *(Matrix2 matrix, Vector2 vector)
         {
-            return Matrix2.Transform(matrix, vector);
+            return Transform(matrix, vector);
         }
         #endregion
 

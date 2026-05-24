@@ -34,6 +34,6 @@ public class RealmInfo
 
 	public override string ToString()
 	{
-		return $"{this.ID,-5} {this.Type,-5} {this.IsLocked,-8} {this.Flags,-10} {this.Name,-15} {this.Address,-15} {this.Port,-10} {this.Build,-10}";
+		return $"{ID,-5} {Type,-5} {IsLocked,-8} {Flags,-10} {Name,-15} {Address,-15} {Port,-10} {Build,-10}";
 	}
 }

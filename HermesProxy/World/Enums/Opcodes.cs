@@ -1,12 +1,5 @@
 using System;
 using HermesProxy.Enums;
-using HermesProxy.World.Enums.V1_12_1_5875;
-using HermesProxy.World.Enums.V1_14_1_40688;
-using HermesProxy.World.Enums.V2_4_3_8606;
-using HermesProxy.World.Enums.V2_5_2_39570;
-using HermesProxy.World.Enums.V2_5_3_41750;
-using HermesProxy.World.Enums.V3_3_5a_12340;
-using HermesProxy.World.Enums.V3_4_3_54261;
 
 namespace HermesProxy.World.Enums;
 
@@ -86,27 +79,27 @@ public static class Opcodes
 
 	public static Type GetOpcodesEnumForVersion(ClientVersionBuild version)
 	{
-		return Opcodes.GetOpcodesDefiningBuild(version) switch
+		return GetOpcodesDefiningBuild(version) switch
 		{
-			ClientVersionBuild.V1_12_1_5875 => typeof(HermesProxy.World.Enums.V1_12_1_5875.Opcode), 
-			ClientVersionBuild.V2_4_3_8606 => typeof(HermesProxy.World.Enums.V2_4_3_8606.Opcode), 
-			ClientVersionBuild.V3_3_5a_12340 => typeof(HermesProxy.World.Enums.V3_3_5a_12340.Opcode), 
-			ClientVersionBuild.V2_5_2_39570 => typeof(HermesProxy.World.Enums.V2_5_2_39570.Opcode), 
-			ClientVersionBuild.V2_5_3_41750 => typeof(HermesProxy.World.Enums.V2_5_3_41750.Opcode), 
-			ClientVersionBuild.V1_14_1_40688 => typeof(HermesProxy.World.Enums.V1_14_1_40688.Opcode), 
-			ClientVersionBuild.V3_4_3_54261 => typeof(HermesProxy.World.Enums.V3_4_3_54261.Opcode), 
+			ClientVersionBuild.V1_12_1_5875 => typeof(V1_12_1_5875.Opcode), 
+			ClientVersionBuild.V2_4_3_8606 => typeof(V2_4_3_8606.Opcode), 
+			ClientVersionBuild.V3_3_5a_12340 => typeof(V3_3_5a_12340.Opcode), 
+			ClientVersionBuild.V2_5_2_39570 => typeof(V2_5_2_39570.Opcode), 
+			ClientVersionBuild.V2_5_3_41750 => typeof(V2_5_3_41750.Opcode), 
+			ClientVersionBuild.V1_14_1_40688 => typeof(V1_14_1_40688.Opcode), 
+			ClientVersionBuild.V3_4_3_54261 => typeof(V3_4_3_54261.Opcode), 
 			_ => null, 
 		};
 	}
 
 	public static uint GetOpcodeValueForVersion(Opcode opcode, ClientVersionBuild version)
 	{
-		return Opcodes.GetOpcodeValueForVersion(opcode.ToString(), version);
+		return GetOpcodeValueForVersion(opcode.ToString(), version);
 	}
 
 	public static uint GetOpcodeValueForVersion(string opcodeName, ClientVersionBuild version)
 	{
-		if (Enum.TryParse(Opcodes.GetOpcodesEnumForVersion(version), opcodeName, out object opcode))
+		if (Enum.TryParse(GetOpcodesEnumForVersion(version), opcodeName, out object opcode))
 		{
 			return (uint)opcode;
 		}
@@ -115,14 +108,14 @@ public static class Opcodes
 
 	public static string GetOpcodeNameForVersion(uint opcode, ClientVersionBuild version)
 	{
-		Type enumType = Opcodes.GetOpcodesEnumForVersion(version);
+		Type enumType = GetOpcodesEnumForVersion(version);
 		return Enum.ToObject(enumType, opcode).ToString();
 	}
 
 	public static Opcode GetUniversalOpcode(uint opcode, ClientVersionBuild version)
 	{
-		string name = Opcodes.GetOpcodeNameForVersion(opcode, version);
-		return Opcodes.GetUniversalOpcode(name);
+		string name = GetOpcodeNameForVersion(opcode, version);
+		return GetUniversalOpcode(name);
 	}
 
 	public static Opcode GetUniversalOpcode(string name)

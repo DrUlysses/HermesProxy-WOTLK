@@ -15,7 +15,7 @@ internal class QuestPushResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.SenderGUID);
-		base._worldPacket.WriteUInt8((byte)this.Result);
+		_worldPacket.WritePackedGuid128(SenderGUID);
+		_worldPacket.WriteUInt8((byte)Result);
 	}
 }

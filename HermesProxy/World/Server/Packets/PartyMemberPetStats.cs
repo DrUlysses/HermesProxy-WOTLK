@@ -19,40 +19,40 @@ public class PartyMemberPetStats
 
 	public void WritePartial(WorldPacket data)
 	{
-		data.WriteBit(this.NewPetGuid != null);
-		data.WriteBit(this.NewPetName != null);
-		data.WriteBit(this.DisplayID.HasValue);
-		data.WriteBit(this.MaxHealth.HasValue);
-		data.WriteBit(this.Health.HasValue);
-		data.WriteBit(this.Auras != null);
+		data.WriteBit(NewPetGuid != null);
+		data.WriteBit(NewPetName != null);
+		data.WriteBit(DisplayID.HasValue);
+		data.WriteBit(MaxHealth.HasValue);
+		data.WriteBit(Health.HasValue);
+		data.WriteBit(Auras != null);
 		data.FlushBits();
-		if (this.NewPetName != null)
+		if (NewPetName != null)
 		{
-			data.WriteBits(this.NewPetName.GetByteCount(), 8);
-			data.WriteString(this.NewPetName);
+			data.WriteBits(NewPetName.GetByteCount(), 8);
+			data.WriteString(NewPetName);
 		}
-		if (this.NewPetGuid != null)
+		if (NewPetGuid != null)
 		{
-			data.WritePackedGuid128(this.NewPetGuid);
+			data.WritePackedGuid128(NewPetGuid);
 		}
-		if (this.DisplayID.HasValue)
+		if (DisplayID.HasValue)
 		{
-			data.WriteUInt32(this.DisplayID.Value);
+			data.WriteUInt32(DisplayID.Value);
 		}
-		if (this.MaxHealth.HasValue)
+		if (MaxHealth.HasValue)
 		{
-			data.WriteUInt32(this.MaxHealth.Value);
+			data.WriteUInt32(MaxHealth.Value);
 		}
-		if (this.Health.HasValue)
+		if (Health.HasValue)
 		{
-			data.WriteUInt32(this.Health.Value);
+			data.WriteUInt32(Health.Value);
 		}
-		if (this.Auras == null)
+		if (Auras == null)
 		{
 			return;
 		}
-		data.WriteInt32(this.Auras.Count);
-		foreach (PartyMemberAuraStates aura in this.Auras)
+		data.WriteInt32(Auras.Count);
+		foreach (PartyMemberAuraStates aura in Auras)
 		{
 			aura.Write(data);
 		}
@@ -60,41 +60,41 @@ public class PartyMemberPetStats
 
 	public void WriteFull(WorldPacket data)
 	{
-		if (this.NewPetGuid == null)
+		if (NewPetGuid == null)
 		{
-			this.NewPetGuid = WowGuid128.Empty;
+			NewPetGuid = WowGuid128.Empty;
 		}
-		if (this.NewPetName == null)
+		if (NewPetName == null)
 		{
-			this.NewPetName = "";
+			NewPetName = "";
 		}
-		if (!this.DisplayID.HasValue)
+		if (!DisplayID.HasValue)
 		{
-			this.DisplayID = 0u;
+			DisplayID = 0u;
 		}
-		if (!this.MaxHealth.HasValue)
+		if (!MaxHealth.HasValue)
 		{
-			this.MaxHealth = 0u;
+			MaxHealth = 0u;
 		}
-		if (!this.Health.HasValue)
+		if (!Health.HasValue)
 		{
-			this.Health = 0u;
+			Health = 0u;
 		}
-		if (this.Auras == null)
+		if (Auras == null)
 		{
-			this.Auras = new List<PartyMemberAuraStates>();
+			Auras = new List<PartyMemberAuraStates>();
 		}
-		data.WritePackedGuid128(this.NewPetGuid);
-		data.WriteUInt32(this.DisplayID.Value);
-		data.WriteUInt32(this.Health.Value);
-		data.WriteUInt32(this.MaxHealth.Value);
-		data.WriteInt32(this.Auras.Count);
-		this.Auras.ForEach(delegate(PartyMemberAuraStates p)
+		data.WritePackedGuid128(NewPetGuid);
+		data.WriteUInt32(DisplayID.Value);
+		data.WriteUInt32(Health.Value);
+		data.WriteUInt32(MaxHealth.Value);
+		data.WriteInt32(Auras.Count);
+		Auras.ForEach(delegate(PartyMemberAuraStates p)
 		{
 			p.Write(data);
 		});
-		data.WriteBits(this.NewPetName.GetByteCount(), 8);
+		data.WriteBits(NewPetName.GetByteCount(), 8);
 		data.FlushBits();
-		data.WriteString(this.NewPetName);
+		data.WriteString(NewPetName);
 	}
 }

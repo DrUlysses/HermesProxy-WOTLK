@@ -11,6 +11,6 @@ public class ReclaimCorpse : ClientPacket
 
 	public override void Read()
 	{
-		this.CorpseGUID = base._worldPacket.ReadPackedGuid128();
+		CorpseGUID = _worldPacket.ReadPackedGuid128();
 	}
 }

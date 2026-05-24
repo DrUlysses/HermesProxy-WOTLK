@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Presence.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/presence_listener.proto</summary>
@@ -137,7 +137,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(SubscriberId, other.SubscriberId)) return false;
+      if (!Equals(SubscriberId, other.SubscriberId)) return false;
       if(!state_.Equals(other.state_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -302,7 +302,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(SubscriberId, other.SubscriberId)) return false;
+      if (!Equals(SubscriberId, other.SubscriberId)) return false;
       if(!state_.Equals(other.state_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

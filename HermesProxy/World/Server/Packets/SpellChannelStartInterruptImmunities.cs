@@ -8,7 +8,7 @@ public class SpellChannelStartInterruptImmunities
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.SchoolImmunities);
-		data.WriteInt32(this.Immunities);
+		data.WriteInt32(SchoolImmunities);
+		data.WriteInt32(Immunities);
 	}
 }

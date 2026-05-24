@@ -44,33 +44,33 @@ internal class SpellNonMeleeDamageLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.TargetGUID);
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WritePackedGuid128(this.CastID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteUInt32(this.SpellXSpellVisualID);
-		base._worldPacket.WriteInt32(this.Damage);
-		base._worldPacket.WriteInt32(this.OriginalDamage);
-		base._worldPacket.WriteInt32(this.Overkill);
-		base._worldPacket.WriteUInt8(this.SchoolMask);
-		base._worldPacket.WriteInt32(this.Absorbed);
-		base._worldPacket.WriteInt32(this.Resisted);
-		base._worldPacket.WriteInt32(this.ShieldBlock);
-		base._worldPacket.WriteUInt32(0); // WorldTextViewers count
-		base._worldPacket.WriteUInt32(0); // Supporters count
-		base._worldPacket.WriteBit(this.Periodic);
-		base._worldPacket.WriteBits((uint)this.Flags, 7);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.WriteBit(this.LogData != null);
-		base._worldPacket.WriteBit(this.ContentTuning != null);
-		base._worldPacket.FlushBits();
-		if (this.LogData != null)
+		_worldPacket.WritePackedGuid128(TargetGUID);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WritePackedGuid128(CastID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteUInt32(SpellXSpellVisualID);
+		_worldPacket.WriteInt32(Damage);
+		_worldPacket.WriteInt32(OriginalDamage);
+		_worldPacket.WriteInt32(Overkill);
+		_worldPacket.WriteUInt8(SchoolMask);
+		_worldPacket.WriteInt32(Absorbed);
+		_worldPacket.WriteInt32(Resisted);
+		_worldPacket.WriteInt32(ShieldBlock);
+		_worldPacket.WriteUInt32(0); // WorldTextViewers count
+		_worldPacket.WriteUInt32(0); // Supporters count
+		_worldPacket.WriteBit(Periodic);
+		_worldPacket.WriteBits((uint)Flags, 7);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.WriteBit(LogData != null);
+		_worldPacket.WriteBit(ContentTuning != null);
+		_worldPacket.FlushBits();
+		if (LogData != null)
 		{
-			this.LogData.Write(base._worldPacket);
+			LogData.Write(_worldPacket);
 		}
-		if (this.ContentTuning != null)
+		if (ContentTuning != null)
 		{
-			this.ContentTuning.Write(base._worldPacket);
+			ContentTuning.Write(_worldPacket);
 		}
 	}
 }

@@ -8,7 +8,7 @@ internal struct ForcedReaction
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.Faction);
-		data.WriteInt32(this.Reaction);
+		data.WriteInt32(Faction);
+		data.WriteInt32(Reaction);
 	}
 }

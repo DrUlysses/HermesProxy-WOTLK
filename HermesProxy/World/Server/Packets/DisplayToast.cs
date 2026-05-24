@@ -32,26 +32,26 @@ public class DisplayToast : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt64(this.Quantity);
-		base._worldPacket.WriteUInt8(this.DisplayToastMethod);
-		base._worldPacket.WriteUInt32(this.QuestID);
-		base._worldPacket.WriteBit(this.Mailed);
-		base._worldPacket.WriteBits(this.Type, 2);
-		if (this.Type == 0)
+		_worldPacket.WriteUInt64(Quantity);
+		_worldPacket.WriteUInt8(DisplayToastMethod);
+		_worldPacket.WriteUInt32(QuestID);
+		_worldPacket.WriteBit(Mailed);
+		_worldPacket.WriteBits(Type, 2);
+		if (Type == 0)
 		{
-			base._worldPacket.WriteBit(this.BonusRoll);
-			base._worldPacket.FlushBits();
-			this.ItemReward.Write(base._worldPacket);
-			base._worldPacket.WriteUInt32(this.SpecializationID);
-			base._worldPacket.WriteUInt32(this.ItemQuantity);
+			_worldPacket.WriteBit(BonusRoll);
+			_worldPacket.FlushBits();
+			ItemReward.Write(_worldPacket);
+			_worldPacket.WriteUInt32(SpecializationID);
+			_worldPacket.WriteUInt32(ItemQuantity);
 		}
 		else
 		{
-			base._worldPacket.FlushBits();
+			_worldPacket.FlushBits();
 		}
-		if (this.Type == 1)
+		if (Type == 1)
 		{
-			base._worldPacket.WriteUInt32(this.CurrencyID);
+			_worldPacket.WriteUInt32(CurrencyID);
 		}
 	}
 }

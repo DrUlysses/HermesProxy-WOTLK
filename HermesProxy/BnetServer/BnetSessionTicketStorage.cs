@@ -13,40 +13,40 @@ public static class BnetSessionTicketStorage
 
 	public static void AddNewSessionByName(string name, GlobalSessionData session)
 	{
-		if (BnetSessionTicketStorage.SessionsByName.ContainsKey(name))
+		if (SessionsByName.ContainsKey(name))
 		{
-			BnetSessionTicketStorage.SessionsByName[name].OnDisconnect();
-			BnetSessionTicketStorage.SessionsByName[name] = session;
+			SessionsByName[name].OnDisconnect();
+			SessionsByName[name] = session;
 		}
 		else
 		{
-			BnetSessionTicketStorage.SessionsByName.Add(name, session);
+			SessionsByName.Add(name, session);
 		}
 	}
 
 	public static void AddNewSessionByTicket(string loginTicket, GlobalSessionData session)
 	{
-		if (BnetSessionTicketStorage.SessionsByTicket.ContainsKey(loginTicket))
+		if (SessionsByTicket.ContainsKey(loginTicket))
 		{
-			BnetSessionTicketStorage.SessionsByTicket[loginTicket].OnDisconnect();
-			BnetSessionTicketStorage.SessionsByTicket[loginTicket] = session;
+			SessionsByTicket[loginTicket].OnDisconnect();
+			SessionsByTicket[loginTicket] = session;
 		}
 		else
 		{
-			BnetSessionTicketStorage.SessionsByTicket.Add(loginTicket, session);
+			SessionsByTicket.Add(loginTicket, session);
 		}
 	}
 
 	public static void AddNewSessionByKey(ulong connectKey, GlobalSessionData session)
 	{
-		if (BnetSessionTicketStorage.SessionsByKey.ContainsKey(connectKey))
+		if (SessionsByKey.ContainsKey(connectKey))
 		{
-			BnetSessionTicketStorage.SessionsByKey[connectKey].OnDisconnect();
-			BnetSessionTicketStorage.SessionsByKey[connectKey] = session;
+			SessionsByKey[connectKey].OnDisconnect();
+			SessionsByKey[connectKey] = session;
 		}
 		else
 		{
-			BnetSessionTicketStorage.SessionsByKey.Add(connectKey, session);
+			SessionsByKey.Add(connectKey, session);
 		}
 	}
 }

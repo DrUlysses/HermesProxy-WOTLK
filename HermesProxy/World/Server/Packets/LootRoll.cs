@@ -17,8 +17,8 @@ internal class LootRoll : ClientPacket
 
 	public override void Read()
 	{
-		this.LootObj = base._worldPacket.ReadPackedGuid128();
-		this.LootListID = base._worldPacket.ReadUInt8();
-		this.RollType = (RollType)base._worldPacket.ReadUInt8();
+		LootObj = _worldPacket.ReadPackedGuid128();
+		LootListID = _worldPacket.ReadUInt8();
+		RollType = (RollType)_worldPacket.ReadUInt8();
 	}
 }

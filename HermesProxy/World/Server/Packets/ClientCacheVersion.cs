@@ -13,6 +13,6 @@ public class ClientCacheVersion : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.CacheVersion);
+		_worldPacket.WriteUInt32(CacheVersion);
 	}
 }

@@ -13,8 +13,8 @@ internal class BattlenetRequest : ClientPacket
 
 	public override void Read()
 	{
-		this.Method.Read(base._worldPacket);
-		uint protoSize = base._worldPacket.ReadUInt32();
-		this.Data = base._worldPacket.ReadBytes(protoSize);
+		Method.Read(_worldPacket);
+		uint protoSize = _worldPacket.ReadUInt32();
+		Data = _worldPacket.ReadBytes(protoSize);
 	}
 }

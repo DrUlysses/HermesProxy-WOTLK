@@ -11,6 +11,6 @@ public class CancelTempEnchantment : ClientPacket
 
 	public override void Read()
 	{
-		this.EnchantmentSlot = base._worldPacket.ReadUInt32();
+		EnchantmentSlot = _worldPacket.ReadUInt32();
 	}
 }

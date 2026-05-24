@@ -12,9 +12,9 @@ internal class ChannelPlayerCommand : ClientPacket
 
 	public override void Read()
 	{
-		uint channelNameLength = base._worldPacket.ReadBits<uint>(7);
-		uint nameLength = base._worldPacket.ReadBits<uint>(9);
-		this.ChannelName = base._worldPacket.ReadString(channelNameLength);
-		this.Name = base._worldPacket.ReadString(nameLength);
+		uint channelNameLength = _worldPacket.ReadBits<uint>(7);
+		uint nameLength = _worldPacket.ReadBits<uint>(9);
+		ChannelName = _worldPacket.ReadString(channelNameLength);
+		Name = _worldPacket.ReadString(nameLength);
 	}
 }

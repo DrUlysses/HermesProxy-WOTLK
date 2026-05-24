@@ -13,7 +13,7 @@ public class AttackSwingError : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits((uint)this.Reason, 3);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBits((uint)Reason, 3);
+		_worldPacket.FlushBits();
 	}
 }

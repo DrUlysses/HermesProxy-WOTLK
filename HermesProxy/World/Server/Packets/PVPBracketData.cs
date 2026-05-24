@@ -32,26 +32,26 @@ public struct PVPBracketData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.Bracket);
-		data.WriteInt32(this.Rating);
-		data.WriteInt32(this.Rank);
-		data.WriteInt32(this.WeeklyPlayed);
-		data.WriteInt32(this.WeeklyWon);
-		data.WriteInt32(this.SeasonPlayed);
-		data.WriteInt32(this.SeasonWon);
-		data.WriteInt32(this.WeeklyBestRating);
-		data.WriteInt32(this.SeasonBestRating);
-		data.WriteInt32(this.PvpTierID);
+		data.WriteUInt8(Bracket);
+		data.WriteInt32(Rating);
+		data.WriteInt32(Rank);
+		data.WriteInt32(WeeklyPlayed);
+		data.WriteInt32(WeeklyWon);
+		data.WriteInt32(SeasonPlayed);
+		data.WriteInt32(SeasonWon);
+		data.WriteInt32(WeeklyBestRating);
+		data.WriteInt32(SeasonBestRating);
+		data.WriteInt32(PvpTierID);
 		if (ModernVersion.AddedInVersion(9, 1, 0, 1, 14, 0, 2, 5, 2))
 		{
-			data.WriteInt32(this.WeeklyBestWinPvpTierID);
+			data.WriteInt32(WeeklyBestWinPvpTierID);
 		}
 		if (ModernVersion.AddedInVersion(9, 1, 5, 1, 14, 1, 2, 5, 3))
 		{
-			data.WriteInt32(this.Unused1);
-			data.WriteInt32(this.Unused2);
+			data.WriteInt32(Unused1);
+			data.WriteInt32(Unused2);
 		}
-		data.WriteBit(this.Disqualified);
+		data.WriteBit(Disqualified);
 		data.FlushBits();
 	}
 }

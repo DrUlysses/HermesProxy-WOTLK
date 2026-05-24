@@ -19,9 +19,9 @@ internal class PvPCredit : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.OriginalHonor);
-		base._worldPacket.WriteInt32(this.Honor);
-		base._worldPacket.WritePackedGuid128(this.Target);
-		base._worldPacket.WriteUInt32(this.Rank);
+		_worldPacket.WriteInt32(OriginalHonor);
+		_worldPacket.WriteInt32(Honor);
+		_worldPacket.WritePackedGuid128(Target);
+		_worldPacket.WriteUInt32(Rank);
 	}
 }

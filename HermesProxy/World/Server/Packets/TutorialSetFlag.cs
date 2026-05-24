@@ -15,10 +15,10 @@ public class TutorialSetFlag : ClientPacket
 
 	public override void Read()
 	{
-		this.Action = (TutorialAction)base._worldPacket.ReadBits<byte>(2);
-		if (this.Action == TutorialAction.Update)
+		Action = (TutorialAction)_worldPacket.ReadBits<byte>(2);
+		if (Action == TutorialAction.Update)
 		{
-			this.TutorialBit = base._worldPacket.ReadUInt32();
+			TutorialBit = _worldPacket.ReadUInt32();
 		}
 	}
 }

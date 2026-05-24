@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (C) 2012-2020 CypherCore <http://github.com/CypherCore>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using Framework.Constants;
 using System;
 
 public static class MathFunctions
@@ -198,7 +197,7 @@ public static class MathFunctions
 
     public static ulong MakePair64(uint l, uint h)
     {
-        return (ulong)l | ((ulong)h << 32);
+        return l | ((ulong)h << 32);
     }
     public static uint Pair64_HiPart(ulong x)
     {

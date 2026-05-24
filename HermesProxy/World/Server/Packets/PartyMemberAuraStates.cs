@@ -14,11 +14,11 @@ public class PartyMemberAuraStates
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.SpellId);
-		data.WriteUInt16(this.AuraFlags);
-		data.WriteUInt32(this.ActiveFlags);
-		data.WriteInt32(this.Points.Count);
-		foreach (float point in this.Points)
+		data.WriteUInt32(SpellId);
+		data.WriteUInt16(AuraFlags);
+		data.WriteUInt32(ActiveFlags);
+		data.WriteInt32(Points.Count);
+		foreach (float point in Points)
 		{
 			data.WriteFloat(point);
 		}

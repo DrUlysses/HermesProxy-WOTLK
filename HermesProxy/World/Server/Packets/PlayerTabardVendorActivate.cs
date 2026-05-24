@@ -13,6 +13,6 @@ public class PlayerTabardVendorActivate : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.DesignerGUID);
+		_worldPacket.WritePackedGuid128(DesignerGUID);
 	}
 }

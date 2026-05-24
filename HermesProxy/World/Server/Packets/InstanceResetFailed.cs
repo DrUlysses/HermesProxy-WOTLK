@@ -15,8 +15,8 @@ internal class InstanceResetFailed : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.MapID);
-		base._worldPacket.WriteBits(this.ResetFailedReason, 2);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt32(MapID);
+		_worldPacket.WriteBits(ResetFailedReason, 2);
+		_worldPacket.FlushBits();
 	}
 }

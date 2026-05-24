@@ -10,9 +10,9 @@ public class AuthWaitInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.WaitCount);
-		data.WriteUInt32(this.WaitTime);
-		data.WriteBit(this.HasFCM);
+		data.WriteUInt32(WaitCount);
+		data.WriteUInt32(WaitTime);
+		data.WriteBit(HasFCM);
 		data.FlushBits();
 	}
 }

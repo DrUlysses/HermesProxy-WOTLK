@@ -22,10 +22,10 @@ public class SpellFailure : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.CasterUnit);
-		base._worldPacket.WritePackedGuid128(this.CastID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteUInt32(this.SpellXSpellVisualID);
-		base._worldPacket.WriteUInt16(this.Reason);
+		_worldPacket.WritePackedGuid128(CasterUnit);
+		_worldPacket.WritePackedGuid128(CastID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteUInt32(SpellXSpellVisualID);
+		_worldPacket.WriteUInt16(Reason);
 	}
 }

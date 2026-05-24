@@ -34,13 +34,13 @@ public class WotlkWorldCrypt : LegacyWorldCrypt
 		};
 		HmacHash encHash = new HmacHash(encSeed);
 		encHash.Finish(sessionKey, sessionKey.Length);
-		this.m_sendKey = encHash.Digest.ToArray();
+		m_sendKey = encHash.Digest.ToArray();
 		HmacHash decHash = new HmacHash(decSeed);
 		decHash.Finish(sessionKey, sessionKey.Length);
-		this.m_recvKey = decHash.Digest.ToArray();
-		this.m_sendState = this.InitRC4(this.m_sendKey);
-		this.m_recvState = this.InitRC4(this.m_recvKey);
-		this.m_isInitialized = true;
+		m_recvKey = decHash.Digest.ToArray();
+		m_sendState = InitRC4(m_sendKey);
+		m_recvState = InitRC4(m_recvKey);
+		m_isInitialized = true;
 	}
 
 	private byte[] InitRC4(byte[] key)
@@ -66,7 +66,7 @@ public class WotlkWorldCrypt : LegacyWorldCrypt
 		state[256] = 0;
 		state[257] = 0;
 		byte[] drop = new byte[1024];
-		WotlkWorldCrypt.RC4Process(state, drop, 1024);
+		RC4Process(state, drop, 1024);
 		return state;
 	}
 
@@ -92,17 +92,17 @@ public class WotlkWorldCrypt : LegacyWorldCrypt
 
 	public void Decrypt(byte[] data, int len)
 	{
-		if (this.m_isInitialized && (long)len >= 4L)
+		if (m_isInitialized && len >= 4L)
 		{
-			WotlkWorldCrypt.RC4Process(this.m_recvState, data, 4);
+			RC4Process(m_recvState, data, 4);
 		}
 	}
 
 	public void Encrypt(byte[] data, int len)
 	{
-		if (this.m_isInitialized && (long)len >= 6L)
+		if (m_isInitialized && len >= 6L)
 		{
-			WotlkWorldCrypt.RC4Process(this.m_sendState, data, 6);
+			RC4Process(m_sendState, data, 6);
 		}
 	}
 }

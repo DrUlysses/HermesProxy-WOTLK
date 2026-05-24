@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Club.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/club_role.proto</summary>
@@ -2361,8 +2361,8 @@ namespace Bgs.Protocol.Club.V1 {
         return true;
       }
       if (Id != other.Id) return false;
-      if (!object.Equals(State, other.State)) return false;
-      if (!object.Equals(Privilege, other.Privilege)) return false;
+      if (!Equals(State, other.State)) return false;
+      if (!Equals(Privilege, other.Privilege)) return false;
       if (AlwaysGrantStreamAccess != other.AlwaysGrantStreamAccess) return false;
       if (AllowInClubSlot != other.AllowInClubSlot) return false;
       return Equals(_unknownFields, other._unknownFields);

@@ -15,7 +15,7 @@ public struct InvUpdate
 
 	public InvUpdate(WorldPacket data)
 	{
-		this.Items = new List<InvItem>();
+		Items = new List<InvItem>();
 		int size = data.ReadBits<int>(2);
 		data.ResetBitPos();
 		for (int i = 0; i < size; i++)
@@ -25,7 +25,7 @@ public struct InvUpdate
 				ContainerSlot = data.ReadUInt8(),
 				Slot = data.ReadUInt8()
 			};
-			this.Items.Add(item);
+			Items.Add(item);
 		}
 	}
 }

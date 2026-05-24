@@ -18,18 +18,18 @@ public class SetTimeZoneInformation : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBits(this.ServerTimeTZ.GetByteCount(), 7);
-		base._worldPacket.WriteBits(this.GameTimeTZ.GetByteCount(), 7);
+		_worldPacket.WriteBits(ServerTimeTZ.GetByteCount(), 7);
+		_worldPacket.WriteBits(GameTimeTZ.GetByteCount(), 7);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteBits((this.ServerRegionalTZ ?? "US/Eastern").GetByteCount(), 7);
+			_worldPacket.WriteBits((ServerRegionalTZ ?? "US/Eastern").GetByteCount(), 7);
 		}
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.ServerTimeTZ);
-		base._worldPacket.WriteString(this.GameTimeTZ);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(ServerTimeTZ);
+		_worldPacket.WriteString(GameTimeTZ);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteString(this.ServerRegionalTZ ?? "US/Eastern");
+			_worldPacket.WriteString(ServerRegionalTZ ?? "US/Eastern");
 		}
 	}
 }

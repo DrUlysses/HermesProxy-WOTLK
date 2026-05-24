@@ -15,7 +15,7 @@ public class AreaSpiritHealerTime : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.HealerGuid);
-		base._worldPacket.WriteUInt32(this.TimeLeft);
+		_worldPacket.WritePackedGuid128(HealerGuid);
+		_worldPacket.WriteUInt32(TimeLeft);
 	}
 }

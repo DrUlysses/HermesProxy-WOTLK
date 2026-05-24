@@ -14,10 +14,10 @@ public class GuildRanks : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Ranks.Count);
-		this.Ranks.ForEach(delegate(GuildRankData p)
+		_worldPacket.WriteInt32(Ranks.Count);
+		Ranks.ForEach(delegate(GuildRankData p)
 		{
-			p.Write(base._worldPacket);
+			p.Write(_worldPacket);
 		});
 	}
 }

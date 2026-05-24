@@ -8,7 +8,7 @@ internal struct FactionStandingData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteInt32(this.Index);
-		data.WriteInt32(this.Standing);
+		data.WriteInt32(Index);
+		data.WriteInt32(Standing);
 	}
 }

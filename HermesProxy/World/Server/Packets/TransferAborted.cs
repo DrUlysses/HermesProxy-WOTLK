@@ -19,10 +19,10 @@ public class TransferAborted : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.MapID);
-		base._worldPacket.WriteUInt8(this.Arg);
-		base._worldPacket.WriteInt32(this.MapDifficultyXConditionID);
-		base._worldPacket.WriteBits(this.Reason, 6);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt32(MapID);
+		_worldPacket.WriteUInt8(Arg);
+		_worldPacket.WriteInt32(MapDifficultyXConditionID);
+		_worldPacket.WriteBits(Reason, 6);
+		_worldPacket.FlushBits();
 	}
 }

@@ -14,6 +14,6 @@ public class TitleEarned : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Index);
+		_worldPacket.WriteUInt32(Index);
 	}
 }

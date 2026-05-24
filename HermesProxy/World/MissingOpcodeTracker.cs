@@ -17,45 +17,45 @@ public static class MissingOpcodeTracker
 	{
 		get
 		{
-			if (MissingOpcodeTracker._logPath == null)
+			if (_logPath == null)
 			{
-				MissingOpcodeTracker._logPath = Path.Combine(Directory.GetCurrentDirectory(), "logs", "missing_opcodes.log");
+				_logPath = Path.Combine(Directory.GetCurrentDirectory(), "logs", "missing_opcodes.log");
 			}
-			return MissingOpcodeTracker._logPath;
+			return _logPath;
 		}
 	}
 
 	public static void LogDroppedSMSG(Opcode universalOpcode, int size)
 	{
 		string key = $"DROPPED_SMSG:{universalOpcode}:sz{size}";
-		MissingOpcodeTracker.Log(key, $"[DROPPED SMSG] {universalOpcode} (mapped to opcode 0, size={size}) - needs modern opcode value or handler");
+		Log(key, $"[DROPPED SMSG] {universalOpcode} (mapped to opcode 0, size={size}) - needs modern opcode value or handler");
 	}
 
 	public static void LogUnhandledCMSG(Opcode universalOpcode, uint rawOpcode)
 	{
 		string key = $"UNHANDLED_CMSG:{universalOpcode}:{rawOpcode}";
-		MissingOpcodeTracker.Log(key, $"[UNHANDLED CMSG] {universalOpcode} (raw=0x{rawOpcode:X4}/{rawOpcode}) - needs handler");
+		Log(key, $"[UNHANDLED CMSG] {universalOpcode} (raw=0x{rawOpcode:X4}/{rawOpcode}) - needs handler");
 	}
 
 	public static void LogUnhandledLegacySMSG(Opcode universalOpcode, uint rawOpcode)
 	{
 		string key = $"UNHANDLED_LEGACY_SMSG:{universalOpcode}";
-		MissingOpcodeTracker.Log(key, $"[UNHANDLED LEGACY SMSG] {universalOpcode} (raw=0x{rawOpcode:X4}/{rawOpcode}) - needs conversion handler");
+		Log(key, $"[UNHANDLED LEGACY SMSG] {universalOpcode} (raw=0x{rawOpcode:X4}/{rawOpcode}) - needs conversion handler");
 	}
 
 	private static void Log(string key, string message)
 	{
-		lock (MissingOpcodeTracker._lock)
+		lock (_lock)
 		{
-			if (MissingOpcodeTracker._logged.Contains(key))
+			if (_logged.Contains(key))
 			{
 				return;
 			}
-			MissingOpcodeTracker._logged.Add(key);
+			_logged.Add(key);
 			try
 			{
-				Directory.CreateDirectory(Path.GetDirectoryName(MissingOpcodeTracker.LogPath));
-				File.AppendAllText(MissingOpcodeTracker.LogPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}\n");
+				Directory.CreateDirectory(Path.GetDirectoryName(LogPath));
+				File.AppendAllText(LogPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}\n");
 			}
 			catch
 			{
@@ -65,12 +65,12 @@ public static class MissingOpcodeTracker
 
 	public static void Reset()
 	{
-		lock (MissingOpcodeTracker._lock)
+		lock (_lock)
 		{
-			MissingOpcodeTracker._logged.Clear();
+			_logged.Clear();
 			try
 			{
-				File.Delete(MissingOpcodeTracker.LogPath);
+				File.Delete(LogPath);
 			}
 			catch
 			{

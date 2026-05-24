@@ -11,6 +11,6 @@ public class GuildDeleteRank : ClientPacket
 
 	public override void Read()
 	{
-		this.RankOrder = base._worldPacket.ReadInt32();
+		RankOrder = _worldPacket.ReadInt32();
 	}
 }

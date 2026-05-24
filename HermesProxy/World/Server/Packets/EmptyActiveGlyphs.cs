@@ -12,8 +12,8 @@ public class EmptyActiveGlyphs : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(0u);
-		base._worldPacket.WriteBit(bit: true);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt32(0u);
+		_worldPacket.WriteBit(bit: true);
+		_worldPacket.FlushBits();
 	}
 }

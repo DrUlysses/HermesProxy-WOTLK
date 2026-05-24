@@ -23,11 +23,11 @@ internal class EnchantmentLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Owner);
-		base._worldPacket.WritePackedGuid128(this.Caster);
-		base._worldPacket.WritePackedGuid128(this.ItemGUID);
-		base._worldPacket.WriteInt32(this.ItemID);
-		base._worldPacket.WriteInt32(this.Enchantment);
-		base._worldPacket.WriteInt32(this.EnchantSlot);
+		_worldPacket.WritePackedGuid128(Owner);
+		_worldPacket.WritePackedGuid128(Caster);
+		_worldPacket.WritePackedGuid128(ItemGUID);
+		_worldPacket.WriteInt32(ItemID);
+		_worldPacket.WriteInt32(Enchantment);
+		_worldPacket.WriteInt32(EnchantSlot);
 	}
 }

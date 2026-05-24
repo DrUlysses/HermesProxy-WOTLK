@@ -15,12 +15,12 @@ public class PhaseShiftChange : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Client);
-		base._worldPacket.WriteUInt32(this.PhaseShiftFlags);
-		base._worldPacket.WriteUInt32(0u);
-		base._worldPacket.WritePackedGuid128(WowGuid128.Empty);
-		base._worldPacket.WriteUInt32(0u);
-		base._worldPacket.WriteUInt32(0u);
-		base._worldPacket.WriteUInt32(0u);
+		_worldPacket.WritePackedGuid128(Client);
+		_worldPacket.WriteUInt32(PhaseShiftFlags);
+		_worldPacket.WriteUInt32(0u);
+		_worldPacket.WritePackedGuid128(WowGuid128.Empty);
+		_worldPacket.WriteUInt32(0u);
+		_worldPacket.WriteUInt32(0u);
+		_worldPacket.WriteUInt32(0u);
 	}
 }

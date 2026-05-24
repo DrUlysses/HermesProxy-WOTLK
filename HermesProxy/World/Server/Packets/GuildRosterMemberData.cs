@@ -47,28 +47,28 @@ public class GuildRosterMemberData
 
 	public void Write(WorldPacket data)
 	{
-		data.WritePackedGuid128(this.Guid);
-		data.WriteInt32(this.RankID);
-		data.WriteInt32(this.AreaID);
-		data.WriteInt32(this.PersonalAchievementPoints);
-		data.WriteInt32(this.GuildReputation);
-		data.WriteFloat(this.LastSave);
+		data.WritePackedGuid128(Guid);
+		data.WriteInt32(RankID);
+		data.WriteInt32(AreaID);
+		data.WriteInt32(PersonalAchievementPoints);
+		data.WriteInt32(GuildReputation);
+		data.WriteFloat(LastSave);
 		for (byte i = 0; i < 2; i++)
 		{
-			this.Profession[i].Write(data);
+			Profession[i].Write(data);
 		}
-		data.WriteUInt32(this.VirtualRealmAddress);
-		data.WriteUInt8(this.Status);
-		data.WriteUInt8(this.Level);
-		data.WriteUInt8((byte)this.ClassID);
-		data.WriteUInt8((byte)this.SexID);
-		data.WriteBits(this.Name.GetByteCount(), 6);
-		data.WriteBits(this.Note.GetByteCount(), 8);
-		data.WriteBits(this.OfficerNote.GetByteCount(), 8);
-		data.WriteBit(this.Authenticated);
-		data.WriteBit(this.SorEligible);
-		data.WriteString(this.Name);
-		data.WriteString(this.Note);
-		data.WriteString(this.OfficerNote);
+		data.WriteUInt32(VirtualRealmAddress);
+		data.WriteUInt8(Status);
+		data.WriteUInt8(Level);
+		data.WriteUInt8((byte)ClassID);
+		data.WriteUInt8((byte)SexID);
+		data.WriteBits(Name.GetByteCount(), 6);
+		data.WriteBits(Note.GetByteCount(), 8);
+		data.WriteBits(OfficerNote.GetByteCount(), 8);
+		data.WriteBit(Authenticated);
+		data.WriteBit(SorEligible);
+		data.WriteString(Name);
+		data.WriteString(Note);
+		data.WriteString(OfficerNote);
 	}
 }

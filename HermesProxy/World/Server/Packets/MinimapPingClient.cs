@@ -15,7 +15,7 @@ internal class MinimapPingClient : ClientPacket
 
 	public override void Read()
 	{
-		this.Position = base._worldPacket.ReadVector2();
-		this.PartyIndex = base._worldPacket.ReadInt8();
+		Position = _worldPacket.ReadVector2();
+		PartyIndex = _worldPacket.ReadInt8();
 	}
 }

@@ -11,6 +11,6 @@ public class Inspect : ClientPacket
 
 	public override void Read()
 	{
-		this.Target = base._worldPacket.ReadPackedGuid128();
+		Target = _worldPacket.ReadPackedGuid128();
 	}
 }

@@ -11,6 +11,6 @@ public class SocialContractRequestResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBool(data: false);
+		_worldPacket.WriteBool(data: false);
 	}
 }

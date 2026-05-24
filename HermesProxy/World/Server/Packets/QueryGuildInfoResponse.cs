@@ -18,9 +18,9 @@ public class QueryGuildInfoResponse : ServerPacket
 
 			public RankInfo(uint id, uint order, string name)
 			{
-				this.RankID = id;
-				this.RankOrder = order;
-				this.RankName = name;
+				RankID = id;
+				RankOrder = order;
+				RankName = name;
 			}
 		}
 
@@ -58,34 +58,34 @@ public class QueryGuildInfoResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.GuildGUID);
+		_worldPacket.WritePackedGuid128(GuildGUID);
 		if (ModernVersion.RemovedInVersion(9, 2, 0, 1, 14, 2, 2, 5, 3))
 		{
-			base._worldPacket.WritePackedGuid128(this.PlayerGuid);
+			_worldPacket.WritePackedGuid128(PlayerGuid);
 		}
-		base._worldPacket.WriteBit(this.HasGuildInfo);
-		base._worldPacket.FlushBits();
-		if (!this.HasGuildInfo)
+		_worldPacket.WriteBit(HasGuildInfo);
+		_worldPacket.FlushBits();
+		if (!HasGuildInfo)
 		{
 			return;
 		}
-		base._worldPacket.WritePackedGuid128(this.Info.GuildGuid);
-		base._worldPacket.WriteUInt32(this.Info.VirtualRealmAddress);
-		base._worldPacket.WriteInt32(this.Info.Ranks.Count);
-		base._worldPacket.WriteUInt32(this.Info.EmblemStyle);
-		base._worldPacket.WriteUInt32(this.Info.EmblemColor);
-		base._worldPacket.WriteUInt32(this.Info.BorderStyle);
-		base._worldPacket.WriteUInt32(this.Info.BorderColor);
-		base._worldPacket.WriteUInt32(this.Info.BackgroundColor);
-		base._worldPacket.WriteBits(this.Info.GuildName.GetByteCount(), 7);
-		base._worldPacket.FlushBits();
-		foreach (GuildInfo.RankInfo rank in this.Info.Ranks)
+		_worldPacket.WritePackedGuid128(Info.GuildGuid);
+		_worldPacket.WriteUInt32(Info.VirtualRealmAddress);
+		_worldPacket.WriteInt32(Info.Ranks.Count);
+		_worldPacket.WriteUInt32(Info.EmblemStyle);
+		_worldPacket.WriteUInt32(Info.EmblemColor);
+		_worldPacket.WriteUInt32(Info.BorderStyle);
+		_worldPacket.WriteUInt32(Info.BorderColor);
+		_worldPacket.WriteUInt32(Info.BackgroundColor);
+		_worldPacket.WriteBits(Info.GuildName.GetByteCount(), 7);
+		_worldPacket.FlushBits();
+		foreach (GuildInfo.RankInfo rank in Info.Ranks)
 		{
-			base._worldPacket.WriteUInt32(rank.RankID);
-			base._worldPacket.WriteUInt32(rank.RankOrder);
-			base._worldPacket.WriteBits(rank.RankName.GetByteCount(), 7);
-			base._worldPacket.WriteString(rank.RankName);
+			_worldPacket.WriteUInt32(rank.RankID);
+			_worldPacket.WriteUInt32(rank.RankOrder);
+			_worldPacket.WriteBits(rank.RankName.GetByteCount(), 7);
+			_worldPacket.WriteString(rank.RankName);
 		}
-		base._worldPacket.WriteString(this.Info.GuildName);
+		_worldPacket.WriteString(Info.GuildName);
 	}
 }

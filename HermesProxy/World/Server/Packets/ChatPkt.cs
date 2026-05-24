@@ -9,7 +9,7 @@ public class ChatPkt : ServerPacket
 {
 	public ChatMessageTypeModern SlashCmd = ChatMessageTypeModern.System;
 
-	public uint _Language = 0u;
+	public uint _Language;
 
 	public WowGuid128 SenderGUID;
 
@@ -52,40 +52,40 @@ public class ChatPkt : ServerPacket
 	public ChatPkt(GlobalSessionData globalSession, ChatMessageTypeModern chatType, string message, uint language = 0u, WowGuid128 sender = null, string senderName = "", WowGuid128 receiver = null, string receiverName = "", string channelName = "", ChatFlags chatFlags = ChatFlags.None, string addonPrefix = "", uint achievementId = 0u)
 		: base(Opcode.SMSG_CHAT)
 	{
-		this.SlashCmd = chatType;
-		this._Language = language;
-		this._ChatFlags = chatFlags;
-		this.ChatText = message;
-		this.Channel = channelName;
-		this.AchievementID = achievementId;
-		this.Prefix = addonPrefix;
-		this.SenderGUID = ((sender != null) ? sender : WowGuid128.Empty);
+		SlashCmd = chatType;
+		_Language = language;
+		_ChatFlags = chatFlags;
+		ChatText = message;
+		Channel = channelName;
+		AchievementID = achievementId;
+		Prefix = addonPrefix;
+		SenderGUID = ((sender != null) ? sender : WowGuid128.Empty);
 		if (string.IsNullOrEmpty(senderName) && sender != null)
 		{
-			this.SenderName = globalSession.GameState.GetPlayerName(sender);
+			SenderName = globalSession.GameState.GetPlayerName(sender);
 		}
 		else
 		{
-			this.SenderName = senderName;
+			SenderName = senderName;
 		}
-		this.SenderAccountGUID = ((sender != null) ? globalSession.GetGameAccountGuidForPlayer(sender) : WowGuid128.Empty);
-		this.SenderGuildGUID = WowGuid128.Empty;
-		this.TargetGUID = ((receiver != null) ? receiver : WowGuid128.Empty);
+		SenderAccountGUID = ((sender != null) ? globalSession.GetGameAccountGuidForPlayer(sender) : WowGuid128.Empty);
+		SenderGuildGUID = WowGuid128.Empty;
+		TargetGUID = ((receiver != null) ? receiver : WowGuid128.Empty);
 		if (string.IsNullOrEmpty(receiverName) && receiver != null)
 		{
-			this.TargetName = globalSession.GameState.GetPlayerName(receiver);
+			TargetName = globalSession.GameState.GetPlayerName(receiver);
 		}
 		else
 		{
-			this.TargetName = receiverName;
+			TargetName = receiverName;
 		}
-		if (!this.SenderGUID.IsEmpty())
+		if (!SenderGUID.IsEmpty())
 		{
-			this.SenderVirtualAddress = globalSession.RealmId.GetAddress();
+			SenderVirtualAddress = globalSession.RealmId.GetAddress();
 		}
-		if (!this.TargetGUID.IsEmpty())
+		if (!TargetGUID.IsEmpty())
 		{
-			this.TargetVirtualAddress = globalSession.RealmId.GetAddress();
+			TargetVirtualAddress = globalSession.RealmId.GetAddress();
 		}
 	}
 
@@ -112,40 +112,40 @@ public class ChatPkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8((byte)this.SlashCmd);
-		base._worldPacket.WriteUInt32(this._Language);
-		base._worldPacket.WritePackedGuid128(this.SenderGUID);
-		base._worldPacket.WritePackedGuid128(this.SenderGuildGUID);
-		base._worldPacket.WritePackedGuid128(this.SenderAccountGUID);
-		base._worldPacket.WritePackedGuid128(this.TargetGUID);
-		base._worldPacket.WriteUInt32(this.TargetVirtualAddress);
-		base._worldPacket.WriteUInt32(this.SenderVirtualAddress);
-		base._worldPacket.WriteInt32((int)this.AchievementID);
-		base._worldPacket.WriteFloat(this.DisplayTime);
-		base._worldPacket.WriteInt32(this.SpellID);
-		base._worldPacket.WriteBits(this.SenderName.GetByteCount(), 11);
-		base._worldPacket.WriteBits(this.TargetName.GetByteCount(), 11);
-		base._worldPacket.WriteBits(this.Prefix.GetByteCount(), 5);
-		base._worldPacket.WriteBits(this.Channel.GetByteCount(), 7);
-		base._worldPacket.WriteBits(this.ChatText.GetByteCount(), 12);
-		base._worldPacket.WriteBits((uint)this._ChatFlags, 15);
-		base._worldPacket.WriteBit(this.HideChatLog);
-		base._worldPacket.WriteBit(this.FakeSenderName);
-		base._worldPacket.WriteBit(this.Unused_801.HasValue);
-		base._worldPacket.WriteBit(this.ChannelGUID != null);
-		base._worldPacket.FlushBits();
-		base._worldPacket.WriteString(this.SenderName);
-		base._worldPacket.WriteString(this.TargetName);
-		base._worldPacket.WriteString(this.Prefix);
-		base._worldPacket.WriteString(this.Channel);
-		base._worldPacket.WriteString(this.ChatText);
-		if (this.Unused_801.HasValue)
+		_worldPacket.WriteUInt8((byte)SlashCmd);
+		_worldPacket.WriteUInt32(_Language);
+		_worldPacket.WritePackedGuid128(SenderGUID);
+		_worldPacket.WritePackedGuid128(SenderGuildGUID);
+		_worldPacket.WritePackedGuid128(SenderAccountGUID);
+		_worldPacket.WritePackedGuid128(TargetGUID);
+		_worldPacket.WriteUInt32(TargetVirtualAddress);
+		_worldPacket.WriteUInt32(SenderVirtualAddress);
+		_worldPacket.WriteInt32((int)AchievementID);
+		_worldPacket.WriteFloat(DisplayTime);
+		_worldPacket.WriteInt32(SpellID);
+		_worldPacket.WriteBits(SenderName.GetByteCount(), 11);
+		_worldPacket.WriteBits(TargetName.GetByteCount(), 11);
+		_worldPacket.WriteBits(Prefix.GetByteCount(), 5);
+		_worldPacket.WriteBits(Channel.GetByteCount(), 7);
+		_worldPacket.WriteBits(ChatText.GetByteCount(), 12);
+		_worldPacket.WriteBits((uint)_ChatFlags, 15);
+		_worldPacket.WriteBit(HideChatLog);
+		_worldPacket.WriteBit(FakeSenderName);
+		_worldPacket.WriteBit(Unused_801.HasValue);
+		_worldPacket.WriteBit(ChannelGUID != null);
+		_worldPacket.FlushBits();
+		_worldPacket.WriteString(SenderName);
+		_worldPacket.WriteString(TargetName);
+		_worldPacket.WriteString(Prefix);
+		_worldPacket.WriteString(Channel);
+		_worldPacket.WriteString(ChatText);
+		if (Unused_801.HasValue)
 		{
-			base._worldPacket.WriteUInt32(this.Unused_801.Value);
+			_worldPacket.WriteUInt32(Unused_801.Value);
 		}
-		if (this.ChannelGUID != null)
+		if (ChannelGUID != null)
 		{
-			base._worldPacket.WritePackedGuid128(this.ChannelGUID);
+			_worldPacket.WritePackedGuid128(ChannelGUID);
 		}
 	}
 }

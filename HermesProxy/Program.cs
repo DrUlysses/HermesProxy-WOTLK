@@ -70,7 +70,7 @@ public class Program
 				ConfigFileLocation = parseResult.GetValueForOption(CommandLineArgumentsTemplate.ConfigFileLocation),
 				WorkingDirectory = parseResult.GetValueForOption(CommandLineArgumentsTemplate.WorkingDirectory),
 				DisableVersionCheck = parseResult.GetValueForOption(CommandLineArgumentsTemplate.DisableVersionCheck),
-				OverwrittenConfigValues = Program.ParseMultiArgument(parseResult.GetValueForOption(CommandLineArgumentsTemplate.OverwrittenConfigValues))
+				OverwrittenConfigValues = ParseMultiArgument(parseResult.GetValueForOption(CommandLineArgumentsTemplate.OverwrittenConfigValues))
 			};
 			Server.ServerMain(args2);
 		});

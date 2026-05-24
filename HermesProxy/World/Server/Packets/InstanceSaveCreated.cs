@@ -13,7 +13,7 @@ internal class InstanceSaveCreated : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteBit(this.Gm);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteBit(Gm);
+		_worldPacket.FlushBits();
 	}
 }

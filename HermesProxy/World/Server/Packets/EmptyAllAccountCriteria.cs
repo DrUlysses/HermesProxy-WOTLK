@@ -12,6 +12,6 @@ public class EmptyAllAccountCriteria : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(0);
+		_worldPacket.WriteInt32(0);
 	}
 }

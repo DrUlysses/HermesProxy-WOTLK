@@ -231,10 +231,10 @@ public class HighGuid703 : HighGuid
 	public HighGuid703(byte high)
 	{
 		this.high = high;
-		if (!HighGuid703.High703ToHighType.ContainsKey((HighGuidType703)high))
+		if (!High703ToHighType.ContainsKey((HighGuidType703)high))
 		{
 			throw new ArgumentOutOfRangeException("0x" + high.ToString("X"));
 		}
-		base.highGuidType = HighGuid703.High703ToHighType[(HighGuidType703)high];
+		highGuidType = High703ToHighType[(HighGuidType703)high];
 	}
 }

@@ -11,7 +11,7 @@ public class ChatMessageDND : ClientPacket
 
 	public override void Read()
 	{
-		uint len = base._worldPacket.ReadBits<uint>(9);
-		this.Text = base._worldPacket.ReadString(len);
+		uint len = _worldPacket.ReadBits<uint>(9);
+		Text = _worldPacket.ReadString(len);
 	}
 }

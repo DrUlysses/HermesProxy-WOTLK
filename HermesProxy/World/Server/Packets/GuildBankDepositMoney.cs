@@ -13,7 +13,7 @@ public class GuildBankDepositMoney : ClientPacket
 
 	public override void Read()
 	{
-		this.BankGuid = base._worldPacket.ReadPackedGuid128();
-		this.Money = base._worldPacket.ReadUInt64();
+		BankGuid = _worldPacket.ReadPackedGuid128();
+		Money = _worldPacket.ReadUInt64();
 	}
 }

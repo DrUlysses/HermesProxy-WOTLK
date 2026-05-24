@@ -17,10 +17,10 @@ public class GossipSelectOption : ClientPacket
 
 	public override void Read()
 	{
-		this.GossipUnit = base._worldPacket.ReadPackedGuid128();
-		this.GossipID = base._worldPacket.ReadUInt32();
-		this.GossipIndex = base._worldPacket.ReadUInt32();
-		uint length = base._worldPacket.ReadBits<uint>(8);
-		this.PromotionCode = base._worldPacket.ReadString(length);
+		GossipUnit = _worldPacket.ReadPackedGuid128();
+		GossipID = _worldPacket.ReadUInt32();
+		GossipIndex = _worldPacket.ReadUInt32();
+		uint length = _worldPacket.ReadBits<uint>(8);
+		PromotionCode = _worldPacket.ReadString(length);
 	}
 }

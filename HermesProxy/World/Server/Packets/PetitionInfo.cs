@@ -43,33 +43,33 @@ public class PetitionInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.PetitionID);
-		data.WritePackedGuid128(this.Petitioner);
-		data.WriteUInt32(this.MinSignatures);
-		data.WriteUInt32(this.MaxSignatures);
-		data.WriteInt32(this.DeadLine);
-		data.WriteInt32(this.IssueDate);
-		data.WriteInt32(this.AllowedGuildID);
-		data.WriteInt32(this.AllowedClasses);
-		data.WriteInt32(this.AllowedRaces);
-		data.WriteInt16(this.AllowedGender);
-		data.WriteInt32(this.AllowedMinLevel);
-		data.WriteInt32(this.AllowedMaxLevel);
-		data.WriteInt32(this.NumChoices);
-		data.WriteInt32(this.StaticType);
-		data.WriteUInt32(this.Muid);
-		data.WriteBits(this.Title.GetByteCount(), 7);
-		data.WriteBits(this.BodyText.GetByteCount(), 12);
-		for (byte i = 0; i < this.Choicetext.Length; i++)
+		data.WriteUInt32(PetitionID);
+		data.WritePackedGuid128(Petitioner);
+		data.WriteUInt32(MinSignatures);
+		data.WriteUInt32(MaxSignatures);
+		data.WriteInt32(DeadLine);
+		data.WriteInt32(IssueDate);
+		data.WriteInt32(AllowedGuildID);
+		data.WriteInt32(AllowedClasses);
+		data.WriteInt32(AllowedRaces);
+		data.WriteInt16(AllowedGender);
+		data.WriteInt32(AllowedMinLevel);
+		data.WriteInt32(AllowedMaxLevel);
+		data.WriteInt32(NumChoices);
+		data.WriteInt32(StaticType);
+		data.WriteUInt32(Muid);
+		data.WriteBits(Title.GetByteCount(), 7);
+		data.WriteBits(BodyText.GetByteCount(), 12);
+		for (byte i = 0; i < Choicetext.Length; i++)
 		{
-			data.WriteBits(this.Choicetext[i].GetByteCount(), 6);
+			data.WriteBits(Choicetext[i].GetByteCount(), 6);
 		}
 		data.FlushBits();
-		for (byte i2 = 0; i2 < this.Choicetext.Length; i2++)
+		for (byte i2 = 0; i2 < Choicetext.Length; i2++)
 		{
-			data.WriteString(this.Choicetext[i2]);
+			data.WriteString(Choicetext[i2]);
 		}
-		data.WriteString(this.Title);
-		data.WriteString(this.BodyText);
+		data.WriteString(Title);
+		data.WriteString(BodyText);
 	}
 }

@@ -12,10 +12,10 @@ public class RuneData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.Start);
-		data.WriteUInt8(this.Count);
-		data.WriteInt32(this.Cooldowns.Count);
-		foreach (byte cd in this.Cooldowns)
+		data.WriteUInt8(Start);
+		data.WriteUInt8(Count);
+		data.WriteInt32(Cooldowns.Count);
+		foreach (byte cd in Cooldowns)
 		{
 			data.WriteUInt8(cd);
 		}

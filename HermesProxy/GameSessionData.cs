@@ -58,7 +58,7 @@ public class GameSessionData
 	public uint? CurrentMapId;
 
 	// Cached QueryGameObjectResponse data for pre-sending before transport CreateObjects
-	public Dictionary<uint, HermesProxy.World.Server.Packets.QueryGameObjectResponse> GameObjectQueryCache = new Dictionary<uint, HermesProxy.World.Server.Packets.QueryGameObjectResponse>();
+	public Dictionary<uint, QueryGameObjectResponse> GameObjectQueryCache = new Dictionary<uint, QueryGameObjectResponse>();
 
 	public uint CurrentZoneId;
 
@@ -224,7 +224,7 @@ public class GameSessionData
 
 	public uint GetCurrentGroupSize()
 	{
-		PartyUpdate group = this.GetCurrentGroup();
+		PartyUpdate group = GetCurrentGroup();
 		if (group == null)
 		{
 			return 0u;
@@ -234,7 +234,7 @@ public class GameSessionData
 
 	public WowGuid128 GetCurrentGroupLeader()
 	{
-		PartyUpdate group = this.GetCurrentGroup();
+		PartyUpdate group = GetCurrentGroup();
 		if (group == null)
 		{
 			return WowGuid128.Empty;
@@ -244,12 +244,12 @@ public class GameSessionData
 
 	public LootMethod GetCurrentLootMethod()
 	{
-		return this.GetCurrentGroup()?.LootSettings.Method ?? LootMethod.FreeForAll;
+		return GetCurrentGroup()?.LootSettings.Method ?? LootMethod.FreeForAll;
 	}
 
 	public WowGuid128 GetCurrentGroupGuid()
 	{
-		PartyUpdate group = this.GetCurrentGroup();
+		PartyUpdate group = GetCurrentGroup();
 		if (group == null)
 		{
 			return WowGuid128.Empty;
@@ -259,12 +259,12 @@ public class GameSessionData
 
 	public PartyUpdate GetCurrentGroup()
 	{
-		return this.CurrentGroups[this.GetCurrentPartyIndex()];
+		return CurrentGroups[GetCurrentPartyIndex()];
 	}
 
 	public sbyte GetCurrentPartyIndex()
 	{
-		return (sbyte)(this.IsInBattleground() ? 1 : 0);
+		return (sbyte)(IsInBattleground() ? 1 : 0);
 	}
 
 	public byte GetItemSpellSlot(WowGuid128 guid, uint spellId)
@@ -274,7 +274,7 @@ public class GameSessionData
 		{
 			return 0;
 		}
-		Dictionary<int, UpdateField> updates = this.GetCachedObjectFieldsLegacy(guid);
+		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0;
@@ -290,67 +290,67 @@ public class GameSessionData
 		{
 			return 0u;
 		}
-		return this.GetCachedObjectFieldsLegacy(guid)?[OBJECT_FIELD_ENTRY].UInt32Value ?? 0;
+		return GetCachedObjectFieldsLegacy(guid)?[OBJECT_FIELD_ENTRY].UInt32Value ?? 0;
 	}
 
 	public void SetFlatSpellMod(byte spellMod, byte spellMask, int amount)
 	{
-		if (this.FlatSpellMods.ContainsKey(spellMod))
+		if (FlatSpellMods.ContainsKey(spellMod))
 		{
-			if (this.FlatSpellMods[spellMod].ContainsKey(spellMask))
+			if (FlatSpellMods[spellMod].ContainsKey(spellMask))
 			{
-				this.FlatSpellMods[spellMod][spellMask] = amount;
+				FlatSpellMods[spellMod][spellMask] = amount;
 			}
 			else
 			{
-				this.FlatSpellMods[spellMod].Add(spellMask, amount);
+				FlatSpellMods[spellMod].Add(spellMask, amount);
 			}
 		}
 		else
 		{
 			Dictionary<byte, int> dict = new Dictionary<byte, int>();
 			dict.Add(spellMask, amount);
-			this.FlatSpellMods.Add(spellMod, dict);
+			FlatSpellMods.Add(spellMod, dict);
 		}
 	}
 
 	public void SetPctSpellMod(byte spellMod, byte spellMask, int amount)
 	{
-		if (this.PctSpellMods.ContainsKey(spellMod))
+		if (PctSpellMods.ContainsKey(spellMod))
 		{
-			if (this.PctSpellMods[spellMod].ContainsKey(spellMask))
+			if (PctSpellMods[spellMod].ContainsKey(spellMask))
 			{
-				this.PctSpellMods[spellMod][spellMask] = amount;
+				PctSpellMods[spellMod][spellMask] = amount;
 			}
 			else
 			{
-				this.PctSpellMods[spellMod].Add(spellMask, amount);
+				PctSpellMods[spellMod].Add(spellMask, amount);
 			}
 		}
 		else
 		{
 			Dictionary<byte, int> dict = new Dictionary<byte, int>();
 			dict.Add(spellMask, amount);
-			this.PctSpellMods.Add(spellMod, dict);
+			PctSpellMods.Add(spellMod, dict);
 		}
 	}
 
 	public ArenaTeamInspectData GetArenaTeamDataForPlayer(WowGuid128 guid, byte slot)
 	{
-		if (this.PlayerArenaTeams.ContainsKey(guid))
+		if (PlayerArenaTeams.ContainsKey(guid))
 		{
-			return this.PlayerArenaTeams[guid][slot];
+			return PlayerArenaTeams[guid][slot];
 		}
 		return new ArenaTeamInspectData();
 	}
 
 	public void StoreArenaTeamDataForPlayer(WowGuid128 guid, byte slot, ArenaTeamInspectData team)
 	{
-		if (!this.PlayerArenaTeams.ContainsKey(guid))
+		if (!PlayerArenaTeams.ContainsKey(guid))
 		{
-			this.PlayerArenaTeams.Add(guid, new Array<ArenaTeamInspectData>(3, new ArenaTeamInspectData()));
+			PlayerArenaTeams.Add(guid, new Array<ArenaTeamInspectData>(3, new ArenaTeamInspectData()));
 		}
-		this.PlayerArenaTeams[guid][slot] = team;
+		PlayerArenaTeams[guid][slot] = team;
 	}
 
 	public WowGuid64 GetInventorySlotItem(int slot)
@@ -358,7 +358,7 @@ public class GameSessionData
 		int PLAYER_FIELD_INV_SLOT_HEAD = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_INV_SLOT_HEAD);
 		if (PLAYER_FIELD_INV_SLOT_HEAD >= 0)
 		{
-			Dictionary<int, UpdateField> updates = this.GetCachedObjectFieldsLegacy(this.CurrentPlayerGuid);
+			Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(CurrentPlayerGuid);
 			if (updates != null)
 			{
 				return updates.GetGuidValue(PLAYER_FIELD_INV_SLOT_HEAD + slot * 2).To64();
@@ -369,7 +369,7 @@ public class GameSessionData
 
 	public ushort GetObjectSpawnCounter(WowGuid64 guid)
 	{
-		if (this.ObjectSpawnCount.TryGetValue(guid, out var count))
+		if (ObjectSpawnCount.TryGetValue(guid, out var count))
 		{
 			return count;
 		}
@@ -378,38 +378,38 @@ public class GameSessionData
 
 	public void IncrementObjectSpawnCounter(WowGuid64 guid)
 	{
-		if (this.ObjectSpawnCount.ContainsKey(guid))
+		if (ObjectSpawnCount.ContainsKey(guid))
 		{
-			this.ObjectSpawnCount[guid]++;
+			ObjectSpawnCount[guid]++;
 		}
 		else
 		{
-			this.ObjectSpawnCount.Add(guid, 0);
+			ObjectSpawnCount.Add(guid, 0);
 		}
 	}
 
 	public void SetDailyQuestSlot(uint slot, uint questId)
 	{
-		if (this.DailyQuestsDone.ContainsKey(slot))
+		if (DailyQuestsDone.ContainsKey(slot))
 		{
 			if (questId != 0)
 			{
-				this.DailyQuestsDone[slot] = questId;
+				DailyQuestsDone[slot] = questId;
 			}
 			else
 			{
-				this.DailyQuestsDone.Remove(slot);
+				DailyQuestsDone.Remove(slot);
 			}
 		}
 		else if (questId != 0)
 		{
-			this.DailyQuestsDone.Add(slot, questId);
+			DailyQuestsDone.Add(slot, questId);
 		}
 	}
 
 	public bool IsAlliancePlayer(WowGuid128 guid)
 	{
-		if (this.CachedPlayers.TryGetValue(guid, out var cache))
+		if (CachedPlayers.TryGetValue(guid, out var cache))
 		{
 			return GameData.IsAllianceRace(cache.RaceId);
 		}
@@ -418,18 +418,18 @@ public class GameSessionData
 
 	public bool IsInBattleground()
 	{
-		if (!this.CurrentMapId.HasValue)
+		if (!CurrentMapId.HasValue)
 		{
 			return false;
 		}
-		uint bgId = GameData.GetBattlegroundIdFromMapId(this.CurrentMapId.Value);
+		uint bgId = GameData.GetBattlegroundIdFromMapId(CurrentMapId.Value);
 		if (bgId != 0)
 		{
-			foreach (KeyValuePair<uint, uint> queue in this.BattleFieldQueueTypes)
+			foreach (KeyValuePair<uint, uint> queue in BattleFieldQueueTypes)
 			{
 				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 				{
-					if (queue.Value == this.CurrentMapId)
+					if (queue.Value == CurrentMapId)
 					{
 						return true;
 					}
@@ -445,182 +445,182 @@ public class GameSessionData
 
 	public long GetBattleFieldQueueTime(uint queueSlot)
 	{
-		if (this.BattleFieldQueueTimes.ContainsKey(queueSlot))
+		if (BattleFieldQueueTimes.ContainsKey(queueSlot))
 		{
-			return this.BattleFieldQueueTimes[queueSlot];
+			return BattleFieldQueueTimes[queueSlot];
 		}
 		long time = Time.UnixTime;
-		this.BattleFieldQueueTimes.Add(queueSlot, time);
+		BattleFieldQueueTimes.Add(queueSlot, time);
 		return time;
 	}
 
 	public void StoreBattleFieldQueueType(uint queueSlot, uint mapOrBgId)
 	{
-		if (this.BattleFieldQueueTypes.ContainsKey(queueSlot))
+		if (BattleFieldQueueTypes.ContainsKey(queueSlot))
 		{
-			this.BattleFieldQueueTypes[queueSlot] = mapOrBgId;
+			BattleFieldQueueTypes[queueSlot] = mapOrBgId;
 		}
 		else
 		{
-			this.BattleFieldQueueTypes.Add(queueSlot, mapOrBgId);
+			BattleFieldQueueTypes.Add(queueSlot, mapOrBgId);
 		}
 	}
 
 	public uint GetBattleFieldQueueType(uint queueSlot)
 	{
-		if (this.BattleFieldQueueTypes.ContainsKey(queueSlot))
+		if (BattleFieldQueueTypes.ContainsKey(queueSlot))
 		{
-			return this.BattleFieldQueueTypes[queueSlot];
+			return BattleFieldQueueTypes[queueSlot];
 		}
 		return 0u;
 	}
 
 	public void StoreAuraDurationLeft(WowGuid128 guid, byte slot, int duration, int currentTime)
 	{
-		if (this.UnitAuraDurationLeft.ContainsKey(guid))
+		if (UnitAuraDurationLeft.ContainsKey(guid))
 		{
-			if (this.UnitAuraDurationLeft[guid].ContainsKey(slot))
+			if (UnitAuraDurationLeft[guid].ContainsKey(slot))
 			{
-				this.UnitAuraDurationLeft[guid][slot] = duration;
+				UnitAuraDurationLeft[guid][slot] = duration;
 			}
 			else
 			{
-				this.UnitAuraDurationLeft[guid].Add(slot, duration);
+				UnitAuraDurationLeft[guid].Add(slot, duration);
 			}
 		}
 		else
 		{
 			Dictionary<byte, int> dict = new Dictionary<byte, int>();
 			dict.Add(slot, duration);
-			this.UnitAuraDurationLeft.Add(guid, dict);
+			UnitAuraDurationLeft.Add(guid, dict);
 		}
-		if (this.UnitAuraDurationUpdateTime.ContainsKey(guid))
+		if (UnitAuraDurationUpdateTime.ContainsKey(guid))
 		{
-			if (this.UnitAuraDurationUpdateTime[guid].ContainsKey(slot))
+			if (UnitAuraDurationUpdateTime[guid].ContainsKey(slot))
 			{
-				this.UnitAuraDurationUpdateTime[guid][slot] = currentTime;
+				UnitAuraDurationUpdateTime[guid][slot] = currentTime;
 			}
 			else
 			{
-				this.UnitAuraDurationUpdateTime[guid].Add(slot, currentTime);
+				UnitAuraDurationUpdateTime[guid].Add(slot, currentTime);
 			}
 		}
 		else
 		{
 			Dictionary<byte, int> dict2 = new Dictionary<byte, int>();
 			dict2.Add(slot, currentTime);
-			this.UnitAuraDurationUpdateTime.Add(guid, dict2);
+			UnitAuraDurationUpdateTime.Add(guid, dict2);
 		}
 	}
 
 	public void StoreAuraDurationFull(WowGuid128 guid, byte slot, int duration)
 	{
-		if (this.UnitAuraDurationFull.ContainsKey(guid))
+		if (UnitAuraDurationFull.ContainsKey(guid))
 		{
-			if (this.UnitAuraDurationFull[guid].ContainsKey(slot))
+			if (UnitAuraDurationFull[guid].ContainsKey(slot))
 			{
-				this.UnitAuraDurationFull[guid][slot] = duration;
+				UnitAuraDurationFull[guid][slot] = duration;
 			}
 			else
 			{
-				this.UnitAuraDurationFull[guid].Add(slot, duration);
+				UnitAuraDurationFull[guid].Add(slot, duration);
 			}
 		}
 		else
 		{
 			Dictionary<byte, int> dict = new Dictionary<byte, int>();
 			dict.Add(slot, duration);
-			this.UnitAuraDurationFull.Add(guid, dict);
+			UnitAuraDurationFull.Add(guid, dict);
 		}
 	}
 
 	public void ClearAuraDuration(WowGuid128 guid, byte slot)
 	{
-		if (this.UnitAuraDurationUpdateTime.ContainsKey(guid) && this.UnitAuraDurationUpdateTime[guid].ContainsKey(slot))
+		if (UnitAuraDurationUpdateTime.ContainsKey(guid) && UnitAuraDurationUpdateTime[guid].ContainsKey(slot))
 		{
-			this.UnitAuraDurationUpdateTime[guid].Remove(slot);
+			UnitAuraDurationUpdateTime[guid].Remove(slot);
 		}
-		if (this.UnitAuraDurationLeft.ContainsKey(guid) && this.UnitAuraDurationLeft[guid].ContainsKey(slot))
+		if (UnitAuraDurationLeft.ContainsKey(guid) && UnitAuraDurationLeft[guid].ContainsKey(slot))
 		{
-			this.UnitAuraDurationLeft[guid].Remove(slot);
+			UnitAuraDurationLeft[guid].Remove(slot);
 		}
-		if (this.UnitAuraDurationFull.ContainsKey(guid) && this.UnitAuraDurationFull[guid].ContainsKey(slot))
+		if (UnitAuraDurationFull.ContainsKey(guid) && UnitAuraDurationFull[guid].ContainsKey(slot))
 		{
-			this.UnitAuraDurationFull[guid].Remove(slot);
+			UnitAuraDurationFull[guid].Remove(slot);
 		}
 	}
 
 	public void GetAuraDuration(WowGuid128 guid, byte slot, out int left, out int full)
 	{
-		if (this.UnitAuraDurationLeft.ContainsKey(guid) && this.UnitAuraDurationLeft[guid].ContainsKey(slot))
+		if (UnitAuraDurationLeft.ContainsKey(guid) && UnitAuraDurationLeft[guid].ContainsKey(slot))
 		{
-			left = this.UnitAuraDurationLeft[guid][slot];
+			left = UnitAuraDurationLeft[guid][slot];
 		}
 		else
 		{
 			left = -1;
 		}
-		if (this.UnitAuraDurationFull.ContainsKey(guid) && this.UnitAuraDurationFull[guid].ContainsKey(slot))
+		if (UnitAuraDurationFull.ContainsKey(guid) && UnitAuraDurationFull[guid].ContainsKey(slot))
 		{
-			full = this.UnitAuraDurationFull[guid][slot];
+			full = UnitAuraDurationFull[guid][slot];
 		}
 		else
 		{
 			full = left;
 		}
-		if (left > 0 && this.UnitAuraDurationUpdateTime.ContainsKey(guid) && this.UnitAuraDurationUpdateTime[guid].ContainsKey(slot))
+		if (left > 0 && UnitAuraDurationUpdateTime.ContainsKey(guid) && UnitAuraDurationUpdateTime[guid].ContainsKey(slot))
 		{
-			left -= Environment.TickCount - this.UnitAuraDurationUpdateTime[guid][slot];
+			left -= Environment.TickCount - UnitAuraDurationUpdateTime[guid][slot];
 		}
 	}
 
 	public void StoreAuraCaster(WowGuid128 target, byte slot, WowGuid128 caster)
 	{
-		if (this.UnitAuraCaster.ContainsKey(target))
+		if (UnitAuraCaster.ContainsKey(target))
 		{
-			if (this.UnitAuraCaster[target].ContainsKey(slot))
+			if (UnitAuraCaster[target].ContainsKey(slot))
 			{
-				this.UnitAuraCaster[target][slot] = caster;
+				UnitAuraCaster[target][slot] = caster;
 			}
 			else
 			{
-				this.UnitAuraCaster[target].Add(slot, caster);
+				UnitAuraCaster[target].Add(slot, caster);
 			}
 		}
 		else
 		{
 			Dictionary<byte, WowGuid128> dict = new Dictionary<byte, WowGuid128>();
 			dict.Add(slot, caster);
-			this.UnitAuraCaster.Add(target, dict);
+			UnitAuraCaster.Add(target, dict);
 		}
 	}
 
 	public void ClearAuraCaster(WowGuid128 guid, byte slot)
 	{
-		if (this.UnitAuraCaster.ContainsKey(guid) && this.UnitAuraCaster[guid].ContainsKey(slot))
+		if (UnitAuraCaster.ContainsKey(guid) && UnitAuraCaster[guid].ContainsKey(slot))
 		{
-			this.UnitAuraCaster[guid].Remove(slot);
+			UnitAuraCaster[guid].Remove(slot);
 		}
 	}
 
 	public WowGuid128 GetAuraCaster(WowGuid128 target, byte slot)
 	{
-		if (this.UnitAuraCaster.ContainsKey(target) && this.UnitAuraCaster[target].ContainsKey(slot))
+		if (UnitAuraCaster.ContainsKey(target) && UnitAuraCaster[target].ContainsKey(slot))
 		{
-			return this.UnitAuraCaster[target][slot];
+			return UnitAuraCaster[target][slot];
 		}
 		return null;
 	}
 
 	public WowGuid128 GetAuraCaster(WowGuid128 target, byte slot, uint spellId)
 	{
-		WowGuid128 caster = this.GetAuraCaster(target, slot);
+		WowGuid128 caster = GetAuraCaster(target, slot);
 		if (caster == null)
 		{
-			caster = this.GetLastAuraCasterOnTarget(target, spellId);
+			caster = GetLastAuraCasterOnTarget(target, spellId);
 			if (caster != null)
 			{
-				this.StoreAuraCaster(target, slot, caster);
+				StoreAuraCaster(target, slot, caster);
 			}
 		}
 		return caster;
@@ -628,30 +628,30 @@ public class GameSessionData
 
 	public void StoreLastAuraCasterOnTarget(WowGuid128 target, uint spellId, WowGuid128 caster)
 	{
-		if (this.LastAuraCasterOnTarget.ContainsKey(target))
+		if (LastAuraCasterOnTarget.ContainsKey(target))
 		{
-			if (this.LastAuraCasterOnTarget[target].ContainsKey(spellId))
+			if (LastAuraCasterOnTarget[target].ContainsKey(spellId))
 			{
-				this.LastAuraCasterOnTarget[target][spellId] = caster;
+				LastAuraCasterOnTarget[target][spellId] = caster;
 			}
 			else
 			{
-				this.LastAuraCasterOnTarget[target].Add(spellId, caster);
+				LastAuraCasterOnTarget[target].Add(spellId, caster);
 			}
 		}
 		else
 		{
 			Dictionary<uint, WowGuid128> casterDict = new Dictionary<uint, WowGuid128>();
 			casterDict.Add(spellId, caster);
-			this.LastAuraCasterOnTarget.Add(target, casterDict);
+			LastAuraCasterOnTarget.Add(target, casterDict);
 		}
 	}
 
 	public WowGuid128 GetLastAuraCasterOnTarget(WowGuid128 target, uint spellId)
 	{
-		if (this.LastAuraCasterOnTarget.ContainsKey(target) && this.LastAuraCasterOnTarget[target].TryGetValue(spellId, out var caster))
+		if (LastAuraCasterOnTarget.ContainsKey(target) && LastAuraCasterOnTarget[target].TryGetValue(spellId, out var caster))
 		{
-			this.LastAuraCasterOnTarget[target].Remove(spellId);
+			LastAuraCasterOnTarget[target].Remove(spellId);
 			return caster;
 		}
 		return null;
@@ -659,30 +659,30 @@ public class GameSessionData
 
 	public void StorePlayerGuildId(WowGuid128 guid, uint guildId)
 	{
-		if (this.PlayerGuildIds.ContainsKey(guid))
+		if (PlayerGuildIds.ContainsKey(guid))
 		{
-			this.PlayerGuildIds[guid] = guildId;
+			PlayerGuildIds[guid] = guildId;
 		}
 		else
 		{
-			this.PlayerGuildIds.Add(guid, guildId);
+			PlayerGuildIds.Add(guid, guildId);
 		}
 	}
 
 	public uint GetPlayerGuildId(WowGuid128 guid)
 	{
-		if (this.PlayerGuildIds.ContainsKey(guid))
+		if (PlayerGuildIds.ContainsKey(guid))
 		{
-			return this.PlayerGuildIds[guid];
+			return PlayerGuildIds[guid];
 		}
 		return 0u;
 	}
 
 	public uint[] GetGemsForItem(WowGuid128 guid)
 	{
-		if (this.ItemGems.ContainsKey(guid))
+		if (ItemGems.ContainsKey(guid))
 		{
-			return this.ItemGems[guid];
+			return ItemGems[guid];
 		}
 		return null;
 	}
@@ -690,14 +690,14 @@ public class GameSessionData
 	public void SaveGemsForItem(WowGuid128 guid, uint?[] gems)
 	{
 		uint[] existing;
-		if (this.ItemGems.ContainsKey(guid))
+		if (ItemGems.ContainsKey(guid))
 		{
-			existing = this.ItemGems[guid];
+			existing = ItemGems[guid];
 		}
 		else
 		{
 			existing = new uint[3];
-			this.ItemGems.Add(guid, existing);
+			ItemGems.Add(guid, existing);
 		}
 		for (int i = 0; i < 3; i++)
 		{
@@ -710,109 +710,109 @@ public class GameSessionData
 
 	public WowGuid128 GetPetGuidByNumber(uint petNumber)
 	{
-		this.ObjectCacheMutex.WaitOne();
-		foreach (KeyValuePair<WowGuid128, UpdateFieldsArray> itr in this.ObjectCacheModern)
+		ObjectCacheMutex.WaitOne();
+		foreach (KeyValuePair<WowGuid128, UpdateFieldsArray> itr in ObjectCacheModern)
 		{
 			if (itr.Key.GetHighType() == HighGuidType.Pet && itr.Key.GetEntry() == petNumber)
 			{
-				this.ObjectCacheMutex.ReleaseMutex();
+				ObjectCacheMutex.ReleaseMutex();
 				return itr.Key;
 			}
 		}
-		this.ObjectCacheMutex.ReleaseMutex();
+		ObjectCacheMutex.ReleaseMutex();
 		return null;
 	}
 
 	public void StoreOriginalObjectType(WowGuid128 guid, ObjectType type)
 	{
-		if (this.OriginalObjectTypes.ContainsKey(guid))
+		if (OriginalObjectTypes.ContainsKey(guid))
 		{
-			this.OriginalObjectTypes[guid] = type;
+			OriginalObjectTypes[guid] = type;
 		}
 		else
 		{
-			this.OriginalObjectTypes.Add(guid, type);
+			OriginalObjectTypes.Add(guid, type);
 		}
 	}
 
 	public ObjectType GetOriginalObjectType(WowGuid128 guid)
 	{
-		if (this.OriginalObjectTypes.ContainsKey(guid))
+		if (OriginalObjectTypes.ContainsKey(guid))
 		{
-			return this.OriginalObjectTypes[guid];
+			return OriginalObjectTypes[guid];
 		}
 		return guid.GetObjectType();
 	}
 
 	public void StoreRealSpell(uint realSpellId, uint learnSpellId)
 	{
-		if (this.RealSpellToLearnSpell.ContainsKey(realSpellId))
+		if (RealSpellToLearnSpell.ContainsKey(realSpellId))
 		{
-			this.RealSpellToLearnSpell[realSpellId] = learnSpellId;
+			RealSpellToLearnSpell[realSpellId] = learnSpellId;
 		}
 		else
 		{
-			this.RealSpellToLearnSpell.Add(realSpellId, learnSpellId);
+			RealSpellToLearnSpell.Add(realSpellId, learnSpellId);
 		}
 	}
 
 	public uint GetLearnSpellFromRealSpell(uint spellId)
 	{
-		if (this.RealSpellToLearnSpell.ContainsKey(spellId))
+		if (RealSpellToLearnSpell.ContainsKey(spellId))
 		{
-			return this.RealSpellToLearnSpell[spellId];
+			return RealSpellToLearnSpell[spellId];
 		}
 		return spellId;
 	}
 
 	public void StoreCreatureClass(uint entry, Class classId)
 	{
-		if (this.CreatureClasses.ContainsKey(entry))
+		if (CreatureClasses.ContainsKey(entry))
 		{
-			this.CreatureClasses[entry] = classId;
+			CreatureClasses[entry] = classId;
 		}
 		else
 		{
-			this.CreatureClasses.Add(entry, classId);
+			CreatureClasses.Add(entry, classId);
 		}
 	}
 
 	public void SetItemBuyCount(uint itemId, uint buyCount)
 	{
-		if (this.ItemBuyCount.ContainsKey(itemId))
+		if (ItemBuyCount.ContainsKey(itemId))
 		{
-			this.ItemBuyCount[itemId] = buyCount;
+			ItemBuyCount[itemId] = buyCount;
 		}
 		else
 		{
-			this.ItemBuyCount.Add(itemId, buyCount);
+			ItemBuyCount.Add(itemId, buyCount);
 		}
 	}
 
 	public uint GetItemBuyCount(uint itemId)
 	{
-		if (this.ItemBuyCount.ContainsKey(itemId))
+		if (ItemBuyCount.ContainsKey(itemId))
 		{
-			return this.ItemBuyCount[itemId];
+			return ItemBuyCount[itemId];
 		}
 		return 1u;
 	}
 
 	public void SetChannelId(string name, int id)
 	{
-		if (this.ChannelIds.ContainsKey(name))
+		if (ChannelIds.ContainsKey(name))
 		{
-			this.ChannelIds[name] = id;
+			ChannelIds[name] = id;
 		}
 		else
 		{
-			this.ChannelIds.Add(name, id);
+			ChannelIds.Add(name, id);
 		}
 	}
 
 	public string GetChannelName(int id)
 	{
-		foreach (KeyValuePair<string, int> itr in this.ChannelIds)
+		foreach (KeyValuePair<string, int> itr in ChannelIds)
 		{
 			if (itr.Value == id)
 			{
@@ -824,9 +824,9 @@ public class GameSessionData
 
 	public string GetPlayerName(WowGuid128 guid)
 	{
-		if (this.CachedPlayers.ContainsKey(guid) && this.CachedPlayers[guid].Name != null)
+		if (CachedPlayers.ContainsKey(guid) && CachedPlayers[guid].Name != null)
 		{
-			return this.CachedPlayers[guid].Name;
+			return CachedPlayers[guid].Name;
 		}
 		return "";
 	}
@@ -834,7 +834,7 @@ public class GameSessionData
 	public WowGuid128? GetPlayerGuidByName(string name)
 	{
 		name = name.Trim().Replace("\0", "");
-		foreach (KeyValuePair<WowGuid128, PlayerCache> player in this.CachedPlayers)
+		foreach (KeyValuePair<WowGuid128, PlayerCache> player in CachedPlayers)
 		{
 			if (player.Value.Name == name && !WowGuid128.IsUnknownPlayerGuid(player.Key))
 			{
@@ -850,44 +850,44 @@ public class GameSessionData
 		{
 			data.Name = data.Name.Trim().Replace("\0", "");
 		}
-		if (this.CachedPlayers.ContainsKey(guid))
+		if (CachedPlayers.ContainsKey(guid))
 		{
 			if (!string.IsNullOrEmpty(data.Name))
 			{
-				this.CachedPlayers[guid].Name = data.Name;
+				CachedPlayers[guid].Name = data.Name;
 			}
 			if (data.RaceId != Race.None)
 			{
-				this.CachedPlayers[guid].RaceId = data.RaceId;
+				CachedPlayers[guid].RaceId = data.RaceId;
 			}
 			if (data.ClassId != Class.None)
 			{
-				this.CachedPlayers[guid].ClassId = data.ClassId;
+				CachedPlayers[guid].ClassId = data.ClassId;
 			}
 			if (data.SexId != Gender.None)
 			{
-				this.CachedPlayers[guid].SexId = data.SexId;
+				CachedPlayers[guid].SexId = data.SexId;
 			}
 			if (data.Level != 0)
 			{
-				this.CachedPlayers[guid].Level = data.Level;
+				CachedPlayers[guid].Level = data.Level;
 			}
 		}
 		else
 		{
-			this.CachedPlayers.Add(guid, data);
+			CachedPlayers.Add(guid, data);
 		}
 	}
 
 	public Class GetUnitClass(WowGuid128 guid)
 	{
-		if (this.CachedPlayers.ContainsKey(guid))
+		if (CachedPlayers.ContainsKey(guid))
 		{
-			return this.CachedPlayers[guid].ClassId;
+			return CachedPlayers[guid].ClassId;
 		}
-		if (this.CreatureClasses.ContainsKey(guid.GetEntry()))
+		if (CreatureClasses.ContainsKey(guid.GetEntry()))
 		{
-			return this.CreatureClasses[guid.GetEntry()];
+			return CreatureClasses[guid.GetEntry()];
 		}
 		return Class.Warrior;
 	}
@@ -899,7 +899,7 @@ public class GameSessionData
 		{
 			return 0;
 		}
-		Dictionary<int, UpdateField> updates = this.GetCachedObjectFieldsLegacy(guid);
+		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0;
@@ -918,7 +918,7 @@ public class GameSessionData
 		{
 			return 0u;
 		}
-		Dictionary<int, UpdateField> updates = this.GetCachedObjectFieldsLegacy(guid);
+		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0u;
@@ -937,7 +937,7 @@ public class GameSessionData
 		{
 			return 0f;
 		}
-		Dictionary<int, UpdateField> updates = this.GetCachedObjectFieldsLegacy(guid);
+		Dictionary<int, UpdateField> updates = GetCachedObjectFieldsLegacy(guid);
 		if (updates == null)
 		{
 			return 0f;
@@ -951,8 +951,8 @@ public class GameSessionData
 
 	public bool HasRangedWeapon()
 	{
-		if (this.CurrentPlayerGuid == null) return false;
-		var updates = this.GetCachedObjectFieldsLegacy(this.CurrentPlayerGuid);
+		if (CurrentPlayerGuid == null) return false;
+		var updates = GetCachedObjectFieldsLegacy(CurrentPlayerGuid);
 		if (updates == null) return false;
 		int PLAYER_VISIBLE_ITEM_1_ENTRYID = LegacyVersion.GetUpdateField(PlayerField.PLAYER_VISIBLE_ITEM_1_ENTRYID);
 		if (PLAYER_VISIBLE_ITEM_1_ENTRYID < 0) return false;
@@ -963,25 +963,25 @@ public class GameSessionData
 
 	public Dictionary<int, UpdateField> GetCachedObjectFieldsLegacy(WowGuid128 guid)
 	{
-		this.ObjectCacheMutex.WaitOne();
-		if (this.ObjectCacheLegacy.TryGetValue(guid, out var dict))
+		ObjectCacheMutex.WaitOne();
+		if (ObjectCacheLegacy.TryGetValue(guid, out var dict))
 		{
-			this.ObjectCacheMutex.ReleaseMutex();
+			ObjectCacheMutex.ReleaseMutex();
 			return dict;
 		}
-		this.ObjectCacheMutex.ReleaseMutex();
+		ObjectCacheMutex.ReleaseMutex();
 		return null;
 	}
 
 	public UpdateFieldsArray GetCachedObjectFieldsModern(WowGuid128 guid)
 	{
-		this.ObjectCacheMutex.WaitOne();
-		if (this.ObjectCacheModern.TryGetValue(guid, out var array))
+		ObjectCacheMutex.WaitOne();
+		if (ObjectCacheModern.TryGetValue(guid, out var array))
 		{
-			this.ObjectCacheMutex.ReleaseMutex();
+			ObjectCacheMutex.ReleaseMutex();
 			return array;
 		}
-		this.ObjectCacheMutex.ReleaseMutex();
+		ObjectCacheMutex.ReleaseMutex();
 		return null;
 	}
 }

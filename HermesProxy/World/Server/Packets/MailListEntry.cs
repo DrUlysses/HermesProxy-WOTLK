@@ -45,40 +45,38 @@ public class MailListEntry
 	/// </summary>
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt64((ulong)this.MailID);
-		data.WriteUInt32((uint)this.SenderType);
-		data.WriteUInt64(this.Cod);
-		data.WriteInt32(this.StationeryID);
-		data.WriteUInt64(this.SentMoney);
-		data.WriteInt32((int)this.Flags);
-		data.WriteFloat(this.DaysLeft);
-		data.WriteInt32(this.MailTemplateID);
-		data.WriteInt32(this.Attachments.Count);
+		data.WriteUInt64((ulong)MailID);
+		data.WriteUInt32((uint)SenderType);
+		data.WriteUInt64(Cod);
+		data.WriteInt32(StationeryID);
+		data.WriteUInt64(SentMoney);
+		data.WriteInt32((int)Flags);
+		data.WriteFloat(DaysLeft);
+		data.WriteInt32(MailTemplateID);
+		data.WriteInt32(Attachments.Count);
 
 		// TC343: sender written unconditionally based on type (not optional bits)
-		switch (this.SenderType)
+		switch (SenderType)
 		{
 		case MailType.Normal:
-			data.WritePackedGuid128(this.SenderCharacter ?? WowGuid128.Empty);
+			data.WritePackedGuid128(SenderCharacter ?? WowGuid128.Empty);
 			break;
 		case MailType.Auction:
 		case MailType.Item:
 		case MailType.Creature:
 		case MailType.GameObject:
-			data.WriteInt32((int)this.AltSenderID.GetValueOrDefault());
-			break;
-		default:
+			data.WriteInt32((int)AltSenderID.GetValueOrDefault());
 			break;
 		}
 
-		data.WriteBits(this.Subject.GetByteCount(), 8);
-		data.WriteBits(this.Body.GetByteCount(), 13);
+		data.WriteBits(Subject.GetByteCount(), 8);
+		data.WriteBits(Body.GetByteCount(), 13);
 		data.FlushBits();
-		this.Attachments.ForEach(delegate(MailAttachedItem p)
+		Attachments.ForEach(delegate(MailAttachedItem p)
 		{
 			p.Write(data);
 		});
-		data.WriteString(this.Subject);
-		data.WriteString(this.Body);
+		data.WriteString(Subject);
+		data.WriteString(Body);
 	}
 }

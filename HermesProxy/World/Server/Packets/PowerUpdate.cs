@@ -12,18 +12,18 @@ public class PowerUpdate : ServerPacket
 	public PowerUpdate(WowGuid128 guid)
 		: base(Opcode.SMSG_POWER_UPDATE)
 	{
-		this.Guid = guid;
-		this.Powers = new List<PowerUpdatePower>();
+		Guid = guid;
+		Powers = new List<PowerUpdatePower>();
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.Guid);
-		base._worldPacket.WriteInt32(this.Powers.Count);
-		foreach (PowerUpdatePower power in this.Powers)
+		_worldPacket.WritePackedGuid128(Guid);
+		_worldPacket.WriteInt32(Powers.Count);
+		foreach (PowerUpdatePower power in Powers)
 		{
-			base._worldPacket.WriteInt32(power.Power);
-			base._worldPacket.WriteUInt8(power.PowerType);
+			_worldPacket.WriteInt32(power.Power);
+			_worldPacket.WriteUInt8(power.PowerType);
 		}
 	}
 }

@@ -42,26 +42,26 @@ public struct LfgPlayerQuestReward
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.Mask);
-		data.WriteInt32(this.RewardMoney);
-		data.WriteInt32(this.RewardXP);
-		data.WriteUInt32((uint)(this.Items?.Count ?? 0));
-		data.WriteUInt32((uint)(this.Currency?.Count ?? 0));
-		data.WriteUInt32((uint)(this.BonusCurrency?.Count ?? 0));
-		if (this.Items != null)
-			foreach (var item in this.Items)
+		data.WriteUInt8(Mask);
+		data.WriteInt32(RewardMoney);
+		data.WriteInt32(RewardXP);
+		data.WriteUInt32((uint)(Items?.Count ?? 0));
+		data.WriteUInt32((uint)(Currency?.Count ?? 0));
+		data.WriteUInt32((uint)(BonusCurrency?.Count ?? 0));
+		if (Items != null)
+			foreach (var item in Items)
 			{
 				data.WriteInt32(item.ItemID);
 				data.WriteInt32(item.Quantity);
 			}
-		if (this.Currency != null)
-			foreach (var cur in this.Currency)
+		if (Currency != null)
+			foreach (var cur in Currency)
 			{
 				data.WriteInt32(cur.CurrencyID);
 				data.WriteInt32(cur.Quantity);
 			}
-		if (this.BonusCurrency != null)
-			foreach (var cur in this.BonusCurrency)
+		if (BonusCurrency != null)
+			foreach (var cur in BonusCurrency)
 			{
 				data.WriteInt32(cur.CurrencyID);
 				data.WriteInt32(cur.Quantity);
@@ -98,26 +98,26 @@ public struct LfgPlayerDungeonInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.Slot);
-		data.WriteInt32(this.CompletionQuantity);
-		data.WriteInt32(this.CompletionLimit);
-		data.WriteInt32(this.CompletionCurrencyID);
-		data.WriteInt32(this.SpecificQuantity);
-		data.WriteInt32(this.SpecificLimit);
-		data.WriteInt32(this.OverallQuantity);
-		data.WriteInt32(this.OverallLimit);
-		data.WriteInt32(this.PurseWeeklyQuantity);
-		data.WriteInt32(this.PurseWeeklyLimit);
-		data.WriteInt32(this.PurseQuantity);
-		data.WriteInt32(this.PurseLimit);
-		data.WriteInt32(this.Quantity);
-		data.WriteUInt32(this.CompletedMask);
-		data.WriteUInt32(this.EncounterMask);
+		data.WriteUInt32(Slot);
+		data.WriteInt32(CompletionQuantity);
+		data.WriteInt32(CompletionLimit);
+		data.WriteInt32(CompletionCurrencyID);
+		data.WriteInt32(SpecificQuantity);
+		data.WriteInt32(SpecificLimit);
+		data.WriteInt32(OverallQuantity);
+		data.WriteInt32(OverallLimit);
+		data.WriteInt32(PurseWeeklyQuantity);
+		data.WriteInt32(PurseWeeklyLimit);
+		data.WriteInt32(PurseQuantity);
+		data.WriteInt32(PurseLimit);
+		data.WriteInt32(Quantity);
+		data.WriteUInt32(CompletedMask);
+		data.WriteUInt32(EncounterMask);
 		data.WriteUInt32(0); // ShortageReward count
-		data.WriteBit(this.FirstReward);
-		data.WriteBit(this.ShortageEligible);
+		data.WriteBit(FirstReward);
+		data.WriteBit(ShortageEligible);
 		data.FlushBits();
-		this.Rewards.Write(data);
+		Rewards.Write(data);
 	}
 }
 
@@ -133,26 +133,26 @@ public class LfgPlayerInfoPkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Dungeons.Count);
+		_worldPacket.WriteUInt32((uint)Dungeons.Count);
 		// Write BlackList
-		bool hasGuid = this.BlackList.PlayerGuid != null;
-		base._worldPacket.WriteBit(hasGuid);
-		base._worldPacket.WriteUInt32((uint)(this.BlackList.Slots?.Count ?? 0));
+		bool hasGuid = BlackList.PlayerGuid != null;
+		_worldPacket.WriteBit(hasGuid);
+		_worldPacket.WriteUInt32((uint)(BlackList.Slots?.Count ?? 0));
 		if (hasGuid)
-			base._worldPacket.WritePackedGuid128(this.BlackList.PlayerGuid);
-		if (this.BlackList.Slots != null)
-			foreach (var slot in this.BlackList.Slots)
+			_worldPacket.WritePackedGuid128(BlackList.PlayerGuid);
+		if (BlackList.Slots != null)
+			foreach (var slot in BlackList.Slots)
 			{
-				base._worldPacket.WriteUInt32(slot.Slot);
-				base._worldPacket.WriteUInt32(slot.Reason);
-				base._worldPacket.WriteInt32(slot.SubReason1);
-				base._worldPacket.WriteInt32(slot.SubReason2);
-				base._worldPacket.WriteUInt32(slot.SoftLock);
+				_worldPacket.WriteUInt32(slot.Slot);
+				_worldPacket.WriteUInt32(slot.Reason);
+				_worldPacket.WriteInt32(slot.SubReason1);
+				_worldPacket.WriteInt32(slot.SubReason2);
+				_worldPacket.WriteUInt32(slot.SoftLock);
 			}
 		// Write Dungeons
-		foreach (var dungeon in this.Dungeons)
+		foreach (var dungeon in Dungeons)
 		{
-			dungeon.Write(base._worldPacket);
+			dungeon.Write(_worldPacket);
 		}
 	}
 }

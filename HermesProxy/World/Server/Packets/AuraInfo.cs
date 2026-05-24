@@ -8,12 +8,12 @@ public struct AuraInfo
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.Slot);
-		data.WriteBit(this.AuraData != null);
+		data.WriteUInt8(Slot);
+		data.WriteBit(AuraData != null);
 		data.FlushBits();
-		if (this.AuraData != null)
+		if (AuraData != null)
 		{
-			this.AuraData.Write(data);
+			AuraData.Write(data);
 		}
 	}
 }

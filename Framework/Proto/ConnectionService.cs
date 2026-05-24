@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Connection.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/connection_service.proto</summary>
@@ -219,8 +219,8 @@ namespace Bgs.Protocol.Connection.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ClientId, other.ClientId)) return false;
-      if (!object.Equals(BindRequest, other.BindRequest)) return false;
+      if (!Equals(ClientId, other.ClientId)) return false;
+      if (!Equals(BindRequest, other.BindRequest)) return false;
       if (UseBindlessRpc != other.UseBindlessRpc) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -688,14 +688,14 @@ namespace Bgs.Protocol.Connection.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(ServerId, other.ServerId)) return false;
-      if (!object.Equals(ClientId, other.ClientId)) return false;
+      if (!Equals(ServerId, other.ServerId)) return false;
+      if (!Equals(ClientId, other.ClientId)) return false;
       if (BindResult != other.BindResult) return false;
-      if (!object.Equals(BindResponse, other.BindResponse)) return false;
-      if (!object.Equals(ContentHandleArray, other.ContentHandleArray)) return false;
+      if (!Equals(BindResponse, other.BindResponse)) return false;
+      if (!Equals(ContentHandleArray, other.ContentHandleArray)) return false;
       if (ServerTime != other.ServerTime) return false;
       if (UseBindlessRpc != other.UseBindlessRpc) return false;
-      if (!object.Equals(BinaryContentHandleArray, other.BinaryContentHandleArray)) return false;
+      if (!Equals(BinaryContentHandleArray, other.BinaryContentHandleArray)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1564,7 +1564,7 @@ namespace Bgs.Protocol.Connection.V1 {
       if (Time != other.Time) return false;
       if (NetworkOnly != other.NetworkOnly) return false;
       if (Payload != other.Payload) return false;
-      if (!object.Equals(Forward, other.Forward)) return false;
+      if (!Equals(Forward, other.Forward)) return false;
       if (ForwardClientId != other.ForwardClientId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

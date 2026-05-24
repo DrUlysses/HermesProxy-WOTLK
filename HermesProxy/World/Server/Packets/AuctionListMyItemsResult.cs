@@ -20,18 +20,18 @@ public class AuctionListMyItemsResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Items.Count);
-		base._worldPacket.WriteInt32(this.SoldItems.Count);
-		base._worldPacket.WriteUInt32(this.DesiredDelay);
-		base._worldPacket.WriteBit(this.HasMoreResults);
-		base._worldPacket.FlushBits();
-		foreach (AuctionItem item in this.Items)
+		_worldPacket.WriteInt32(Items.Count);
+		_worldPacket.WriteInt32(SoldItems.Count);
+		_worldPacket.WriteUInt32(DesiredDelay);
+		_worldPacket.WriteBit(HasMoreResults);
+		_worldPacket.FlushBits();
+		foreach (AuctionItem item in Items)
 		{
-			item.Write(base._worldPacket);
+			item.Write(_worldPacket);
 		}
-		foreach (AuctionItem item in this.SoldItems)
+		foreach (AuctionItem item in SoldItems)
 		{
-			item.Write(base._worldPacket);
+			item.Write(_worldPacket);
 		}
 	}
 }

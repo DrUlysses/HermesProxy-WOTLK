@@ -31,7 +31,7 @@ public class QuestObjective
 
 	public bool IsStoringValue()
 	{
-		switch (this.Type)
+		switch (Type)
 		{
 		case QuestObjectiveType.Monster:
 		case QuestObjectiveType.Item:
@@ -50,7 +50,7 @@ public class QuestObjective
 
 	public bool IsStoringFlag()
 	{
-		switch (this.Type)
+		switch (Type)
 		{
 		case QuestObjectiveType.AreaTrigger:
 		case QuestObjectiveType.WinPetBattleAgainstNpc:

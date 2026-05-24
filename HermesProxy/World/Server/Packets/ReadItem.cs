@@ -13,7 +13,7 @@ internal class ReadItem : ClientPacket
 
 	public override void Read()
 	{
-		this.PackSlot = base._worldPacket.ReadUInt8();
-		this.Slot = base._worldPacket.ReadUInt8();
+		PackSlot = _worldPacket.ReadUInt8();
+		Slot = _worldPacket.ReadUInt8();
 	}
 }

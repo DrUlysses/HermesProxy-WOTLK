@@ -21,18 +21,18 @@ using Framework.Networking;
 using HermesProxy.Enums;
 using HermesProxy.World.Enums;
 using HermesProxy.World.Enums.Classic;
-using HermesProxy.World.Enums.TBC;
-using HermesProxy.World.Enums.Vanilla;
-using HermesProxy.World.Enums.WotLK;
 using HermesProxy.World.Objects;
 using HermesProxy.World.Server;
 using HermesProxy.World.Server.Packets;
+using HashAlgorithm = Framework.Cryptography.HashAlgorithm;
+using Quaternion = Framework.GameMath.Quaternion;
+using Vector3 = Framework.GameMath.Vector3;
 
 namespace HermesProxy.World.Client;
 
 public class WorldClient
 {
-	private uint _requestBgPlayerPosCounter = 0u;
+	private uint _requestBgPlayerPosCounter;
 
 	private Socket _clientSocket;
 
@@ -56,16 +56,16 @@ public class WorldClient
 
 	private Dictionary<Opcode, List<ServerPacket>> _delayedPacketsToClient;
 
-	public GlobalSessionData Session => this._globalSession;
+	public GlobalSessionData Session => _globalSession;
 
 	[PacketHandler(Opcode.SMSG_ARENA_TEAM_QUERY_RESPONSE)]
 	private void HandleArenaTeamQueryResponse(WorldPacket packet)
 	{
 		uint teamId = packet.ReadUInt32();
-		if (!this.GetSession().GameState.ArenaTeams.TryGetValue(teamId, out var team))
+		if (!GetSession().GameState.ArenaTeams.TryGetValue(teamId, out var team))
 		{
 			team = new ArenaTeamData();
-			this.GetSession().GameState.ArenaTeams.Add(teamId, team);
+			GetSession().GameState.ArenaTeams.Add(teamId, team);
 		}
 		team.Name = packet.ReadCString();
 		team.TeamSize = packet.ReadUInt32();
@@ -80,10 +80,10 @@ public class WorldClient
 	private void HandleArenaTeamStats(WorldPacket packet)
 	{
 		uint teamId = packet.ReadUInt32();
-		if (!this.GetSession().GameState.ArenaTeams.TryGetValue(teamId, out var team))
+		if (!GetSession().GameState.ArenaTeams.TryGetValue(teamId, out var team))
 		{
 			team = new ArenaTeamData();
-			this.GetSession().GameState.ArenaTeams.Add(teamId, team);
+			GetSession().GameState.ArenaTeams.Add(teamId, team);
 		}
 		team.Rating = packet.ReadUInt32();
 		team.WeekPlayed = packet.ReadUInt32();
@@ -109,13 +109,13 @@ public class WorldClient
 		{
 			ArenaTeamMember member = default(ArenaTeamMember);
 			PlayerCache cache = new PlayerCache();
-			member.MemberGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			member.MemberGUID = packet.ReadGuid().To128(GetSession().GameState);
 			member.Online = packet.ReadBool();
 			member.Name = (cache.Name = packet.ReadCString());
 			member.Captain = packet.ReadInt32();
 			member.Level = (cache.Level = packet.ReadUInt8());
 			member.ClassId = (cache.ClassId = (Class)packet.ReadUInt8());
-			this.GetSession().GameState.UpdatePlayerCache(member.MemberGUID, cache);
+			GetSession().GameState.UpdatePlayerCache(member.MemberGUID, cache);
 			member.WeekGamesPlayed = packet.ReadUInt32();
 			member.WeekGamesWon = packet.ReadUInt32();
 			member.SeasonGamesPlayed = packet.ReadUInt32();
@@ -128,7 +128,7 @@ public class WorldClient
 			}
 			arena.Members.Add(member);
 		}
-		if (this.GetSession().GameState.ArenaTeams.TryGetValue(arena.TeamId, out var team))
+		if (GetSession().GameState.ArenaTeams.TryGetValue(arena.TeamId, out var team))
 		{
 			arena.TeamPlayed = team.WeekPlayed;
 			arena.TeamWins = team.WeekWins;
@@ -137,7 +137,7 @@ public class WorldClient
 			arena.TeamRating = team.Rating;
 			arena.PlayerRating = team.Rank;
 		}
-		this.SendPacketToClient(arena);
+		SendPacketToClient(arena);
 	}
 
 	[PacketHandler(Opcode.SMSG_ARENA_TEAM_EVENT)]
@@ -167,7 +167,7 @@ public class WorldClient
 		{
 			packet.ReadGuid();
 		}
-		this.SendPacketToClient(arena);
+		SendPacketToClient(arena);
 	}
 
 	[PacketHandler(Opcode.SMSG_ARENA_TEAM_COMMAND_RESULT)]
@@ -179,7 +179,7 @@ public class WorldClient
 		arena.PlayerName = packet.ReadCString();
 		ArenaTeamCommandErrorLegacy errorType = (ArenaTeamCommandErrorLegacy)packet.ReadUInt32();
 		arena.Error = (ArenaTeamCommandErrorModern)Enum.Parse(typeof(ArenaTeamCommandErrorModern), errorType.ToString());
-		this.SendPacketToClient(arena);
+		SendPacketToClient(arena);
 	}
 
 	[PacketHandler(Opcode.SMSG_ARENA_TEAM_INVITE)]
@@ -188,22 +188,22 @@ public class WorldClient
 		ArenaTeamInvite arena = new ArenaTeamInvite();
 		arena.PlayerName = packet.ReadCString();
 		arena.TeamName = packet.ReadCString();
-		arena.PlayerGuid = this.GetSession().GameState.GetPlayerGuidByName(arena.PlayerName);
+		arena.PlayerGuid = GetSession().GameState.GetPlayerGuidByName(arena.PlayerName);
 		if (arena.PlayerGuid == null)
 		{
 			arena.PlayerGuid = WowGuid128.Empty;
 		}
-		arena.PlayerVirtualAddress = this.GetSession().RealmId.GetAddress();
+		arena.PlayerVirtualAddress = GetSession().RealmId.GetAddress();
 		arena.TeamGuid = WowGuid128.Create(HighGuidType703.ArenaTeam, 1uL);
-		this.SendPacketToClient(arena);
+		SendPacketToClient(arena);
 	}
 
 	[PacketHandler(Opcode.MSG_AUCTION_HELLO)]
 	private void HandleAuctionHello(WorldPacket packet)
 	{
 		AuctionHelloResponse auction = new AuctionHelloResponse();
-		auction.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = auction.Guid;
+		auction.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = auction.Guid;
 		packet.ReadUInt32(); // AuctionHouseID - not used by modern client
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958))
 		{
@@ -213,12 +213,12 @@ public class WorldClient
 		ShowBank npcInteraction = new ShowBank();
 		npcInteraction.Guid = auction.Guid;
 		npcInteraction.InteractionType = 21; // PlayerInteractionType::Auctioneer
-		this.SendPacketToClient(npcInteraction);
-		this.SendPacketToClient(auction);
+		SendPacketToClient(npcInteraction);
+		SendPacketToClient(auction);
 		WorldPacket packet2 = new WorldPacket(Opcode.CMSG_AUCTION_LIST_OWNED_ITEMS);
 		packet2.WriteGuid(auction.Guid.To64());
 		packet2.WriteUInt32(0u);
-		this.SendPacketToServer(packet2);
+		SendPacketToServer(packet2);
 	}
 
 	private AuctionItem ReadAuctionItem(WorldPacket packet)
@@ -251,13 +251,13 @@ public class WorldClient
 		{
 			item.Flags = packet.ReadUInt32();
 		}
-		item.Owner = packet.ReadGuid().To128(this.GetSession().GameState);
-		item.OwnerAccountID = this.GetSession().GetGameAccountGuidForPlayer(item.Owner);
+		item.Owner = packet.ReadGuid().To128(GetSession().GameState);
+		item.OwnerAccountID = GetSession().GetGameAccountGuidForPlayer(item.Owner);
 		item.MinBid = packet.ReadUInt32();
 		item.MinIncrement = packet.ReadUInt32();
 		item.BuyoutPrice = packet.ReadUInt32();
 		item.DurationLeft = packet.ReadInt32();
-		item.Bidder = packet.ReadGuid().To128(this.GetSession().GameState);
+		item.Bidder = packet.ReadGuid().To128(GetSession().GameState);
 		item.BidAmount = packet.ReadUInt32();
 		if (item.Item.ItemID == 0)
 		{
@@ -274,7 +274,7 @@ public class WorldClient
 		uint count = packet.ReadUInt32();
 		for (uint i = 0u; i < count; i++)
 		{
-			AuctionItem item = this.ReadAuctionItem(packet);
+			AuctionItem item = ReadAuctionItem(packet);
 			auction.Items.Add(item);
 		}
 		int totalCount = packet.ReadInt32();
@@ -283,7 +283,7 @@ public class WorldClient
 			auction.DesiredDelay = packet.ReadUInt32();
 		}
 		auction.HasMoreResults = totalCount > (int)count;
-		this.SendPacketToClient(auction);
+		SendPacketToClient(auction);
 	}
 
 	[PacketHandler(Opcode.SMSG_AUCTION_LIST_ITEMS_RESULT)]
@@ -293,7 +293,7 @@ public class WorldClient
 		uint count = packet.ReadUInt32();
 		for (uint i = 0u; i < count; i++)
 		{
-			AuctionItem item = this.ReadAuctionItem(packet);
+			AuctionItem item = ReadAuctionItem(packet);
 			item.CensorServerSideInfo = true;
 			auction.Items.Add(item);
 		}
@@ -304,7 +304,7 @@ public class WorldClient
 			auction.DesiredDelay = packet.ReadUInt32();
 		}
 		auction.HasMoreResults = totalCount > (int)count;
-		this.SendPacketToClient(auction);
+		SendPacketToClient(auction);
 	}
 
 	[PacketHandler(Opcode.SMSG_AUCTION_COMMAND_RESULT)]
@@ -326,12 +326,12 @@ public class WorldClient
 			auction.BagResult = LegacyVersion.ConvertInventoryResult(packet.ReadUInt32());
 			break;
 		case AuctionHouseError.HigherBid:
-			auction.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
+			auction.Guid = packet.ReadGuid().To128(GetSession().GameState);
 			auction.Money = packet.ReadUInt32();
 			auction.MinIncrement = packet.ReadUInt32();
 			break;
 		}
-		this.SendPacketToClient(auction);
+		SendPacketToClient(auction);
 	}
 
 	[PacketHandler(Opcode.SMSG_AUCTION_OWNER_NOTIFICATION)]
@@ -351,15 +351,15 @@ public class WorldClient
 			auction.Info = info;
 			auction.Sold = info.BidAmount != 0;
 			auction.ProceedsMailDelay = mailDelay;
-			this.SendPacketToClient(auction);
+			SendPacketToClient(auction);
 		}
 		else
 		{
 			AuctionOwnerBidNotification auction2 = new AuctionOwnerBidNotification();
 			auction2.Info = info;
 			auction2.MinIncrement = minIncrement;
-			auction2.Bidder = buyer.To128(this.GetSession().GameState);
-			this.SendPacketToClient(auction2);
+			auction2.Bidder = buyer.To128(GetSession().GameState);
+			SendPacketToClient(auction2);
 		}
 	}
 
@@ -369,7 +369,7 @@ public class WorldClient
 		AuctionBidderNotification info = new AuctionBidderNotification();
 		uint auctionHouseId = packet.ReadUInt32();
 		info.AuctionID = packet.ReadUInt32();
-		info.Bidder = packet.ReadGuid().To128(this.GetSession().GameState);
+		info.Bidder = packet.ReadGuid().To128(GetSession().GameState);
 		uint bidAmount = packet.ReadUInt32();
 		uint minIncrement = packet.ReadUInt32();
 		info.Item.ItemID = packet.ReadUInt32();
@@ -378,7 +378,7 @@ public class WorldClient
 		{
 			AuctionWonNotification auction = new AuctionWonNotification();
 			auction.Info = info;
-			this.SendPacketToClient(auction);
+			SendPacketToClient(auction);
 		}
 		else
 		{
@@ -386,7 +386,7 @@ public class WorldClient
 			auction2.Info = info;
 			auction2.BidAmount = bidAmount;
 			auction2.MinIncrement = minIncrement;
-			this.SendPacketToClient(auction2);
+			SendPacketToClient(auction2);
 		}
 	}
 
@@ -394,8 +394,8 @@ public class WorldClient
 	private void HandleBattlefieldListVanilla(WorldPacket packet)
 	{
 		BattlefieldList bglist = new BattlefieldList();
-		bglist.BattlemasterGuid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = bglist.BattlemasterGuid;
+		bglist.BattlemasterGuid = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = bglist.BattlemasterGuid;
 		bglist.BattlemasterListID = GameData.GetBattlegroundIdFromMapId(packet.ReadUInt32());
 		packet.ReadUInt8();
 		uint instancesCount = packet.ReadUInt32();
@@ -404,15 +404,15 @@ public class WorldClient
 			int instanceId = packet.ReadInt32();
 			bglist.BattlefieldInstances.Add(instanceId);
 		}
-		this.SendPacketToClient(bglist);
+		SendPacketToClient(bglist);
 	}
 
 	[PacketHandler(Opcode.SMSG_BATTLEFIELD_LIST, ClientVersionBuild.V2_0_1_6180, ClientVersionBuild.V3_0_2_9056)]
 	private void HandleBattlefieldListTBC(WorldPacket packet)
 	{
 		BattlefieldList bglist = new BattlefieldList();
-		bglist.BattlemasterGuid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = bglist.BattlemasterGuid;
+		bglist.BattlemasterGuid = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = bglist.BattlemasterGuid;
 		bglist.BattlemasterListID = packet.ReadUInt32();
 		packet.ReadUInt8();
 		uint instancesCount = packet.ReadUInt32();
@@ -421,15 +421,15 @@ public class WorldClient
 			int instanceId = packet.ReadInt32();
 			bglist.BattlefieldInstances.Add(instanceId);
 		}
-		this.SendPacketToClient(bglist);
+		SendPacketToClient(bglist);
 	}
 
 	[PacketHandler(Opcode.SMSG_BATTLEFIELD_LIST, ClientVersionBuild.V3_0_2_9056)]
 	private void HandleBattlefieldListWotLK(WorldPacket packet)
 	{
 		BattlefieldList bglist = new BattlefieldList();
-		bglist.BattlemasterGuid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = bglist.BattlemasterGuid;
+		bglist.BattlemasterGuid = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = bglist.BattlemasterGuid;
 		bglist.PvpAnywhere = packet.ReadBool();
 		bglist.BattlemasterListID = packet.ReadUInt32();
 		bglist.MinLevel = packet.ReadUInt8();
@@ -454,7 +454,7 @@ public class WorldClient
 			int instanceId = packet.ReadInt32();
 			bglist.BattlefieldInstances.Add(instanceId);
 		}
-		this.SendPacketToClient(bglist);
+		SendPacketToClient(bglist);
 	}
 
 	[PacketHandler(Opcode.SMSG_BATTLEFIELD_STATUS, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
@@ -462,8 +462,8 @@ public class WorldClient
 	{
 		BattlefieldStatusHeader hdr = new BattlefieldStatusHeader();
 		hdr.Ticket.Id = 1 + packet.ReadUInt32();
-		hdr.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
-		hdr.Ticket.Time = this.GetSession().GameState.GetBattleFieldQueueTime(hdr.Ticket.Id);
+		hdr.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
+		hdr.Ticket.Time = GetSession().GameState.GetBattleFieldQueueTime(hdr.Ticket.Id);
 		hdr.Ticket.Type = RideType.Battlegrounds;
 		uint mapId = packet.ReadUInt32();
 		if (mapId != 0)
@@ -481,7 +481,7 @@ public class WorldClient
 				queue.Hdr = hdr;
 				queue.AverageWaitTime = packet.ReadUInt32();
 				queue.WaitTime = packet.ReadUInt32();
-				this.SendPacketToClient(queue);
+				SendPacketToClient(queue);
 				break;
 			}
 			case BattleGroundStatus.WaitJoin:
@@ -490,7 +490,7 @@ public class WorldClient
 				confirm.Hdr = hdr;
 				confirm.Mapid = mapId;
 				confirm.Timeout = packet.ReadUInt32();
-				this.SendPacketToClient(confirm);
+				SendPacketToClient(confirm);
 				break;
 			}
 			case BattleGroundStatus.InProgress:
@@ -504,43 +504,43 @@ public class WorldClient
 				{
 					BattlegroundInit init = new BattlegroundInit();
 					init.Milliseconds = 1154756799u;
-					this.SendPacketToClient(init);
+					SendPacketToClient(init);
 				}
-				this.SendPacketToClient(active);
+				SendPacketToClient(active);
 				break;
 			}
 			default:
-				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "HandleBattlefieldStatusVanilla", "BattleGroundHandler.cs");
+				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "BattleGroundHandler.cs");
 				break;
 			}
 		}
 		else
 		{
-			uint queuedMapId = this.GetSession().GameState.GetBattleFieldQueueType(hdr.Ticket.Id);
-			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) && queuedMapId == this.GetSession().GameState.CurrentMapId)
+			uint queuedMapId = GetSession().GameState.GetBattleFieldQueueType(hdr.Ticket.Id);
+			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) && queuedMapId == GetSession().GameState.CurrentMapId)
 			{
-				PartyUpdate bgGroup = this.GetSession().GameState.CurrentGroups[1];
+				PartyUpdate bgGroup = GetSession().GameState.CurrentGroups[1];
 				if (bgGroup != null)
 				{
 					PartyUpdate party = new PartyUpdate();
-					party.SequenceNum = this.GetSession().GameState.GroupUpdateCounter++;
+					party.SequenceNum = GetSession().GameState.GroupUpdateCounter++;
 					party.PartyFlags = GroupFlags.FakeRaid | GroupFlags.Destroyed;
 					party.PartyIndex = 1;
 					party.PartyGUID = bgGroup.PartyGUID;
 					party.LeaderGUID = WowGuid128.Empty;
 					party.MyIndex = -1;
-					this.GetSession().GameState.CurrentGroups[1] = null;
-					this.SendPacketToClient(party);
+					GetSession().GameState.CurrentGroups[1] = null;
+					SendPacketToClient(party);
 				}
 			}
 			BattlefieldStatusFailed failed = new BattlefieldStatusFailed();
 			failed.Ticket = hdr.Ticket;
 			failed.Reason = 30;
 			failed.BattlefieldListId = GameData.GetBattlegroundIdFromMapId(queuedMapId);
-			this.SendPacketToClient(failed);
-			this.GetSession().GameState.BattleFieldQueueTimes.Remove(hdr.Ticket.Id);
+			SendPacketToClient(failed);
+			GetSession().GameState.BattleFieldQueueTimes.Remove(hdr.Ticket.Id);
 		}
-		this.GetSession().GameState.StoreBattleFieldQueueType(hdr.Ticket.Id, mapId);
+		GetSession().GameState.StoreBattleFieldQueueType(hdr.Ticket.Id, mapId);
 	}
 
 	[PacketHandler(Opcode.SMSG_BATTLEFIELD_STATUS, ClientVersionBuild.V2_0_1_6180)]
@@ -548,8 +548,8 @@ public class WorldClient
 	{
 		BattlefieldStatusHeader hdr = new BattlefieldStatusHeader();
 		hdr.Ticket.Id = 1 + packet.ReadUInt32();
-		hdr.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
-		hdr.Ticket.Time = this.GetSession().GameState.GetBattleFieldQueueTime(hdr.Ticket.Id);
+		hdr.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
+		hdr.Ticket.Time = GetSession().GameState.GetBattleFieldQueueTime(hdr.Ticket.Id);
 		hdr.Ticket.Type = RideType.Battlegrounds;
 		hdr.ArenaTeamSize = packet.ReadUInt8();
 		packet.ReadUInt8();
@@ -574,7 +574,7 @@ public class WorldClient
 				queue.Hdr = hdr;
 				queue.AverageWaitTime = packet.ReadUInt32();
 				queue.WaitTime = packet.ReadUInt32();
-				this.SendPacketToClient(queue);
+				SendPacketToClient(queue);
 				break;
 			}
 			case BattleGroundStatus.WaitJoin:
@@ -587,7 +587,7 @@ public class WorldClient
 					packet.ReadUInt64();
 				}
 				confirm.Timeout = packet.ReadUInt32();
-				this.SendPacketToClient(confirm);
+				SendPacketToClient(confirm);
 				break;
 			}
 			case BattleGroundStatus.InProgress:
@@ -606,13 +606,13 @@ public class WorldClient
 				{
 					BattlegroundInit init = new BattlegroundInit();
 					init.Milliseconds = 1154756799u;
-					this.SendPacketToClient(init);
+					SendPacketToClient(init);
 				}
-				this.SendPacketToClient(active);
+				SendPacketToClient(active);
 				break;
 			}
 			default:
-				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "HandleBattlefieldStatusTBC", "BattleGroundHandler.cs");
+				Log.Print(LogType.Error, $"Unexpected BG status {status}.", "BattleGroundHandler.cs");
 				break;
 			}
 		}
@@ -621,11 +621,11 @@ public class WorldClient
 			BattlefieldStatusFailed failed = new BattlefieldStatusFailed();
 			failed.Ticket = hdr.Ticket;
 			failed.Reason = 30;
-			failed.BattlefieldListId = this.GetSession().GameState.GetBattleFieldQueueType(hdr.Ticket.Id);
-			this.SendPacketToClient(failed);
-			this.GetSession().GameState.BattleFieldQueueTimes.Remove(hdr.Ticket.Id);
+			failed.BattlefieldListId = GetSession().GameState.GetBattleFieldQueueType(hdr.Ticket.Id);
+			SendPacketToClient(failed);
+			GetSession().GameState.BattleFieldQueueTimes.Remove(hdr.Ticket.Id);
 		}
-		this.GetSession().GameState.StoreBattleFieldQueueType(hdr.Ticket.Id, battlefieldListId);
+		GetSession().GameState.StoreBattleFieldQueueType(hdr.Ticket.Id, battlefieldListId);
 	}
 
 	[PacketHandler(Opcode.MSG_PVP_LOG_DATA, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
@@ -640,7 +640,7 @@ public class WorldClient
 		for (int i = 0; i < count; i++)
 		{
 			PVPMatchStatisticsMessage.PVPMatchPlayerStatistics player = new PVPMatchStatisticsMessage.PVPMatchPlayerStatistics();
-			player.PlayerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			player.PlayerGUID = packet.ReadGuid().To128(GetSession().GameState);
 			player.Rank = packet.ReadInt32();
 			player.Kills = packet.ReadUInt32();
 			player.Honor = new PVPMatchStatisticsMessage.HonorData();
@@ -652,7 +652,7 @@ public class WorldClient
 			{
 				player.Stats.Add(packet.ReadUInt32());
 			}
-			if (this.GetSession().GameState.CachedPlayers.TryGetValue(player.PlayerGUID, out var cache))
+			if (GetSession().GameState.CachedPlayers.TryGetValue(player.PlayerGUID, out var cache))
 			{
 				player.Sex = cache.SexId;
 				player.PlayerRace = cache.RaceId;
@@ -667,7 +667,7 @@ public class WorldClient
 			}
 			pvp.Statistics.Add(player);
 		}
-		this.SendPacketToClient(pvp);
+		SendPacketToClient(pvp);
 	}
 
 	[PacketHandler(Opcode.MSG_PVP_LOG_DATA, ClientVersionBuild.V2_0_1_6180)]
@@ -701,7 +701,7 @@ public class WorldClient
 		for (int k = 0; k < count; k++)
 		{
 			PVPMatchStatisticsMessage.PVPMatchPlayerStatistics player = new PVPMatchStatisticsMessage.PVPMatchPlayerStatistics();
-			player.PlayerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			player.PlayerGUID = packet.ReadGuid().To128(GetSession().GameState);
 			player.Kills = packet.ReadUInt32();
 			if (pvp.ArenaTeams == null)
 			{
@@ -722,7 +722,7 @@ public class WorldClient
 			{
 				player.Stats.Add(packet.ReadUInt32());
 			}
-			if (this.GetSession().GameState.CachedPlayers.TryGetValue(player.PlayerGUID, out var cache))
+			if (GetSession().GameState.CachedPlayers.TryGetValue(player.PlayerGUID, out var cache))
 			{
 				player.Sex = cache.SexId;
 				player.PlayerRace = cache.RaceId;
@@ -740,14 +740,14 @@ public class WorldClient
 			}
 			pvp.Statistics.Add(player);
 		}
-		this.SendPacketToClient(pvp);
+		SendPacketToClient(pvp);
 	}
 
 	private BattlegroundPlayerPosition ReadBattlegroundPlayerPosition(WorldPacket packet)
 	{
 		return new BattlegroundPlayerPosition
 		{
-			Guid = packet.ReadGuid().To128(this.GetSession().GameState),
+			Guid = packet.ReadGuid().To128(GetSession().GameState),
 			Pos = packet.ReadVector2()
 		};
 	}
@@ -755,17 +755,17 @@ public class WorldClient
 	[PacketHandler(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
 	private void HandleBattlegroundPlayerPositionsVanilla(WorldPacket packet)
 	{
-		this.GetSession().GameState.FlagCarrierGuids.Clear();
+		GetSession().GameState.FlagCarrierGuids.Clear();
 		BattlegroundPlayerPositions bglist = new BattlegroundPlayerPositions();
 		uint teamMembersCount = packet.ReadUInt32();
 		for (uint i = 0u; i < teamMembersCount; i++)
 		{
-			this.ReadBattlegroundPlayerPosition(packet);
+			ReadBattlegroundPlayerPosition(packet);
 		}
 		if (packet.ReadBool())
 		{
-			BattlegroundPlayerPosition position = this.ReadBattlegroundPlayerPosition(packet);
-			if (this.GetSession().GameState.IsAlliancePlayer(position.Guid))
+			BattlegroundPlayerPosition position = ReadBattlegroundPlayerPosition(packet);
+			if (GetSession().GameState.IsAlliancePlayer(position.Guid))
 			{
 				position.IconID = 1;
 				position.ArenaSlot = 3;
@@ -776,9 +776,9 @@ public class WorldClient
 				position.ArenaSlot = 2;
 			}
 			bglist.FlagCarriers.Add(position);
-			this.GetSession().GameState.FlagCarrierGuids.Add(position.Guid);
+			GetSession().GameState.FlagCarrierGuids.Add(position.Guid);
 		}
-		this.SendPacketToClient(bglist);
+		SendPacketToClient(bglist);
 	}
 
 	[PacketHandler(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS, ClientVersionBuild.V2_0_1_6180)]
@@ -789,13 +789,13 @@ public class WorldClient
 		uint flagCarriersCount = packet.ReadUInt32();
 		for (uint i = 0u; i < teamMembersCount; i++)
 		{
-			this.ReadBattlegroundPlayerPosition(packet);
+			ReadBattlegroundPlayerPosition(packet);
 		}
-		this.GetSession().GameState.FlagCarrierGuids.Clear();
+		GetSession().GameState.FlagCarrierGuids.Clear();
 		for (uint i2 = 0u; i2 < flagCarriersCount; i2++)
 		{
-			BattlegroundPlayerPosition position = this.ReadBattlegroundPlayerPosition(packet);
-			if (this.GetSession().GameState.IsAlliancePlayer(position.Guid))
+			BattlegroundPlayerPosition position = ReadBattlegroundPlayerPosition(packet);
+			if (GetSession().GameState.IsAlliancePlayer(position.Guid))
 			{
 				position.IconID = 1;
 				position.ArenaSlot = 3;
@@ -806,9 +806,9 @@ public class WorldClient
 				position.ArenaSlot = 2;
 			}
 			bglist.FlagCarriers.Add(position);
-			this.GetSession().GameState.FlagCarrierGuids.Add(position.Guid);
+			GetSession().GameState.FlagCarrierGuids.Add(position.Guid);
 		}
-		this.SendPacketToClient(bglist);
+		SendPacketToClient(bglist);
 	}
 
 	[PacketHandler(Opcode.SMSG_BATTLEGROUND_PLAYER_JOINED)]
@@ -816,17 +816,17 @@ public class WorldClient
 	private void HandleBattlegroundPlayerLeftOrJoined(WorldPacket packet)
 	{
 		BattlegroundPlayerLeftOrJoined player = new BattlegroundPlayerLeftOrJoined(packet.GetUniversalOpcode(isModern: false));
-		player.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(player);
+		player.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(player);
 	}
 
 	[PacketHandler(Opcode.SMSG_AREA_SPIRIT_HEALER_TIME)]
 	private void HandleAreaSpiritHealerTime(WorldPacket packet)
 	{
 		AreaSpiritHealerTime healer = new AreaSpiritHealerTime();
-		healer.HealerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+		healer.HealerGuid = packet.ReadGuid().To128(GetSession().GameState);
 		healer.TimeLeft = packet.ReadUInt32();
-		this.SendPacketToClient(healer);
+		SendPacketToClient(healer);
 	}
 
 	[PacketHandler(Opcode.SMSG_PVP_CREDIT)]
@@ -834,9 +834,9 @@ public class WorldClient
 	{
 		PvPCredit credit = new PvPCredit();
 		credit.OriginalHonor = packet.ReadInt32();
-		credit.Target = packet.ReadGuid().To128(this.GetSession().GameState);
+		credit.Target = packet.ReadGuid().To128(GetSession().GameState);
 		credit.Rank = packet.ReadUInt32();
-		this.SendPacketToClient(credit);
+		SendPacketToClient(credit);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAYER_SKINNED)]
@@ -847,7 +847,7 @@ public class WorldClient
 		{
 			skinned.FreeRepop = packet.ReadBool();
 		}
-		this.SendPacketToClient(skinned);
+		SendPacketToClient(skinned);
 	}
 
 	[PacketHandler(Opcode.SMSG_ENUM_CHARACTERS_RESULT)]
@@ -861,14 +861,14 @@ public class WorldClient
 		charEnum.IsNewPlayer = false;
 		charEnum.IsAlliedRacesCreationAllowed = false;
 		charEnum.DisabledClassesMask = null;
-		this.GetSession().GameState.OwnCharacters.Clear();
+		GetSession().GameState.OwnCharacters.Clear();
 		byte count = packet.ReadUInt8();
 		for (byte i = 0; i < count; i++)
 		{
 			EnumCharactersResult.CharacterInfo char1 = new EnumCharactersResult.CharacterInfo();
 			char1.ListPosition = i;
 			PlayerCache cache = new PlayerCache();
-			char1.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
+			char1.Guid = packet.ReadGuid().To128(GetSession().GameState);
 			char1.Name = (cache.Name = packet.ReadCString());
 			char1.RaceId = (cache.RaceId = (Race)packet.ReadUInt8());
 			char1.ClassId = (cache.ClassId = (Class)packet.ReadUInt8());
@@ -884,12 +884,12 @@ public class WorldClient
 			{
 				charEnum.MaxCharacterLevel = char1.ExperienceLevel;
 			}
-			this.GetSession().GameState.UpdatePlayerCache(char1.Guid, cache);
+			GetSession().GameState.UpdatePlayerCache(char1.Guid, cache);
 			char1.ZoneId = packet.ReadUInt32();
 			char1.MapId = packet.ReadUInt32();
 			char1.PreloadPos = packet.ReadVector3();
 			uint guildId = packet.ReadUInt32();
-			this.GetSession().GameState.StorePlayerGuildId(char1.Guid, guildId);
+			GetSession().GameState.StorePlayerGuildId(char1.Guid, guildId);
 			char1.GuildGuid = ((guildId != 0) ? WowGuid128.Create(HighGuidType703.Guild, guildId) : WowGuid128.Empty);
 			char1.Flags = (CharacterFlags)packet.ReadUInt32();
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
@@ -933,11 +933,11 @@ public class WorldClient
 			char1.unkWod61x = 0;
 			char1.ExpansionChosen = true;
 			charEnum.Characters.Add(char1);
-			this.GetSession().GameState.OwnCharacters.Add(new OwnCharacterInfo
+			GetSession().GameState.OwnCharacters.Add(new OwnCharacterInfo
 			{
-				AccountId = this.GetSession().GameAccountInfo.WoWAccountGuid,
+				AccountId = GetSession().GameAccountInfo.WoWAccountGuid,
 				CharacterGuid = char1.Guid,
-				Realm = this.GetSession().Realm,
+				Realm = GetSession().Realm,
 				LastLoginUnixSec = char1.LastPlayedTime,
 				Name = char1.Name,
 				RaceId = char1.RaceId,
@@ -959,7 +959,7 @@ public class WorldClient
 			charEnum.RaceUnlockData.Add(new EnumCharactersResult.RaceUnlock(10, hasExpansion: true, hasAchievement: false, hasHeritageArmor: false));
 			charEnum.RaceUnlockData.Add(new EnumCharactersResult.RaceUnlock(11, hasExpansion: true, hasAchievement: false, hasHeritageArmor: false));
 		}
-		this.SendPacketToClient(charEnum);
+		SendPacketToClient(charEnum);
 	}
 
 	[PacketHandler(Opcode.SMSG_CREATE_CHAR)]
@@ -969,7 +969,7 @@ public class WorldClient
 		CreateChar createChar = new CreateChar();
 		createChar.Guid = new WowGuid128();
 		createChar.Code = ModernVersion.ConvertResponseCodesValue(result);
-		this.SendPacketToClient(createChar);
+		SendPacketToClient(createChar);
 	}
 
 	[PacketHandler(Opcode.SMSG_DELETE_CHAR)]
@@ -978,7 +978,7 @@ public class WorldClient
 		byte result = packet.ReadUInt8();
 		DeleteChar deleteChar = new DeleteChar();
 		deleteChar.Code = ModernVersion.ConvertResponseCodesValue(result);
-		this.SendPacketToClient(deleteChar);
+		SendPacketToClient(deleteChar);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_PLAYER_NAME_RESPONSE)]
@@ -988,13 +988,13 @@ public class WorldClient
 		byte result = 0;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
-			playerGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			playerGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
 			if (packet.ReadBool())
 				result = 1;
 		}
 		else
 		{
-			playerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+			playerGuid = packet.ReadGuid().To128(GetSession().GameState);
 		}
 
 		PlayerGuidLookupData data = new PlayerGuidLookupData();
@@ -1008,7 +1008,7 @@ public class WorldClient
 				QueryPlayerNameResponse response = new QueryPlayerNameResponse();
 				response.Player = playerGuid;
 				response.Result = 1;
-				this.SendPacketToClient(response);
+				SendPacketToClient(response);
 			}
 			else
 			{
@@ -1019,7 +1019,7 @@ public class WorldClient
 					Result = 1,
 					Data = null
 				});
-				this.SendPacketToClient(response);
+				SendPacketToClient(response);
 			}
 			return;
 		}
@@ -1039,15 +1039,15 @@ public class WorldClient
 			data.Sex = (cache.SexId = (Gender)packet.ReadUInt32());
 			data.ClassID = (cache.ClassId = (Class)packet.ReadInt32());
 		}
-		if (this.GetSession().GameState.CachedPlayers.ContainsKey(playerGuid))
+		if (GetSession().GameState.CachedPlayers.ContainsKey(playerGuid))
 		{
-			data.Level = this.GetSession().GameState.CachedPlayers[playerGuid].Level;
+			data.Level = GetSession().GameState.CachedPlayers[playerGuid].Level;
 		}
 		if (data.Level == 0)
 		{
 			data.Level = 1;
 		}
-		this.GetSession().GameState.UpdatePlayerCache(playerGuid, cache);
+		GetSession().GameState.UpdatePlayerCache(playerGuid, cache);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) && packet.ReadBool())
 		{
 			for (int i = 0; i < 5; i++)
@@ -1056,9 +1056,9 @@ public class WorldClient
 			}
 		}
 		data.IsDeleted = false;
-		data.AccountID = this.GetSession().GetGameAccountGuidForPlayer(playerGuid);
-		data.BnetAccountID = this.GetSession().GetBnetAccountGuidForPlayer(playerGuid);
-		data.VirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+		data.AccountID = GetSession().GetGameAccountGuidForPlayer(playerGuid);
+		data.BnetAccountID = GetSession().GetBnetAccountGuidForPlayer(playerGuid);
+		data.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 
 		// Use plural format for 3.4.3 (singular opcode doesn't exist)
 		if (ModernVersion.GetCurrentOpcode(Opcode.SMSG_QUERY_PLAYER_NAME_RESPONSE) != 0)
@@ -1067,7 +1067,7 @@ public class WorldClient
 			response.Player = playerGuid;
 			response.Result = 0;
 			response.Data = data;
-			this.SendPacketToClient(response);
+			SendPacketToClient(response);
 		}
 		else
 		{
@@ -1078,7 +1078,7 @@ public class WorldClient
 				Result = 0,
 				Data = data
 			});
-			this.SendPacketToClient(response);
+			SendPacketToClient(response);
 		}
 	}
 
@@ -1087,27 +1087,27 @@ public class WorldClient
 	{
 		// Only reset buffer on first login, not on teleports
 		// Teleports don't send a new player CreateObject so _playerObjectSent would never become true
-		if (!this.GetSession().GameState.IsInWorld)
+		if (!GetSession().GameState.IsInWorld)
 		{
-			UpdateObject.ResetLoginBuffer(this.GetSession().GameState);
+			UpdateObject.ResetLoginBuffer(GetSession().GameState);
 		}
 		LoginVerifyWorld verify = new LoginVerifyWorld();
 		verify.MapID = packet.ReadUInt32();
-		this.GetSession().GameState.CurrentMapId = verify.MapID;
+		GetSession().GameState.CurrentMapId = verify.MapID;
 		verify.Pos.X = packet.ReadFloat();
 		verify.Pos.Y = packet.ReadFloat();
 		verify.Pos.Z = packet.ReadFloat();
 		verify.Pos.Orientation = packet.ReadFloat();
-		Log.Print(LogType.Server, $"[LoginVerifyWorld] Map={verify.MapID} Pos=({verify.Pos.X}, {verify.Pos.Y}, {verify.Pos.Z}) Orient={verify.Pos.Orientation}", "HandleLoginVerifyWorld", "CharacterHandler.cs");
-		this.SendPacketToClient(verify);
-		this.GetSession().GameState.IsInWorld = true;
+		Log.Print(LogType.Server, $"[LoginVerifyWorld] Map={verify.MapID} Pos=({verify.Pos.X}, {verify.Pos.Y}, {verify.Pos.Z}) Orient={verify.Pos.Orientation}", "CharacterHandler.cs");
+		SendPacketToClient(verify);
+		GetSession().GameState.IsInWorld = true;
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
 			EmptyInitWorldStates worldStates = new EmptyInitWorldStates();
 			worldStates.MapId = verify.MapID;
 			worldStates.ZoneId = 0;
 			worldStates.AreaId = 0;
-			this.SendPacketToClient(worldStates);
+			SendPacketToClient(worldStates);
 		}
 		WorldServerInfo info = new WorldServerInfo();
 		if (verify.MapID > 1)
@@ -1115,35 +1115,35 @@ public class WorldClient
 			info.DifficultyID = 1u;
 			info.InstanceGroupSize = 5u;
 		}
-		this.SendPacketToClient(info);
+		SendPacketToClient(info);
 		if (ModernVersion.ExpansionVersion < 3)
 		{
 			SetAllTaskProgress tasks = new SetAllTaskProgress();
-			this.SendPacketToClient(tasks);
+			SendPacketToClient(tasks);
 		}
 		InitialSetup setup = new InitialSetup();
 		setup.ServerExpansionLevel = (byte)(LegacyVersion.ExpansionVersion - 1);
-		this.SendPacketToClient(setup);
+		SendPacketToClient(setup);
 		LoadCUFProfiles cuf = new LoadCUFProfiles();
-		cuf.Data = this.GetSession().AccountDataMgr.LoadCUFProfiles();
-		this.SendPacketToClient(cuf);
+		cuf.Data = GetSession().AccountDataMgr.LoadCUFProfiles();
+		SendPacketToClient(cuf);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			this.SendPacketToClient(new EmptyAllAchievementData());
-			this.SendPacketToClient(new EmptyAllAccountCriteria());
-			this.SendPacketToClient(new EmptySetupCurrency());
-			this.SendPacketToClient(new EmptySpellHistory());
-			this.SendPacketToClient(new EmptySpellCharges());
-			this.SendPacketToClient(new EmptyTalentData());
-			this.SendPacketToClient(new EmptyActiveGlyphs());
-			this.SendPacketToClient(new EmptyEquipmentSetList());
-			this.SendPacketToClient(new EmptyAccountMountUpdate());
-			this.SendPacketToClient(new EmptyAccountToyUpdate());
-			this.SendPacketToClient(new EmptyAccountHeirloomUpdate());
-			this.SendPacketToClient(new BattlePetJournalLockAcquired());
+			SendPacketToClient(new EmptyAllAchievementData());
+			SendPacketToClient(new EmptyAllAccountCriteria());
+			SendPacketToClient(new EmptySetupCurrency());
+			SendPacketToClient(new EmptySpellHistory());
+			SendPacketToClient(new EmptySpellCharges());
+			SendPacketToClient(new EmptyTalentData());
+			SendPacketToClient(new EmptyActiveGlyphs());
+			SendPacketToClient(new EmptyEquipmentSetList());
+			SendPacketToClient(new EmptyAccountMountUpdate());
+			SendPacketToClient(new EmptyAccountToyUpdate());
+			SendPacketToClient(new EmptyAccountHeirloomUpdate());
+			SendPacketToClient(new BattlePetJournalLockAcquired());
 			PhaseShiftChange phaseShift = new PhaseShiftChange();
-			phaseShift.Client = this.GetSession().GameState.CurrentPlayerGuid;
-			this.SendPacketToClient(phaseShift);
+			phaseShift.Client = GetSession().GameState.CurrentPlayerGuid;
+			SendPacketToClient(phaseShift);
 		}
 	}
 
@@ -1152,8 +1152,8 @@ public class WorldClient
 	{
 		CharacterLoginFailed failed = new CharacterLoginFailed();
 		failed.Code = (LoginFailureReason)packet.ReadUInt8();
-		this.SendPacketToClient(failed);
-		this.GetSession().GameState.IsInWorld = false;
+		SendPacketToClient(failed);
+		GetSession().GameState.IsInWorld = false;
 	}
 
 	[PacketHandler(Opcode.SMSG_UPDATE_ACTION_BUTTONS)]
@@ -1186,11 +1186,11 @@ public class WorldClient
 		{
 			buttons.Add(0);
 		}
-		this.GetSession().GameState.ActionButtons = buttons;
+		GetSession().GameState.ActionButtons = buttons;
 		UpdateActionButtons updateButtons = new UpdateActionButtons();
 		updateButtons.ActionButtons = buttons;
 		updateButtons.Reason = 0;
-		this.SendPacketToClient(updateButtons);
+		SendPacketToClient(updateButtons);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOGOUT_RESPONSE)]
@@ -1199,31 +1199,31 @@ public class WorldClient
 		LogoutResponse logout = new LogoutResponse();
 		logout.LogoutResult = packet.ReadInt32();
 		logout.Instant = packet.ReadBool();
-		this.SendPacketToClient(logout);
+		SendPacketToClient(logout);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOGOUT_COMPLETE)]
 	private void HandleLogoutComplete(WorldPacket packet)
 	{
 		LogoutComplete logout = new LogoutComplete();
-		this.SendPacketToClient(logout);
-		this.GetSession().GameState = GameSessionData.CreateNewGameSessionData(this.GetSession());
-		this.GetSession().InstanceSocket.CloseSocket();
-		this.GetSession().InstanceSocket = null;
+		SendPacketToClient(logout);
+		GetSession().GameState = GameSessionData.CreateNewGameSessionData(GetSession());
+		GetSession().InstanceSocket.CloseSocket();
+		GetSession().InstanceSocket = null;
 	}
 
 	[PacketHandler(Opcode.SMSG_LOGOUT_CANCEL_ACK)]
 	private void HandleLogoutCancelAck(WorldPacket packet)
 	{
 		LogoutCancelAck logout = new LogoutCancelAck();
-		this.SendPacketToClient(logout);
+		SendPacketToClient(logout);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOG_XP_GAIN)]
 	private void HandleLogXPGain(WorldPacket packet)
 	{
 		LogXPGain log = new LogXPGain();
-		log.Victim = packet.ReadGuid().To128(this.GetSession().GameState);
+		log.Victim = packet.ReadGuid().To128(GetSession().GameState);
 		log.Original = packet.ReadInt32();
 		log.Reason = (PlayerLogXPReason)packet.ReadUInt8();
 		if (log.Reason == PlayerLogXPReason.Kill)
@@ -1235,7 +1235,7 @@ public class WorldClient
 		{
 			log.RAFBonus = packet.ReadUInt8();
 		}
-		this.SendPacketToClient(log);
+		SendPacketToClient(log);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAYED_TIME)]
@@ -1250,9 +1250,9 @@ public class WorldClient
 		}
 		else
 		{
-			played.TriggerEvent = this.GetSession().GameState.ShowPlayedTime;
+			played.TriggerEvent = GetSession().GameState.ShowPlayedTime;
 		}
-		this.SendPacketToClient(played);
+		SendPacketToClient(played);
 	}
 
 	[PacketHandler(Opcode.SMSG_LEVEL_UP_INFO)]
@@ -1269,23 +1269,23 @@ public class WorldClient
 		{
 			info.StatDelta[j] = packet.ReadInt32();
 		}
-		this.SendPacketToClient(info);
+		SendPacketToClient(info);
 	}
 
 	[PacketHandler(Opcode.SMSG_UPDATE_COMBO_POINTS)]
 	private void HandleUpdateComboPoints(WorldPacket packet)
 	{
-		ObjectUpdate updateData = new ObjectUpdate(this.GetSession().GameState.CurrentPlayerGuid, UpdateTypeModern.Values, this.GetSession());
-		updateData.ActivePlayerData.ComboTarget = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		ObjectUpdate updateData = new ObjectUpdate(GetSession().GameState.CurrentPlayerGuid, UpdateTypeModern.Values, GetSession());
+		updateData.ActivePlayerData.ComboTarget = packet.ReadPackedGuid().To128(GetSession().GameState);
 		byte comboPoints = packet.ReadUInt8();
-		sbyte powerSlot = ClassPowerTypes.GetPowerSlotForClass(this.GetSession().GameState.GetUnitClass(this.GetSession().GameState.CurrentPlayerGuid), PowerType.ComboPoints);
+		sbyte powerSlot = ClassPowerTypes.GetPowerSlotForClass(GetSession().GameState.GetUnitClass(GetSession().GameState.CurrentPlayerGuid), PowerType.ComboPoints);
 		if (powerSlot >= 0)
 		{
 			updateData.UnitData.Power[powerSlot] = comboPoints;
 		}
-		UpdateObject updatePacket = new UpdateObject(this.GetSession().GameState);
+		UpdateObject updatePacket = new UpdateObject(GetSession().GameState);
 		updatePacket.ObjectUpdates.Add(updateData);
-		this.SendPacketToClient(updatePacket);
+		SendPacketToClient(updatePacket);
 	}
 
 	[PacketHandler(Opcode.SMSG_INSPECT_RESULT)]
@@ -1295,13 +1295,13 @@ public class WorldClient
 		InspectResult inspect = new InspectResult();
 		if (packet.GetUniversalOpcode(isModern: false) == Opcode.SMSG_INSPECT_RESULT)
 		{
-			inspect.DisplayInfo.GUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			inspect.DisplayInfo.GUID = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			inspect.DisplayInfo.GUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			inspect.DisplayInfo.GUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
-		if (!this.GetSession().GameState.CachedPlayers.TryGetValue(inspect.DisplayInfo.GUID, out var cache))
+		if (!GetSession().GameState.CachedPlayers.TryGetValue(inspect.DisplayInfo.GUID, out var cache))
 		{
 			return;
 		}
@@ -1309,7 +1309,7 @@ public class WorldClient
 		inspect.DisplayInfo.ClassId = cache.ClassId;
 		inspect.DisplayInfo.RaceId = cache.RaceId;
 		inspect.DisplayInfo.SexId = cache.SexId;
-		Dictionary<int, UpdateField> updates = this.GetSession().GameState.GetCachedObjectFieldsLegacy(inspect.DisplayInfo.GUID);
+		Dictionary<int, UpdateField> updates = GetSession().GameState.GetCachedObjectFieldsLegacy(inspect.DisplayInfo.GUID);
 		if (updates != null)
 		{
 			int PLAYER_VISIBLE_ITEM_1_0 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_VISIBLE_ITEM_1_0);
@@ -1374,13 +1374,13 @@ public class WorldClient
 				}
 			}
 		}
-		this.SendPacketToClient(inspect);
+		SendPacketToClient(inspect);
 	}
 
 	[PacketHandler(Opcode.MSG_INSPECT_HONOR_STATS, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
 	private void HandleInspectHonorStatsVanilla(WorldPacket packet)
 	{
-		WowGuid128 playerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+		WowGuid128 playerGuid = packet.ReadGuid().To128(GetSession().GameState);
 		byte lifetimeHighestRank = packet.ReadUInt8();
 		ushort todayHonorableKills = packet.ReadUInt16();
 		ushort todayDishonorableKills = packet.ReadUInt16();
@@ -1417,7 +1417,7 @@ public class WorldClient
 			inspect.ThisWeekHonor = thisWeekHonor;
 			inspect.Standing = standing;
 			inspect.RankProgress = rankProgress;
-			this.SendPacketToClient(inspect);
+			SendPacketToClient(inspect);
 		}
 		else
 		{
@@ -1426,14 +1426,14 @@ public class WorldClient
 			inspect2.LifetimeHighestRank = lifetimeHighestRank;
 			inspect2.YesterdayHonorableKills = yesterdayHonorableKills;
 			inspect2.LifetimeHonorableKills = (ushort)lifetimeHonorableKills;
-			this.SendPacketToClient(inspect2);
+			SendPacketToClient(inspect2);
 		}
 	}
 
 	[PacketHandler(Opcode.MSG_INSPECT_HONOR_STATS, ClientVersionBuild.V2_0_1_6180)]
 	private void HandleInspectHonorStatsTBC(WorldPacket packet)
 	{
-		WowGuid128 playerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+		WowGuid128 playerGuid = packet.ReadGuid().To128(GetSession().GameState);
 		byte lifetimeHighestRank = packet.ReadUInt8();
 		ushort todayHonorableKills = packet.ReadUInt16();
 		ushort yesterdayHonorableKills = packet.ReadUInt16();
@@ -1450,7 +1450,7 @@ public class WorldClient
 			inspect.LifetimeHonorableKills = lifetimeHonorableKills;
 			inspect.YesterdayHonor = yesterdayHonor;
 			inspect.LastWeekHonor = todayHonor;
-			this.SendPacketToClient(inspect);
+			SendPacketToClient(inspect);
 		}
 		else
 		{
@@ -1459,7 +1459,7 @@ public class WorldClient
 			inspect2.LifetimeHighestRank = lifetimeHighestRank;
 			inspect2.YesterdayHonorableKills = yesterdayHonorableKills;
 			inspect2.LifetimeHonorableKills = (ushort)lifetimeHonorableKills;
-			this.SendPacketToClient(inspect2);
+			SendPacketToClient(inspect2);
 		}
 	}
 
@@ -1467,7 +1467,7 @@ public class WorldClient
 	private void HandleInspectArenaTeams(WorldPacket packet)
 	{
 		InspectPvP inspect = new InspectPvP();
-		inspect.PlayerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		inspect.PlayerGUID = packet.ReadGuid().To128(GetSession().GameState);
 		ArenaTeamInspectData team = new ArenaTeamInspectData();
 		byte slot = packet.ReadUInt8();
 		uint teamId = packet.ReadUInt32();
@@ -1477,12 +1477,12 @@ public class WorldClient
 		team.TeamGamesWon = packet.ReadInt32();
 		team.PersonalGamesPlayed = packet.ReadInt32();
 		team.PersonalRating = packet.ReadInt32();
-		this.GetSession().GameState.StoreArenaTeamDataForPlayer(inspect.PlayerGUID, slot, team);
+		GetSession().GameState.StoreArenaTeamDataForPlayer(inspect.PlayerGUID, slot, team);
 		for (byte i = 0; i < 3; i++)
 		{
-			inspect.ArenaTeams.Add(this.GetSession().GameState.GetArenaTeamDataForPlayer(inspect.PlayerGUID, slot));
+			inspect.ArenaTeams.Add(GetSession().GameState.GetArenaTeamDataForPlayer(inspect.PlayerGUID, slot));
 		}
-		this.SendPacketToClient(inspect);
+		SendPacketToClient(inspect);
 	}
 
 	[PacketHandler(Opcode.SMSG_CHARACTER_RENAME_RESULT)]
@@ -1493,10 +1493,10 @@ public class WorldClient
 		rename.Result = ModernVersion.ConvertResponseCodesValue(result);
 		if (rename.Result == 0)
 		{
-			rename.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
+			rename.Guid = packet.ReadGuid().To128(GetSession().GameState);
 			rename.Name = packet.ReadCString();
 		}
-		this.SendPacketToClient(rename);
+		SendPacketToClient(rename);
 	}
 
 	[PacketHandler(Opcode.SMSG_CHANNEL_NOTIFY)]
@@ -1536,13 +1536,13 @@ public class WorldClient
 			{
 				channelId = (int)GameData.GetChatChannelIdFromName(channelName);
 			}
-			this.GetSession().GameState.SetChannelId(channelName, channelId);
+			GetSession().GameState.SetChannelId(channelName, channelId);
 			ChannelNotifyJoined joined = new ChannelNotifyJoined();
 			joined.Channel = channelName;
 			joined.ChannelFlags = flags;
 			joined.ChatChannelID = channelId;
-			joined.ChannelGUID = WowGuid128.Create(HighGuidType703.ChatChannel, this.GetSession().GameState.CurrentMapId.Value, this.GetSession().GameState.CurrentZoneId, (ulong)channelId);
-			this.SendPacketToClient(joined);
+			joined.ChannelGUID = WowGuid128.Create(HighGuidType703.ChatChannel, GetSession().GameState.CurrentMapId.Value, GetSession().GameState.CurrentZoneId, (ulong)channelId);
+			SendPacketToClient(joined);
 			break;
 		}
 		case ChatNotify.YouLeft:
@@ -1556,12 +1556,12 @@ public class WorldClient
 			}
 			else
 			{
-				left.ChatChannelID = this.GetSession().GameState.ChannelIds[channelName];
+				left.ChatChannelID = GetSession().GameState.ChannelIds[channelName];
 				left.Suspended = false;
 			}
-			if (string.Equals(this.GetSession().GameState.LeftChannelName, channelName) || GameData.GetChatChannelIdFromName(channelName) == 0)
+			if (string.Equals(GetSession().GameState.LeftChannelName, channelName) || GameData.GetChatChannelIdFromName(channelName) == 0)
 			{
-				this.SendPacketToClient(left);
+				SendPacketToClient(left);
 			}
 			break;
 		}
@@ -1613,7 +1613,7 @@ public class WorldClient
 		}
 		else
 		{
-			list.Display = this.GetSession().GameState.ChannelDisplayList;
+			list.Display = GetSession().GameState.ChannelDisplayList;
 		}
 		list.ChannelName = packet.ReadCString();
 		list.ChannelFlags = (ChannelFlags)packet.ReadUInt8();
@@ -1622,13 +1622,13 @@ public class WorldClient
 		{
 			ChannelListResponse.ChannelPlayer member = new ChannelListResponse.ChannelPlayer
 			{
-				Guid = packet.ReadGuid().To128(this.GetSession().GameState),
-				VirtualRealmAddress = this.GetSession().RealmId.GetAddress(),
+				Guid = packet.ReadGuid().To128(GetSession().GameState),
+				VirtualRealmAddress = GetSession().RealmId.GetAddress(),
 				Flags = packet.ReadUInt8()
 			};
 			list.Members.Add(member);
 		}
-		this.SendPacketToClient(list);
+		SendPacketToClient(list);
 	}
 
 	[PacketHandler(Opcode.SMSG_CHAT, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
@@ -1647,28 +1647,28 @@ public class WorldClient
 		case ChatMessageTypeVanilla.RaidBossEmote:
 			packet.ReadUInt32();
 			senderName = packet.ReadCString();
-			receiver = packet.ReadGuid().To128(this.GetSession().GameState);
+			receiver = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		case ChatMessageTypeVanilla.Say:
 		case ChatMessageTypeVanilla.Party:
 		case ChatMessageTypeVanilla.Yell:
-			sender = packet.ReadGuid().To128(this.GetSession().GameState);
+			sender = packet.ReadGuid().To128(GetSession().GameState);
 			packet.ReadGuid();
 			break;
 		case ChatMessageTypeVanilla.MonsterSay:
 		case ChatMessageTypeVanilla.MonsterYell:
-			sender = packet.ReadGuid().To128(this.GetSession().GameState);
+			sender = packet.ReadGuid().To128(GetSession().GameState);
 			packet.ReadUInt32();
 			senderName = packet.ReadCString();
-			receiver = packet.ReadGuid().To128(this.GetSession().GameState);
+			receiver = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		case ChatMessageTypeVanilla.Channel:
 			channelName = packet.ReadCString();
 			packet.ReadUInt32();
-			sender = packet.ReadGuid().To128(this.GetSession().GameState);
+			sender = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		default:
-			sender = packet.ReadGuid().To128(this.GetSession().GameState);
+			sender = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		}
 		ChatMessageTypeVanilla chatMessageTypeVanilla = chatType;
@@ -1681,22 +1681,22 @@ public class WorldClient
 		string text = packet.ReadString(textLength);
 		ChatTag chatTag = (ChatTag)packet.ReadUInt8();
 		ChatFlags chatFlags = (ChatFlags)Enum.Parse(typeof(ChatFlags), chatTag.ToString());
-		if (this.Session.GameState.IgnoredPlayers.Contains(sender) && !chatFlags.HasFlag(ChatFlags.GM) && chatType != ChatMessageTypeVanilla.Ignored)
+		if (Session.GameState.IgnoredPlayers.Contains(sender) && !chatFlags.HasFlag(ChatFlags.GM) && chatType != ChatMessageTypeVanilla.Ignored)
 		{
 			if (chatType == ChatMessageTypeVanilla.Whisper)
 			{
 				WorldPacket ignoreResponsePacket = new WorldPacket(Opcode.CMSG_CHAT_REPORT_IGNORED);
 				ignoreResponsePacket.WriteGuid(sender.To64());
-				this.SendPacketToServer(ignoreResponsePacket);
+				SendPacketToServer(ignoreResponsePacket);
 			}
 			return;
 		}
 		string addonPrefix = "";
-		if (ChatPkt.CheckAddonPrefix(this.GetSession().GameState.AddonPrefixes, ref language, ref text, ref addonPrefix))
+		if (ChatPkt.CheckAddonPrefix(GetSession().GameState.AddonPrefixes, ref language, ref text, ref addonPrefix))
 		{
 			ChatMessageTypeModern chatTypeModern = (ChatMessageTypeModern)Enum.Parse(typeof(ChatMessageTypeModern), chatType.ToString());
-			ChatPkt chat = new ChatPkt(this.GetSession(), chatTypeModern, text, language, sender, senderName, receiver, "", channelName, chatFlags, addonPrefix);
-			this.SendPacketToClient(chat);
+			ChatPkt chat = new ChatPkt(GetSession(), chatTypeModern, text, language, sender, senderName, receiver, "", channelName, chatFlags, addonPrefix);
+			SendPacketToClient(chat);
 		}
 	}
 
@@ -1706,7 +1706,7 @@ public class WorldClient
 	{
 		ChatMessageTypeWotLK chatType = (ChatMessageTypeWotLK)packet.ReadUInt8();
 		uint language = packet.ReadUInt32();
-		WowGuid128 sender = packet.ReadGuid().To128(this.GetSession().GameState);
+		WowGuid128 sender = packet.ReadGuid().To128(GetSession().GameState);
 		string senderName = "";
 		string receiverName = "";
 		string channelName = "";
@@ -1719,20 +1719,20 @@ public class WorldClient
 		{
 		case ChatMessageTypeWotLK.Achievement:
 		case ChatMessageTypeWotLK.GuildAchievement:
-			receiver = packet.ReadGuid().To128(this.GetSession().GameState);
+			receiver = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		case ChatMessageTypeWotLK.WhisperForeign:
 		{
 			uint senderNameLength3 = packet.ReadUInt32();
 			senderName = packet.ReadString(senderNameLength3);
-			receiver = packet.ReadGuid().To128(this.GetSession().GameState);
+			receiver = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		}
 		case ChatMessageTypeWotLK.BattlegroundNeutral:
 		case ChatMessageTypeWotLK.BattlegroundAlliance:
 		case ChatMessageTypeWotLK.BattlegroundHorde:
 		{
-			receiver = packet.ReadGuid().To128(this.GetSession().GameState);
+			receiver = packet.ReadGuid().To128(GetSession().GameState);
 			HighGuidType highType = receiver.GetHighType();
 			HighGuidType highGuidType = highType;
 			if (highGuidType == HighGuidType.Transport || (uint)(highGuidType - 9) <= 3u)
@@ -1753,7 +1753,7 @@ public class WorldClient
 		{
 			uint senderNameLength = packet.ReadUInt32();
 			senderName = packet.ReadString(senderNameLength);
-			receiver = packet.ReadGuid().To128(this.GetSession().GameState);
+			receiver = packet.ReadGuid().To128(GetSession().GameState);
 			switch (receiver.GetHighType())
 			{
 			case HighGuidType.Transport:
@@ -1778,7 +1778,7 @@ public class WorldClient
 			{
 				channelName = packet.ReadCString();
 			}
-			receiver = packet.ReadGuid().To128(this.GetSession().GameState);
+			receiver = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		}
 		ChatMessageTypeWotLK chatMessageTypeWotLK = chatType;
@@ -1800,31 +1800,31 @@ public class WorldClient
 		{
 			achievementId = packet.ReadUInt32();
 		}
-		if (this.Session.GameState.IgnoredPlayers.Contains(sender) && !chatFlags.HasFlag(ChatFlags.GM) && chatType != ChatMessageTypeWotLK.Ignored)
+		if (Session.GameState.IgnoredPlayers.Contains(sender) && !chatFlags.HasFlag(ChatFlags.GM) && chatType != ChatMessageTypeWotLK.Ignored)
 		{
 			if (chatType == ChatMessageTypeWotLK.Whisper)
 			{
 				WorldPacket ignoreResponsePacket = new WorldPacket(Opcode.CMSG_CHAT_REPORT_IGNORED);
 				ignoreResponsePacket.WriteGuid(sender.To64());
 				ignoreResponsePacket.WriteUInt8(0);
-				this.SendPacketToServer(ignoreResponsePacket);
+				SendPacketToServer(ignoreResponsePacket);
 			}
 		}
 		else
 		{
 			string addonPrefix = "";
-			if (ChatPkt.CheckAddonPrefix(this.GetSession().GameState.AddonPrefixes, ref language, ref text, ref addonPrefix))
+			if (ChatPkt.CheckAddonPrefix(GetSession().GameState.AddonPrefixes, ref language, ref text, ref addonPrefix))
 			{
 				ChatMessageTypeModern chatTypeModern = (ChatMessageTypeModern)Enum.Parse(typeof(ChatMessageTypeModern), chatType.ToString());
-				ChatPkt chat = new ChatPkt(this.GetSession(), chatTypeModern, text, language, sender, senderName, receiver, receiverName, channelName, chatFlags, addonPrefix, achievementId);
-				this.SendPacketToClient(chat);
+				ChatPkt chat = new ChatPkt(GetSession(), chatTypeModern, text, language, sender, senderName, receiver, receiverName, channelName, chatFlags, addonPrefix, achievementId);
+				SendPacketToClient(chat);
 			}
 		}
 	}
 
 	public void SendMessageChatVanilla(ChatMessageTypeVanilla type, uint lang, string msg, string channel, string to)
 	{
-		if (!this.HandleHermesInternalChatCommand(msg))
+		if (!HandleHermesInternalChatCommand(msg))
 		{
 			WorldPacket packet = new WorldPacket(Opcode.CMSG_MESSAGECHAT);
 			packet.WriteUInt32((uint)type);
@@ -1855,7 +1855,7 @@ public class WorldClient
 				packet.WriteCString(msg);
 				break;
 			}
-			this.SendPacket(packet);
+			SendPacket(packet);
 		}
 	}
 
@@ -1866,10 +1866,10 @@ public class WorldClient
 			string questIdStr = msg.Remove(0, "!qcomplete".Length);
 			if (!uint.TryParse(questIdStr, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var questId))
 			{
-				this.GetSession().SendHermesTextMessage("Chat command invalid questId format '" + questIdStr + "'");
+				GetSession().SendHermesTextMessage("Chat command invalid questId format '" + questIdStr + "'");
 				return true;
 			}
-			this.GetSession().GameState.CurrentPlayerStorage.CompletedQuests.MarkQuestAsCompleted(questId);
+			GetSession().GameState.CurrentPlayerStorage.CompletedQuests.MarkQuestAsCompleted(questId);
 			return true;
 		}
 		if (msg.StartsWith("!quncomplete"))
@@ -1877,10 +1877,10 @@ public class WorldClient
 			string questIdStr2 = msg.Remove(0, "!quncomplete".Length);
 			if (!uint.TryParse(questIdStr2, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, out var questId2))
 			{
-				this.GetSession().SendHermesTextMessage("Chat command invalid questId format '" + questIdStr2 + "'");
+				GetSession().SendHermesTextMessage("Chat command invalid questId format '" + questIdStr2 + "'");
 				return true;
 			}
-			this.GetSession().GameState.CurrentPlayerStorage.CompletedQuests.MarkQuestAsNotCompleted(questId2);
+			GetSession().GameState.CurrentPlayerStorage.CompletedQuests.MarkQuestAsNotCompleted(questId2);
 			return true;
 		}
 		return false;
@@ -1888,7 +1888,7 @@ public class WorldClient
 
 	public void SendMessageChatWotLK(ChatMessageTypeWotLK type, uint lang, string msg, string channel, string to)
 	{
-		if (!this.HandleHermesInternalChatCommand(msg))
+		if (!HandleHermesInternalChatCommand(msg))
 		{
 			WorldPacket packet = new WorldPacket(Opcode.CMSG_MESSAGECHAT);
 			packet.WriteUInt32((uint)type);
@@ -1920,7 +1920,7 @@ public class WorldClient
 				packet.WriteCString(msg);
 				break;
 			}
-			this.SendPacket(packet);
+			SendPacket(packet);
 		}
 	}
 
@@ -1929,23 +1929,23 @@ public class WorldClient
 	{
 		EmoteMessage emote = new EmoteMessage();
 		emote.EmoteID = packet.ReadUInt32();
-		emote.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(emote);
+		emote.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(emote);
 	}
 
 	[PacketHandler(Opcode.SMSG_TEXT_EMOTE)]
 	private void HandleTextEmote(WorldPacket packet)
 	{
 		STextEmote emote = new STextEmote();
-		emote.SourceGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		emote.SourceAccountGUID = this.GetSession().GetGameAccountGuidForPlayer(emote.SourceGUID);
+		emote.SourceGUID = packet.ReadGuid().To128(GetSession().GameState);
+		emote.SourceAccountGUID = GetSession().GetGameAccountGuidForPlayer(emote.SourceGUID);
 		emote.EmoteID = packet.ReadInt32();
 		emote.SoundIndex = packet.ReadInt32();
 		uint nameLength = packet.ReadUInt32();
 		string targetName = packet.ReadString(nameLength);
-		WowGuid128 targetGuid = this.GetSession().GameState.GetPlayerGuidByName(targetName);
+		WowGuid128 targetGuid = GetSession().GameState.GetPlayerGuidByName(targetName);
 		emote.TargetGUID = ((targetGuid != null) ? targetGuid : WowGuid128.Empty);
-		this.SendPacketToClient(emote);
+		SendPacketToClient(emote);
 	}
 
 	[PacketHandler(Opcode.SMSG_PRINT_NOTIFICATION)]
@@ -1953,7 +1953,7 @@ public class WorldClient
 	{
 		PrintNotification notify = new PrintNotification();
 		notify.NotifyText = packet.ReadCString();
-		this.SendPacketToClient(notify);
+		SendPacketToClient(notify);
 	}
 
 	[PacketHandler(Opcode.SMSG_CHAT_PLAYER_NOTFOUND)]
@@ -1961,7 +1961,7 @@ public class WorldClient
 	{
 		ChatPlayerNotfound error = new ChatPlayerNotfound();
 		error.Name = packet.ReadCString();
-		this.SendPacketToClient(error);
+		SendPacketToClient(error);
 	}
 
 	[PacketHandler(Opcode.SMSG_DEFENSE_MESSAGE)]
@@ -1971,7 +1971,7 @@ public class WorldClient
 		message.ZoneID = packet.ReadUInt32();
 		packet.ReadUInt32();
 		message.MessageText = packet.ReadCString();
-		this.SendPacketToClient(message);
+		SendPacketToClient(message);
 	}
 
 	[PacketHandler(Opcode.SMSG_CHAT_SERVER_MESSAGE)]
@@ -1980,7 +1980,7 @@ public class WorldClient
 		ChatServerMessage message = new ChatServerMessage();
 		message.MessageID = packet.ReadInt32();
 		message.StringParam = packet.ReadCString();
-		this.SendPacketToClient(message);
+		SendPacketToClient(message);
 	}
 
 	public void SendChatJoinChannel(int channelId, string channelName, string password)
@@ -1994,7 +1994,7 @@ public class WorldClient
 		}
 		packet.WriteCString(channelName);
 		packet.WriteCString(password);
-		this.SendPacketToServer(packet);
+		SendPacketToServer(packet);
 	}
 
 	public void SendChatLeaveChannel(int channelId, string channelName)
@@ -2005,14 +2005,14 @@ public class WorldClient
 			packet.WriteInt32(channelId);
 		}
 		packet.WriteCString(channelName);
-		this.SendPacketToServer(packet);
+		SendPacketToServer(packet);
 	}
 
 	private bool IsLocalPlayerOrPet(WowGuid128 guid)
 	{
 		if (guid == null) return false;
-		return guid == this.GetSession().GameState.CurrentPlayerGuid ||
-		       guid == this.GetSession().GameState.CurrentPetGuid;
+		return guid == GetSession().GameState.CurrentPlayerGuid ||
+		       guid == GetSession().GameState.CurrentPetGuid;
 	}
 
 	private bool IsLocalPlayerInvolved(WowGuid128 a, WowGuid128 b)
@@ -2024,9 +2024,9 @@ public class WorldClient
 	private void HandleAttackStart(WorldPacket packet)
 	{
 		SAttackStart attack = new SAttackStart();
-		attack.Attacker = packet.ReadGuid().To128(this.GetSession().GameState);
-		attack.Victim = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(attack);
+		attack.Attacker = packet.ReadGuid().To128(GetSession().GameState);
+		attack.Victim = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(attack);
 	}
 
 	[PacketHandler(Opcode.SMSG_ATTACK_STOP)]
@@ -2035,59 +2035,59 @@ public class WorldClient
 		SAttackStop attack = new SAttackStop();
 		if (packet.CanRead())
 		{
-			attack.Attacker = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			attack.Attacker = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		if (packet.CanRead())
 		{
-			attack.Victim = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			attack.Victim = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		if (packet.CanRead())
 		{
 			attack.NowDead = packet.ReadUInt32() != 0;
 		}
-		this.SendPacketToClient(attack);
+		SendPacketToClient(attack);
 	}
 
 	[PacketHandler(Opcode.SMSG_HIGHEST_THREAT_UPDATE)]
 	private void HandleHighestThreatUpdate(WorldPacket packet)
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
-		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] HIGHEST_THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleHighestThreatUpdate", "WorldClient.cs");
+		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
+		Log.Print(LogType.Debug, $"[Combat] HIGHEST_THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_CLEAR)]
 	private void HandleThreatClear(WorldPacket packet)
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
-		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] THREAT_CLEAR unit={unitGuid} (consumed, not forwarded)", "HandleThreatClear", "WorldClient.cs");
+		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
+		Log.Print(LogType.Debug, $"[Combat] THREAT_CLEAR unit={unitGuid} (consumed, not forwarded)", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_UPDATE)]
 	private void HandleThreatUpdate(WorldPacket packet)
 	{
 		// Consume packet to prevent "No handler" warning — client doesn't need this
-		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[Combat] THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "HandleThreatUpdate", "WorldClient.cs");
+		WowGuid128 unitGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
+		Log.Print(LogType.Debug, $"[Combat] THREAT_UPDATE unit={unitGuid} (consumed, not forwarded)", "WorldClient.cs");
 	}
 
 	[PacketHandler(Opcode.SMSG_THREAT_REMOVE)]
 	private void HandleThreatRemove(WorldPacket packet)
 	{
 		ThreatRemove threat = new ThreatRemove();
-		threat.UnitGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		threat.AboutGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(threat);
+		threat.UnitGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		threat.AboutGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		SendPacketToClient(threat);
 	}
 
 	[PacketHandler(Opcode.SMSG_HEALTH_UPDATE)]
 	private void HandleHealthUpdate(WorldPacket packet)
 	{
 		HealthUpdate health = new HealthUpdate();
-		health.Guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		health.Guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		health.Health = packet.ReadUInt32();
-		this.SendPacketToClient(health);
+		SendPacketToClient(health);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_ACTION_FEEDBACK)]
@@ -2096,7 +2096,7 @@ public class WorldClient
 		PetActionFeedback feedback = new PetActionFeedback();
 		feedback.Response = packet.ReadUInt8();
 		feedback.SpellID = 0;
-		this.SendPacketToClient(feedback);
+		SendPacketToClient(feedback);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_TAME_FAILURE)]
@@ -2104,7 +2104,7 @@ public class WorldClient
 	{
 		PetTameFailure tame = new PetTameFailure();
 		tame.Result = packet.ReadUInt8();
-		this.SendPacketToClient(tame);
+		SendPacketToClient(tame);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_GUIDS)]
@@ -2114,9 +2114,9 @@ public class WorldClient
 		uint count = packet.ReadUInt32();
 		for (uint i = 0; i < count; i++)
 		{
-			guids.Guids.Add(packet.ReadGuid().To128(this.GetSession().GameState));
+			guids.Guids.Add(packet.ReadGuid().To128(GetSession().GameState));
 		}
-		this.SendPacketToClient(guids);
+		SendPacketToClient(guids);
 	}
 
 	[PacketHandler(Opcode.SMSG_TITLE_EARNED)]
@@ -2126,7 +2126,7 @@ public class WorldClient
 		uint earned = packet.ReadUInt32();
 		TitleEarned title = new TitleEarned(earned != 0 ? Opcode.SMSG_TITLE_EARNED : Opcode.SMSG_TITLE_LOST);
 		title.Index = index;
-		this.SendPacketToClient(title);
+		SendPacketToClient(title);
 	}
 
 	[PacketHandler(Opcode.SMSG_MOUNT_RESULT)]
@@ -2134,7 +2134,7 @@ public class WorldClient
 	{
 		MountResult mount = new MountResult();
 		mount.Result = packet.ReadInt32();
-		this.SendPacketToClient(mount);
+		SendPacketToClient(mount);
 	}
 
 	[PacketHandler(Opcode.SMSG_ACHIEVEMENT_DELETED)]
@@ -2143,7 +2143,7 @@ public class WorldClient
 		AchievementDeleted deleted = new AchievementDeleted();
 		deleted.AchievementID = packet.ReadUInt32();
 		deleted.Immunities = 0;
-		this.SendPacketToClient(deleted);
+		SendPacketToClient(deleted);
 	}
 
 	[PacketHandler(Opcode.SMSG_CRITERIA_DELETED)]
@@ -2151,21 +2151,21 @@ public class WorldClient
 	{
 		CriteriaDeleted deleted = new CriteriaDeleted();
 		deleted.CriteriaID = packet.ReadUInt32();
-		this.SendPacketToClient(deleted);
+		SendPacketToClient(deleted);
 	}
 
 	[PacketHandler(Opcode.SMSG_GROUP_DESTROYED)]
 	private void HandleGroupDestroyed(WorldPacket packet)
 	{
 		GroupDestroyed destroyed = new GroupDestroyed();
-		this.SendPacketToClient(destroyed);
+		SendPacketToClient(destroyed);
 	}
 
 	[PacketHandler(Opcode.SMSG_ON_CANCEL_EXPECTED_RIDE_VEHICLE_AURA)]
 	private void HandleOnCancelExpectedRideVehicleAura(WorldPacket packet)
 	{
 		OnCancelExpectedRideVehicleAura cancel = new OnCancelExpectedRideVehicleAura();
-		this.SendPacketToClient(cancel);
+		SendPacketToClient(cancel);
 	}
 
 	[PacketHandler(Opcode.SMSG_OVERRIDE_LIGHT)]
@@ -2175,7 +2175,7 @@ public class WorldClient
 		light.AreaLightID = packet.ReadInt32();
 		light.OverrideLightID = packet.ReadInt32();
 		light.TransitionMilliseconds = packet.ReadInt32();
-		this.SendPacketToClient(light);
+		SendPacketToClient(light);
 	}
 
 	[PacketHandler(Opcode.SMSG_UPDATE_ACCOUNT_DATA)]
@@ -2191,13 +2191,13 @@ public class WorldClient
 			compressedData = packet.ReadToEnd();
 		}
 		AccountData data = new AccountData();
-		data.Guid = guid.To128(this.GetSession().GameState);
+		data.Guid = guid.To128(GetSession().GameState);
 		data.Type = type;
 		data.Timestamp = time;
 		data.UncompressedSize = size;
 		data.CompressedData = compressedData;
 		UpdateAccountData update = new UpdateAccountData(data);
-		this.SendPacketToClient(update);
+		SendPacketToClient(update);
 	}
 
 	[PacketHandler(Opcode.SMSG_UPDATE_LAST_INSTANCE)]
@@ -2205,7 +2205,7 @@ public class WorldClient
 	{
 		UpdateLastInstance update = new UpdateLastInstance();
 		update.MapID = packet.ReadUInt32();
-		this.SendPacketToClient(update);
+		SendPacketToClient(update);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_POI_QUERY_RESPONSE)]
@@ -2263,7 +2263,7 @@ public class WorldClient
 			}
 			response.QuestPOIDataStats.Add(questData);
 		}
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_GM_TICKET_GET_SYSTEM_STATUS)]
@@ -2271,14 +2271,14 @@ public class WorldClient
 	{
 		GMTicketSystemStatus status = new GMTicketSystemStatus();
 		status.Status = (int)packet.ReadUInt32();
-		this.SendPacketToClient(status);
+		SendPacketToClient(status);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_DISABLED)]
 	private void HandleLfgDisabled(WorldPacket packet)
 	{
 		LfgDisabled disabled = new LfgDisabled();
-		this.SendPacketToClient(disabled);
+		SendPacketToClient(disabled);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_OFFER_CONTINUE)]
@@ -2286,7 +2286,7 @@ public class WorldClient
 	{
 		LfgOfferContinue offer = new LfgOfferContinue();
 		offer.Slot = packet.ReadUInt32();
-		this.SendPacketToClient(offer);
+		SendPacketToClient(offer);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_PLAYER_REWARD)]
@@ -2312,7 +2312,7 @@ public class WorldClient
 			item.BonusCurrency = 0;
 			reward.Rewards.Add(item);
 		}
-		this.SendPacketToClient(reward);
+		SendPacketToClient(reward);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_ROLE_CHECK_UPDATE)]
@@ -2333,14 +2333,14 @@ public class WorldClient
 		for (byte i = 0; i < memberCount; i++)
 		{
 			LfgRoleCheckMember member = new LfgRoleCheckMember();
-			member.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
+			member.Guid = packet.ReadGuid().To128(GetSession().GameState);
 			bool ready = packet.ReadBool();
 			member.RolesDesired = packet.ReadUInt32();
 			member.Level = packet.ReadUInt8();
 			member.RoleCheckComplete = ready;
 			roleCheck.Members.Add(member);
 		}
-		this.SendPacketToClient(roleCheck);
+		SendPacketToClient(roleCheck);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_PARTY_INFO)]
@@ -2351,7 +2351,7 @@ public class WorldClient
 		for (byte i = 0; i < playerCount; i++)
 		{
 			LfgBlackListEntry entry = new LfgBlackListEntry();
-			entry.PlayerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+			entry.PlayerGuid = packet.ReadGuid().To128(GetSession().GameState);
 			uint lockCount = packet.ReadUInt32();
 			for (uint j = 0; j < lockCount; j++)
 			{
@@ -2364,7 +2364,7 @@ public class WorldClient
 			}
 			partyInfo.Players.Add(entry);
 		}
-		this.SendPacketToClient(partyInfo);
+		SendPacketToClient(partyInfo);
 	}
 
 	[PacketHandler(Opcode.SMSG_BATTLEFIELD_STATUS_QUEUED)]
@@ -2388,10 +2388,10 @@ public class WorldClient
 			uint waitTime = packet.ReadUInt32();
 
 			BattlefieldStatusQueued queued = new BattlefieldStatusQueued();
-			queued.Hdr.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+			queued.Hdr.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
 			queued.Hdr.Ticket.Id = queueSlot;
 			queued.Hdr.Ticket.Type = RideType.Battlegrounds;
-			queued.Hdr.Ticket.Time = (long)System.DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+			queued.Hdr.Ticket.Time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 			queued.Hdr.BattlefieldListIDs.Add(bgTypeId);
 			queued.Hdr.RangeMin = minLevel;
 			queued.Hdr.RangeMax = maxLevel;
@@ -2402,7 +2402,7 @@ public class WorldClient
 			queued.AsGroup = false;
 			queued.EligibleForMatchmaking = true;
 			queued.SuspendedQueue = false;
-			this.SendPacketToClient(queued);
+			SendPacketToClient(queued);
 		}
 	}
 
@@ -2412,8 +2412,8 @@ public class WorldClient
 		AttackerStateUpdate attack = new AttackerStateUpdate();
 		uint hitInfo = packet.ReadUInt32();
 		attack.HitInfo = LegacyVersion.ConvertHitInfoFlags(hitInfo);
-		attack.AttackerGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		attack.VictimGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		attack.AttackerGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		attack.VictimGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		attack.Damage = packet.ReadInt32();
 		attack.OriginalDamage = attack.Damage;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_3_9183))
@@ -2431,7 +2431,7 @@ public class WorldClient
 			uint school = packet.ReadUInt32();
 			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
-				school = (uint)(1 << (int)(byte)school);
+				school = (uint)(1 << (byte)school);
 			}
 			subDmg.SchoolMask = school;
 			subDmg.FloatDamage = packet.ReadFloat();
@@ -2482,7 +2482,7 @@ public class WorldClient
 			packet.ReadUInt32();
 			packet.ReadUInt32();
 		}
-		this.SendPacketToClient(attack);
+		SendPacketToClient(attack);
 	}
 
 	[PacketHandler(Opcode.SMSG_ATTACKSWING_NOTINRANGE)]
@@ -2490,9 +2490,9 @@ public class WorldClient
 	{
 		// Don't forward "not in range" if player has a ranged weapon equipped
 		// The modern client needs to stay in attack state to initiate Auto Shot
-		if (this.GetSession().GameState.CurrentPlayerGuid != null)
+		if (GetSession().GameState.CurrentPlayerGuid != null)
 		{
-			var visibleItems = this.GetSession().GameState.GetCachedObjectFieldsLegacy(this.GetSession().GameState.CurrentPlayerGuid);
+			var visibleItems = GetSession().GameState.GetCachedObjectFieldsLegacy(GetSession().GameState.CurrentPlayerGuid);
 			int PLAYER_VISIBLE_ITEM_1_ENTRYID = LegacyVersion.GetUpdateField(PlayerField.PLAYER_VISIBLE_ITEM_1_ENTRYID);
 			if (PLAYER_VISIBLE_ITEM_1_ENTRYID >= 0)
 			{
@@ -2500,14 +2500,14 @@ public class WorldClient
 				int rangedIdx = PLAYER_VISIBLE_ITEM_1_ENTRYID + 17 * offset;
 				if (visibleItems != null && visibleItems.ContainsKey(rangedIdx) && visibleItems[rangedIdx].UInt32Value != 0)
 				{
-					Log.Print(LogType.Debug, "[Combat] Suppressing ATTACKSWING_NOTINRANGE - player has ranged weapon equipped", "HandleAttackSwingNotInRange", "WorldClient.cs");
+					Log.Print(LogType.Debug, "[Combat] Suppressing ATTACKSWING_NOTINRANGE - player has ranged weapon equipped", "WorldClient.cs");
 					return;
 				}
 			}
 		}
 		AttackSwingError attack = new AttackSwingError();
 		attack.Reason = AttackSwingErr.NotInRange;
-		this.SendPacketToClient(attack);
+		SendPacketToClient(attack);
 	}
 
 	[PacketHandler(Opcode.SMSG_ATTACKSWING_BADFACING)]
@@ -2515,7 +2515,7 @@ public class WorldClient
 	{
 		AttackSwingError attack = new AttackSwingError();
 		attack.Reason = AttackSwingErr.BadFacing;
-		this.SendPacketToClient(attack);
+		SendPacketToClient(attack);
 	}
 
 	[PacketHandler(Opcode.SMSG_ATTACKSWING_DEADTARGET)]
@@ -2523,7 +2523,7 @@ public class WorldClient
 	{
 		AttackSwingError attack = new AttackSwingError();
 		attack.Reason = AttackSwingErr.DeadTarget;
-		this.SendPacketToClient(attack);
+		SendPacketToClient(attack);
 	}
 
 	[PacketHandler(Opcode.SMSG_ATTACKSWING_CANT_ATTACK)]
@@ -2531,42 +2531,42 @@ public class WorldClient
 	{
 		AttackSwingError attack = new AttackSwingError();
 		attack.Reason = AttackSwingErr.CantAttack;
-		this.SendPacketToClient(attack);
+		SendPacketToClient(attack);
 	}
 
 	[PacketHandler(Opcode.SMSG_CANCEL_COMBAT)]
 	private void HandleCancelCombat(WorldPacket packet)
 	{
 		CancelCombat combat = new CancelCombat();
-		this.SendPacketToClient(combat);
+		SendPacketToClient(combat);
 	}
 
 	[PacketHandler(Opcode.SMSG_AI_REACTION)]
 	private void HandleAIReaction(WorldPacket packet)
 	{
 		AIReaction reaction = new AIReaction();
-		reaction.UnitGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		reaction.UnitGUID = packet.ReadGuid().To128(GetSession().GameState);
 		reaction.Reaction = packet.ReadUInt32();
-		this.SendPacketToClient(reaction);
+		SendPacketToClient(reaction);
 	}
 
 	[PacketHandler(Opcode.SMSG_PARTY_KILL_LOG)]
 	private void HandlePartyKillLog(WorldPacket packet)
 	{
 		PartyKillLog log = new PartyKillLog();
-		log.Player = packet.ReadGuid().To128(this.GetSession().GameState);
-		log.Victim = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(log);
+		log.Player = packet.ReadGuid().To128(GetSession().GameState);
+		log.Victim = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(log);
 	}
 
 	[PacketHandler(Opcode.SMSG_DUEL_REQUESTED)]
 	private void HandleDuelRequested(WorldPacket packet)
 	{
 		DuelRequested duel = new DuelRequested();
-		duel.ArbiterGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		duel.RequestedByGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		duel.RequestedByWowAccount = this.GetSession().GetGameAccountGuidForPlayer(duel.RequestedByGUID);
-		this.SendPacketToClient(duel);
+		duel.ArbiterGUID = packet.ReadGuid().To128(GetSession().GameState);
+		duel.RequestedByGUID = packet.ReadGuid().To128(GetSession().GameState);
+		duel.RequestedByWowAccount = GetSession().GetGameAccountGuidForPlayer(duel.RequestedByGUID);
+		SendPacketToClient(duel);
 	}
 
 	[PacketHandler(Opcode.SMSG_DUEL_COUNTDOWN)]
@@ -2574,7 +2574,7 @@ public class WorldClient
 	{
 		DuelCountdown duel = new DuelCountdown();
 		duel.Countdown = packet.ReadUInt32();
-		this.SendPacketToClient(duel);
+		SendPacketToClient(duel);
 	}
 
 	[PacketHandler(Opcode.SMSG_DUEL_COMPLETE)]
@@ -2582,7 +2582,7 @@ public class WorldClient
 	{
 		DuelComplete duel = new DuelComplete();
 		duel.Started = packet.ReadBool();
-		this.SendPacketToClient(duel);
+		SendPacketToClient(duel);
 	}
 
 	[PacketHandler(Opcode.SMSG_DUEL_WINNER)]
@@ -2592,23 +2592,23 @@ public class WorldClient
 		duel.Fled = packet.ReadBool();
 		duel.BeatenName = packet.ReadCString();
 		duel.WinnerName = packet.ReadCString();
-		duel.BeatenVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
-		duel.WinnerVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
-		this.SendPacketToClient(duel);
+		duel.BeatenVirtualRealmAddress = GetSession().RealmId.GetAddress();
+		duel.WinnerVirtualRealmAddress = GetSession().RealmId.GetAddress();
+		SendPacketToClient(duel);
 	}
 
 	[PacketHandler(Opcode.SMSG_DUEL_IN_BOUNDS)]
 	private void HandleDuelInBounds(WorldPacket packet)
 	{
 		DuelInBounds duel = new DuelInBounds();
-		this.SendPacketToClient(duel);
+		SendPacketToClient(duel);
 	}
 
 	[PacketHandler(Opcode.SMSG_DUEL_OUT_OF_BOUNDS)]
 	private void HandleDuelOutOfBounds(WorldPacket packet)
 	{
 		DuelOutOfBounds duel = new DuelOutOfBounds();
-		this.SendPacketToClient(duel);
+		SendPacketToClient(duel);
 	}
 
 	[PacketHandler(Opcode.SMSG_GAME_OBJECT_DESPAWN)]
@@ -2616,40 +2616,40 @@ public class WorldClient
 	{
 		WowGuid64 guid = packet.ReadGuid();
 		GameObjectDespawn despawn = new GameObjectDespawn();
-		despawn.ObjectGUID = guid.To128(this.GetSession().GameState);
-		this.SendPacketToClient(despawn);
-		this.GetSession().GameState.DespawnedGameObjects.Add(guid);
+		despawn.ObjectGUID = guid.To128(GetSession().GameState);
+		SendPacketToClient(despawn);
+		GetSession().GameState.DespawnedGameObjects.Add(guid);
 	}
 
 	[PacketHandler(Opcode.SMSG_GAME_OBJECT_RESET_STATE)]
 	private void HandleGameObjectResetState(WorldPacket packet)
 	{
 		GameObjectResetState reset = new GameObjectResetState();
-		reset.ObjectGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(reset);
+		reset.ObjectGUID = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(reset);
 	}
 
 	[PacketHandler(Opcode.SMSG_GAME_OBJECT_CUSTOM_ANIM)]
 	private void HandleGameObjectCustomAnim(WorldPacket packet)
 	{
 		GameObjectCustomAnim anim = new GameObjectCustomAnim();
-		anim.ObjectGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		anim.ObjectGUID = packet.ReadGuid().To128(GetSession().GameState);
 		anim.CustomAnim = packet.ReadUInt32();
-		this.SendPacketToClient(anim);
+		SendPacketToClient(anim);
 	}
 
 	[PacketHandler(Opcode.SMSG_FISH_NOT_HOOKED)]
 	private void HandleFishNotHooked(WorldPacket packet)
 	{
 		FishNotHooked fish = new FishNotHooked();
-		this.SendPacketToClient(fish);
+		SendPacketToClient(fish);
 	}
 
 	[PacketHandler(Opcode.SMSG_FISH_ESCAPED)]
 	private void HandleFishEscaped(WorldPacket packet)
 	{
 		FishEscaped fish = new FishEscaped();
-		this.SendPacketToClient(fish);
+		SendPacketToClient(fish);
 	}
 
 	[PacketHandler(Opcode.SMSG_PARTY_COMMAND_RESULT)]
@@ -2673,7 +2673,7 @@ public class WorldClient
 		{
 			party.ResultData = packet.ReadUInt32();
 		}
-		this.SendPacketToClient(party);
+		SendPacketToClient(party);
 	}
 
 	[PacketHandler(Opcode.SMSG_GROUP_DECLINE)]
@@ -2681,7 +2681,7 @@ public class WorldClient
 	{
 		GroupDecline party = new GroupDecline();
 		party.Name = packet.ReadCString();
-		this.SendPacketToClient(party);
+		SendPacketToClient(party);
 	}
 
 	[PacketHandler(Opcode.SMSG_PARTY_INVITE)]
@@ -2692,10 +2692,10 @@ public class WorldClient
 		{
 			party.CanAccept = packet.ReadBool();
 		}
-		Realm realm = this.GetSession().RealmManager.GetRealm(this.GetSession().RealmId);
+		Realm realm = GetSession().RealmManager.GetRealm(GetSession().RealmId);
 		party.InviterRealm = new VirtualRealmInfo(realm.Id.GetAddress(), isHomeRealm: true, isInternalRealm: false, realm.Name, realm.NormalizedName);
 		party.InviterName = packet.ReadCString();
-		party.InviterGUID = this.GetSession().GameState.GetPlayerGuidByName(party.InviterName);
+		party.InviterGUID = GetSession().GameState.GetPlayerGuidByName(party.InviterName);
 		if (party.InviterGUID == null)
 		{
 			party.InviterGUID = WowGuid128.Empty;
@@ -2703,7 +2703,7 @@ public class WorldClient
 		}
 		else
 		{
-			party.InviterBNetAccountId = this.GetSession().GetBnetAccountGuidForPlayer(party.InviterGUID);
+			party.InviterBNetAccountId = GetSession().GetBnetAccountGuidForPlayer(party.InviterGUID);
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
@@ -2715,17 +2715,17 @@ public class WorldClient
 			}
 			party.LfgCompletedMask = packet.ReadInt32();
 		}
-		this.SendPacketToClient(party);
+		SendPacketToClient(party);
 	}
 
 	[PacketHandler(Opcode.SMSG_GROUP_LIST, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
 	private void HandleGroupListVanilla(WorldPacket packet)
 	{
 		PartyUpdate party = new PartyUpdate();
-		party.SequenceNum = this.GetSession().GameState.GroupUpdateCounter++;
+		party.SequenceNum = GetSession().GameState.GroupUpdateCounter++;
 		bool isRaid = packet.ReadBool();
 		byte ownSubGroupAndFlags = packet.ReadUInt8();
-		party.PartyIndex = (byte)((isRaid && this.GetSession().GameState.IsInBattleground()) ? 1u : 0u);
+		party.PartyIndex = (byte)((isRaid && GetSession().GameState.IsInBattleground()) ? 1u : 0u);
 		party.PartyGUID = WowGuid128.Create(HighGuidType703.Party, (ulong)(1000 + party.PartyIndex));
 		if (party.PartyIndex != 0)
 		{
@@ -2758,8 +2758,8 @@ public class WorldClient
 				party.PartyType = GroupType.Normal;
 			}
 			PartyPlayerInfo player = default(PartyPlayerInfo);
-			player.GUID = this.GetSession().GameState.CurrentPlayerGuid;
-			player.Name = this.GetSession().GameState.GetPlayerName(player.GUID);
+			player.GUID = GetSession().GameState.CurrentPlayerGuid;
+			player.Name = GetSession().GameState.GetPlayerName(player.GUID);
 			player.Subgroup = (byte)(ownSubGroupAndFlags & 0xF);
 			player.Flags = (((ownSubGroupAndFlags & 0x80) != 0) ? GroupMemberFlags.Assistant : GroupMemberFlags.None);
 			player.Status = GroupMemberOnlineStatus.Online;
@@ -2769,12 +2769,12 @@ public class WorldClient
 			{
 				PartyPlayerInfo member = default(PartyPlayerInfo);
 				member.Name = packet.ReadCString();
-				member.GUID = packet.ReadGuid().To128(this.GetSession().GameState);
+				member.GUID = packet.ReadGuid().To128(GetSession().GameState);
 				member.Status = (GroupMemberOnlineStatus)packet.ReadUInt8();
 				byte subGroupAndFlags = packet.ReadUInt8();
 				member.Subgroup = (byte)(subGroupAndFlags & 0xF);
 				member.Flags = (((subGroupAndFlags & 0x80) != 0) ? GroupMemberFlags.Assistant : GroupMemberFlags.None);
-				member.ClassId = this.GetSession().GameState.GetUnitClass(member.GUID);
+				member.ClassId = GetSession().GameState.GetUnitClass(member.GUID);
 				if (!member.Flags.HasAnyFlag(GroupMemberFlags.Assistant))
 				{
 					allAssist = false;
@@ -2784,7 +2784,7 @@ public class WorldClient
 					party.PlayerList.Add(member);
 					uniqueMembers.Add(member.GUID);
 				}
-				this.Session.GameState.UpdatePlayerCache(member.GUID, new PlayerCache
+				Session.GameState.UpdatePlayerCache(member.GUID, new PlayerCache
 				{
 					Name = member.Name,
 					ClassId = member.ClassId
@@ -2794,10 +2794,10 @@ public class WorldClient
 			{
 				party.PartyFlags |= GroupFlags.EveryoneAssistant;
 			}
-			party.LeaderGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			party.LeaderGUID = packet.ReadGuid().To128(GetSession().GameState);
 			party.LootSettings = new PartyLootSettings();
 			party.LootSettings.Method = (LootMethod)packet.ReadUInt8();
-			party.LootSettings.LootMaster = packet.ReadGuid().To128(this.GetSession().GameState);
+			party.LootSettings.LootMaster = packet.ReadGuid().To128(GetSession().GameState);
 			party.LootSettings.Threshold = packet.ReadUInt8();
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958) && packet.CanRead())
 			{
@@ -2806,8 +2806,8 @@ public class WorldClient
 				if (packet.CanRead())
 					packet.ReadUInt8(); // Dynamic Raid Difficulty (heroic flag)
 			}
-			this.GetSession().GameState.WeWantToLeaveGroup = false;
-			this.GetSession().GameState.CurrentGroups[party.PartyIndex] = party;
+			GetSession().GameState.WeWantToLeaveGroup = false;
+			GetSession().GameState.CurrentGroups[party.PartyIndex] = party;
 		}
 		else
 		{
@@ -2818,20 +2818,20 @@ public class WorldClient
 			}
 			party.LeaderGUID = WowGuid128.Empty;
 			party.MyIndex = -1;
-			this.GetSession().GameState.CurrentGroups[party.PartyIndex] = null;
-			if (!this.GetSession().GameState.WeWantToLeaveGroup)
+			GetSession().GameState.CurrentGroups[party.PartyIndex] = null;
+			if (!GetSession().GameState.WeWantToLeaveGroup)
 			{
-				this.SendPacketToClient(new GroupUninvite());
+				SendPacketToClient(new GroupUninvite());
 			}
 		}
-		this.SendPacketToClient(party);
+		SendPacketToClient(party);
 	}
 
 	[PacketHandler(Opcode.SMSG_GROUP_LIST, ClientVersionBuild.V2_0_1_6180)]
 	private void HandleGroupListTBC(WorldPacket packet)
 	{
 		PartyUpdate party = new PartyUpdate();
-		party.SequenceNum = this.GetSession().GameState.GroupUpdateCounter++;
+		party.SequenceNum = GetSession().GameState.GroupUpdateCounter++;
 		byte groupType = packet.ReadUInt8(); // group type flags
 		bool isRaid = (groupType & 0x01) != 0;
 		bool isBattleground = (groupType & 0x04) != 0;
@@ -2848,7 +2848,7 @@ public class WorldClient
 			packet.ReadUInt32(); // LFG dungeon ID
 		}
 		party.PartyIndex = (byte)(isBattleground ? 1u : 0u);
-		party.PartyGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		party.PartyGUID = packet.ReadGuid().To128(GetSession().GameState);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_3_0_10958))
 		{
 			packet.ReadUInt32(); // group counter
@@ -2874,8 +2874,8 @@ public class WorldClient
 				party.PartyType = GroupType.Normal;
 			}
 			PartyPlayerInfo player = default(PartyPlayerInfo);
-			player.GUID = this.GetSession().GameState.CurrentPlayerGuid;
-			player.Name = this.GetSession().GameState.GetPlayerName(player.GUID);
+			player.GUID = GetSession().GameState.CurrentPlayerGuid;
+			player.Name = GetSession().GameState.GetPlayerName(player.GUID);
 			player.Subgroup = ownSubGroup;
 			player.Flags = (GroupMemberFlags)ownGroupFlags;
 			player.Status = GroupMemberOnlineStatus.Online;
@@ -2885,7 +2885,7 @@ public class WorldClient
 			{
 				PartyPlayerInfo member = default(PartyPlayerInfo);
 				member.Name = packet.ReadCString();
-				member.GUID = packet.ReadGuid().To128(this.GetSession().GameState);
+				member.GUID = packet.ReadGuid().To128(GetSession().GameState);
 				member.Status = (GroupMemberOnlineStatus)packet.ReadUInt8();
 				member.Subgroup = packet.ReadUInt8();
 				member.Flags = (GroupMemberFlags)packet.ReadUInt8();
@@ -2893,7 +2893,7 @@ public class WorldClient
 				{
 					packet.ReadUInt8(); // LFG roles
 				}
-				member.ClassId = this.GetSession().GameState.GetUnitClass(member.GUID);
+				member.ClassId = GetSession().GameState.GetUnitClass(member.GUID);
 				if (!member.Flags.HasAnyFlag(GroupMemberFlags.Assistant))
 				{
 					allAssist = false;
@@ -2903,7 +2903,7 @@ public class WorldClient
 					party.PlayerList.Add(member);
 					uniqueMembers.Add(member.GUID);
 				}
-				this.Session.GameState.UpdatePlayerCache(member.GUID, new PlayerCache
+				Session.GameState.UpdatePlayerCache(member.GUID, new PlayerCache
 				{
 					Name = member.Name,
 					ClassId = member.ClassId
@@ -2913,10 +2913,10 @@ public class WorldClient
 			{
 				party.PartyFlags |= GroupFlags.EveryoneAssistant;
 			}
-			party.LeaderGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			party.LeaderGUID = packet.ReadGuid().To128(GetSession().GameState);
 			party.LootSettings = new PartyLootSettings();
 			party.LootSettings.Method = (LootMethod)packet.ReadUInt8();
-			party.LootSettings.LootMaster = packet.ReadGuid().To128(this.GetSession().GameState);
+			party.LootSettings.LootMaster = packet.ReadGuid().To128(GetSession().GameState);
 			party.LootSettings.Threshold = packet.ReadUInt8();
 			party.DifficultySettings = new PartyDifficultySettings();
 			int difficultyId = packet.ReadUInt8();
@@ -2929,8 +2929,8 @@ public class WorldClient
 			{
 				party.DifficultySettings.RaidDifficultyID = DifficultyModern.Raid40;
 			}
-			this.GetSession().GameState.WeWantToLeaveGroup = false;
-			this.GetSession().GameState.CurrentGroups[party.PartyIndex] = party;
+			GetSession().GameState.WeWantToLeaveGroup = false;
+			GetSession().GameState.CurrentGroups[party.PartyIndex] = party;
 		}
 		else
 		{
@@ -2941,20 +2941,20 @@ public class WorldClient
 			}
 			party.LeaderGUID = WowGuid128.Empty;
 			party.MyIndex = -1;
-			this.GetSession().GameState.CurrentGroups[party.PartyIndex] = null;
-			if (!this.GetSession().GameState.WeWantToLeaveGroup)
+			GetSession().GameState.CurrentGroups[party.PartyIndex] = null;
+			if (!GetSession().GameState.WeWantToLeaveGroup)
 			{
-				this.SendPacketToClient(new GroupUninvite());
+				SendPacketToClient(new GroupUninvite());
 			}
 		}
-		this.SendPacketToClient(party);
+		SendPacketToClient(party);
 	}
 
 	[PacketHandler(Opcode.SMSG_GROUP_UNINVITE)]
 	private void HandleGroupUninvite(WorldPacket packet)
 	{
 		GroupUninvite party = new GroupUninvite();
-		this.SendPacketToClient(party);
+		SendPacketToClient(party);
 	}
 
 	[PacketHandler(Opcode.SMSG_GROUP_NEW_LEADER)]
@@ -2962,8 +2962,8 @@ public class WorldClient
 	{
 		GroupNewLeader party = new GroupNewLeader();
 		party.Name = packet.ReadCString();
-		party.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
-		this.SendPacketToClient(party);
+		party.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
+		SendPacketToClient(party);
 	}
 
 	[PacketHandler(Opcode.MSG_RAID_READY_CHECK, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
@@ -2972,25 +2972,25 @@ public class WorldClient
 		if (!packet.CanRead())
 		{
 			ReadyCheckStarted ready = new ReadyCheckStarted();
-			ready.InitiatorGUID = this.GetSession().GameState.GetCurrentGroupLeader();
-			ready.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
-			ready.PartyGUID = this.GetSession().GameState.GetCurrentGroupGuid();
-			this.SendPacketToClient(ready);
+			ready.InitiatorGUID = GetSession().GameState.GetCurrentGroupLeader();
+			ready.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
+			ready.PartyGUID = GetSession().GameState.GetCurrentGroupGuid();
+			SendPacketToClient(ready);
 			return;
 		}
 		ReadyCheckResponse ready2 = new ReadyCheckResponse();
-		ready2.Player = packet.ReadGuid().To128(this.GetSession().GameState);
+		ready2.Player = packet.ReadGuid().To128(GetSession().GameState);
 		ready2.IsReady = packet.ReadBool();
-		ready2.PartyGUID = this.GetSession().GameState.GetCurrentGroupGuid();
-		this.SendPacketToClient(ready2);
-		this.GetSession().GameState.GroupReadyCheckResponses++;
-		if (this.GetSession().GameState.GroupReadyCheckResponses >= this.GetSession().GameState.GetCurrentGroupSize())
+		ready2.PartyGUID = GetSession().GameState.GetCurrentGroupGuid();
+		SendPacketToClient(ready2);
+		GetSession().GameState.GroupReadyCheckResponses++;
+		if (GetSession().GameState.GroupReadyCheckResponses >= GetSession().GameState.GetCurrentGroupSize())
 		{
-			this.GetSession().GameState.GroupReadyCheckResponses = 0u;
+			GetSession().GameState.GroupReadyCheckResponses = 0u;
 			ReadyCheckCompleted completed = new ReadyCheckCompleted();
-			completed.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
-			completed.PartyGUID = this.GetSession().GameState.GetCurrentGroupGuid();
-			this.SendPacketToClient(completed);
+			completed.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
+			completed.PartyGUID = GetSession().GameState.GetCurrentGroupGuid();
+			SendPacketToClient(completed);
 		}
 	}
 
@@ -2998,28 +2998,28 @@ public class WorldClient
 	private void HandleRaidReadyCheck(WorldPacket packet)
 	{
 		ReadyCheckStarted ready = new ReadyCheckStarted();
-		ready.InitiatorGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		ready.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
-		ready.PartyGUID = this.GetSession().GameState.GetCurrentGroupGuid();
-		this.SendPacketToClient(ready);
+		ready.InitiatorGUID = packet.ReadGuid().To128(GetSession().GameState);
+		ready.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
+		ready.PartyGUID = GetSession().GameState.GetCurrentGroupGuid();
+		SendPacketToClient(ready);
 	}
 
 	[PacketHandler(Opcode.MSG_RAID_READY_CHECK_CONFIRM, ClientVersionBuild.V2_0_1_6180)]
 	private void HandleRaidReadyCheckConfirm(WorldPacket packet)
 	{
 		ReadyCheckResponse ready = new ReadyCheckResponse();
-		ready.Player = packet.ReadGuid().To128(this.GetSession().GameState);
+		ready.Player = packet.ReadGuid().To128(GetSession().GameState);
 		ready.IsReady = packet.ReadBool();
-		ready.PartyGUID = this.GetSession().GameState.GetCurrentGroupGuid();
-		this.SendPacketToClient(ready);
-		this.GetSession().GameState.GroupReadyCheckResponses++;
-		if (this.GetSession().GameState.GroupReadyCheckResponses >= this.GetSession().GameState.GetCurrentGroupSize())
+		ready.PartyGUID = GetSession().GameState.GetCurrentGroupGuid();
+		SendPacketToClient(ready);
+		GetSession().GameState.GroupReadyCheckResponses++;
+		if (GetSession().GameState.GroupReadyCheckResponses >= GetSession().GameState.GetCurrentGroupSize())
 		{
-			this.GetSession().GameState.GroupReadyCheckResponses = 0u;
+			GetSession().GameState.GroupReadyCheckResponses = 0u;
 			ReadyCheckCompleted completed = new ReadyCheckCompleted();
-			completed.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
-			completed.PartyGUID = this.GetSession().GameState.GetCurrentGroupGuid();
-			this.SendPacketToClient(completed);
+			completed.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
+			completed.PartyGUID = GetSession().GameState.GetCurrentGroupGuid();
+			SendPacketToClient(completed);
 		}
 	}
 
@@ -3027,9 +3027,9 @@ public class WorldClient
 	private void HandleRaidReadyCheckFinished(WorldPacket packet)
 	{
 		ReadyCheckCompleted ready = new ReadyCheckCompleted();
-		ready.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
-		ready.PartyGUID = this.GetSession().GameState.GetCurrentGroupGuid();
-		this.SendPacketToClient(ready);
+		ready.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
+		ready.PartyGUID = GetSession().GameState.GetCurrentGroupGuid();
+		SendPacketToClient(ready);
 	}
 
 	[PacketHandler(Opcode.MSG_RAID_TARGET_UPDATE)]
@@ -3038,53 +3038,53 @@ public class WorldClient
 		if (packet.ReadBool())
 		{
 			SendRaidTargetUpdateAll update = new SendRaidTargetUpdateAll();
-			update.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
+			update.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
 			while (packet.CanRead())
 			{
 				sbyte symbol = packet.ReadInt8();
-				WowGuid128 guid = packet.ReadGuid().To128(this.GetSession().GameState);
+				WowGuid128 guid = packet.ReadGuid().To128(GetSession().GameState);
 				update.TargetIcons.Add(new Tuple<sbyte, WowGuid128>(symbol, guid));
 			}
-			this.SendPacketToClient(update);
+			SendPacketToClient(update);
 			return;
 		}
 		SendRaidTargetUpdateSingle update2 = new SendRaidTargetUpdateSingle();
-		update2.PartyIndex = this.GetSession().GameState.GetCurrentPartyIndex();
+		update2.PartyIndex = GetSession().GameState.GetCurrentPartyIndex();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			update2.ChangedBy = packet.ReadGuid().To128(this.GetSession().GameState);
+			update2.ChangedBy = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			update2.ChangedBy = this.GetSession().GameState.CurrentPlayerGuid;
+			update2.ChangedBy = GetSession().GameState.CurrentPlayerGuid;
 		}
 		update2.Symbol = packet.ReadInt8();
-		update2.Target = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(update2);
+		update2.Target = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(update2);
 	}
 
 	[PacketHandler(Opcode.SMSG_SUMMON_REQUEST)]
 	private void HandleSummonRequest(WorldPacket packet)
 	{
 		SummonRequest summon = new SummonRequest();
-		summon.SummonerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		summon.SummonerVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+		summon.SummonerGUID = packet.ReadGuid().To128(GetSession().GameState);
+		summon.SummonerVirtualRealmAddress = GetSession().RealmId.GetAddress();
 		summon.AreaID = packet.ReadInt32();
 		packet.ReadUInt32();
-		this.SendPacketToClient(summon);
+		SendPacketToClient(summon);
 	}
 
 	[PacketHandler(Opcode.SMSG_PARTY_MEMBER_PARTIAL_STATE, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
 	private void HandlePartyMemberStats(WorldPacket packet)
 	{
-		if (this.GetSession().GameState.CurrentMapId == 489 && (this.GetSession().GameState.HasWsgAllyFlagCarrier || this.GetSession().GameState.HasWsgHordeFlagCarrier) && this._requestBgPlayerPosCounter++ > 10)
+		if (GetSession().GameState.CurrentMapId == 489 && (GetSession().GameState.HasWsgAllyFlagCarrier || GetSession().GameState.HasWsgHordeFlagCarrier) && _requestBgPlayerPosCounter++ > 10)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);
-			this.SendPacket(packet2);
-			this._requestBgPlayerPosCounter = 0u;
+			SendPacket(packet2);
+			_requestBgPlayerPosCounter = 0u;
 		}
 		PartyMemberPartialState state = new PartyMemberPartialState();
-		state.AffectedGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		state.AffectedGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		GroupUpdateFlagVanilla updateFlags = (GroupUpdateFlagVanilla)packet.ReadUInt32();
 		if (updateFlags.HasFlag(GroupUpdateFlagVanilla.Status))
 		{
@@ -3134,7 +3134,7 @@ public class WorldClient
 			byte maxAura = 32;
 			for (byte i = 0; i < maxAura; i++)
 			{
-				if ((auraMask & (1L << (int)i)) != 0)
+				if ((auraMask & (1L << i)) != 0)
 				{
 					PartyMemberAuraStates aura = new PartyMemberAuraStates();
 					aura.SpellId = packet.ReadUInt16();
@@ -3157,7 +3157,7 @@ public class WorldClient
 			byte maxAura2 = 48;
 			for (byte i2 = 0; i2 < maxAura2; i2++)
 			{
-				if ((auraMask2 & (1L << (int)i2)) != 0)
+				if ((auraMask2 & (1L << i2)) != 0)
 				{
 					PartyMemberAuraStates aura2 = new PartyMemberAuraStates();
 					aura2.SpellId = packet.ReadUInt16();
@@ -3176,7 +3176,7 @@ public class WorldClient
 			{
 				state.Pet = new PartyMemberPetStats();
 			}
-			state.Pet.NewPetGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+			state.Pet.NewPetGuid = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		if (updateFlags.HasFlag(GroupUpdateFlagVanilla.PetName))
 		{
@@ -3236,7 +3236,7 @@ public class WorldClient
 			byte maxAura3 = 32;
 			for (byte i3 = 0; i3 < maxAura3; i3++)
 			{
-				if ((auraMask3 & (1L << (int)i3)) != 0)
+				if ((auraMask3 & (1L << i3)) != 0)
 				{
 					PartyMemberAuraStates aura3 = new PartyMemberAuraStates();
 					aura3.SpellId = packet.ReadUInt16();
@@ -3263,7 +3263,7 @@ public class WorldClient
 			byte maxAura4 = 48;
 			for (byte i4 = 0; i4 < maxAura4; i4++)
 			{
-				if ((auraMask4 & (1L << (int)i4)) != 0)
+				if ((auraMask4 & (1L << i4)) != 0)
 				{
 					PartyMemberAuraStates aura4 = new PartyMemberAuraStates();
 					aura4.SpellId = packet.ReadUInt16();
@@ -3276,20 +3276,20 @@ public class WorldClient
 				}
 			}
 		}
-		this.SendPacketToClient(state);
+		SendPacketToClient(state);
 	}
 
 	[PacketHandler(Opcode.SMSG_PARTY_MEMBER_PARTIAL_STATE, ClientVersionBuild.V2_0_1_6180)]
 	private void HandlePartyMemberStatsTbc(WorldPacket packet)
 	{
-		if (this.GetSession().GameState.CurrentMapId == 489 && (this.GetSession().GameState.HasWsgAllyFlagCarrier || this.GetSession().GameState.HasWsgHordeFlagCarrier) && this._requestBgPlayerPosCounter++ > 10)
+		if (GetSession().GameState.CurrentMapId == 489 && (GetSession().GameState.HasWsgAllyFlagCarrier || GetSession().GameState.HasWsgHordeFlagCarrier) && _requestBgPlayerPosCounter++ > 10)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);
-			this.SendPacket(packet2);
-			this._requestBgPlayerPosCounter = 0u;
+			SendPacket(packet2);
+			_requestBgPlayerPosCounter = 0u;
 		}
 		PartyMemberPartialState state = new PartyMemberPartialState();
-		state.AffectedGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		state.AffectedGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		GroupUpdateFlagTBC updateFlags = (GroupUpdateFlagTBC)packet.ReadUInt32();
 		if (updateFlags.HasFlag(GroupUpdateFlagTBC.Status))
 		{
@@ -3338,7 +3338,7 @@ public class WorldClient
 			ulong auraMask = packet.ReadUInt64();
 			for (byte i = 0; i < LegacyVersion.GetAuraSlotsCount(); i++)
 			{
-				if ((auraMask & (ulong)(1L << (int)i)) != 0)
+				if ((auraMask & (ulong)(1L << i)) != 0)
 				{
 					PartyMemberAuraStates aura = new PartyMemberAuraStates();
 					aura.SpellId = packet.ReadUInt16();
@@ -3358,7 +3358,7 @@ public class WorldClient
 			{
 				state.Pet = new PartyMemberPetStats();
 			}
-			state.Pet.NewPetGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+			state.Pet.NewPetGuid = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		if (updateFlags.HasFlag(GroupUpdateFlagTBC.PetName))
 		{
@@ -3417,7 +3417,7 @@ public class WorldClient
 			ulong auraMask2 = packet.ReadUInt64();
 			for (byte i2 = 0; i2 < LegacyVersion.GetAuraSlotsCount(); i2++)
 			{
-				if ((auraMask2 & (ulong)(1L << (int)i2)) != 0)
+				if ((auraMask2 & (ulong)(1L << i2)) != 0)
 				{
 					PartyMemberAuraStates aura2 = new PartyMemberAuraStates();
 					aura2.SpellId = packet.ReadUInt16();
@@ -3431,20 +3431,20 @@ public class WorldClient
 				}
 			}
 		}
-		this.SendPacketToClient(state);
+		SendPacketToClient(state);
 	}
 
 	[PacketHandler(Opcode.SMSG_PARTY_MEMBER_FULL_STATE, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
 	private void HandlePartyMemberStatsFull(WorldPacket packet)
 	{
-		if (this.GetSession().GameState.CurrentMapId == 489 && (this.GetSession().GameState.HasWsgAllyFlagCarrier || this.GetSession().GameState.HasWsgHordeFlagCarrier) && this._requestBgPlayerPosCounter++ > 10)
+		if (GetSession().GameState.CurrentMapId == 489 && (GetSession().GameState.HasWsgAllyFlagCarrier || GetSession().GameState.HasWsgHordeFlagCarrier) && _requestBgPlayerPosCounter++ > 10)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);
-			this.SendPacket(packet2);
-			this._requestBgPlayerPosCounter = 0u;
+			SendPacket(packet2);
+			_requestBgPlayerPosCounter = 0u;
 		}
 		PartyMemberFullState state = new PartyMemberFullState();
-		if (this.GetSession().GameState.IsInBattleground())
+		if (GetSession().GameState.IsInBattleground())
 		{
 			state.PartyType[0] = 0;
 			state.PartyType[1] = 2;
@@ -3454,7 +3454,7 @@ public class WorldClient
 			state.PartyType[0] = 1;
 			state.PartyType[1] = 0;
 		}
-		state.MemberGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		state.MemberGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		GroupUpdateFlagVanilla updateFlags = (GroupUpdateFlagVanilla)packet.ReadUInt32();
 		if (updateFlags.HasFlag(GroupUpdateFlagVanilla.Status))
 		{
@@ -3503,7 +3503,7 @@ public class WorldClient
 			byte maxAura = 32;
 			for (byte i = 0; i < maxAura; i++)
 			{
-				if ((auraMask & (1L << (int)i)) != 0)
+				if ((auraMask & (1L << i)) != 0)
 				{
 					PartyMemberAuraStates aura = new PartyMemberAuraStates();
 					aura.SpellId = packet.ReadUInt16();
@@ -3526,7 +3526,7 @@ public class WorldClient
 			byte maxAura2 = 48;
 			for (byte i2 = 0; i2 < maxAura2; i2++)
 			{
-				if ((auraMask2 & (1L << (int)i2)) != 0)
+				if ((auraMask2 & (1L << i2)) != 0)
 				{
 					PartyMemberAuraStates aura2 = new PartyMemberAuraStates();
 					aura2.SpellId = packet.ReadUInt16();
@@ -3545,7 +3545,7 @@ public class WorldClient
 			{
 				state.Pet = new PartyMemberPetStats();
 			}
-			state.Pet.NewPetGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+			state.Pet.NewPetGuid = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		if (updateFlags.HasFlag(GroupUpdateFlagVanilla.PetName))
 		{
@@ -3605,7 +3605,7 @@ public class WorldClient
 			byte maxAura3 = 32;
 			for (byte i3 = 0; i3 < maxAura3; i3++)
 			{
-				if ((auraMask3 & (1L << (int)i3)) != 0)
+				if ((auraMask3 & (1L << i3)) != 0)
 				{
 					PartyMemberAuraStates aura3 = new PartyMemberAuraStates();
 					aura3.SpellId = packet.ReadUInt16();
@@ -3632,7 +3632,7 @@ public class WorldClient
 			byte maxAura4 = 48;
 			for (byte i4 = 0; i4 < maxAura4; i4++)
 			{
-				if ((auraMask4 & (1L << (int)i4)) != 0)
+				if ((auraMask4 & (1L << i4)) != 0)
 				{
 					PartyMemberAuraStates aura4 = new PartyMemberAuraStates();
 					aura4.SpellId = packet.ReadUInt16();
@@ -3645,20 +3645,20 @@ public class WorldClient
 				}
 			}
 		}
-		this.SendPacketToClient(state);
+		SendPacketToClient(state);
 	}
 
 	[PacketHandler(Opcode.SMSG_PARTY_MEMBER_FULL_STATE, ClientVersionBuild.V2_0_1_6180)]
 	private void HandlePartyMemberStatsFullTBC(WorldPacket packet)
 	{
-		if (this.GetSession().GameState.CurrentMapId == 489 && (this.GetSession().GameState.HasWsgAllyFlagCarrier || this.GetSession().GameState.HasWsgHordeFlagCarrier) && this._requestBgPlayerPosCounter++ > 10)
+		if (GetSession().GameState.CurrentMapId == 489 && (GetSession().GameState.HasWsgAllyFlagCarrier || GetSession().GameState.HasWsgHordeFlagCarrier) && _requestBgPlayerPosCounter++ > 10)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);
-			this.SendPacket(packet2);
-			this._requestBgPlayerPosCounter = 0u;
+			SendPacket(packet2);
+			_requestBgPlayerPosCounter = 0u;
 		}
 		PartyMemberFullState state = new PartyMemberFullState();
-		if (this.GetSession().GameState.IsInBattleground())
+		if (GetSession().GameState.IsInBattleground())
 		{
 			state.PartyType[0] = 0;
 			state.PartyType[1] = 2;
@@ -3671,7 +3671,7 @@ public class WorldClient
 
         state.ForEnemy = packet.ReadUInt8() != 0;
 
-        state.MemberGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+        state.MemberGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		GroupUpdateFlagTBC updateFlags = (GroupUpdateFlagTBC)packet.ReadUInt32();
 		if (updateFlags.HasFlag(GroupUpdateFlagTBC.Status))
 		{
@@ -3727,7 +3727,7 @@ public class WorldClient
 			ulong auraMask = packet.ReadUInt64();
 			for (byte i = 0; i < LegacyVersion.GetAuraSlotsCount(); i++)
 			{
-				if ((auraMask & (ulong)(1L << (int)i)) != 0)
+				if ((auraMask & (ulong)(1L << i)) != 0)
 				{
 					PartyMemberAuraStates aura = new PartyMemberAuraStates();
                     if (ModernVersion.ExpansionVersion == 3)
@@ -3750,7 +3750,7 @@ public class WorldClient
 			{
 				state.Pet = new PartyMemberPetStats();
 			}
-			state.Pet.NewPetGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+			state.Pet.NewPetGuid = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		if (updateFlags.HasFlag(GroupUpdateFlagTBC.PetName))
 		{
@@ -3775,7 +3775,7 @@ public class WorldClient
 				state.Pet = new PartyMemberPetStats();
 			}
             if (ModernVersion.ExpansionVersion == 3)
-				state.Pet.Health = (uint)packet.ReadUInt32();
+				state.Pet.Health = packet.ReadUInt32();
 			else
                 state.Pet.Health = packet.ReadUInt16();
         }
@@ -3786,7 +3786,7 @@ public class WorldClient
 				state.Pet = new PartyMemberPetStats();
 			}
             if (ModernVersion.ExpansionVersion == 3)
-                state.Pet.MaxHealth = (uint)packet.ReadUInt32();
+                state.Pet.MaxHealth = packet.ReadUInt32();
 			else
                 state.Pet.MaxHealth = packet.ReadUInt16();
 
@@ -3816,7 +3816,7 @@ public class WorldClient
 			ulong auraMask2 = packet.ReadUInt64();
 			for (byte i2 = 0; i2 < LegacyVersion.GetAuraSlotsCount(); i2++)
 			{
-				if ((auraMask2 & (ulong)(1L << (int)i2)) != 0)
+				if ((auraMask2 & (ulong)(1L << i2)) != 0)
 				{
 					PartyMemberAuraStates aura2 = new PartyMemberAuraStates();
                     if (ModernVersion.ExpansionVersion == 3)
@@ -3833,16 +3833,16 @@ public class WorldClient
 				}
 			}
 		}
-		this.SendPacketToClient(state);
+		SendPacketToClient(state);
 	}
 
 	[PacketHandler(Opcode.MSG_MINIMAP_PING)]
 	private void HandleMinimapPing(WorldPacket packet)
 	{
 		MinimapPing ping = new MinimapPing();
-		ping.SenderGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		ping.SenderGUID = packet.ReadGuid().To128(GetSession().GameState);
 		ping.Position = packet.ReadVector2();
-		this.SendPacketToClient(ping);
+		SendPacketToClient(ping);
 	}
 
 	[PacketHandler(Opcode.MSG_RANDOM_ROLL)]
@@ -3852,9 +3852,9 @@ public class WorldClient
 		roll.Min = packet.ReadInt32();
 		roll.Max = packet.ReadInt32();
 		roll.Result = packet.ReadInt32();
-		roll.Roller = packet.ReadGuid().To128(this.GetSession().GameState);
-		roll.RollerWowAccount = this.GetSession().GetGameAccountGuidForPlayer(roll.Roller);
-		this.SendPacketToClient(roll);
+		roll.Roller = packet.ReadGuid().To128(GetSession().GameState);
+		roll.RollerWowAccount = GetSession().GetGameAccountGuidForPlayer(roll.Roller);
+		SendPacketToClient(roll);
 	}
 
 	[PacketHandler(Opcode.SMSG_GUILD_COMMAND_RESULT)]
@@ -3864,7 +3864,7 @@ public class WorldClient
 		result.Command = (GuildCommandType)packet.ReadUInt32();
 		result.Name = packet.ReadCString();
 		result.Result = (GuildCommandError)packet.ReadUInt32();
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	[PacketHandler(Opcode.SMSG_GUILD_EVENT)]
@@ -3880,16 +3880,16 @@ public class WorldClient
 		WowGuid128 guid = WowGuid128.Empty;
 		if (packet.CanRead())
 		{
-			guid = packet.ReadGuid().To128(this.GetSession().GameState);
+			guid = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		switch (eventType)
 		{
 		case GuildEventType.Promotion:
 		case GuildEventType.Demotion:
 		{
-			WowGuid128 officer = this.GetSession().GameState.GetPlayerGuidByName(strings[0]);
-			WowGuid128 player = this.GetSession().GameState.GetPlayerGuidByName(strings[1]);
-			uint rankId = this.GetSession().GetGuildRankIdByName(this.GetSession().GameState.GetPlayerGuildId(this.GetSession().GameState.CurrentPlayerGuid), strings[2]);
+			WowGuid128 officer = GetSession().GameState.GetPlayerGuidByName(strings[0]);
+			WowGuid128 player = GetSession().GameState.GetPlayerGuidByName(strings[1]);
+			uint rankId = GetSession().GetGuildRankIdByName(GetSession().GameState.GetPlayerGuildId(GetSession().GameState.CurrentPlayerGuid), strings[2]);
 			if (officer != null && player != null)
 			{
 				GuildSendRankChange promote = new GuildSendRankChange();
@@ -3897,7 +3897,7 @@ public class WorldClient
 				promote.Other = player;
 				promote.Promote = eventType == GuildEventType.Promotion;
 				promote.RankID = rankId;
-				this.SendPacketToClient(promote);
+				SendPacketToClient(promote);
 			}
 			break;
 		}
@@ -3905,16 +3905,16 @@ public class WorldClient
 		{
 			GuildEventMotd motd = new GuildEventMotd();
 			motd.MotdText = strings[0];
-			this.SendPacketToClient(motd);
+			SendPacketToClient(motd);
 			break;
 		}
 		case GuildEventType.PlayerJoined:
 		{
 			GuildEventPlayerJoined joined = new GuildEventPlayerJoined();
 			joined.Guid = guid;
-			joined.VirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+			joined.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 			joined.Name = strings[0];
-			this.SendPacketToClient(joined);
+			SendPacketToClient(joined);
 			break;
 		}
 		case GuildEventType.PlayerLeft:
@@ -3922,9 +3922,9 @@ public class WorldClient
 			GuildEventPlayerLeft left = new GuildEventPlayerLeft();
 			left.Removed = false;
 			left.LeaverGUID = guid;
-			left.LeaverVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+			left.LeaverVirtualRealmAddress = GetSession().RealmId.GetAddress();
 			left.LeaverName = strings[0];
-			this.SendPacketToClient(left);
+			SendPacketToClient(left);
 			break;
 		}
 		case GuildEventType.PlayerRemoved:
@@ -3932,37 +3932,37 @@ public class WorldClient
 			GuildEventPlayerLeft removed = new GuildEventPlayerLeft();
 			removed.Removed = true;
 			removed.LeaverGUID = guid;
-			removed.LeaverVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+			removed.LeaverVirtualRealmAddress = GetSession().RealmId.GetAddress();
 			removed.LeaverName = strings[0];
-			removed.RemoverGUID = this.GetSession().GameState.GetPlayerGuidByName(strings[1]);
-			removed.RemoverVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+			removed.RemoverGUID = GetSession().GameState.GetPlayerGuidByName(strings[1]);
+			removed.RemoverVirtualRealmAddress = GetSession().RealmId.GetAddress();
 			removed.RemoverName = strings[1];
-			this.SendPacketToClient(removed);
+			SendPacketToClient(removed);
 			break;
 		}
 		case GuildEventType.LeaderIs:
 			break;
 		case GuildEventType.LeaderChanged:
 		{
-			WowGuid128 oldLeader = this.GetSession().GameState.GetPlayerGuidByName(strings[0]);
-			WowGuid128 newLeader = this.GetSession().GameState.GetPlayerGuidByName(strings[1]);
+			WowGuid128 oldLeader = GetSession().GameState.GetPlayerGuidByName(strings[0]);
+			WowGuid128 newLeader = GetSession().GameState.GetPlayerGuidByName(strings[1]);
 			if (oldLeader != null && newLeader != null)
 			{
 				GuildEventNewLeader leader = new GuildEventNewLeader();
 				leader.OldLeaderGUID = oldLeader;
-				leader.OldLeaderVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+				leader.OldLeaderVirtualRealmAddress = GetSession().RealmId.GetAddress();
 				leader.OldLeaderName = strings[0];
 				leader.NewLeaderGUID = newLeader;
-				leader.NewLeaderVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+				leader.NewLeaderVirtualRealmAddress = GetSession().RealmId.GetAddress();
 				leader.NewLeaderName = strings[1];
-				this.SendPacketToClient(leader);
+				SendPacketToClient(leader);
 			}
 			break;
 		}
 		case GuildEventType.Disbanded:
 		{
 			GuildEventDisbanded disband = new GuildEventDisbanded();
-			this.SendPacketToClient(disband);
+			SendPacketToClient(disband);
 			break;
 		}
 		case GuildEventType.TabardChange:
@@ -3970,7 +3970,7 @@ public class WorldClient
 		case GuildEventType.RankUpdated:
 		{
 			GuildEventRanksUpdated ranks = new GuildEventRanksUpdated();
-			this.SendPacketToClient(ranks);
+			SendPacketToClient(ranks);
 			break;
 		}
 		case GuildEventType.Unk11:
@@ -3980,10 +3980,10 @@ public class WorldClient
 		{
 			GuildEventPresenceChange presence = new GuildEventPresenceChange();
 			presence.Guid = guid;
-			presence.VirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+			presence.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 			presence.LoggedOn = eventType == GuildEventType.PlayerSignedOn;
 			presence.Name = strings[0];
-			this.SendPacketToClient(presence);
+			SendPacketToClient(presence);
 			break;
 		}
 		case GuildEventType.BankBagSlotsChanged:
@@ -3991,7 +3991,7 @@ public class WorldClient
 		case GuildEventType.BankTabPurchased:
 		{
 			GuildEventTabAdded tab3 = new GuildEventTabAdded();
-			this.SendPacketToClient(tab3);
+			SendPacketToClient(tab3);
 			break;
 		}
 		case GuildEventType.BankTabUpdated:
@@ -3999,14 +3999,14 @@ public class WorldClient
 			GuildEventTabModified tab2 = new GuildEventTabModified();
 			tab2.Name = strings[0];
 			tab2.Icon = strings[1];
-			this.SendPacketToClient(tab2);
+			SendPacketToClient(tab2);
 			break;
 		}
 		case GuildEventType.BankMoneyUpdate:
 		{
 			GuildEventBankMoneyChanged money = new GuildEventBankMoneyChanged();
 			money.Money = (ulong)int.Parse(strings[0], NumberStyles.HexNumber);
-			this.SendPacketToClient(money);
+			SendPacketToClient(money);
 			break;
 		}
 		case GuildEventType.BankMoneyWithdraw:
@@ -4014,7 +4014,7 @@ public class WorldClient
 		case GuildEventType.BankTextChanged:
 		{
 			GuildEventTabTextChanged tab = new GuildEventTabTextChanged();
-			this.SendPacketToClient(tab);
+			SendPacketToClient(tab);
 			break;
 		}
 		}
@@ -4026,13 +4026,13 @@ public class WorldClient
 		QueryGuildInfoResponse guild = new QueryGuildInfoResponse();
 		uint guildId = packet.ReadUInt32();
 		guild.GuildGUID = WowGuid128.Create(HighGuidType703.Guild, guildId);
-		guild.PlayerGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		guild.PlayerGuid = GetSession().GameState.CurrentPlayerGuid;
 		guild.HasGuildInfo = true;
 		guild.Info = new QueryGuildInfoResponse.GuildInfo();
 		guild.Info.GuildGuid = guild.GuildGUID;
-		guild.Info.VirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+		guild.Info.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 		guild.Info.GuildName = packet.ReadCString();
-		this.GetSession().StoreGuildGuidAndName(guild.GuildGUID, guild.Info.GuildName);
+		GetSession().StoreGuildGuidAndName(guild.GuildGUID, guild.Info.GuildName);
 		List<string> ranks = new List<string>();
 		for (uint i = 0u; i < 10; i++)
 		{
@@ -4049,13 +4049,13 @@ public class WorldClient
 				guild.Info.Ranks.Add(rank);
 			}
 		}
-		this.GetSession().StoreGuildRankNames(guildId, ranks);
+		GetSession().StoreGuildRankNames(guildId, ranks);
 		guild.Info.EmblemStyle = packet.ReadUInt32();
 		guild.Info.EmblemColor = packet.ReadUInt32();
 		guild.Info.BorderStyle = packet.ReadUInt32();
 		guild.Info.BorderColor = packet.ReadUInt32();
 		guild.Info.BackgroundColor = packet.ReadUInt32();
-		this.SendPacketToClient(guild);
+		SendPacketToClient(guild);
 	}
 
 	[PacketHandler(Opcode.SMSG_GUILD_INFO)]
@@ -4064,7 +4064,7 @@ public class WorldClient
 		packet.ReadCString();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			this.GetSession().GameState.CurrentGuildCreateTime = packet.ReadPackedTime();
+			GetSession().GameState.CurrentGuildCreateTime = packet.ReadPackedTime();
 		}
 		else
 		{
@@ -4074,15 +4074,15 @@ public class WorldClient
 			try
 			{
 				DateTime date = new DateTime(year, month, day);
-				this.GetSession().GameState.CurrentGuildCreateTime = (uint)Time.DateTimeToUnixTime(date);
+				GetSession().GameState.CurrentGuildCreateTime = (uint)Time.DateTimeToUnixTime(date);
 			}
 			catch
 			{
-				Log.Print(LogType.Error, $"Invalid guild create date: {day}-{month}-{year}", "HandleGuildInfo", "GuildHandler.cs");
+				Log.Print(LogType.Error, $"Invalid guild create date: {day}-{month}-{year}", "GuildHandler.cs");
 			}
 		}
 		packet.ReadUInt32();
-		this.GetSession().GameState.CurrentGuildNumAccounts = packet.ReadUInt32();
+		GetSession().GameState.CurrentGuildNumAccounts = packet.ReadUInt32();
 	}
 
 	[PacketHandler(Opcode.SMSG_GUILD_ROSTER)]
@@ -4090,9 +4090,9 @@ public class WorldClient
 	{
 		GuildRoster guild = new GuildRoster();
 		uint membersCount = packet.ReadUInt32();
-		if (this.GetSession().GameState.CurrentGuildNumAccounts != 0)
+		if (GetSession().GameState.CurrentGuildNumAccounts != 0)
 		{
-			guild.NumAccounts = this.GetSession().GameState.CurrentGuildNumAccounts;
+			guild.NumAccounts = GetSession().GameState.CurrentGuildNumAccounts;
 		}
 		else
 		{
@@ -4100,9 +4100,9 @@ public class WorldClient
 		}
 		guild.WelcomeText = packet.ReadCString();
 		guild.InfoText = packet.ReadCString();
-		if (this.GetSession().GameState.CurrentGuildCreateTime != 0)
+		if (GetSession().GameState.CurrentGuildCreateTime != 0)
 		{
-			guild.CreateDate = this.GetSession().GameState.CurrentGuildCreateTime;
+			guild.CreateDate = GetSession().GameState.CurrentGuildCreateTime;
 		}
 		else
 		{
@@ -4117,7 +4117,7 @@ public class WorldClient
 				GuildRankData rank = new GuildRankData();
 				rank.RankID = i;
 				rank.RankOrder = i;
-				rank.RankName = this.GetSession().GetGuildRankNameById(this.GetSession().GameState.GetPlayerGuildId(this.GetSession().GameState.CurrentPlayerGuid), i);
+				rank.RankName = GetSession().GetGuildRankNameById(GetSession().GameState.GetPlayerGuildId(GetSession().GameState.CurrentPlayerGuid), i);
 				rank.Flags = packet.ReadUInt32();
 				if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 				{
@@ -4130,14 +4130,14 @@ public class WorldClient
 				}
 				ranks.Ranks.Add(rank);
 			}
-			this.SendPacketToClient(ranks);
+			SendPacketToClient(ranks);
 		}
 		for (int k = 0; k < membersCount; k++)
 		{
 			GuildRosterMemberData member = new GuildRosterMemberData();
 			PlayerCache cache = new PlayerCache();
-			member.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-			member.VirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+			member.Guid = packet.ReadGuid().To128(GetSession().GameState);
+			member.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 			member.Status = packet.ReadUInt8();
 			member.Name = (cache.Name = packet.ReadCString());
 			member.RankID = packet.ReadInt32();
@@ -4147,7 +4147,7 @@ public class WorldClient
 			{
 				member.SexID = (cache.SexId = (Gender)packet.ReadUInt8());
 			}
-			this.GetSession().GameState.UpdatePlayerCache(member.Guid, cache);
+			GetSession().GameState.UpdatePlayerCache(member.Guid, cache);
 			member.AreaID = packet.ReadInt32();
 			if (member.Status == 0)
 			{
@@ -4161,7 +4161,7 @@ public class WorldClient
 			member.OfficerNote = packet.ReadCString();
 			guild.MemberData.Add(member);
 		}
-		this.SendPacketToClient(guild);
+		SendPacketToClient(guild);
 	}
 
 	[PacketHandler(Opcode.SMSG_GUILD_INVITE)]
@@ -4169,11 +4169,11 @@ public class WorldClient
 	{
 		GuildInvite invite = new GuildInvite();
 		invite.InviterName = packet.ReadCString();
-		invite.InviterVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+		invite.InviterVirtualRealmAddress = GetSession().RealmId.GetAddress();
 		invite.GuildName = packet.ReadCString();
-		invite.GuildVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
-		invite.GuildGUID = this.GetSession().GetGuildGuid(invite.GuildName);
-		this.SendPacketToClient(invite);
+		invite.GuildVirtualRealmAddress = GetSession().RealmId.GetAddress();
+		invite.GuildGUID = GetSession().GetGuildGuid(invite.GuildName);
+		SendPacketToClient(invite);
 	}
 
 	[PacketHandler(Opcode.MSG_GUILD_PERMISSIONS)]
@@ -4189,15 +4189,15 @@ public class WorldClient
 		{
 			results.TabPermissions[i] = packet.ReadUInt32();
 		}
-		this.SendPacketToClient(results);
+		SendPacketToClient(results);
 	}
 
 	[PacketHandler(Opcode.MSG_TABARDVENDOR_ACTIVATE)]
 	private void HandleTabardVendorActivate(WorldPacket packet)
 	{
 		PlayerTabardVendorActivate activate = new PlayerTabardVendorActivate();
-		activate.DesignerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(activate);
+		activate.DesignerGUID = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(activate);
 	}
 
 	[PacketHandler(Opcode.MSG_SAVE_GUILD_EMBLEM)]
@@ -4205,7 +4205,7 @@ public class WorldClient
 	{
 		PlayerSaveGuildEmblem emblem = new PlayerSaveGuildEmblem();
 		emblem.Error = (GuildEmblemError)packet.ReadUInt32();
-		this.SendPacketToClient(emblem);
+		SendPacketToClient(emblem);
 	}
 
 	[PacketHandler(Opcode.SMSG_GUILD_INVITE_DECLINED)]
@@ -4213,8 +4213,8 @@ public class WorldClient
 	{
 		GuildInviteDeclined invite = new GuildInviteDeclined();
 		invite.InviterName = packet.ReadCString();
-		invite.InviterVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
-		this.SendPacketToClient(invite);
+		invite.InviterVirtualRealmAddress = GetSession().RealmId.GetAddress();
+		SendPacketToClient(invite);
 	}
 
 	[PacketHandler(Opcode.SMSG_GUILD_BANK_QUERY_RESULTS)]
@@ -4289,7 +4289,7 @@ public class WorldClient
 			result.ItemInfo.Add(itemInfo);
 		}
 		result.FullUpdate = hasTabs && slots > 0;
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	[PacketHandler(Opcode.MSG_QUERY_GUILD_BANK_TEXT)]
@@ -4298,7 +4298,7 @@ public class WorldClient
 		GuildBankTextQueryResult result = new GuildBankTextQueryResult();
 		result.Tab = packet.ReadUInt8();
 		result.Text = packet.ReadCString();
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	[PacketHandler(Opcode.MSG_GUILD_BANK_LOG_QUERY)]
@@ -4311,7 +4311,7 @@ public class WorldClient
 		{
 			GuildBankLogEntry logEntry = new GuildBankLogEntry();
 			logEntry.EntryType = packet.ReadInt8();
-			logEntry.PlayerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			logEntry.PlayerGUID = packet.ReadGuid().To128(GetSession().GameState);
 			if (result.Tab != 6)
 			{
 				logEntry.ItemID = packet.ReadInt32();
@@ -4328,7 +4328,7 @@ public class WorldClient
 			logEntry.TimeOffset = packet.ReadUInt32();
 			result.Entry.Add(logEntry);
 		}
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	[PacketHandler(Opcode.MSG_GUILD_BANK_MONEY_WITHDRAWN)]
@@ -4336,7 +4336,7 @@ public class WorldClient
 	{
 		GuildBankRemainingWithdrawMoney result = new GuildBankRemainingWithdrawMoney();
 		result.RemainingWithdrawMoney = packet.ReadUInt32();
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	[PacketHandler(Opcode.SMSG_UPDATE_INSTANCE_OWNERSHIP)]
@@ -4344,7 +4344,7 @@ public class WorldClient
 	{
 		UpdateInstanceOwnership instance = new UpdateInstanceOwnership();
 		instance.IOwnInstance = packet.ReadUInt32();
-		this.SendPacketToClient(instance);
+		SendPacketToClient(instance);
 	}
 
 	[PacketHandler(Opcode.SMSG_INSTANCE_RESET)]
@@ -4352,7 +4352,7 @@ public class WorldClient
 	{
 		InstanceReset reset = new InstanceReset();
 		reset.MapID = packet.ReadUInt32();
-		this.SendPacketToClient(reset);
+		SendPacketToClient(reset);
 	}
 
 	[PacketHandler(Opcode.SMSG_INSTANCE_RESET_FAILED)]
@@ -4361,7 +4361,7 @@ public class WorldClient
 		InstanceResetFailed reset = new InstanceResetFailed();
 		reset.ResetFailedReason = (ResetFailedReason)packet.ReadUInt32();
 		reset.MapID = packet.ReadUInt32();
-		this.SendPacketToClient(reset);
+		SendPacketToClient(reset);
 	}
 
 	[PacketHandler(Opcode.SMSG_RESET_FAILED_NOTIFY)]
@@ -4369,7 +4369,7 @@ public class WorldClient
 	{
 		ResetFailedNotify reset = new ResetFailedNotify();
 		packet.ReadUInt32();
-		this.SendPacketToClient(reset);
+		SendPacketToClient(reset);
 	}
 
 	[PacketHandler(Opcode.SMSG_RAID_INSTANCE_INFO)]
@@ -4411,7 +4411,7 @@ public class WorldClient
 			}
 			infos.LockList.Add(instance);
 		}
-		this.SendPacketToClient(infos);
+		SendPacketToClient(infos);
 	}
 
 	[PacketHandler(Opcode.SMSG_INSTANCE_SAVE_CREATED)]
@@ -4419,7 +4419,7 @@ public class WorldClient
 	{
 		InstanceSaveCreated save = new InstanceSaveCreated();
 		save.Gm = packet.ReadUInt32() != 0;
-		this.SendPacketToClient(save);
+		SendPacketToClient(save);
 	}
 
 	[PacketHandler(Opcode.SMSG_RAID_GROUP_ONLY)]
@@ -4428,7 +4428,7 @@ public class WorldClient
 		RaidGroupOnly save = new RaidGroupOnly();
 		save.Delay = packet.ReadInt32();
 		save.Reason = (RaidGroupReason)packet.ReadUInt32();
-		this.SendPacketToClient(save);
+		SendPacketToClient(save);
 	}
 
 	[PacketHandler(Opcode.SMSG_RAID_INSTANCE_MESSAGE)]
@@ -4455,7 +4455,7 @@ public class WorldClient
 			instance.Locked = packet.ReadBool();
 			instance.Extended = packet.ReadBool();
 		}
-		this.SendPacketToClient(instance);
+		SendPacketToClient(instance);
 	}
 
 	[PacketHandler(Opcode.SMSG_SET_PROFICIENCY)]
@@ -4464,25 +4464,25 @@ public class WorldClient
 		SetProficiency proficiency = new SetProficiency();
 		proficiency.ProficiencyClass = packet.ReadUInt8();
 		proficiency.ProficiencyMask = packet.ReadUInt32();
-		this.SendPacketToClient(proficiency);
+		SendPacketToClient(proficiency);
 	}
 
 	[PacketHandler(Opcode.SMSG_BUY_SUCCEEDED)]
 	private void HandleBuySucceeded(WorldPacket packet)
 	{
 		BuySucceeded buy = new BuySucceeded();
-		buy.VendorGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		buy.VendorGUID = packet.ReadGuid().To128(GetSession().GameState);
 		buy.Muid = packet.ReadUInt32();
 		buy.NewQuantity = packet.ReadInt32();
 		buy.QuantityBought = packet.ReadUInt32();
-		this.SendPacketToClient(buy);
+		SendPacketToClient(buy);
 	}
 
 	[PacketHandler(Opcode.SMSG_ITEM_PUSH_RESULT)]
 	private void HandleItemPushResult(WorldPacket packet)
 	{
 		ItemPushResult item = new ItemPushResult();
-		item.PlayerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		item.PlayerGUID = packet.ReadGuid().To128(GetSession().GameState);
 		bool fromNPC = packet.ReadUInt32() == 1;
 		item.Created = packet.ReadUInt32() == 1;
 		bool showInChat = packet.ReadUInt32() == 1;
@@ -4511,7 +4511,7 @@ public class WorldClient
 			{
 				queryPacket.WriteGuid(WowGuid64.Empty);
 			}
-			this.SendPacketToServer(queryPacket);
+			SendPacketToServer(queryPacket);
 		}
 		item.Item.RandomPropertiesSeed = packet.ReadUInt32();
 		item.Item.RandomPropertiesID = packet.ReadUInt32();
@@ -4526,11 +4526,11 @@ public class WorldClient
 			QuestObjective objective = GameData.GetQuestObjectiveForItem(item.Item.ItemID);
 			if (objective != null)
 			{
-				Dictionary<int, UpdateField> updateFields = this.GetSession().GameState.GetCachedObjectFieldsLegacy(this.GetSession().GameState.CurrentPlayerGuid);
+				Dictionary<int, UpdateField> updateFields = GetSession().GameState.GetCachedObjectFieldsLegacy(GetSession().GameState.CurrentPlayerGuid);
 				int questsCount = LegacyVersion.GetQuestLogSize();
 				for (int i = 0; i < questsCount; i++)
 				{
-					QuestLog logEntry = this.ReadQuestLogEntry(i, null, updateFields);
+					QuestLog logEntry = ReadQuestLogEntry(i, null, updateFields);
 					if (logEntry != null && logEntry.QuestID.HasValue && logEntry.QuestID == objective.QuestID && logEntry.ObjectiveProgress[objective.StorageIndex].HasValue)
 					{
 						currentCount = (uint)logEntry.ObjectiveProgress[objective.StorageIndex].Value;
@@ -4540,42 +4540,42 @@ public class WorldClient
 			}
 			item.QuantityInInventory = item.Quantity + currentCount;
 		}
-		if (item.Slot == byte.MaxValue && item.SlotInBag >= 0 && item.PlayerGUID == this.GetSession().GameState.CurrentPlayerGuid)
+		if (item.Slot == byte.MaxValue && item.SlotInBag >= 0 && item.PlayerGUID == GetSession().GameState.CurrentPlayerGuid)
 		{
-			item.ItemGUID = this.GetSession().GameState.GetInventorySlotItem(item.SlotInBag).To128(this.GetSession().GameState);
+			item.ItemGUID = GetSession().GameState.GetInventorySlotItem(item.SlotInBag).To128(GetSession().GameState);
 		}
 		else
 		{
 			item.ItemGUID = WowGuid128.Empty;
 		}
-		this.SendPacketToClient(item);
+		SendPacketToClient(item);
 	}
 
 	[PacketHandler(Opcode.SMSG_READ_ITEM_RESULT_OK)]
 	private void HandleReadItemResultOk(WorldPacket packet)
 	{
 		ReadItemResultOK read = new ReadItemResultOK();
-		read.ItemGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(read);
+		read.ItemGUID = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(read);
 	}
 
 	[PacketHandler(Opcode.SMSG_READ_ITEM_RESULT_FAILED)]
 	private void HandleReadItemResultFailed(WorldPacket packet)
 	{
 		ReadItemResultFailed read = new ReadItemResultFailed();
-		read.ItemGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		read.ItemGUID = packet.ReadGuid().To128(GetSession().GameState);
 		read.Subcode = 2;
-		this.SendPacketToClient(read);
+		SendPacketToClient(read);
 	}
 
 	[PacketHandler(Opcode.SMSG_BUY_FAILED)]
 	private void HandleBuyFailed(WorldPacket packet)
 	{
 		BuyFailed fail = new BuyFailed();
-		fail.VendorGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		fail.VendorGUID = packet.ReadGuid().To128(GetSession().GameState);
 		fail.Muid = packet.ReadUInt32();
 		fail.Reason = (BuyResult)packet.ReadUInt8();
-		this.SendPacketToClient(fail);
+		SendPacketToClient(fail);
 	}
 
 	[PacketHandler(Opcode.SMSG_INVENTORY_CHANGE_FAILURE, ClientVersionBuild.Zero, ClientVersionBuild.V2_0_1_6180)]
@@ -4591,14 +4591,14 @@ public class WorldClient
 			{
 				failure.Level = packet.ReadInt32();
 			}
-			failure.Item[0] = packet.ReadGuid().To128(this.GetSession().GameState);
-			failure.Item[1] = packet.ReadGuid().To128(this.GetSession().GameState);
+			failure.Item[0] = packet.ReadGuid().To128(GetSession().GameState);
+			failure.Item[1] = packet.ReadGuid().To128(GetSession().GameState);
 			failure.ContainerBSlot = packet.ReadUInt8();
-			this.SendPacketToClient(failure);
-			if (this.GetSession().GameState.CurrentClientNormalCast != null && !this.GetSession().GameState.CurrentClientNormalCast.HasStarted && this.GetSession().GameState.CurrentClientNormalCast.ItemGUID == failure.Item[0])
+			SendPacketToClient(failure);
+			if (GetSession().GameState.CurrentClientNormalCast != null && !GetSession().GameState.CurrentClientNormalCast.HasStarted && GetSession().GameState.CurrentClientNormalCast.ItemGUID == failure.Item[0])
 			{
-				this.GetSession().InstanceSocket.SendCastRequestFailed(this.GetSession().GameState.CurrentClientNormalCast, isPet: false);
-				this.GetSession().GameState.CurrentClientNormalCast = null;
+				GetSession().InstanceSocket.SendCastRequestFailed(GetSession().GameState.CurrentClientNormalCast, isPet: false);
+				GetSession().GameState.CurrentClientNormalCast = null;
 			}
 		}
 	}
@@ -4610,8 +4610,8 @@ public class WorldClient
 		failure.BagResult = LegacyVersion.ConvertInventoryResult(packet.ReadUInt8());
 		if (failure.BagResult != InventoryResult.Ok)
 		{
-			failure.Item[0] = packet.ReadGuid().To128(this.GetSession().GameState);
-			failure.Item[1] = packet.ReadGuid().To128(this.GetSession().GameState);
+			failure.Item[0] = packet.ReadGuid().To128(GetSession().GameState);
+			failure.Item[1] = packet.ReadGuid().To128(GetSession().GameState);
 			failure.ContainerBSlot = packet.ReadUInt8();
 			switch (failure.BagResult)
 			{
@@ -4620,9 +4620,9 @@ public class WorldClient
 				failure.Level = packet.ReadInt32();
 				break;
 			case InventoryResult.EventAutoEquipBindConfirm:
-				failure.SrcContainer = packet.ReadGuid().To128(this.GetSession().GameState);
+				failure.SrcContainer = packet.ReadGuid().To128(GetSession().GameState);
 				failure.SrcSlot = packet.ReadInt32();
-				failure.DstContainer = packet.ReadGuid().To128(this.GetSession().GameState);
+				failure.DstContainer = packet.ReadGuid().To128(GetSession().GameState);
 				break;
 			case InventoryResult.ItemMaxLimitCategoryCountExceeded:
 			case InventoryResult.ItemMaxLimitCategorySocketedExceeded:
@@ -4630,11 +4630,11 @@ public class WorldClient
 				failure.LimitCategory = packet.ReadInt32();
 				break;
 			}
-			this.SendPacketToClient(failure);
-			if (this.GetSession().GameState.CurrentClientNormalCast != null && !this.GetSession().GameState.CurrentClientNormalCast.HasStarted && this.GetSession().GameState.CurrentClientNormalCast.ItemGUID == failure.Item[0])
+			SendPacketToClient(failure);
+			if (GetSession().GameState.CurrentClientNormalCast != null && !GetSession().GameState.CurrentClientNormalCast.HasStarted && GetSession().GameState.CurrentClientNormalCast.ItemGUID == failure.Item[0])
 			{
-				this.GetSession().InstanceSocket.SendCastRequestFailed(this.GetSession().GameState.CurrentClientNormalCast, isPet: false);
-				this.GetSession().GameState.CurrentClientNormalCast = null;
+				GetSession().InstanceSocket.SendCastRequestFailed(GetSession().GameState.CurrentClientNormalCast, isPet: false);
+				GetSession().GameState.CurrentClientNormalCast = null;
 			}
 		}
 	}
@@ -4644,39 +4644,39 @@ public class WorldClient
 	{
 		DurabilityDamageDeath death = new DurabilityDamageDeath();
 		death.Percent = 10u;
-		this.SendPacketToClient(death);
+		SendPacketToClient(death);
 	}
 
 	[PacketHandler(Opcode.SMSG_ITEM_COOLDOWN)]
 	private void HandleItemCooldown(WorldPacket packet)
 	{
 		ItemCooldown item = new ItemCooldown();
-		item.ItemGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+		item.ItemGuid = packet.ReadGuid().To128(GetSession().GameState);
 		item.SpellID = packet.ReadUInt32();
 		item.Cooldown = 30000u;
-		this.SendPacketToClient(item);
+		SendPacketToClient(item);
 	}
 
 	[PacketHandler(Opcode.SMSG_SELL_RESPONSE)]
 	private void HandleSellResponse(WorldPacket packet)
 	{
 		SellResponse sell = new SellResponse();
-		sell.VendorGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		sell.ItemGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		sell.VendorGUID = packet.ReadGuid().To128(GetSession().GameState);
+		sell.ItemGUID = packet.ReadGuid().To128(GetSession().GameState);
 		sell.Reason = packet.ReadUInt8();
-		Log.Print(LogType.Debug, $"[SellResponse] Item={sell.ItemGUID} Vendor={sell.VendorGUID} Reason={sell.Reason}", "HandleSellResponse", "WorldClient.cs");
-		this.SendPacketToClient(sell);
+		Log.Print(LogType.Debug, $"[SellResponse] Item={sell.ItemGUID} Vendor={sell.VendorGUID} Reason={sell.Reason}", "WorldClient.cs");
+		SendPacketToClient(sell);
 	}
 
 	[PacketHandler(Opcode.SMSG_ITEM_ENCHANT_TIME_UPDATE)]
 	private void HandleItemEnchantTimeUpdate(WorldPacket packet)
 	{
 		ItemEnchantTimeUpdate enchant = new ItemEnchantTimeUpdate();
-		enchant.ItemGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+		enchant.ItemGuid = packet.ReadGuid().To128(GetSession().GameState);
 		enchant.Slot = packet.ReadUInt32();
 		enchant.DurationLeft = packet.ReadUInt32();
-		enchant.OwnerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(enchant);
+		enchant.OwnerGuid = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(enchant);
 	}
 
 	[PacketHandler(Opcode.SMSG_ENCHANTMENT_LOG)]
@@ -4685,16 +4685,16 @@ public class WorldClient
 		EnchantmentLog enchantment = new EnchantmentLog();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			enchantment.Owner = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-			enchantment.Caster = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			enchantment.Owner = packet.ReadPackedGuid().To128(GetSession().GameState);
+			enchantment.Caster = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			enchantment.Owner = packet.ReadGuid().To128(this.GetSession().GameState);
-			enchantment.Caster = packet.ReadGuid().To128(this.GetSession().GameState);
+			enchantment.Owner = packet.ReadGuid().To128(GetSession().GameState);
+			enchantment.Caster = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		enchantment.ItemID = packet.ReadInt32();
-		GameSessionData session = this.GetSession().GameState;
+		GameSessionData session = GetSession().GameState;
 		for (int i = 0; i < 23; i++)
 		{
 			if (session.GetItemId(session.GetInventorySlotItem(i).To128(session)).Equals((uint)enchantment.ItemID))
@@ -4706,7 +4706,7 @@ public class WorldClient
 		if (!(enchantment.ItemGUID == null))
 		{
 			enchantment.Enchantment = packet.ReadInt32();
-			this.SendPacketToClient(enchantment);
+			SendPacketToClient(enchantment);
 		}
 	}
 
@@ -4715,34 +4715,34 @@ public class WorldClient
 	{
 		LootList list = new LootList();
 		WowGuid64 creatureGuid = packet.ReadGuid();
-		list.Owner = creatureGuid.To128(this.GetSession().GameState);
+		list.Owner = creatureGuid.To128(GetSession().GameState);
 		list.LootObj = creatureGuid.ToLootGuid();
 
 		WowGuid64 masterLooter = packet.ReadPackedGuid();
 		if (!masterLooter.IsEmpty())
-			list.Master = masterLooter.To128(this.GetSession().GameState);
+			list.Master = masterLooter.To128(GetSession().GameState);
 
 		WowGuid64 roundRobinWinner = packet.ReadPackedGuid();
 		if (!roundRobinWinner.IsEmpty())
-			list.RoundRobinWinner = roundRobinWinner.To128(this.GetSession().GameState);
+			list.RoundRobinWinner = roundRobinWinner.To128(GetSession().GameState);
 
-		this.SendPacketToClient(list);
+		SendPacketToClient(list);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_RESPONSE)]
 	private void HandleLootResponse(WorldPacket packet)
 	{
 		LootResponse loot = new LootResponse();
-		this.GetSession().GameState.LastLootTargetGuid = packet.ReadGuid();
-		loot.Owner = this.GetSession().GameState.LastLootTargetGuid.To128(this.GetSession().GameState);
-		loot.LootObj = this.GetSession().GameState.LastLootTargetGuid.ToLootGuid();
+		GetSession().GameState.LastLootTargetGuid = packet.ReadGuid();
+		loot.Owner = GetSession().GameState.LastLootTargetGuid.To128(GetSession().GameState);
+		loot.LootObj = GetSession().GameState.LastLootTargetGuid.ToLootGuid();
 		loot.AcquireReason = (LootType)packet.ReadUInt8();
 		if (loot.AcquireReason == LootType.None)
 		{
 			loot.FailureReason = (LootError)packet.ReadUInt8();
 			return;
 		}
-		loot.LootMethod = this.GetSession().GameState.GetCurrentLootMethod();
+		loot.LootMethod = GetSession().GameState.GetCurrentLootMethod();
 		loot.Coins = packet.ReadUInt32();
 		byte itemsCount = packet.ReadUInt8();
 		for (int i = 0; i < itemsCount; i++)
@@ -4758,7 +4758,7 @@ public class WorldClient
 			lootItem.UIType = (LootSlotTypeModern)Enum.Parse(typeof(LootSlotTypeModern), uiType.ToString());
 			loot.Items.Add(lootItem);
 		}
-		this.SendPacketToClient(loot);
+		SendPacketToClient(loot);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_RELEASE)]
@@ -4766,20 +4766,20 @@ public class WorldClient
 	{
 		LootReleaseResponse loot = new LootReleaseResponse();
 		WowGuid64 owner = packet.ReadGuid();
-		loot.Owner = owner.To128(this.GetSession().GameState);
+		loot.Owner = owner.To128(GetSession().GameState);
 		loot.LootObj = owner.ToLootGuid();
 		packet.ReadBool();
-		this.SendPacketToClient(loot);
+		SendPacketToClient(loot);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_REMOVED)]
 	private void HandleLootRemoved(WorldPacket packet)
 	{
 		LootRemoved loot = new LootRemoved();
-		loot.Owner = this.GetSession().GameState.LastLootTargetGuid.To128(this.GetSession().GameState);
-		loot.LootObj = this.GetSession().GameState.LastLootTargetGuid.ToLootGuid();
+		loot.Owner = GetSession().GameState.LastLootTargetGuid.To128(GetSession().GameState);
+		loot.LootObj = GetSession().GameState.LastLootTargetGuid.ToLootGuid();
 		loot.LootListID = packet.ReadUInt8();
-		this.SendPacketToClient(loot);
+		SendPacketToClient(loot);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_MONEY_NOTIFY)]
@@ -4791,15 +4791,15 @@ public class WorldClient
 		{
 			loot.SoleLooter = packet.ReadBool();
 		}
-		this.SendPacketToClient(loot);
+		SendPacketToClient(loot);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_CLEAR_MONEY)]
 	private void HandleLootCelarMoney(WorldPacket packet)
 	{
 		CoinRemoved loot = new CoinRemoved();
-		loot.LootObj = this.GetSession().GameState.LastLootTargetGuid.ToLootGuid();
-		this.SendPacketToClient(loot);
+		loot.LootObj = GetSession().GameState.LastLootTargetGuid.ToLootGuid();
+		SendPacketToClient(loot);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_START_ROLL)]
@@ -4814,7 +4814,7 @@ public class WorldClient
 		}
 		else
 		{
-			loot.MapID = this.GetSession().GameState.CurrentMapId.Value;
+			loot.MapID = GetSession().GameState.CurrentMapId.Value;
 		}
 		loot.Item.LootListID = (byte)packet.ReadUInt32();
 		loot.Item.Loot.ItemID = packet.ReadUInt32();
@@ -4837,14 +4837,14 @@ public class WorldClient
 		{
 			loot.ValidRolls = RollMask.AllNoDisenchant;
 		}
-		this.SendPacketToClient(loot);
-		if (this.GetSession().GameState.IsPassingOnLoot)
+		SendPacketToClient(loot);
+		if (GetSession().GameState.IsPassingOnLoot)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.CMSG_LOOT_ROLL);
 			packet2.WriteGuid(owner);
 			packet2.WriteUInt32(loot.Item.LootListID);
 			packet2.WriteUInt8(0);
-			this.SendPacketToServer(packet2);
+			SendPacketToServer(packet2);
 		}
 	}
 
@@ -4855,7 +4855,7 @@ public class WorldClient
 		WowGuid64 owner = packet.ReadGuid();
 		loot.LootObj = owner.ToLootGuid();
 		loot.Item.LootListID = (byte)packet.ReadUInt32();
-		loot.Player = packet.ReadGuid().To128(this.GetSession().GameState);
+		loot.Player = packet.ReadGuid().To128(GetSession().GameState);
 		loot.Item.Loot.ItemID = packet.ReadUInt32();
 		loot.Item.Loot.RandomPropertiesSeed = packet.ReadUInt32();
 		loot.Item.Loot.RandomPropertiesID = packet.ReadUInt32();
@@ -4882,7 +4882,7 @@ public class WorldClient
 		{
 			loot.Autopassed = packet.ReadBool();
 		}
-		this.SendPacketToClient(loot);
+		SendPacketToClient(loot);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_ROLL_WON)]
@@ -4895,18 +4895,18 @@ public class WorldClient
 		loot.Item.Loot.RandomPropertiesSeed = packet.ReadUInt32();
 		loot.Item.Loot.RandomPropertiesID = packet.ReadUInt32();
 		loot.Item.Quantity = 1u;
-		loot.Winner = packet.ReadGuid().To128(this.GetSession().GameState);
+		loot.Winner = packet.ReadGuid().To128(GetSession().GameState);
 		loot.Roll = packet.ReadUInt8();
 		loot.RollType = (RollType)packet.ReadUInt8();
 		if (loot.RollType == RollType.Need)
 		{
 			loot.MainSpec = 128;
 		}
-		this.SendPacketToClient(loot);
+		SendPacketToClient(loot);
 		LootRollsComplete complete = new LootRollsComplete();
 		complete.LootObj = loot.LootObj;
 		complete.LootListID = loot.Item.LootListID;
-		this.SendPacketToClient(complete);
+		SendPacketToClient(complete);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_ALL_PASSED)]
@@ -4919,32 +4919,32 @@ public class WorldClient
 		loot.Item.Loot.RandomPropertiesSeed = packet.ReadUInt32();
 		loot.Item.Loot.RandomPropertiesID = packet.ReadUInt32();
 		loot.Item.Quantity = 1u;
-		this.SendPacketToClient(loot);
+		SendPacketToClient(loot);
 		LootRollsComplete complete = new LootRollsComplete();
 		complete.LootObj = loot.LootObj;
 		complete.LootListID = loot.Item.LootListID;
-		this.SendPacketToClient(complete);
+		SendPacketToClient(complete);
 	}
 
 	[PacketHandler(Opcode.SMSG_LOOT_MASTER_LIST)]
 	private void HandleLootMasterList(WorldPacket packet)
 	{
-		if (!(this.GetSession().GameState.LastLootTargetGuid == null))
+		if (!(GetSession().GameState.LastLootTargetGuid == null))
 		{
 			LootList list = new LootList();
-			list.Owner = this.GetSession().GameState.LastLootTargetGuid.To128(this.GetSession().GameState);
-			list.LootObj = this.GetSession().GameState.LastLootTargetGuid.ToLootGuid();
-			list.Master = this.GetSession().GameState.CurrentPlayerGuid;
-			this.SendPacketToClient(list);
+			list.Owner = GetSession().GameState.LastLootTargetGuid.To128(GetSession().GameState);
+			list.LootObj = GetSession().GameState.LastLootTargetGuid.ToLootGuid();
+			list.Master = GetSession().GameState.CurrentPlayerGuid;
+			SendPacketToClient(list);
 			MasterLootCandidateList loot = new MasterLootCandidateList();
-			loot.LootObj = this.GetSession().GameState.LastLootTargetGuid.ToLootGuid();
+			loot.LootObj = GetSession().GameState.LastLootTargetGuid.ToLootGuid();
 			byte count = packet.ReadUInt8();
 			for (byte i = 0; i < count; i++)
 			{
-				WowGuid128 guid = packet.ReadGuid().To128(this.GetSession().GameState);
+				WowGuid128 guid = packet.ReadGuid().To128(GetSession().GameState);
 				loot.Players.Add(guid);
 			}
-			this.SendPacketToClient(loot);
+			SendPacketToClient(loot);
 		}
 	}
 
@@ -4953,7 +4953,7 @@ public class WorldClient
 	{
 		NotifyReceivedMail mail = new NotifyReceivedMail();
 		mail.Delay = packet.ReadFloat();
-		this.SendPacketToClient(mail);
+		SendPacketToClient(mail);
 	}
 
 	[PacketHandler(Opcode.MSG_QUERY_NEXT_MAIL_TIME)]
@@ -4966,7 +4966,7 @@ public class WorldClient
 			if (result.NextMailTime == 0f)
 			{
 				MailQueryNextTimeResult.MailNextTimeEntry mail = new MailQueryNextTimeResult.MailNextTimeEntry();
-				mail.SenderGuid = this.GetSession().GameState.CurrentPlayerGuid;
+				mail.SenderGuid = GetSession().GameState.CurrentPlayerGuid;
 				mail.AltSenderID = 0;
 				mail.AltSenderType = 0;
 				mail.StationeryID = 41;
@@ -4980,7 +4980,7 @@ public class WorldClient
 			for (int i = 0; i < count; i++)
 			{
 				MailQueryNextTimeResult.MailNextTimeEntry mail2 = new MailQueryNextTimeResult.MailNextTimeEntry();
-				mail2.SenderGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+				mail2.SenderGuid = packet.ReadGuid().To128(GetSession().GameState);
 				mail2.AltSenderID = packet.ReadInt32();
 				mail2.AltSenderType = (sbyte)packet.ReadInt32();
 				mail2.StationeryID = packet.ReadInt32();
@@ -4988,7 +4988,7 @@ public class WorldClient
 				result.Mails.Add(mail2);
 			}
 		}
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	[PacketHandler(Opcode.SMSG_MAIL_LIST_RESULT)]
@@ -5016,7 +5016,7 @@ public class WorldClient
 			switch (mail.SenderType)
 			{
 			case MailType.Normal:
-				mail.SenderCharacter = packet.ReadGuid().To128(this.GetSession().GameState);
+				mail.SenderCharacter = packet.ReadGuid().To128(GetSession().GameState);
 				break;
 			case MailType.Item:
 				if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -5039,21 +5039,21 @@ public class WorldClient
 			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_3_0_10958))
 			{
 				mail.ItemTextId = packet.ReadUInt32();
-				if (mail.ItemTextId != 0 && !this.GetSession().GameState.ItemTexts.ContainsKey(mail.ItemTextId))
+				if (mail.ItemTextId != 0 && !GetSession().GameState.ItemTexts.ContainsKey(mail.ItemTextId))
 				{
-					this.GetSession().GameState.RequestedItemTextIds.Add(mail.ItemTextId);
+					GetSession().GameState.RequestedItemTextIds.Add(mail.ItemTextId);
 					WorldPacket query = new WorldPacket(Opcode.CMSG_ITEM_TEXT_QUERY);
 					query.WriteUInt32(mail.ItemTextId);
 					query.WriteInt32(mail.MailID);
 					query.WriteUInt32(0u);
-					this.SendPacket(query);
+					SendPacket(query);
 				}
 			}
 			packet.ReadUInt32();
 			mail.StationeryID = packet.ReadInt32();
 			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
-				MailAttachedItem mailItem = this.ReadMailItem(packet);
+				MailAttachedItem mailItem = ReadMailItem(packet);
 				if (mailItem.Item.ItemID != 0)
 				{
 					mailItem.AttachID = 1;
@@ -5081,26 +5081,26 @@ public class WorldClient
 				byte itemsCount = packet.ReadUInt8();
 				for (int j = 0; j < itemsCount; j++)
 				{
-					MailAttachedItem mailItem2 = this.ReadMailItem(packet);
+					MailAttachedItem mailItem2 = ReadMailItem(packet);
 					mail.Attachments.Add(mailItem2);
 				}
 			}
 			result.Mails.Add(mail);
 		}
-		if (this.GetSession().GameState.RequestedItemTextIds.Count == 0)
+		if (GetSession().GameState.RequestedItemTextIds.Count == 0)
 		{
 			foreach (MailListEntry mail2 in result.Mails)
 			{
 				if (mail2.ItemTextId != 0)
 				{
-					mail2.Body = this.GetSession().GameState.ItemTexts[mail2.ItemTextId];
+					mail2.Body = GetSession().GameState.ItemTexts[mail2.ItemTextId];
 				}
 			}
-			this.SendPacketToClient(result);
+			SendPacketToClient(result);
 		}
 		else
 		{
-			this.GetSession().GameState.PendingMailListPacket = result;
+			GetSession().GameState.PendingMailListPacket = result;
 		}
 	}
 
@@ -5109,31 +5109,31 @@ public class WorldClient
 	{
 		uint itemTextId = packet.ReadUInt32();
 		string text = packet.ReadCString();
-		if (this.GetSession().GameState.ItemTexts.ContainsKey(itemTextId))
+		if (GetSession().GameState.ItemTexts.ContainsKey(itemTextId))
 		{
-			this.GetSession().GameState.ItemTexts[itemTextId] = text;
+			GetSession().GameState.ItemTexts[itemTextId] = text;
 		}
 		else
 		{
-			this.GetSession().GameState.ItemTexts.Add(itemTextId, text);
+			GetSession().GameState.ItemTexts.Add(itemTextId, text);
 		}
-		if (this.GetSession().GameState.RequestedItemTextIds.Contains(itemTextId))
+		if (GetSession().GameState.RequestedItemTextIds.Contains(itemTextId))
 		{
-			this.GetSession().GameState.RequestedItemTextIds.Remove(itemTextId);
+			GetSession().GameState.RequestedItemTextIds.Remove(itemTextId);
 		}
-		if (this.GetSession().GameState.PendingMailListPacket == null || this.GetSession().GameState.RequestedItemTextIds.Count != 0)
+		if (GetSession().GameState.PendingMailListPacket == null || GetSession().GameState.RequestedItemTextIds.Count != 0)
 		{
 			return;
 		}
-		MailListResult result = this.GetSession().GameState.PendingMailListPacket;
+		MailListResult result = GetSession().GameState.PendingMailListPacket;
 		foreach (MailListEntry mail in result.Mails)
 		{
 			if (mail.ItemTextId != 0)
 			{
-				mail.Body = this.GetSession().GameState.ItemTexts[mail.ItemTextId];
+				mail.Body = GetSession().GameState.ItemTexts[mail.ItemTextId];
 			}
 		}
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	private MailAttachedItem ReadMailItem(WorldPacket packet)
@@ -5201,14 +5201,14 @@ public class WorldClient
 				mail.AttachID = 1u;
 			}
 		}
-		this.SendPacketToClient(mail);
+		SendPacketToClient(mail);
 	}
 
 	[PacketHandler(Opcode.SMSG_PONG)]
 	private void HandlePingResponse(WorldPacket packet)
 	{
 		uint serial = packet.ReadUInt32();
-		this.SendPacketToClient(new Pong(serial));
+		SendPacketToClient(new Pong(serial));
 	}
 
 	[PacketHandler(Opcode.SMSG_TUTORIAL_FLAGS)]
@@ -5219,19 +5219,19 @@ public class WorldClient
 		{
 			tutorials.TutorialData[i] = packet.ReadUInt32();
 		}
-		this.SendPacketToClient(tutorials);
+		SendPacketToClient(tutorials);
 	}
 
 	[PacketHandler(Opcode.SMSG_ACCOUNT_DATA_TIMES)]
 	private void HandleAccountDataTimes(WorldPacket packet)
 	{
-		this.GetSession().RealmSocket.SendAccountDataTimes();
+		GetSession().RealmSocket.SendAccountDataTimes();
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			this.GetSession().RealmSocket.SendFeatureSystemStatus();
-			this.GetSession().RealmSocket.SendMotd();
-			this.GetSession().RealmSocket.SendSetTimeZoneInformation();
-			this.GetSession().RealmSocket.SendSeasonInfo();
+			GetSession().RealmSocket.SendFeatureSystemStatus();
+			GetSession().RealmSocket.SendMotd();
+			GetSession().RealmSocket.SendSetTimeZoneInformation();
+			GetSession().RealmSocket.SendSeasonInfo();
 		}
 	}
 
@@ -5242,16 +5242,16 @@ public class WorldClient
 		point.BindPosition = packet.ReadVector3();
 		point.BindMapID = packet.ReadUInt32();
 		point.BindAreaID = packet.ReadUInt32();
-		this.SendPacketToClient(point);
+		SendPacketToClient(point);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAYER_BOUND)]
 	private void HandlePlayerBound(WorldPacket packet)
 	{
 		PlayerBound bound = new PlayerBound();
-		bound.BinderGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		bound.BinderGUID = packet.ReadGuid().To128(GetSession().GameState);
 		bound.AreaID = packet.ReadUInt32();
-		this.SendPacketToClient(bound);
+		SendPacketToClient(bound);
 	}
 
 	[PacketHandler(Opcode.SMSG_DEATH_RELEASE_LOC)]
@@ -5260,17 +5260,17 @@ public class WorldClient
 		DeathReleaseLoc death = new DeathReleaseLoc();
 		death.MapID = packet.ReadInt32();
 		death.Location = packet.ReadVector3();
-		Log.Print(LogType.Debug, $"[DeathReleaseLoc] MapID={death.MapID} Pos={death.Location}", "HandleDeathReleaseLoc", "WorldClient.cs");
-		this.SendPacketToClient(death);
+		Log.Print(LogType.Debug, $"[DeathReleaseLoc] MapID={death.MapID} Pos={death.Location}", "WorldClient.cs");
+		SendPacketToClient(death);
 	}
 
 	[PacketHandler(Opcode.SMSG_PRE_RESSURECT)]
 	private void HandlePreResurrect(WorldPacket packet)
 	{
-		WowGuid128 playerGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		WowGuid128 playerGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		PreRessurect preRes = new PreRessurect();
 		preRes.PlayerGUID = playerGuid;
-		this.SendPacketToClient(preRes);
+		SendPacketToClient(preRes);
 	}
 
 	[PacketHandler(Opcode.SMSG_CORPSE_RECLAIM_DELAY)]
@@ -5278,7 +5278,7 @@ public class WorldClient
 	{
 		CorpseReclaimDelay delay = new CorpseReclaimDelay();
 		delay.Remaining = packet.ReadUInt32();
-		this.SendPacketToClient(delay);
+		SendPacketToClient(delay);
 	}
 
 	[PacketHandler(Opcode.SMSG_TIME_SYNC_REQUEST)]
@@ -5286,7 +5286,7 @@ public class WorldClient
 	{
 		TimeSyncRequest sync = new TimeSyncRequest();
 		sync.SequenceIndex = packet.ReadUInt32();
-		this.SendPacketToClient(sync);
+		SendPacketToClient(sync);
 	}
 
 	[PacketHandler(Opcode.SMSG_WEATHER)]
@@ -5310,14 +5310,14 @@ public class WorldClient
 			weather.Intensity = packet.ReadFloat();
 			weather.Abrupt = packet.ReadBool();
 		}
-		this.SendPacketToClient(weather);
-		this.SendPacketToClient(new StartLightningStorm());
+		SendPacketToClient(weather);
+		SendPacketToClient(new StartLightningStorm());
 	}
 
 	[PacketHandler(Opcode.SMSG_LOGIN_SET_TIME_SPEED)]
 	private void HandleLoginSetTimeSpeed(WorldPacket packet)
 	{
-		if (this.GetSession().GameState.IsFirstEnterWorld)
+		if (GetSession().GameState.IsFirstEnterWorld)
 		{
 			LoginSetTimeSpeed login = new LoginSetTimeSpeed();
 			login.ServerTime = packet.ReadUInt32();
@@ -5328,7 +5328,7 @@ public class WorldClient
 				login.ServerTimeHolidayOffset = packet.ReadInt32();
 				login.GameTimeHolidayOffset = login.ServerTimeHolidayOffset;
 			}
-			this.SendPacketToClient(login);
+			SendPacketToClient(login);
 		}
 	}
 
@@ -5337,16 +5337,16 @@ public class WorldClient
 	{
 		uint length = packet.ReadUInt32();
 		string message = packet.ReadString(length);
-		if (this.GetSession().GameState.LastEnteredAreaTrigger != 0)
+		if (GetSession().GameState.LastEnteredAreaTrigger != 0)
 		{
 			AreaTriggerMessage denied = new AreaTriggerMessage();
-			denied.AreaTriggerID = this.GetSession().GameState.LastEnteredAreaTrigger;
-			this.SendPacketToClient(denied);
+			denied.AreaTriggerID = GetSession().GameState.LastEnteredAreaTrigger;
+			SendPacketToClient(denied);
 		}
 		else
 		{
-			ChatPkt chat = new ChatPkt(this.GetSession(), ChatMessageTypeModern.System, message);
-			this.SendPacketToClient(chat);
+			ChatPkt chat = new ChatPkt(GetSession(), ChatMessageTypeModern.System, message);
+			SendPacketToClient(chat);
 		}
 	}
 
@@ -5355,7 +5355,7 @@ public class WorldClient
 	{
 		CorpseLocation corpse = new CorpseLocation
 		{
-			Player = this.GetSession().GameState.CurrentPlayerGuid,
+			Player = GetSession().GameState.CurrentPlayerGuid,
 			Transport = WowGuid128.Empty
 		};
 		corpse.Valid = packet.ReadBool();
@@ -5371,9 +5371,9 @@ public class WorldClient
 		}
 		else
 		{
-			corpse.MapID = (corpse.ActualMapID = (int)this.GetSession().GameState.CurrentMapId.Value);
+			corpse.MapID = (corpse.ActualMapID = (int)GetSession().GameState.CurrentMapId.Value);
 		}
-		this.SendPacketToClient(corpse);
+		SendPacketToClient(corpse);
 	}
 
 	[PacketHandler(Opcode.SMSG_STAND_STATE_UPDATE)]
@@ -5381,7 +5381,7 @@ public class WorldClient
 	{
 		StandStateUpdate state = new StandStateUpdate();
 		state.StandState = packet.ReadUInt8();
-		this.SendPacketToClient(state);
+		SendPacketToClient(state);
 	}
 
 	[PacketHandler(Opcode.SMSG_EXPLORATION_EXPERIENCE)]
@@ -5390,7 +5390,7 @@ public class WorldClient
 		ExplorationExperience explore = new ExplorationExperience();
 		explore.AreaID = packet.ReadUInt32();
 		explore.Experience = packet.ReadUInt32();
-		this.SendPacketToClient(explore);
+		SendPacketToClient(explore);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAY_MUSIC)]
@@ -5398,7 +5398,7 @@ public class WorldClient
 	{
 		PlayMusic music = new PlayMusic();
 		music.SoundEntryID = packet.ReadUInt32();
-		this.SendPacketToClient(music);
+		SendPacketToClient(music);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAY_SOUND)]
@@ -5406,8 +5406,8 @@ public class WorldClient
 	{
 		PlaySound sound = new PlaySound();
 		sound.SoundEntryID = packet.ReadUInt32();
-		sound.SourceObjectGuid = this.GetSession().GameState.CurrentPlayerGuid;
-		this.SendPacketToClient(sound);
+		sound.SourceObjectGuid = GetSession().GameState.CurrentPlayerGuid;
+		SendPacketToClient(sound);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAY_OBJECT_SOUND)]
@@ -5415,9 +5415,9 @@ public class WorldClient
 	{
 		PlayObjectSound sound = new PlayObjectSound();
 		sound.SoundEntryID = packet.ReadUInt32();
-		sound.SourceObjectGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		sound.SourceObjectGUID = packet.ReadGuid().To128(GetSession().GameState);
 		sound.TargetObjectGUID = sound.SourceObjectGUID;
-		this.SendPacketToClient(sound);
+		SendPacketToClient(sound);
 	}
 
 	[PacketHandler(Opcode.SMSG_TRIGGER_CINEMATIC)]
@@ -5425,15 +5425,15 @@ public class WorldClient
 	{
 		TriggerCinematic cinematic = new TriggerCinematic();
 		cinematic.CinematicID = packet.ReadUInt32();
-		this.SendPacketToClient(cinematic);
+		SendPacketToClient(cinematic);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPECIAL_MOUNT_ANIM)]
 	private void HandleSpecialMountAnim(WorldPacket packet)
 	{
 		SpecialMountAnim mount = new SpecialMountAnim();
-		mount.UnitGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(mount);
+		mount.UnitGUID = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(mount);
 	}
 
 	[PacketHandler(Opcode.SMSG_START_MIRROR_TIMER)]
@@ -5446,7 +5446,7 @@ public class WorldClient
 		timer.Scale = packet.ReadInt32();
 		timer.Paused = packet.ReadBool();
 		timer.SpellID = packet.ReadInt32();
-		this.SendPacketToClient(timer);
+		SendPacketToClient(timer);
 	}
 
 	[PacketHandler(Opcode.SMSG_PAUSE_MIRROR_TIMER)]
@@ -5455,7 +5455,7 @@ public class WorldClient
 		PauseMirrorTimer timer = new PauseMirrorTimer();
 		timer.Timer = (MirrorTimerType)packet.ReadUInt32();
 		timer.Paused = packet.ReadBool();
-		this.SendPacketToClient(timer);
+		SendPacketToClient(timer);
 	}
 
 	[PacketHandler(Opcode.SMSG_STOP_MIRROR_TIMER)]
@@ -5463,18 +5463,18 @@ public class WorldClient
 	{
 		StopMirrorTimer timer = new StopMirrorTimer();
 		timer.Timer = (MirrorTimerType)packet.ReadUInt32();
-		this.SendPacketToClient(timer);
+		SendPacketToClient(timer);
 	}
 
 	[PacketHandler(Opcode.SMSG_INVALIDATE_PLAYER)]
 	private void HandleInvalidatePlayer(WorldPacket packet)
 	{
 		InvalidatePlayer invalidate = new InvalidatePlayer();
-		invalidate.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(invalidate);
-		if (this.GetSession().GameState.CachedPlayers.ContainsKey(invalidate.Guid))
+		invalidate.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(invalidate);
+		if (GetSession().GameState.CachedPlayers.ContainsKey(invalidate.Guid))
 		{
-			this.GetSession().GameState.CachedPlayers.Remove(invalidate.Guid);
+			GetSession().GameState.CachedPlayers.Remove(invalidate.Guid);
 		}
 	}
 
@@ -5483,7 +5483,7 @@ public class WorldClient
 	{
 		ZoneUnderAttack zone = new ZoneUnderAttack();
 		zone.AreaID = packet.ReadInt32();
-		this.SendPacketToClient(zone);
+		SendPacketToClient(zone);
 	}
 
 	[PacketHandler(Opcode.MSG_SET_DUNGEON_DIFFICULTY)]
@@ -5494,7 +5494,7 @@ public class WorldClient
 		difficulty.DifficultyID = (byte)Enum.Parse(typeof(DifficultyModern), ((DifficultyLegacy)difficultyId/*cast due to .constrained prefix*/).ToString());
 		packet.ReadInt32();
 		packet.ReadInt32();
-		this.SendPacketToClient(difficulty);
+		SendPacketToClient(difficulty);
 	}
 
 	[PacketHandler(Opcode.SMSG_POWER_UPDATE)]
@@ -5502,12 +5502,12 @@ public class WorldClient
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			WowGuid128 guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			WowGuid128 guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 			byte powerType = packet.ReadUInt8();
 			int powerValue = packet.ReadInt32();
 			PowerUpdate update = new PowerUpdate(guid);
 			update.Powers.Add(new PowerUpdatePower(powerValue, powerType));
-			this.SendPacketToClient(update);
+			SendPacketToClient(update);
 		}
 	}
 
@@ -5558,7 +5558,7 @@ public class WorldClient
 				foreach (var talent in group2.Talents)
 					spentPoints += talent.Rank + 1; // rank is 0-based
 			int totalPoints = (int)talentData.UnspentTalentPoints + spentPoints;
-			this.GetSession().GameState.TotalTalentPoints = totalPoints;
+			GetSession().GameState.TotalTalentPoints = totalPoints;
 
 			// Compute GlyphsEnabled from level (level = totalPoints + 9)
 			int level = totalPoints + 9;
@@ -5568,17 +5568,17 @@ public class WorldClient
 			if (level >= 50) glyphsEnabled |= 0x04;         // Major slot 2
 			if (level >= 70) glyphsEnabled |= 0x10;         // Minor slot 4
 			if (level >= 80) glyphsEnabled |= 0x20;         // Minor slot 5
-			this.GetSession().GameState.GlyphsEnabled = glyphsEnabled;
+			GetSession().GameState.GlyphsEnabled = glyphsEnabled;
 
 			// Store active glyphs from active spec
 			if (talentData.TalentGroups.Count > talentData.ActiveGroup)
 			{
 				var activeGroup = talentData.TalentGroups[talentData.ActiveGroup];
 				for (int g = 0; g < activeGroup.GlyphIDs.Count && g < 6; g++)
-					this.GetSession().GameState.ActiveGlyphs[g] = activeGroup.GlyphIDs[g];
+					GetSession().GameState.ActiveGlyphs[g] = activeGroup.GlyphIDs[g];
 			}
 
-			this.SendPacketToClient(talentData);
+			SendPacketToClient(talentData);
 		}
 	}
 
@@ -5588,8 +5588,8 @@ public class WorldClient
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			AllAchievementData data = new AllAchievementData();
-			uint realmAddress = this.GetSession().RealmId.GetAddress();
-			WowGuid128 playerGuid = this.GetSession().GameState.CurrentPlayerGuid;
+			uint realmAddress = GetSession().RealmId.GetAddress();
+			WowGuid128 playerGuid = GetSession().GameState.CurrentPlayerGuid;
 
 			// 3.3.5a format: earned achievements (terminated by -1), then criteria progress (terminated by -1)
 			// Earned achievements
@@ -5599,7 +5599,7 @@ public class WorldClient
 				if (achievementId == 0xFFFFFFFF) // -1 terminator
 					break;
 				uint datePackedTime = packet.ReadUInt32();
-				long dateUnix = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+				long dateUnix = Time.GetUnixTimeFromPackedTime(datePackedTime);
 
 				EarnedAchievement earned = new EarnedAchievement();
 				earned.Id = achievementId;
@@ -5620,7 +5620,7 @@ public class WorldClient
 				WowGuid64 playerGuid64 = packet.ReadPackedGuid();
 				uint timedFlag = packet.ReadUInt32();
 				uint datePackedTime = packet.ReadUInt32();
-				long dateUnix = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+				long dateUnix = Time.GetUnixTimeFromPackedTime(datePackedTime);
 				uint timeFromStart = packet.ReadUInt32();
 				uint timeFromCreate = packet.ReadUInt32();
 
@@ -5635,7 +5635,7 @@ public class WorldClient
 				data.Progress.Add(progress);
 			}
 
-			this.SendPacketToClient(data);
+			SendPacketToClient(data);
 		}
 	}
 
@@ -5650,11 +5650,11 @@ public class WorldClient
 			WowGuid64 playerGuid64 = packet.ReadPackedGuid();
 			update.Flags = packet.ReadUInt32(); // timed flag
 			uint datePackedTime = packet.ReadUInt32();
-			update.CurrentTime = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+			update.CurrentTime = Time.GetUnixTimeFromPackedTime(datePackedTime);
 			update.ElapsedTime = packet.ReadUInt32();
 			update.CreationTime = packet.ReadUInt32();
-			update.PlayerGUID = this.GetSession().GameState.CurrentPlayerGuid ?? WowGuid128.Empty;
-			this.SendPacketToClient(update);
+			update.PlayerGUID = GetSession().GameState.CurrentPlayerGuid ?? WowGuid128.Empty;
+			SendPacketToClient(update);
 		}
 	}
 
@@ -5667,16 +5667,16 @@ public class WorldClient
 			WowGuid64 playerGuid64 = packet.ReadPackedGuid();
 			earned.AchievementID = packet.ReadUInt32();
 			uint datePackedTime = packet.ReadUInt32();
-			earned.Time = (long)Time.GetUnixTimeFromPackedTime(datePackedTime);
+			earned.Time = Time.GetUnixTimeFromPackedTime(datePackedTime);
 			packet.ReadUInt32(); // unknown/reserved (0)
 
-			uint realmAddress = this.GetSession().RealmId.GetAddress();
-			earned.Sender = this.GetSession().GameState.CurrentPlayerGuid;
-			earned.Earner = playerGuid64.To128(this.GetSession().GameState);
+			uint realmAddress = GetSession().RealmId.GetAddress();
+			earned.Sender = GetSession().GameState.CurrentPlayerGuid;
+			earned.Earner = playerGuid64.To128(GetSession().GameState);
 			earned.EarnerNativeRealm = realmAddress;
 			earned.EarnerVirtualRealm = realmAddress;
 			earned.Initial = false;
-			this.SendPacketToClient(earned);
+			SendPacketToClient(earned);
 		}
 	}
 
@@ -5743,7 +5743,7 @@ public class WorldClient
 			}
 			info.BlackList = blackList;
 
-			this.SendPacketToClient(info);
+			SendPacketToClient(info);
 		}
 	}
 
@@ -5751,10 +5751,10 @@ public class WorldClient
 	private void HandleLfgJoinResult(WorldPacket packet)
 	{
 		DfJoinResult result = new DfJoinResult();
-		result.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		result.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
 		result.Ticket.Id = 1;
 		result.Ticket.Type = RideType.Lfg;
-		result.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		result.Ticket.Time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		result.Result = (byte)packet.ReadUInt32(); // joinData.result
 		result.ResultDetail = (byte)packet.ReadUInt32(); // joinData.state
 		if (packet.CanRead())
@@ -5763,7 +5763,7 @@ public class WorldClient
 			for (int p = 0; p < partySize; p++)
 			{
 				DfJoinBlackList blackList = new DfJoinBlackList();
-				blackList.PlayerGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+				blackList.PlayerGuid = packet.ReadGuid().To128(GetSession().GameState);
 				uint dungeonCount = packet.ReadUInt32();
 				for (uint d = 0; d < dungeonCount; d++)
 				{
@@ -5775,7 +5775,7 @@ public class WorldClient
 				result.BlackList.Add(blackList);
 			}
 		}
-		this.SendPacketToClient(result);
+		SendPacketToClient(result);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_UPDATE_PLAYER)]
@@ -5787,20 +5787,20 @@ public class WorldClient
 		}
 
 		DfUpdateStatus status = new DfUpdateStatus();
-		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		status.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
 		status.Ticket.Id = 1;
 		status.Ticket.Type = RideType.Lfg;
-		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		status.Ticket.Time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		if (!HasRemaining(packet, 1))
 		{
-			this.SendPacketToClient(status);
+			SendPacketToClient(status);
 			return;
 		}
 		byte updateType = packet.ReadUInt8();
 		status.SubType = updateType;
 		if (!HasRemaining(packet, 1))
 		{
-			this.SendPacketToClient(status);
+			SendPacketToClient(status);
 			return;
 		}
 		bool hasExtraInfo = packet.ReadUInt8() != 0;
@@ -5808,25 +5808,25 @@ public class WorldClient
 		{
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			status.Queued = packet.ReadUInt8() != 0;
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			packet.ReadUInt8(); // unk
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			packet.ReadUInt8(); // unk
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			byte dungeonCount = packet.ReadUInt8();
@@ -5846,7 +5846,7 @@ public class WorldClient
 				packet.ReadCString(); // comment - not used in modern
 			}
 		}
-		this.SendPacketToClient(status);
+		SendPacketToClient(status);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_UPDATE_PARTY)]
@@ -5858,20 +5858,20 @@ public class WorldClient
 		}
 
 		DfUpdateStatus status = new DfUpdateStatus();
-		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		status.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
 		status.Ticket.Id = 1;
 		status.Ticket.Type = RideType.Lfg;
-		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		status.Ticket.Time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		if (!HasRemaining(packet, 1))
 		{
-			this.SendPacketToClient(status);
+			SendPacketToClient(status);
 			return;
 		}
 		status.SubType = packet.ReadUInt8();
 		status.IsParty = true;
 		if (!HasRemaining(packet, 1))
 		{
-			this.SendPacketToClient(status);
+			SendPacketToClient(status);
 			return;
 		}
 		bool hasExtraInfo = packet.ReadUInt8() != 0;
@@ -5879,25 +5879,25 @@ public class WorldClient
 		{
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			status.Queued = packet.ReadUInt8() != 0;
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			packet.ReadUInt8(); // unk
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			packet.ReadUInt8(); // unk
 			if (!HasRemaining(packet, 1))
 			{
-				this.SendPacketToClient(status);
+				SendPacketToClient(status);
 				return;
 			}
 			byte dungeonCount = packet.ReadUInt8();
@@ -5917,7 +5917,7 @@ public class WorldClient
 				packet.ReadCString(); // comment - not used in modern
 			}
 		}
-		this.SendPacketToClient(status);
+		SendPacketToClient(status);
 	}
 
 	[PacketHandler(Opcode.SMSG_CALENDAR_SEND_NUM_PENDING)]
@@ -5925,7 +5925,7 @@ public class WorldClient
 	{
 		CalendarSendNumPendingPkt pending = new CalendarSendNumPendingPkt();
 		pending.NumPending = packet.CanRead() ? packet.ReadUInt32() : 0u;
-		this.SendPacketToClient(pending);
+		SendPacketToClient(pending);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_QUEUE_STATUS)]
@@ -5937,13 +5937,13 @@ public class WorldClient
 		}
 
 		DfQueueStatus status = new DfQueueStatus();
-		status.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		status.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
 		status.Ticket.Id = 1;
 		status.Ticket.Type = RideType.Lfg;
-		status.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		status.Ticket.Time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		if (!HasRemaining(packet, 27))
 		{
-			this.SendPacketToClient(status);
+			SendPacketToClient(status);
 			return;
 		}
 		status.Slot = packet.ReadUInt32();
@@ -5956,7 +5956,7 @@ public class WorldClient
 		status.LastNeeded[1] = packet.ReadUInt8(); // Healers needed
 		status.LastNeeded[2] = packet.ReadUInt8(); // DPS needed
 		status.QueuedTime = packet.ReadUInt32();
-		this.SendPacketToClient(status);
+		SendPacketToClient(status);
 	}
 
 	[PacketHandler(Opcode.SMSG_LFG_PROPOSAL_UPDATE)]
@@ -5968,13 +5968,13 @@ public class WorldClient
 		}
 
 		DfProposalUpdate proposal = new DfProposalUpdate();
-		proposal.Ticket.RequesterGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		proposal.Ticket.RequesterGuid = GetSession().GameState.CurrentPlayerGuid;
 		proposal.Ticket.Id = 1;
 		proposal.Ticket.Type = RideType.Lfg;
-		proposal.Ticket.Time = (long)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+		proposal.Ticket.Time = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 		if (!HasRemaining(packet, 15))
 		{
-			this.SendPacketToClient(proposal);
+			SendPacketToClient(proposal);
 			return;
 		}
 		uint dungeonEntry = packet.ReadUInt32();
@@ -6002,7 +6002,7 @@ public class WorldClient
 			player.Accepted = packet.ReadUInt8() != 0;
 			proposal.Players.Add(player);
 		}
-		this.SendPacketToClient(proposal);
+		SendPacketToClient(proposal);
 	}
 
 	[PacketHandler(Opcode.SMSG_LEARNED_DANCE_MOVES)]
@@ -6054,68 +6054,68 @@ public class WorldClient
 	private void HandleMovementMessages(WorldPacket packet)
 	{
 		MoveUpdate moveUpdate = new MoveUpdate();
-		moveUpdate.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		moveUpdate.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		moveUpdate.MoveInfo = new MovementInfo();
-		moveUpdate.MoveInfo.ReadMovementInfoLegacy(packet, this.GetSession().GameState);
+		moveUpdate.MoveInfo.ReadMovementInfoLegacy(packet, GetSession().GameState);
 		moveUpdate.MoveInfo.Flags = (uint)((MovementFlagWotLK)moveUpdate.MoveInfo.Flags).CastFlags<MovementFlagModern>();
 		moveUpdate.MoveInfo.ValidateMovementInfo();
-		this.SendPacketToClient(moveUpdate);
+		SendPacketToClient(moveUpdate);
 	}
 
 	[PacketHandler(Opcode.MSG_MOVE_KNOCK_BACK)]
 	private void HandleMoveKnockBack(WorldPacket packet)
 	{
 		MoveUpdateKnockBack knockback = new MoveUpdateKnockBack();
-		knockback.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		knockback.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		knockback.MoveInfo = new MovementInfo();
-		knockback.MoveInfo.ReadMovementInfoLegacy(packet, this.GetSession().GameState);
+		knockback.MoveInfo.ReadMovementInfoLegacy(packet, GetSession().GameState);
 		knockback.MoveInfo.Flags = (uint)((MovementFlagWotLK)knockback.MoveInfo.Flags).CastFlags<MovementFlagModern>();
 		knockback.MoveInfo.JumpSinAngle = packet.ReadFloat();
 		knockback.MoveInfo.JumpCosAngle = packet.ReadFloat();
 		knockback.MoveInfo.JumpHorizontalSpeed = packet.ReadFloat();
 		knockback.MoveInfo.JumpVerticalSpeed = packet.ReadFloat();
 		knockback.MoveInfo.ValidateMovementInfo();
-		this.SendPacketToClient(knockback);
+		SendPacketToClient(knockback);
 	}
 
 	[PacketHandler(Opcode.SMSG_MOVE_KNOCK_BACK)]
 	private void HandleMoveForceKnockBack(WorldPacket packet)
 	{
 		MoveKnockBack knockback = new MoveKnockBack();
-		knockback.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		knockback.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		knockback.MoveCounter = packet.ReadUInt32();
 		knockback.Direction = packet.ReadVector2();
 		knockback.HorizontalSpeed = packet.ReadFloat();
 		knockback.VerticalSpeed = packet.ReadFloat();
-		this.SendPacketToClient(knockback);
+		SendPacketToClient(knockback);
 	}
 
 	[PacketHandler(Opcode.SMSG_CONTROL_UPDATE)]
 	private void HandleControlUpdate(WorldPacket packet)
 	{
 		ControlUpdate control = new ControlUpdate();
-		control.Guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		control.Guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		control.HasControl = packet.ReadBool();
-		this.SendPacketToClient(control);
+		SendPacketToClient(control);
 	}
 
 	[PacketHandler(Opcode.MSG_MOVE_TELEPORT_ACK)]
 	private void HandleMoveTeleportAck(WorldPacket packet)
 	{
-		WowGuid128 guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		if (this.GetSession().GameState.IsInTaxiFlight && this.GetSession().GameState.CurrentPlayerGuid == guid)
+		WowGuid128 guid = packet.ReadPackedGuid().To128(GetSession().GameState);
+		if (GetSession().GameState.IsInTaxiFlight && GetSession().GameState.CurrentPlayerGuid == guid)
 		{
 			ControlUpdate control = new ControlUpdate();
 			control.Guid = guid;
 			control.HasControl = true;
-			this.SendPacketToClient(control);
-			this.GetSession().GameState.IsInTaxiFlight = false;
+			SendPacketToClient(control);
+			GetSession().GameState.IsInTaxiFlight = false;
 		}
 		MoveTeleport teleport = new MoveTeleport();
 		teleport.MoverGUID = guid;
 		teleport.MoveCounter = packet.ReadUInt32();
 		MovementInfo moveInfo = new MovementInfo();
-		moveInfo.ReadMovementInfoLegacy(packet, this.GetSession().GameState);
+		moveInfo.ReadMovementInfoLegacy(packet, GetSession().GameState);
 		moveInfo.Flags = (uint)((MovementFlagWotLK)moveInfo.Flags).CastFlags<MovementFlagModern>();
 		moveInfo.ValidateMovementInfo();
 		teleport.Position = moveInfo.Position;
@@ -6126,27 +6126,27 @@ public class WorldClient
 			teleport.Vehicle = new VehicleTeleport();
 			teleport.Vehicle.VehicleSeatIndex = moveInfo.TransportSeat;
 		}
-		this.SendPacketToClient(teleport);
+		SendPacketToClient(teleport);
 	}
 
 	[PacketHandler(Opcode.SMSG_TRANSFER_PENDING)]
 	private void HandleTransferPending(WorldPacket packet)
 	{
-		if (this.GetSession().GameState.IsWaitingForWorldPortAck)
+		if (GetSession().GameState.IsWaitingForWorldPortAck)
 		{
-			Log.Print(LogType.Error, "Skipping SMSG_TRANSFER_PENDING, client is already being teleported.", "HandleTransferPending", "MovementHandler.cs");
+			Log.Print(LogType.Error, "Skipping SMSG_TRANSFER_PENDING, client is already being teleported.", "MovementHandler.cs");
 			return;
 		}
 		TransferPending transfer = new TransferPending();
-		transfer.MapID = (this.GetSession().GameState.PendingTransferMapId = packet.ReadUInt32());
-		transfer.OldMapPosition = Framework.GameMath.Vector3.Zero;
-		this.SendPacketToClient(transfer);
-		this.GetSession().GameState.IsFirstEnterWorld = false;
-		this.GetSession().GameState.IsWaitingForNewWorld = true;
+		transfer.MapID = (GetSession().GameState.PendingTransferMapId = packet.ReadUInt32());
+		transfer.OldMapPosition = Vector3.Zero;
+		SendPacketToClient(transfer);
+		GetSession().GameState.IsFirstEnterWorld = false;
+		GetSession().GameState.IsWaitingForNewWorld = true;
 		SuspendToken suspend = new SuspendToken();
 		suspend.SequenceIndex = 3u;
 		suspend.Reason = 1u;
-		this.SendPacketToClient(suspend);
+		SendPacketToClient(suspend);
 	}
 
 	[PacketHandler(Opcode.SMSG_TRANSFER_ABORTED)]
@@ -6159,7 +6159,7 @@ public class WorldClient
 		}
 		else
 		{
-			transfer.MapID = this.GetSession().GameState.PendingTransferMapId;
+			transfer.MapID = GetSession().GameState.PendingTransferMapId;
 		}
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
@@ -6174,39 +6174,39 @@ public class WorldClient
 		{
 			transfer.Arg = packet.ReadUInt8();
 		}
-		this.SendPacketToClient(transfer);
-		this.GetSession().GameState.IsWaitingForNewWorld = false;
+		SendPacketToClient(transfer);
+		GetSession().GameState.IsWaitingForNewWorld = false;
 	}
 
 	[PacketHandler(Opcode.SMSG_NEW_WORLD)]
 	private void HandleNewWorld(WorldPacket packet)
 	{
 		NewWorld teleport = new NewWorld();
-		this.GetSession().GameState.CurrentMapId = (teleport.MapID = packet.ReadUInt32());
+		GetSession().GameState.CurrentMapId = (teleport.MapID = packet.ReadUInt32());
 		teleport.Position = packet.ReadVector3();
 		teleport.Orientation = packet.ReadFloat();
 		teleport.Reason = 4u;
-		this.GetSession().GameState.IsFirstEnterWorld = false;
-		if (!this.GetSession().GameState.IsWaitingForNewWorld)
+		GetSession().GameState.IsFirstEnterWorld = false;
+		if (!GetSession().GameState.IsWaitingForNewWorld)
 		{
 			return;
 		}
-		this.GetSession().GameState.IsWaitingForNewWorld = false;
-		this.GetSession().GameState.IsWaitingForWorldPortAck = true;
-		this.SendPacketToClient(teleport);
+		GetSession().GameState.IsWaitingForNewWorld = false;
+		GetSession().GameState.IsWaitingForWorldPortAck = true;
+		SendPacketToClient(teleport);
 		if (teleport.MapID > 1)
 		{
 			UpdateLastInstance instance = new UpdateLastInstance();
 			instance.MapID = teleport.MapID;
-			this.SendPacketToClient(instance);
+			SendPacketToClient(instance);
 			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
-				this.SendPacketToClient(new TimeSyncRequest());
+				SendPacketToClient(new TimeSyncRequest());
 			}
 			ResumeToken resume = new ResumeToken();
 			resume.SequenceIndex = 3u;
 			resume.Reason = 1u;
-			this.SendPacketToClient(resume);
+			SendPacketToClient(resume);
 		}
 		WorldServerInfo info = new WorldServerInfo();
 		if (teleport.MapID > 1)
@@ -6214,7 +6214,7 @@ public class WorldClient
 			info.DifficultyID = 1u;
 			info.InstanceGroupSize = 5u;
 		}
-		this.SendPacketToClient(info);
+		SendPacketToClient(info);
 	}
 
 	[PacketHandler(Opcode.SMSG_MOVE_SPLINE_SET_WALK_BACK_SPEED)]
@@ -6235,9 +6235,9 @@ public class WorldClient
 	private void HandleMoveSplineSetSpeed(WorldPacket packet)
 	{
 		MoveSplineSetSpeed speed = new MoveSplineSetSpeed(packet.GetUniversalOpcode(isModern: false));
-		speed.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		speed.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		speed.Speed = packet.ReadFloat();
-		this.SendPacketToClient(speed);
+		SendPacketToClient(speed);
 	}
 
 	[PacketHandler(Opcode.SMSG_FORCE_WALK_SPEED_CHANGE)]
@@ -6255,14 +6255,14 @@ public class WorldClient
 			.Replace("_CHANGE", "");
 		Opcode universalOpcode = Opcodes.GetUniversalOpcode(opcodeName);
 		MoveSetSpeed speed = new MoveSetSpeed(universalOpcode);
-		speed.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		speed.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		speed.MoveCounter = packet.ReadUInt32();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) && packet.GetUniversalOpcode(isModern: false) == Opcode.SMSG_FORCE_RUN_SPEED_CHANGE)
 		{
 			packet.ReadUInt8();
 		}
 		speed.Speed = packet.ReadFloat();
-		this.SendPacketToClient(speed);
+		SendPacketToClient(speed);
 		bool flag = universalOpcode - 2420 <= Opcode.CMSG_ABANDON_NPE_RESPONSE;
 		if (flag && LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
@@ -6271,7 +6271,7 @@ public class WorldClient
 			flySpeed.MoverGUID = speed.MoverGUID;
 			flySpeed.MoveCounter = speed.MoveCounter;
 			flySpeed.Speed = speed.Speed;
-			this.SendPacketToClient(flySpeed);
+			SendPacketToClient(flySpeed);
 		}
 	}
 
@@ -6289,14 +6289,14 @@ public class WorldClient
 		string opcodeName = packet.GetUniversalOpcode(isModern: false).ToString().Replace("MSG_MOVE_SET", "SMSG_MOVE_UPDATE");
 		Opcode universalOpcode = Opcodes.GetUniversalOpcode(opcodeName);
 		MoveUpdateSpeed speed = new MoveUpdateSpeed(universalOpcode);
-		speed.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		speed.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		speed.MoveInfo = new MovementInfo();
-		speed.MoveInfo.ReadMovementInfoLegacy(packet, this.GetSession().GameState);
+		speed.MoveInfo.ReadMovementInfoLegacy(packet, GetSession().GameState);
 		MovementFlagModern newFlags = ((MovementFlagWotLK)speed.MoveInfo.Flags).CastFlags<MovementFlagModern>();
 		speed.MoveInfo.Flags = (uint)newFlags;
 		speed.MoveInfo.ValidateMovementInfo();
 		speed.Speed = packet.ReadFloat();
-		this.SendPacketToClient(speed);
+		SendPacketToClient(speed);
 		bool flag = universalOpcode - 2477 <= Opcode.CMSG_ABANDON_NPE_RESPONSE;
 		if (flag && LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
@@ -6305,7 +6305,7 @@ public class WorldClient
 			flySpeed.MoverGUID = speed.MoverGUID;
 			flySpeed.MoveInfo = speed.MoveInfo;
 			flySpeed.Speed = speed.Speed;
-			this.SendPacketToClient(flySpeed);
+			SendPacketToClient(flySpeed);
 		}
 	}
 
@@ -6328,8 +6328,8 @@ public class WorldClient
 	private void HandleSplineMovementMessages(WorldPacket packet)
 	{
 		MoveSplineSetFlag spline = new MoveSplineSetFlag(packet.GetUniversalOpcode(isModern: false));
-		spline.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(spline);
+		spline.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		SendPacketToClient(spline);
 	}
 
 	[PacketHandler(Opcode.SMSG_MOVE_ROOT)]
@@ -6349,9 +6349,9 @@ public class WorldClient
 	private void HandleMoveForceFlagChange(WorldPacket packet)
 	{
 		MoveSetFlag flag = new MoveSetFlag(packet.GetUniversalOpcode(isModern: false));
-		flag.MoverGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		flag.MoverGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		flag.MoveCounter = packet.ReadUInt32();
-		this.SendPacketToClient(flag);
+		SendPacketToClient(flag);
 	}
 
 	[PacketHandler(Opcode.SMSG_COMPRESSED_MOVES)]
@@ -6366,7 +6366,7 @@ public class WorldClient
 			byte[] data = pkt.ReadBytes((uint)(size - 2));
 			WorldPacket pkt2 = new WorldPacket(opc, data);
 			pkt2.SetReceiveTime(pkt.GetReceivedTime());
-			this.HandlePacket(pkt2);
+			HandlePacket(pkt2);
 		}
 	}
 
@@ -6374,11 +6374,11 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_MONSTER_MOVE_TRANSPORT)]
 	private void HandleMonsterMove(WorldPacket packet)
 	{
-		WowGuid128 guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		WowGuid128 guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		ServerSideMovement moveSpline = new ServerSideMovement();
 		if (packet.GetUniversalOpcode(isModern: false) == Opcode.SMSG_MONSTER_MOVE_TRANSPORT)
 		{
-			moveSpline.TransportGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			moveSpline.TransportGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 			{
 				moveSpline.TransportSeat = packet.ReadInt8();
@@ -6399,7 +6399,7 @@ public class WorldClient
 			break;
 		case SplineTypeLegacy.FacingTarget:
 			moveSpline.SplineType = SplineTypeModern.FacingTarget;
-			moveSpline.FinalFacingGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+			moveSpline.FinalFacingGuid = packet.ReadGuid().To128(GetSession().GameState);
 			break;
 		case SplineTypeLegacy.FacingAngle:
 			moveSpline.SplineType = SplineTypeModern.FacingAngle;
@@ -6410,7 +6410,7 @@ public class WorldClient
 		{
 			moveSpline.SplineType = SplineTypeModern.None;
 			MonsterMove moveStop = new MonsterMove(guid, moveSpline);
-			this.SendPacketToClient(moveStop);
+			SendPacketToClient(moveStop);
 			return;
 		}
 		}
@@ -6428,7 +6428,7 @@ public class WorldClient
 			if (splineFlags == SplineFlagVanilla.Runmode)
 			{
 				moveSpline.SplineFlags = SplineFlagModern.Unknown5;
-				UnitFlagsVanilla unitFlags = (UnitFlagsVanilla)this.GetSession().GameState.GetLegacyFieldValueUInt32(guid, UnitField.UNIT_FIELD_FLAGS);
+				UnitFlagsVanilla unitFlags = (UnitFlagsVanilla)GetSession().GameState.GetLegacyFieldValueUInt32(guid, UnitField.UNIT_FIELD_FLAGS);
 				if (unitFlags.HasFlag(UnitFlagsVanilla.CanSwim))
 				{
 					moveSpline.SplineFlags |= SplineFlagModern.CanSwim;
@@ -6453,7 +6453,7 @@ public class WorldClient
 			if (splineFlags2 == SplineFlagTBC.Runmode)
 			{
 				moveSpline.SplineFlags = SplineFlagModern.Unknown5;
-				UnitFlags unitFlags2 = (UnitFlags)this.GetSession().GameState.GetLegacyFieldValueUInt32(guid, UnitField.UNIT_FIELD_FLAGS);
+				UnitFlags unitFlags2 = (UnitFlags)GetSession().GameState.GetLegacyFieldValueUInt32(guid, UnitField.UNIT_FIELD_FLAGS);
 				if (unitFlags2.HasFlag(UnitFlags.CanSwim))
 				{
 					moveSpline.SplineFlags |= SplineFlagModern.CanSwim;
@@ -6493,7 +6493,7 @@ public class WorldClient
 		{
 			for (int i = 0; i < moveSpline.SplineCount; i++)
 			{
-				Framework.GameMath.Vector3 vec = packet.ReadVector3();
+				Vector3 vec = packet.ReadVector3();
 				moveSpline?.SplinePoints.Add(vec);
 			}
 			moveSpline.SplineFlags |= SplineFlagModern.UncompressedPath;
@@ -6501,51 +6501,51 @@ public class WorldClient
 		else
 		{
 			moveSpline.EndPosition = packet.ReadVector3();
-			Framework.GameMath.Vector3 mid = (moveSpline.StartPosition + moveSpline.EndPosition) * 0.5f;
+			Vector3 mid = (moveSpline.StartPosition + moveSpline.EndPosition) * 0.5f;
 			for (int j = 1; j < moveSpline.SplineCount; j++)
 			{
-				Framework.GameMath.Vector3 vec2 = packet.ReadPackedVector3();
+				Vector3 vec2 = packet.ReadPackedVector3();
 				vec2 = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? (moveSpline.EndPosition - vec2) : (mid - vec2));
 				moveSpline.SplinePoints.Add(vec2);
 			}
 		}
-		bool isTaxiFlight = hasTaxiFlightFlags && (this.GetSession().GameState.IsWaitingForTaxiStart || Math.Abs(packet.GetReceivedTime() - this.GetSession().GameState.CurrentPlayerCreateTime) <= 1000) && this.GetSession().GameState.CurrentPlayerGuid == guid;
+		bool isTaxiFlight = hasTaxiFlightFlags && (GetSession().GameState.IsWaitingForTaxiStart || Math.Abs(packet.GetReceivedTime() - GetSession().GameState.CurrentPlayerCreateTime) <= 1000) && GetSession().GameState.CurrentPlayerGuid == guid;
 		if (isTaxiFlight)
 		{
 			ServerSideMovement stopSpline = new ServerSideMovement();
 			stopSpline.StartPosition = moveSpline.StartPosition;
 			stopSpline.SplineId = moveSpline.SplineId - 2;
 			MonsterMove moveStop2 = new MonsterMove(guid, stopSpline);
-			this.SendPacketToClient(moveStop2);
+			SendPacketToClient(moveStop2);
 			ControlUpdate update = new ControlUpdate();
 			update.Guid = guid;
 			update.HasControl = false;
-			this.SendPacketToClient(update);
+			SendPacketToClient(update);
 			stopSpline.SplineId = moveSpline.SplineId - 1;
 			moveStop2 = new MonsterMove(guid, stopSpline);
-			this.SendPacketToClient(moveStop2);
+			SendPacketToClient(moveStop2);
 			update = new ControlUpdate();
 			update.Guid = guid;
 			update.HasControl = false;
-			this.SendPacketToClient(update);
+			SendPacketToClient(update);
 			moveSpline.SplineFlags = SplineFlagModern.Flying | SplineFlagModern.CatmullRom | SplineFlagModern.CanSwim | SplineFlagModern.UncompressedPath | SplineFlagModern.Unknown5 | SplineFlagModern.Steering | SplineFlagModern.Unknown10;
-			if (!hasCatmullRom && moveSpline.EndPosition != Framework.GameMath.Vector3.Zero)
+			if (!hasCatmullRom && moveSpline.EndPosition != Vector3.Zero)
 			{
 				moveSpline.SplinePoints.Add(moveSpline.EndPosition);
 			}
 		}
 		MonsterMove monsterMove = new MonsterMove(guid, moveSpline);
-		this.SendPacketToClient(monsterMove);
+		SendPacketToClient(monsterMove);
 		if (isTaxiFlight)
 		{
-			if (this.GetSession().GameState.IsWaitingForTaxiStart)
+			if (GetSession().GameState.IsWaitingForTaxiStart)
 			{
 				ActivateTaxiReplyPkt taxi = new ActivateTaxiReplyPkt();
 				taxi.Reply = ActivateTaxiReply.Ok;
-				this.SendPacketToClient(taxi);
-				this.GetSession().GameState.IsWaitingForTaxiStart = false;
+				SendPacketToClient(taxi);
+				GetSession().GameState.IsWaitingForTaxiStart = false;
 			}
-			this.GetSession().GameState.IsInTaxiFlight = true;
+			GetSession().GameState.IsInTaxiFlight = true;
 		}
 	}
 
@@ -6553,8 +6553,8 @@ public class WorldClient
 	private void HandleGossipmessage(WorldPacket packet)
 	{
 		GossipMessagePkt gossip = new GossipMessagePkt();
-		gossip.GossipGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = gossip.GossipGUID;
+		gossip.GossipGUID = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = gossip.GossipGUID;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_4_0_8089))
 		{
 			gossip.GossipID = packet.ReadInt32();
@@ -6585,17 +6585,17 @@ public class WorldClient
 		uint questsCount = packet.ReadUInt32();
 		for (uint i2 = 0u; i2 < questsCount; i2++)
 		{
-			ClientGossipQuest quest = this.ReadGossipQuestOption(packet);
+			ClientGossipQuest quest = ReadGossipQuestOption(packet);
 			gossip.GossipQuests.Add(quest);
 		}
-		this.SendPacketToClient(gossip);
+		SendPacketToClient(gossip);
 	}
 
 	[PacketHandler(Opcode.SMSG_GOSSIP_COMPLETE)]
 	private void HandleGossipComplete(WorldPacket packet)
 	{
 		GossipComplete gossip = new GossipComplete();
-		this.SendPacketToClient(gossip);
+		SendPacketToClient(gossip);
 	}
 
 	[PacketHandler(Opcode.SMSG_GOSSIP_POI)]
@@ -6603,33 +6603,33 @@ public class WorldClient
 	{
 		GossipPOI poi = new GossipPOI();
 		poi.Flags = packet.ReadUInt32();
-		poi.Pos = new Framework.GameMath.Vector3(packet.ReadVector2());
+		poi.Pos = new Vector3(packet.ReadVector2());
 		poi.Icon = packet.ReadUInt32();
 		poi.Importance = packet.ReadUInt32();
 		poi.Name = packet.ReadCString();
-		this.SendPacketToClient(poi);
+		SendPacketToClient(poi);
 	}
 
 	[PacketHandler(Opcode.SMSG_BINDER_CONFIRM)]
 	private void HandleBinderConfirm(WorldPacket packet)
 	{
 		BinderConfirm confirm = new BinderConfirm();
-		confirm.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = confirm.Guid;
-		this.SendPacketToClient(confirm);
+		confirm.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = confirm.Guid;
+		SendPacketToClient(confirm);
 	}
 
 	[PacketHandler(Opcode.SMSG_VENDOR_INVENTORY)]
 	private void HandleVendorInventory(WorldPacket packet)
 	{
 		VendorInventory vendor = new VendorInventory();
-		vendor.VendorGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = vendor.VendorGUID;
+		vendor.VendorGUID = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = vendor.VendorGUID;
 		byte itemsCount = packet.ReadUInt8();
 		if (itemsCount == 0)
 		{
 			vendor.Reason = packet.ReadUInt8();
-			this.SendPacketToClient(vendor);
+			SendPacketToClient(vendor);
 			return;
 		}
 		for (byte i = 0; i < itemsCount; i++)
@@ -6647,27 +6647,27 @@ public class WorldClient
 			{
 				vendorItem.ExtendedCostID = packet.ReadInt32();
 			}
-			this.GetSession().GameState.SetItemBuyCount(vendorItem.Item.ItemID, vendorItem.StackCount);
+			GetSession().GameState.SetItemBuyCount(vendorItem.Item.ItemID, vendorItem.StackCount);
 			vendor.Items.Add(vendorItem);
 		}
-		this.SendPacketToClient(vendor);
+		SendPacketToClient(vendor);
 	}
 
 	[PacketHandler(Opcode.SMSG_SHOW_BANK)]
 	private void HandleShowBank(WorldPacket packet)
 	{
 		ShowBank bank = new ShowBank();
-		bank.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = bank.Guid;
-		this.SendPacketToClient(bank);
+		bank.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = bank.Guid;
+		SendPacketToClient(bank);
 	}
 
 	[PacketHandler(Opcode.SMSG_TRAINER_LIST)]
 	private void HandleTrainerList(WorldPacket packet)
 	{
 		TrainerList trainer = new TrainerList();
-		trainer.TrainerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = trainer.TrainerGUID;
+		trainer.TrainerGUID = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = trainer.TrainerGUID;
 		trainer.TrainerID = trainer.TrainerGUID.GetEntry();
 		trainer.TrainerType = packet.ReadInt32();
 		int count = packet.ReadInt32();
@@ -6680,7 +6680,7 @@ public class WorldClient
 				uint realSpellId = GameData.GetRealSpell(spellId);
 				if (realSpellId != spellId)
 				{
-					this.GetSession().GameState.StoreRealSpell(realSpellId, spellId);
+					GetSession().GameState.StoreRealSpell(realSpellId, spellId);
 					spellId = realSpellId;
 				}
 			}
@@ -6700,28 +6700,28 @@ public class WorldClient
 			trainer.Spells.Add(spell);
 		}
 		trainer.Greeting = packet.ReadCString();
-		this.SendPacketToClient(trainer);
+		SendPacketToClient(trainer);
 	}
 
 	[PacketHandler(Opcode.SMSG_TRAINER_BUY_FAILED)]
 	private void HandleTrainerBuyFailed(WorldPacket packet)
 	{
 		TrainerBuyFailed buy = new TrainerBuyFailed();
-		buy.TrainerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		buy.TrainerGUID = packet.ReadGuid().To128(GetSession().GameState);
 		buy.SpellID = packet.ReadUInt32();
 		buy.TrainerFailedReason = packet.ReadUInt32();
-		this.SendPacketToClient(buy);
-		ChatPkt chat = new ChatPkt(this.GetSession(), ChatMessageTypeModern.System, $"Failed to learn Spell {buy.SpellID} (Reason {buy.TrainerFailedReason}).");
-		this.SendPacketToClient(chat);
+		SendPacketToClient(buy);
+		ChatPkt chat = new ChatPkt(GetSession(), ChatMessageTypeModern.System, $"Failed to learn Spell {buy.SpellID} (Reason {buy.TrainerFailedReason}).");
+		SendPacketToClient(chat);
 	}
 
 	[PacketHandler(Opcode.MSG_TALENT_WIPE_CONFIRM)]
 	private void HandleTalentWipeConfirm(WorldPacket packet)
 	{
 		RespecWipeConfirm respec = new RespecWipeConfirm();
-		respec.TrainerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		respec.TrainerGUID = packet.ReadGuid().To128(GetSession().GameState);
 		respec.Cost = packet.ReadUInt32();
-		this.SendPacketToClient(respec);
+		SendPacketToClient(respec);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPIRIT_HEALER_CONFIRM)]
@@ -6732,23 +6732,23 @@ public class WorldClient
 		WowGuid64 guid = packet.ReadGuid();
 		WorldPacket activate = new WorldPacket(Opcode.CMSG_SPIRIT_HEALER_ACTIVATE);
 		activate.WriteGuid(guid);
-		this.SendPacket(activate);
+		SendPacket(activate);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_SPELLS_MESSAGE)]
 	private void HandlePetSpellsMessage(WorldPacket packet)
 	{
 		WowGuid guid = packet.ReadGuid();
-		this.GetSession().GameState.CurrentPetGuid = guid.To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentClientPetCast = null;
+		GetSession().GameState.CurrentPetGuid = guid.To128(GetSession().GameState);
+		GetSession().GameState.CurrentClientPetCast = null;
 		if (guid.IsEmpty())
 		{
 			PetClearSpells clear = new PetClearSpells();
-			this.SendPacketToClient(clear);
+			SendPacketToClient(clear);
 			return;
 		}
 		PetSpells spells = new PetSpells();
-		spells.PetGUID = guid.To128(this.GetSession().GameState);
+		spells.PetGUID = guid.To128(GetSession().GameState);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767))
 		{
 			spells.CreatureFamily = packet.ReadUInt16();
@@ -6784,16 +6784,16 @@ public class WorldClient
 			cooldown.CategoryDuration = packet.ReadUInt32();
 			spells.Cooldowns.Add(cooldown);
 		}
-		this.SendPacketToClient(spells);
+		SendPacketToClient(spells);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_ACTION_SOUND)]
 	private void HandlePetActionSound(WorldPacket packet)
 	{
 		PetActionSound sound = new PetActionSound();
-		sound.UnitGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		sound.UnitGUID = packet.ReadGuid().To128(GetSession().GameState);
 		sound.Action = packet.ReadUInt32();
-		this.SendPacketToClient(sound);
+		SendPacketToClient(sound);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_BROKEN)]
@@ -6801,36 +6801,36 @@ public class WorldClient
 	{
 		PrintNotification notify = new PrintNotification();
 		notify.NotifyText = "Your pet has run away";
-		this.SendPacketToClient(notify);
+		SendPacketToClient(notify);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_UNLEARN_CONFIRM)]
 	private void HandlePetUnlearnConfirm(WorldPacket packet)
 	{
 		RespecWipeConfirm respec = new RespecWipeConfirm();
-		respec.TrainerGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		respec.TrainerGUID = packet.ReadGuid().To128(GetSession().GameState);
 		respec.Cost = packet.ReadUInt32();
 		respec.RespecType = SpecResetType.PetTalents;
-		this.SendPacketToClient(respec);
+		SendPacketToClient(respec);
 	}
 
 	[PacketHandler(Opcode.MSG_LIST_STABLED_PETS)]
 	private void HandleListStabledPets(WorldPacket packet)
 	{
 		PetGuids pets = new PetGuids();
-		Dictionary<int, UpdateField> updateFields = this.GetSession().GameState.GetCachedObjectFieldsLegacy(this.GetSession().GameState.CurrentPlayerGuid);
+		Dictionary<int, UpdateField> updateFields = GetSession().GameState.GetCachedObjectFieldsLegacy(GetSession().GameState.CurrentPlayerGuid);
 		int UNIT_FIELD_SUMMON = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_SUMMON);
 		if (UNIT_FIELD_SUMMON >= 0 && updateFields.ContainsKey(UNIT_FIELD_SUMMON))
 		{
-			WowGuid128 guid = WorldClient.GetGuidValue(updateFields, UnitField.UNIT_FIELD_SUMMON).To128(this.GetSession().GameState);
+			WowGuid128 guid = GetGuidValue(updateFields, UnitField.UNIT_FIELD_SUMMON).To128(GetSession().GameState);
 			if (!guid.IsEmpty())
 			{
 				pets.Guids.Add(guid);
 			}
 		}
-		this.SendPacketToClient(pets);
+		SendPacketToClient(pets);
 		PetStableList stable = new PetStableList();
-		stable.StableMaster = packet.ReadGuid().To128(this.GetSession().GameState);
+		stable.StableMaster = packet.ReadGuid().To128(GetSession().GameState);
 		byte count = packet.ReadUInt8();
 		stable.NumStableSlots = packet.ReadUInt8();
 		for (byte i = 0; i < count; i++)
@@ -6859,11 +6859,11 @@ public class WorldClient
 				WorldPacket query = new WorldPacket(Opcode.CMSG_QUERY_CREATURE);
 				query.WriteUInt32(pet.CreatureID);
 				query.WriteGuid(WowGuid64.Empty);
-				this.SendPacket(query);
+				SendPacket(query);
 			}
 			stable.Pets.Add(pet);
 		}
-		this.SendPacketToClient(stable);
+		SendPacketToClient(stable);
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_STABLE_RESULT)]
@@ -6871,15 +6871,15 @@ public class WorldClient
 	{
 		PetStableResult stable = new PetStableResult();
 		stable.Result = packet.ReadUInt8();
-		this.SendPacketToClient(stable);
+		SendPacketToClient(stable);
 	}
 
 	[PacketHandler(Opcode.SMSG_PETITION_SHOW_LIST)]
 	private void HandlePetitionShowList(WorldPacket packet)
 	{
 		ServerPetitionShowList petitions = new ServerPetitionShowList();
-		petitions.Unit = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = petitions.Unit;
+		petitions.Unit = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = petitions.Unit;
 		byte count = packet.ReadUInt8();
 		for (int i = 0; i < count; i++)
 		{
@@ -6900,28 +6900,28 @@ public class WorldClient
 			}
 			petitions.Petitions.Add(petition);
 		}
-		this.SendPacketToClient(petitions);
+		SendPacketToClient(petitions);
 	}
 
 	[PacketHandler(Opcode.SMSG_PETITION_SHOW_SIGNATURES)]
 	private void HandlePetitionShowSignatures(WorldPacket packet)
 	{
 		ServerPetitionShowSignatures petition = new ServerPetitionShowSignatures();
-		petition.Item = packet.ReadGuid().To128(this.GetSession().GameState);
-		petition.Owner = packet.ReadGuid().To128(this.GetSession().GameState);
-		petition.OwnerAccountID = this.GetSession().GetGameAccountGuidForPlayer(petition.Owner);
+		petition.Item = packet.ReadGuid().To128(GetSession().GameState);
+		petition.Owner = packet.ReadGuid().To128(GetSession().GameState);
+		petition.OwnerAccountID = GetSession().GetGameAccountGuidForPlayer(petition.Owner);
 		petition.PetitionID = packet.ReadInt32();
 		byte counter = packet.ReadUInt8();
 		for (int i = 0; i < counter; i++)
 		{
 			ServerPetitionShowSignatures.PetitionSignature signature = new ServerPetitionShowSignatures.PetitionSignature
 			{
-				Signer = packet.ReadGuid().To128(this.GetSession().GameState),
+				Signer = packet.ReadGuid().To128(GetSession().GameState),
 				Choice = packet.ReadInt32()
 			};
 			petition.Signatures.Add(signature);
 		}
-		this.SendPacketToClient(petition);
+		SendPacketToClient(petition);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_PETITION_RESPONSE)]
@@ -6932,7 +6932,7 @@ public class WorldClient
 		petition.Allow = true;
 		petition.Info = new PetitionInfo();
 		petition.Info.PetitionID = petition.PetitionID;
-		petition.Info.Petitioner = packet.ReadGuid().To128(this.GetSession().GameState);
+		petition.Info.Petitioner = packet.ReadGuid().To128(GetSession().GameState);
 		petition.Info.Title = packet.ReadCString();
 		petition.Info.BodyText = packet.ReadCString();
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -6962,27 +6962,27 @@ public class WorldClient
 		{
 			petition.Info.StaticType = packet.ReadInt32();
 		}
-		this.SendPacketToClient(petition);
+		SendPacketToClient(petition);
 	}
 
 	[PacketHandler(Opcode.MSG_PETITION_RENAME)]
 	private void HandlePetitionRename(WorldPacket packet)
 	{
 		PetitionRenameGuildResponse petition = new PetitionRenameGuildResponse();
-		petition.PetitionGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+		petition.PetitionGuid = packet.ReadGuid().To128(GetSession().GameState);
 		petition.NewGuildName = packet.ReadCString();
-		this.SendPacketToClient(petition);
+		SendPacketToClient(petition);
 	}
 
 	[PacketHandler(Opcode.MSG_PETITION_DECLINE)]
 	private void HandlePetitionDecline(WorldPacket packet)
 	{
-		WowGuid128 guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		string name = this.GetSession().GameState.GetPlayerName(guid);
+		WowGuid128 guid = packet.ReadGuid().To128(GetSession().GameState);
+		string name = GetSession().GameState.GetPlayerName(guid);
 		if (!string.IsNullOrEmpty(name))
 		{
-			ChatPkt chat = new ChatPkt(this.GetSession(), ChatMessageTypeModern.System, name + " has declined your guild invitation.");
-			this.SendPacketToClient(chat);
+			ChatPkt chat = new ChatPkt(GetSession(), ChatMessageTypeModern.System, name + " has declined your guild invitation.");
+			SendPacketToClient(chat);
 		}
 	}
 
@@ -6990,10 +6990,10 @@ public class WorldClient
 	private void HandlePetitionSignResults(WorldPacket packet)
 	{
 		PetitionSignResults petition = new PetitionSignResults();
-		petition.Item = packet.ReadGuid().To128(this.GetSession().GameState);
-		petition.Player = packet.ReadGuid().To128(this.GetSession().GameState);
+		petition.Item = packet.ReadGuid().To128(GetSession().GameState);
+		petition.Player = packet.ReadGuid().To128(GetSession().GameState);
 		petition.Error = (PetitionSignResult)packet.ReadUInt32();
-		this.SendPacketToClient(petition);
+		SendPacketToClient(petition);
 	}
 
 	[PacketHandler(Opcode.SMSG_TURN_IN_PETITION_RESULT)]
@@ -7001,7 +7001,7 @@ public class WorldClient
 	{
 		TurnInPetitionResult petition = new TurnInPetitionResult();
 		petition.Result = (PetitionTurnResult)packet.ReadUInt32();
-		this.SendPacketToClient(petition);
+		SendPacketToClient(petition);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_TIME_RESPONSE)]
@@ -7013,7 +7013,7 @@ public class WorldClient
 		{
 			packet.ReadInt32();
 		}
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_QUEST_INFO_RESPONSE)]
@@ -7025,7 +7025,7 @@ public class WorldClient
 		if (id.Value)
 		{
 			response.Allow = false;
-			this.SendPacketToClient(response);
+			SendPacketToClient(response);
 			return;
 		}
 		response.Allow = true;
@@ -7258,7 +7258,7 @@ public class WorldClient
 		quest.AcceptedSoundKitID = 890u;
 		quest.CompleteSoundKitID = 878u;
 		GameData.StoreQuestTemplate(response.QuestID, quest);
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_CREATURE_RESPONSE)]
@@ -7270,7 +7270,7 @@ public class WorldClient
 		if (id.Value)
 		{
 			response.Allow = false;
-			this.SendPacketToClient(response);
+			SendPacketToClient(response);
 			return;
 		}
 		response.Allow = true;
@@ -7345,7 +7345,7 @@ public class WorldClient
 		creature.MovementInfoID = 1693u;
 		creature.Class = 1;
 		GameData.StoreCreatureTemplate(response.CreatureID, creature);
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_GAME_OBJECT_RESPONSE)]
@@ -7358,7 +7358,7 @@ public class WorldClient
 		if (id.Value)
 		{
 			response.Allow = false;
-			this.SendPacketToClient(response);
+			SendPacketToClient(response);
 			return;
 		}
 		response.Allow = true;
@@ -7400,7 +7400,7 @@ public class WorldClient
 		GetSession().GameState.GameObjectQueryCache[response.GameObjectID] = response;
 		if (gameObject.Type == 15) // MO_TRANSPORT — log template data for debugging
 			Log.Print(LogType.Debug, $"[GOQuery] Entry={response.GameObjectID} Type={gameObject.Type} DisplayID={gameObject.DisplayID} Name={gameObject.Name[0]} data0(pathID)={gameObject.Data[0]} data1(speed)={gameObject.Data[1]} data2(accel)={gameObject.Data[2]} Size={gameObject.Size}");
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_PAGE_TEXT_RESPONSE)]
@@ -7416,7 +7416,7 @@ public class WorldClient
 			NextPageID = packet.ReadUInt32()
 		};
 		response.Pages.Add(page);
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUERY_NPC_TEXT_RESPONSE)]
@@ -7428,7 +7428,7 @@ public class WorldClient
 		if (id.Value)
 		{
 			response.Allow = false;
-			this.SendPacketToClient(response);
+			SendPacketToClient(response);
 			return;
 		}
 		response.Allow = true;
@@ -7454,7 +7454,7 @@ public class WorldClient
 				response.BroadcastTextID[i] = GameData.GetBroadcastTextId(maleText, femaleText, language, emoteDelays, emotes);
 			}
 		}
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_ITEM_QUERY_SINGLE_RESPONSE)]
@@ -7466,31 +7466,31 @@ public class WorldClient
 			// Server doesn't have this item - remove from requested sets but do NOT send
 			// Invalid DBReply, as that would poison the client's hotfix cache before a
 			// valid hotfix can arrive from a different query
-			this.GetSession().GameState.RequestedItemHotfixes.Remove((uint)entry.Key);
-			this.GetSession().GameState.RequestedItemSparseHotfixes.Remove((uint)entry.Key);
-			Log.Print(LogType.Debug, $"Item #{entry.Key} not found on legacy server, skipping Invalid DBReply.", "HandleItemQueryResponse", "QueryHandler.cs");
+			GetSession().GameState.RequestedItemHotfixes.Remove((uint)entry.Key);
+			GetSession().GameState.RequestedItemSparseHotfixes.Remove((uint)entry.Key);
+			Log.Print(LogType.Debug, $"Item #{entry.Key} not found on legacy server, skipping Invalid DBReply.", "QueryHandler.cs");
 		}
 		else
 		{
 			ItemTemplate item = new ItemTemplate();
 			item.ReadFromLegacyPacket((uint)entry.Key, packet);
-			this.SendItemUpdatesIfNeeded(item);
+			SendItemUpdatesIfNeeded(item);
 			GameData.StoreItemTemplate((uint)entry.Key, item);
 
 			// Flush any buffered item CreateObjects that were waiting for this template
 			uint itemEntryKey = (uint)entry.Key;
-			if (this.GetSession().GameState.PendingItemCreates.TryGetValue(itemEntryKey, out var pendingUpdates))
+			if (GetSession().GameState.PendingItemCreates.TryGetValue(itemEntryKey, out var pendingUpdates))
 			{
-				this.GetSession().GameState.PendingItemCreates.Remove(itemEntryKey);
-				UpdateObject updateObject = new UpdateObject(this.GetSession().GameState);
+				GetSession().GameState.PendingItemCreates.Remove(itemEntryKey);
+				UpdateObject updateObject = new UpdateObject(GetSession().GameState);
 				foreach (var pending in pendingUpdates)
 				{
 					updateObject.ObjectUpdates.Add(pending);
-					Log.Print(LogType.Debug, $"Flushing buffered item CreateObject {pending.Guid} entry={itemEntryKey} after template arrived.", "HandleItemQueryResponse", "");
+					Log.Print(LogType.Debug, $"Flushing buffered item CreateObject {pending.Guid} entry={itemEntryKey} after template arrived.", "");
 				}
 				if (updateObject.ObjectUpdates.Count > 0)
 				{
-					this.SendPacketToClient(updateObject);
+					SendPacketToClient(updateObject);
 				}
 			}
 		}
@@ -7507,19 +7507,19 @@ public class WorldClient
 		HotFixMessage reply = GameData.GenerateItemUpdateIfNeeded(item);
 		if (reply != null)
 		{
-			this.SendPacketToClient(reply);
+			SendPacketToClient(reply);
 		}
 		reply = GameData.GenerateItemSparseUpdateIfNeeded(item);
 		if (reply != null)
 		{
-			this.SendPacketToClient(reply);
+			SendPacketToClient(reply);
 			DBReply replyA = new DBReply();
 			replyA.Status = HotfixStatus.Valid;
 			replyA.Timestamp = (uint)Time.UnixTime;
 			replyA.RecordID = reply.Hotfixes[0].RecordId;
 			replyA.TableHash = reply.Hotfixes[0].TableHash;
 			replyA.Data = reply.Hotfixes[0].HotfixContent;
-			this.SendPacketToClient(replyA);
+			SendPacketToClient(replyA);
 		}
 		// Skip ItemEffect hotfix for mount items (class 15, subclass 5) — the DB2 already has
 		// the correct mount summon spell; overwriting with the learn spell (55884) breaks the
@@ -7531,7 +7531,7 @@ public class WorldClient
 				reply = GameData.GenerateItemEffectUpdateIfNeeded(item, i);
 				if (reply != null)
 				{
-					this.SendPacketToClient(reply);
+					SendPacketToClient(reply);
 				}
 			}
 		}
@@ -7540,12 +7540,12 @@ public class WorldClient
 			reply = GameData.GenerateItemAppearanceUpdateIfNeeded(item);
 			if (reply != null)
 			{
-				this.SendPacketToClient(reply);
+				SendPacketToClient(reply);
 			}
 			reply = GameData.GenerateItemModifiedAppearanceUpdateIfNeeded(item);
 			if (reply != null)
 			{
-				this.SendPacketToClient(reply);
+				SendPacketToClient(reply);
 			}
 		}
 	}
@@ -7554,10 +7554,10 @@ public class WorldClient
 	private void HandleQueryPetNameResponse(WorldPacket packet)
 	{
 		uint petNumber = packet.ReadUInt32();
-		WowGuid128 guid = this.GetSession().GameState.GetPetGuidByNumber(petNumber);
+		WowGuid128 guid = GetSession().GameState.GetPetGuidByNumber(petNumber);
 		if (guid == null)
 		{
-			Log.Print(LogType.Error, $"Pet name query response for unknown pet {petNumber}!", "HandleQueryPetNameResponse", "QueryHandler.cs");
+			Log.Print(LogType.Error, $"Pet name query response for unknown pet {petNumber}!", "QueryHandler.cs");
 			return;
 		}
 		QueryPetNameResponse response = new QueryPetNameResponse();
@@ -7578,7 +7578,7 @@ public class WorldClient
 				response.DeclinedNames.name[i] = packet.ReadCString();
 			}
 		}
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_ITEM_NAME_QUERY_RESPONSE)]
@@ -7597,7 +7597,7 @@ public class WorldClient
 	private void HandleWhoResponse(WorldPacket packet)
 	{
 		WhoResponsePkt response = new WhoResponsePkt();
-		response.RequestID = this.GetSession().GameState.LastWhoRequestId;
+		response.RequestID = GetSession().GameState.LastWhoRequestId;
 		uint count = packet.ReadUInt32();
 		packet.ReadUInt32();
 		for (int i = 0; i < count; i++)
@@ -7613,21 +7613,21 @@ public class WorldClient
 				player.PlayerData.Sex = (Gender)packet.ReadUInt8();
 			}
 			player.AreaID = packet.ReadInt32();
-			player.PlayerData.GuidActual = this.GetSession().GameState.GetPlayerGuidByName(player.PlayerData.Name);
+			player.PlayerData.GuidActual = GetSession().GameState.GetPlayerGuidByName(player.PlayerData.Name);
 			if (player.PlayerData.GuidActual == null)
 			{
 				player.PlayerData.GuidActual = WowGuid128.CreateUnknownPlayerGuid();
 			}
-			player.PlayerData.AccountID = this.GetSession().GetGameAccountGuidForPlayer(player.PlayerData.GuidActual);
-			player.PlayerData.BnetAccountID = this.GetSession().GetBnetAccountGuidForPlayer(player.PlayerData.GuidActual);
-			player.PlayerData.VirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+			player.PlayerData.AccountID = GetSession().GetGameAccountGuidForPlayer(player.PlayerData.GuidActual);
+			player.PlayerData.BnetAccountID = GetSession().GetBnetAccountGuidForPlayer(player.PlayerData.GuidActual);
+			player.PlayerData.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 			if (!string.IsNullOrEmpty(player.GuildName))
 			{
-				player.GuildGUID = this.GetSession().GetGuildGuid(player.GuildName);
+				player.GuildGUID = GetSession().GetGuildGuid(player.GuildName);
 				player.GuildVirtualRealmAddress = player.PlayerData.VirtualRealmAddress;
 			}
 			response.Players.Add(player);
-			this.Session.GameState.UpdatePlayerCache(player.PlayerData.GuidActual, new PlayerCache
+			Session.GameState.UpdatePlayerCache(player.PlayerData.GuidActual, new PlayerCache
 			{
 				Name = player.PlayerData.Name,
 				RaceId = player.PlayerData.RaceID,
@@ -7636,18 +7636,18 @@ public class WorldClient
 				Level = player.PlayerData.Level
 			});
 		}
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_GIVER_QUEST_DETAILS)]
 	private void HandleQuestGiverQuestDetails(WorldPacket packet)
 	{
 		QuestGiverQuestDetails quest = new QuestGiverQuestDetails();
-		quest.QuestGiverGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = quest.QuestGiverGUID;
+		quest.QuestGiverGUID = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = quest.QuestGiverGUID;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			quest.InformUnit = packet.ReadGuid().To128(this.GetSession().GameState);
+			quest.InformUnit = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		else
 		{
@@ -7695,14 +7695,14 @@ public class WorldClient
 				quest.Rewards.XP = packet.ReadUInt32();
 			}
 		}
-		this.ReadExtraQuestInfo(packet, quest.Rewards, readFlags: false);
+		ReadExtraQuestInfo(packet, quest.Rewards, readFlags: false);
 		uint emoteCount = packet.ReadUInt32();
 		for (int i = 0; i < emoteCount; i++)
 		{
 			quest.DescEmotes[i].Type = packet.ReadUInt32();
 			quest.DescEmotes[i].Delay = packet.ReadUInt32();
 		}
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 	}
 
 	private void ReadExtraQuestInfo(WorldPacket packet, QuestRewards rewards, bool readFlags)
@@ -7777,9 +7777,9 @@ public class WorldClient
 	private void HandleQuestGiverStatus(WorldPacket packet)
 	{
 		QuestGiverStatusPkt response = new QuestGiverStatusPkt();
-		response.QuestGiver.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
+		response.QuestGiver.Guid = packet.ReadGuid().To128(GetSession().GameState);
 		response.QuestGiver.Status = LegacyVersion.ConvertQuestGiverStatus(packet.ReadUInt8());
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_GIVER_STATUS_MULTIPLE)]
@@ -7790,29 +7790,29 @@ public class WorldClient
 		for (int i = 0; i < count; i++)
 		{
 			QuestGiverInfo info = new QuestGiverInfo();
-			info.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
+			info.Guid = packet.ReadGuid().To128(GetSession().GameState);
 			info.Status = LegacyVersion.ConvertQuestGiverStatus(packet.ReadUInt8());
 			response.QuestGivers.Add(info);
 		}
-		this.SendPacketToClient(response);
+		SendPacketToClient(response);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_GIVER_QUEST_LIST_MESSAGE)]
 	private void HandleQuestGiverQuestListMessage(WorldPacket packet)
 	{
 		QuestGiverQuestListMessage quests = new QuestGiverQuestListMessage();
-		quests.QuestGiverGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = quests.QuestGiverGUID;
+		quests.QuestGiverGUID = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = quests.QuestGiverGUID;
 		quests.Greeting = packet.ReadCString();
 		quests.GreetEmoteDelay = packet.ReadUInt32();
 		quests.GreetEmoteType = packet.ReadUInt32();
 		byte count = packet.ReadUInt8();
 		for (int i = 0; i < count; i++)
 		{
-			ClientGossipQuest quest = this.ReadGossipQuestOption(packet);
+			ClientGossipQuest quest = ReadGossipQuestOption(packet);
 			quests.QuestOptions.Add(quest);
 		}
-		this.SendPacketToClient(quests);
+		SendPacketToClient(quests);
 	}
 
 	private ClientGossipQuest ReadGossipQuestOption(WorldPacket packet)
@@ -7840,8 +7840,8 @@ public class WorldClient
 	private void HandleQuestGiverRequestItems(WorldPacket packet)
 	{
 		QuestGiverRequestItems quest = new QuestGiverRequestItems();
-		quest.QuestGiverGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = quest.QuestGiverGUID;
+		quest.QuestGiverGUID = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = quest.QuestGiverGUID;
 		quest.QuestGiverCreatureID = quest.QuestGiverGUID.GetEntry();
 		quest.QuestID = packet.ReadUInt32();
 		quest.QuestTitle = packet.ReadCString();
@@ -7888,15 +7888,15 @@ public class WorldClient
 		{
 			packet.ReadUInt32();
 		}
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_GIVER_OFFER_REWARD_MESSAGE)]
 	private void HandleQuestGiverOfferRewardMessage(WorldPacket packet)
 	{
 		QuestGiverOfferRewardMessage quest = new QuestGiverOfferRewardMessage();
-		quest.QuestData.QuestGiverGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.GetSession().GameState.CurrentInteractedWithNPC = quest.QuestData.QuestGiverGUID;
+		quest.QuestData.QuestGiverGUID = packet.ReadGuid().To128(GetSession().GameState);
+		GetSession().GameState.CurrentInteractedWithNPC = quest.QuestData.QuestGiverGUID;
 		quest.QuestData.QuestGiverCreatureID = quest.QuestData.QuestGiverGUID.GetEntry();
 		quest.QuestGiverCreatureID = (int)quest.QuestData.QuestGiverGUID.GetEntry();
 		quest.QuestData.QuestID = packet.ReadUInt32();
@@ -7927,7 +7927,7 @@ public class WorldClient
 				Type = packet.ReadUInt32()
 			};
 		}
-		this.ReadExtraQuestInfo(packet, quest.QuestData.Rewards, readFlags: true);
+		ReadExtraQuestInfo(packet, quest.QuestData.Rewards, readFlags: true);
 		// Cache quest template for reward selection (HandleQuestGiverChooseReward needs it)
 		if (GameData.GetQuestTemplate(quest.QuestData.QuestID) == null)
 		{
@@ -7939,7 +7939,7 @@ public class WorldClient
 			}
 			GameData.StoreQuestTemplate(quest.QuestData.QuestID, cached);
 		}
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_GIVER_QUEST_COMPLETE)]
@@ -7947,7 +7947,7 @@ public class WorldClient
 	{
 		QuestGiverQuestComplete quest = new QuestGiverQuestComplete();
 		quest.QuestID = packet.ReadUInt32();
-		this.GetSession().GameState.CurrentPlayerStorage.CompletedQuests.MarkQuestAsCompleted(quest.QuestID);
+		GetSession().GameState.CurrentPlayerStorage.CompletedQuests.MarkQuestAsCompleted(quest.QuestID);
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			packet.ReadUInt32();
@@ -7984,16 +7984,16 @@ public class WorldClient
 		if (questTemplate != null && questTemplate.RewardNextQuest == 0)
 		{
 			quest.LaunchQuest = false;
-			if (this.GetSession().GameState.CurrentInteractedWithNPC != null)
+			if (GetSession().GameState.CurrentInteractedWithNPC != null)
 			{
-				uint npcFlags = this.GetSession().GameState.GetLegacyFieldValueUInt32(this.GetSession().GameState.CurrentInteractedWithNPC, UnitField.UNIT_NPC_FLAGS);
+				uint npcFlags = GetSession().GameState.GetLegacyFieldValueUInt32(GetSession().GameState.CurrentInteractedWithNPC, UnitField.UNIT_NPC_FLAGS);
 				if (npcFlags.HasAnyFlag(NPCFlags.Gossip))
 				{
 					quest.LaunchGossip = true;
 				}
 			}
 		}
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 		DisplayToast toast = new DisplayToast();
 		toast.QuestID = quest.QuestID;
 		if (itemId != 0 && itemCount != 0)
@@ -8007,7 +8007,7 @@ public class WorldClient
 			toast.Quantity = 60uL;
 			toast.Type = 2;
 		}
-		this.SendPacketToClient(toast);
+		SendPacketToClient(toast);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_GIVER_QUEST_FAILED)]
@@ -8016,7 +8016,7 @@ public class WorldClient
 		QuestGiverQuestFailed quest = new QuestGiverQuestFailed();
 		quest.QuestID = packet.ReadUInt32();
 		quest.Reason = LegacyVersion.ConvertInventoryResult(packet.ReadUInt32());
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_GIVER_INVALID_QUEST)]
@@ -8024,7 +8024,7 @@ public class WorldClient
 	{
 		QuestGiverInvalidQuest quest = new QuestGiverInvalidQuest();
 		quest.Reason = (QuestFailedReasons)packet.ReadUInt32();
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_UPDATE_COMPLETE)]
@@ -8034,7 +8034,7 @@ public class WorldClient
 	{
 		QuestUpdateStatus quest = new QuestUpdateStatus(packet.GetUniversalOpcode(isModern: false));
 		quest.QuestID = packet.ReadUInt32();
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_UPDATE_ADD_ITEM)]
@@ -8047,16 +8047,16 @@ public class WorldClient
 		{
 			return;
 		}
-		Dictionary<int, UpdateField> updateFields = this.GetSession().GameState.GetCachedObjectFieldsLegacy(this.GetSession().GameState.CurrentPlayerGuid);
+		Dictionary<int, UpdateField> updateFields = GetSession().GameState.GetCachedObjectFieldsLegacy(GetSession().GameState.CurrentPlayerGuid);
 		int questsCount = LegacyVersion.GetQuestLogSize();
 		for (int i = 0; i < questsCount; i++)
 		{
-			QuestLog logEntry = this.ReadQuestLogEntry(i, null, updateFields);
+			QuestLog logEntry = ReadQuestLogEntry(i, null, updateFields);
 			if (logEntry != null && logEntry.QuestID.HasValue && GameData.GetQuestTemplate((uint)logEntry.QuestID.Value) == null)
 			{
 				WorldPacket packet2 = new WorldPacket(Opcode.CMSG_QUERY_QUEST_INFO);
 				packet2.WriteUInt32((uint)logEntry.QuestID.Value);
-				this.SendPacketToServer(packet2);
+				SendPacketToServer(packet2);
 			}
 		}
 	}
@@ -8071,8 +8071,8 @@ public class WorldClient
 		credit.ObjectiveType = (entry.Value ? QuestObjectiveType.GameObject : QuestObjectiveType.Monster);
 		credit.Count = (ushort)packet.ReadUInt32();
 		credit.Required = (ushort)packet.ReadUInt32();
-		credit.VictimGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(credit);
+		credit.VictimGUID = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(credit);
 	}
 
 	[PacketHandler(Opcode.SMSG_QUEST_CONFIRM_ACCEPT)]
@@ -8081,23 +8081,23 @@ public class WorldClient
 		QuestConfirmAccept quest = new QuestConfirmAccept();
 		quest.QuestID = packet.ReadUInt32();
 		quest.QuestTitle = packet.ReadCString();
-		quest.InitiatedBy = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(quest);
+		quest.InitiatedBy = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(quest);
 	}
 
 	[PacketHandler(Opcode.MSG_QUEST_PUSH_RESULT)]
 	private void HandleQuestPushResult(WorldPacket packet)
 	{
 		QuestPushResult quest = new QuestPushResult();
-		quest.SenderGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		quest.SenderGUID = packet.ReadGuid().To128(GetSession().GameState);
 		quest.Result = (QuestPushReason)packet.ReadUInt8();
-		this.SendPacketToClient(quest);
+		SendPacketToClient(quest);
 	}
 
 	[PacketHandler(Opcode.SMSG_INITIALIZE_FACTIONS)]
 	private void HandleInitializeFactions(WorldPacket packet)
 	{
-		if (this.GetSession().GameState.IsFirstEnterWorld)
+		if (GetSession().GameState.IsFirstEnterWorld)
 		{
 			InitializeFactions factions = new InitializeFactions();
 			uint count = packet.ReadUInt32();
@@ -8106,10 +8106,10 @@ public class WorldClient
 				factions.FactionFlags[i] = (ReputationFlags)packet.ReadUInt8();
 				factions.FactionStandings[i] = packet.ReadInt32();
 			}
-			this.SendPacketToClient(factions);
+			SendPacketToClient(factions);
 			if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
-				this.SendPacketToClient(new TimeSyncRequest());
+				SendPacketToClient(new TimeSyncRequest());
 			}
 		}
 	}
@@ -8138,7 +8138,7 @@ public class WorldClient
 			};
 			standing.Factions.Add(faction);
 		}
-		this.SendPacketToClient(standing);
+		SendPacketToClient(standing);
 	}
 
 	[PacketHandler(Opcode.SMSG_SET_FORCED_REACTIONS)]
@@ -8155,7 +8155,7 @@ public class WorldClient
 			};
 			reactions.Reactions.Add(reaction);
 		}
-		this.SendPacketToClient(reactions);
+		SendPacketToClient(reactions);
 	}
 
 	[PacketHandler(Opcode.SMSG_SET_FACTION_VISIBLE)]
@@ -8163,7 +8163,7 @@ public class WorldClient
 	{
 		SetFactionVisible faction = new SetFactionVisible(visible: true);
 		faction.FactionIndex = packet.ReadUInt32();
-		this.SendPacketToClient(faction);
+		SendPacketToClient(faction);
 	}
 
 	[PacketHandler(Opcode.SMSG_FRIEND_LIST)]
@@ -8176,10 +8176,10 @@ public class WorldClient
 		{
 			ContactInfo contact = new ContactInfo();
 			contact.TypeFlags = SocialFlag.Friend;
-			contact.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-			contact.WowAccountGuid = this.GetSession().GetGameAccountGuidForPlayer(contact.Guid);
-			contact.NativeRealmAddr = this.GetSession().RealmId.GetAddress();
-			contact.VirtualRealmAddr = this.GetSession().RealmId.GetAddress();
+			contact.Guid = packet.ReadGuid().To128(GetSession().GameState);
+			contact.WowAccountGuid = GetSession().GetGameAccountGuidForPlayer(contact.Guid);
+			contact.NativeRealmAddr = GetSession().RealmId.GetAddress();
+			contact.VirtualRealmAddr = GetSession().RealmId.GetAddress();
 			contact.Status = (FriendStatus)packet.ReadUInt8();
 			if (contact.Status != FriendStatus.Offline)
 			{
@@ -8189,7 +8189,7 @@ public class WorldClient
 			}
 			contacts.Contacts.Add(contact);
 		}
-		this.SendPacketToClient(contacts);
+		SendPacketToClient(contacts);
 	}
 
 	[PacketHandler(Opcode.SMSG_IGNORE_LIST)]
@@ -8203,15 +8203,15 @@ public class WorldClient
 		{
 			ContactInfo contact = new ContactInfo();
 			contact.TypeFlags = SocialFlag.Ignored;
-			contact.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-			contact.WowAccountGuid = this.GetSession().GetGameAccountGuidForPlayer(contact.Guid);
-			contact.NativeRealmAddr = this.GetSession().RealmId.GetAddress();
-			contact.VirtualRealmAddr = this.GetSession().RealmId.GetAddress();
+			contact.Guid = packet.ReadGuid().To128(GetSession().GameState);
+			contact.WowAccountGuid = GetSession().GetGameAccountGuidForPlayer(contact.Guid);
+			contact.NativeRealmAddr = GetSession().RealmId.GetAddress();
+			contact.VirtualRealmAddr = GetSession().RealmId.GetAddress();
 			contacts.Contacts.Add(contact);
 			ignoredPlayers.Add(contact.Guid);
 		}
-		this.Session.GameState.IgnoredPlayers = ignoredPlayers;
-		this.SendPacketToClient(contacts);
+		Session.GameState.IgnoredPlayers = ignoredPlayers;
+		SendPacketToClient(contacts);
 	}
 
 	[PacketHandler(Opcode.SMSG_CONTACT_LIST)]
@@ -8223,10 +8223,10 @@ public class WorldClient
 		for (int i = 0; i < count; i++)
 		{
 			ContactInfo contact = new ContactInfo();
-			contact.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-			contact.WowAccountGuid = this.GetSession().GetGameAccountGuidForPlayer(contact.Guid);
-			contact.NativeRealmAddr = this.GetSession().RealmId.GetAddress();
-			contact.VirtualRealmAddr = this.GetSession().RealmId.GetAddress();
+			contact.Guid = packet.ReadGuid().To128(GetSession().GameState);
+			contact.WowAccountGuid = GetSession().GetGameAccountGuidForPlayer(contact.Guid);
+			contact.NativeRealmAddr = GetSession().RealmId.GetAddress();
+			contact.VirtualRealmAddr = GetSession().RealmId.GetAddress();
 			contact.TypeFlags = (SocialFlag)packet.ReadUInt32();
 			contact.Note = packet.ReadCString();
 			if (contact.TypeFlags.HasAnyFlag(SocialFlag.Friend))
@@ -8241,7 +8241,7 @@ public class WorldClient
 			}
 			contacts.Contacts.Add(contact);
 		}
-		this.SendPacketToClient(contacts);
+		SendPacketToClient(contacts);
 	}
 
 	[PacketHandler(Opcode.SMSG_FRIEND_STATUS)]
@@ -8249,9 +8249,9 @@ public class WorldClient
 	{
 		FriendStatusPkt friend = new FriendStatusPkt();
 		friend.FriendResult = (FriendsResult)packet.ReadUInt8();
-		friend.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		friend.WowAccountGuid = this.GetSession().GetGameAccountGuidForPlayer(friend.Guid);
-		friend.VirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+		friend.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		friend.WowAccountGuid = GetSession().GetGameAccountGuidForPlayer(friend.Guid);
+		friend.VirtualRealmAddress = GetSession().RealmId.GetAddress();
 		switch (friend.FriendResult)
 		{
 		case FriendsResult.AddedOffline:
@@ -8277,14 +8277,14 @@ public class WorldClient
 			friend.ClassID = (Class)packet.ReadUInt32();
 			break;
 		}
-		this.SendPacketToClient(friend);
+		SendPacketToClient(friend);
 		if (friend.FriendResult == FriendsResult.IgnoreAdded)
 		{
-			this.Session.GameState.IgnoredPlayers.Add(friend.Guid);
+			Session.GameState.IgnoredPlayers.Add(friend.Guid);
 		}
 		else if (friend.FriendResult == FriendsResult.IgnoreRemoved)
 		{
-			this.Session.GameState.IgnoredPlayers.Remove(friend.Guid);
+			Session.GameState.IgnoredPlayers.Remove(friend.Guid);
 		}
 	}
 
@@ -8299,13 +8299,13 @@ public class WorldClient
 			if (!packet.CanRead()) break;
 			uint spellId = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767)) ? packet.ReadUInt16() : packet.ReadUInt32());
 			spells.KnownSpells.Add(spellId);
-			this.GetSession().GameState.KnownSpells.Add(spellId);
+			GetSession().GameState.KnownSpells.Add(spellId);
 			if (!packet.CanRead()) break;
 			packet.ReadInt16();
 		}
-		this.SendPacketToClient(spells);
+		SendPacketToClient(spells);
 		// Send mount collection based on known mount spells
-		this.SendAccountMountUpdate();
+		SendAccountMountUpdate();
 		if (!packet.CanRead())
 			return;
 		ushort cooldownCount = packet.ReadUInt16();
@@ -8325,12 +8325,12 @@ public class WorldClient
 				history.CategoryRecoveryTime = packet.ReadInt32();
 				histories.Entries.Add(history);
 			}
-			this.SendPacketToClient(histories, Opcode.SMSG_SEND_UNLEARN_SPELLS);
+			SendPacketToClient(histories, Opcode.SMSG_SEND_UNLEARN_SPELLS);
 		}
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			this.SendPacketToClient(new SendUnlearnSpells());
-			this.SendPacketToClient(new SendSpellCharges());
+			SendPacketToClient(new SendUnlearnSpells());
+			SendPacketToClient(new SendSpellCharges());
 		}
 	}
 
@@ -8352,7 +8352,7 @@ public class WorldClient
 		}
 		spells.SpellID.Add(spellId);
 		spells.Superceded.Add(supercededId);
-		this.SendPacketToClient(spells);
+		SendPacketToClient(spells);
 	}
 
 	[PacketHandler(Opcode.SMSG_LEARNED_SPELL)]
@@ -8366,11 +8366,11 @@ public class WorldClient
 			IsFavorite = false,
 			Superceded = null
 		});
-		this.GetSession().GameState.KnownSpells.Add(spellId);
-		this.SendPacketToClient(spells);
+		GetSession().GameState.KnownSpells.Add(spellId);
+		SendPacketToClient(spells);
 		// If this is a mount spell, update the mount collection
 		if (GameData.MountSpells.Contains(spellId))
-			this.SendAccountMountUpdate();
+			SendAccountMountUpdate();
 	}
 
 	/// <summary>
@@ -8380,13 +8380,13 @@ public class WorldClient
 	private void SendAccountMountUpdate()
 	{
 		AccountMountUpdate update = new AccountMountUpdate();
-		foreach (uint spellId in this.GetSession().GameState.KnownSpells)
+		foreach (uint spellId in GetSession().GameState.KnownSpells)
 		{
 			if (GameData.MountSpells.Contains(spellId))
 				update.MountSpellIDs.Add(spellId);
 		}
-		this.SendPacketToClient(update);
-		Log.Print(LogType.Debug, $"[MountUpdate] Sent {update.MountSpellIDs.Count} mounts to client", "SendAccountMountUpdate", "");
+		SendPacketToClient(update);
+		Log.Print(LogType.Debug, $"[MountUpdate] Sent {update.MountSpellIDs.Count} mounts to client", "");
 	}
 
 	[PacketHandler(Opcode.SMSG_SEND_UNLEARN_SPELLS)]
@@ -8399,7 +8399,7 @@ public class WorldClient
 			uint spellId = packet.ReadUInt32();
 			spells.Spells.Add(spellId);
 		}
-		this.SendPacketToClient(spells);
+		SendPacketToClient(spells);
 	}
 
 	[PacketHandler(Opcode.SMSG_UNLEARNED_SPELLS)]
@@ -8408,7 +8408,7 @@ public class WorldClient
 		UnlearnedSpells spells = new UnlearnedSpells();
 		uint spellId = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_0_9767)) ? packet.ReadUInt16() : packet.ReadUInt32());
 		spells.Spells.Add(spellId);
-		this.SendPacketToClient(spells);
+		SendPacketToClient(spells);
 	}
 
 	[PacketHandler(Opcode.SMSG_CAST_FAILED)]
@@ -8432,7 +8432,7 @@ public class WorldClient
 			}
 		}
 		uint reason = packet.ReadUInt8();
-		Log.Print(LogType.Debug, $"[CastFailed] SpellID={spellId} Reason={reason}", "HandleCastFailed", "");
+		Log.Print(LogType.Debug, $"[CastFailed] SpellID={spellId} Reason={reason}", "");
 		if (LegacyVersion.InVersion(ClientVersionBuild.V2_0_1_6180, ClientVersionBuild.V3_0_2_9056))
 		{
 			packet.ReadUInt8();
@@ -8447,45 +8447,45 @@ public class WorldClient
 		{
 			arg2 = packet.ReadInt32();
 		}
-		if (this.GetSession().GameState.CurrentClientSpecialCast != null && this.GetSession().GameState.CurrentClientSpecialCast.SpellId == spellId)
+		if (GetSession().GameState.CurrentClientSpecialCast != null && GetSession().GameState.CurrentClientSpecialCast.SpellId == spellId)
 		{
 			CastFailed failed = new CastFailed();
-			failed.SpellID = this.GetSession().GameState.CurrentClientSpecialCast.SpellId;
-			failed.SpellXSpellVisualID = this.GetSession().GameState.CurrentClientSpecialCast.SpellXSpellVisualId;
+			failed.SpellID = GetSession().GameState.CurrentClientSpecialCast.SpellId;
+			failed.SpellXSpellVisualID = GetSession().GameState.CurrentClientSpecialCast.SpellXSpellVisualId;
 			failed.Reason = LegacyVersion.ConvertSpellCastResult(reason);
-			failed.CastID = this.GetSession().GameState.CurrentClientSpecialCast.ServerGUID;
+			failed.CastID = GetSession().GameState.CurrentClientSpecialCast.ServerGUID;
 			failed.FailedArg1 = arg1;
 			failed.FailedArg2 = arg2;
-			this.SendPacketToClient(failed);
-			this.GetSession().GameState.CurrentClientSpecialCast = null;
+			SendPacketToClient(failed);
+			GetSession().GameState.CurrentClientSpecialCast = null;
 		}
 		else
 		{
-			if (this.GetSession().GameState.CurrentClientNormalCast == null || this.GetSession().GameState.CurrentClientNormalCast.SpellId != spellId)
+			if (GetSession().GameState.CurrentClientNormalCast == null || GetSession().GameState.CurrentClientNormalCast.SpellId != spellId)
 			{
 				return;
 			}
-			if (!this.GetSession().GameState.CurrentClientNormalCast.HasStarted)
+			if (!GetSession().GameState.CurrentClientNormalCast.HasStarted)
 			{
 				SpellPrepare prepare2 = new SpellPrepare();
-				prepare2.ClientCastID = this.GetSession().GameState.CurrentClientNormalCast.ClientGUID;
-				prepare2.ServerCastID = this.GetSession().GameState.CurrentClientNormalCast.ServerGUID;
-				this.SendPacketToClient(prepare2);
+				prepare2.ClientCastID = GetSession().GameState.CurrentClientNormalCast.ClientGUID;
+				prepare2.ServerCastID = GetSession().GameState.CurrentClientNormalCast.ServerGUID;
+				SendPacketToClient(prepare2);
 			}
 			CastFailed failed2 = new CastFailed();
-			failed2.SpellID = this.GetSession().GameState.CurrentClientNormalCast.SpellId;
-			failed2.SpellXSpellVisualID = this.GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
+			failed2.SpellID = GetSession().GameState.CurrentClientNormalCast.SpellId;
+			failed2.SpellXSpellVisualID = GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
 			failed2.Reason = LegacyVersion.ConvertSpellCastResult(reason);
-			failed2.CastID = this.GetSession().GameState.CurrentClientNormalCast.ServerGUID;
+			failed2.CastID = GetSession().GameState.CurrentClientNormalCast.ServerGUID;
 			failed2.FailedArg1 = arg1;
 			failed2.FailedArg2 = arg2;
-			this.SendPacketToClient(failed2);
-			this.GetSession().GameState.CurrentClientNormalCast = null;
-			foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientCasts)
+			SendPacketToClient(failed2);
+			GetSession().GameState.CurrentClientNormalCast = null;
+			foreach (ClientCastRequest pending in GetSession().GameState.PendingClientCasts)
 			{
-				this.GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: false);
+				GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: false);
 			}
-			this.GetSession().GameState.PendingClientCasts.Clear();
+			GetSession().GameState.PendingClientCasts.Clear();
 		}
 	}
 
@@ -8498,28 +8498,28 @@ public class WorldClient
 		}
 		uint spellId = packet.ReadUInt32();
 		byte status = packet.ReadUInt8();
-		if (status != 2 || this.GetSession().GameState.CurrentClientPetCast == null || this.GetSession().GameState.CurrentClientPetCast.SpellId != spellId)
+		if (status != 2 || GetSession().GameState.CurrentClientPetCast == null || GetSession().GameState.CurrentClientPetCast.SpellId != spellId)
 		{
 			return;
 		}
-		if (!this.GetSession().GameState.CurrentClientPetCast.HasStarted)
+		if (!GetSession().GameState.CurrentClientPetCast.HasStarted)
 		{
 			SpellPrepare prepare2 = new SpellPrepare();
-			prepare2.ClientCastID = this.GetSession().GameState.CurrentClientPetCast.ClientGUID;
-			prepare2.ServerCastID = this.GetSession().GameState.CurrentClientPetCast.ServerGUID;
-			this.SendPacketToClient(prepare2);
+			prepare2.ClientCastID = GetSession().GameState.CurrentClientPetCast.ClientGUID;
+			prepare2.ServerCastID = GetSession().GameState.CurrentClientPetCast.ServerGUID;
+			SendPacketToClient(prepare2);
 		}
 		PetCastFailed spell = new PetCastFailed();
 		spell.SpellID = spellId;
 		uint reason = packet.ReadUInt8();
 		spell.Reason = LegacyVersion.ConvertSpellCastResult(reason);
-		spell.CastID = this.GetSession().GameState.CurrentClientPetCast.ServerGUID;
-		this.SendPacketToClient(spell);
-		foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientPetCasts)
+		spell.CastID = GetSession().GameState.CurrentClientPetCast.ServerGUID;
+		SendPacketToClient(spell);
+		foreach (ClientCastRequest pending in GetSession().GameState.PendingClientPetCasts)
 		{
-			this.GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: true);
+			GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: true);
 		}
-		this.GetSession().GameState.PendingClientPetCasts.Clear();
+		GetSession().GameState.PendingClientPetCasts.Clear();
 	}
 
 	[PacketHandler(Opcode.SMSG_PET_CAST_FAILED, ClientVersionBuild.V2_0_1_6180)]
@@ -8534,22 +8534,22 @@ public class WorldClient
 			packet.ReadUInt8();
 		}
 		uint spellId = packet.ReadUInt32();
-		if (this.GetSession().GameState.CurrentClientPetCast == null || this.GetSession().GameState.CurrentClientPetCast.SpellId != spellId)
+		if (GetSession().GameState.CurrentClientPetCast == null || GetSession().GameState.CurrentClientPetCast.SpellId != spellId)
 		{
 			return;
 		}
-		if (!this.GetSession().GameState.CurrentClientPetCast.HasStarted)
+		if (!GetSession().GameState.CurrentClientPetCast.HasStarted)
 		{
 			SpellPrepare prepare2 = new SpellPrepare();
-			prepare2.ClientCastID = this.GetSession().GameState.CurrentClientPetCast.ClientGUID;
-			prepare2.ServerCastID = this.GetSession().GameState.CurrentClientPetCast.ServerGUID;
-			this.SendPacketToClient(prepare2);
+			prepare2.ClientCastID = GetSession().GameState.CurrentClientPetCast.ClientGUID;
+			prepare2.ServerCastID = GetSession().GameState.CurrentClientPetCast.ServerGUID;
+			SendPacketToClient(prepare2);
 		}
 		PetCastFailed failed = new PetCastFailed();
 		failed.SpellID = spellId;
 		uint reason = packet.ReadUInt8();
 		failed.Reason = LegacyVersion.ConvertSpellCastResult(reason);
-		failed.CastID = this.GetSession().GameState.CurrentClientPetCast.ServerGUID;
+		failed.CastID = GetSession().GameState.CurrentClientPetCast.ServerGUID;
 		if (packet.CanRead())
 		{
 			failed.FailedArg1 = packet.ReadInt32();
@@ -8558,12 +8558,12 @@ public class WorldClient
 		{
 			failed.FailedArg2 = packet.ReadInt32();
 		}
-		this.SendPacketToClient(failed);
-		foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientPetCasts)
+		SendPacketToClient(failed);
+		foreach (ClientCastRequest pending in GetSession().GameState.PendingClientPetCasts)
 		{
-			this.GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: true);
+			GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: true);
 		}
-		this.GetSession().GameState.PendingClientPetCasts.Clear();
+		GetSession().GameState.PendingClientPetCasts.Clear();
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_FAILURE)]
@@ -8575,8 +8575,8 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_SPELL_FAILED_OTHER)]
 	private void HandleSpellFailedOther(WorldPacket packet)
 	{
-		WowGuid128 casterUnit = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? packet.ReadGuid().To128(this.GetSession().GameState) : packet.ReadPackedGuid().To128(this.GetSession().GameState));
-		if (casterUnit == this.GetSession().GameState.CurrentPlayerGuid && Settings.ClientSpellDelay > 0)
+		WowGuid128 casterUnit = ((!LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180)) ? packet.ReadGuid().To128(GetSession().GameState) : packet.ReadPackedGuid().To128(GetSession().GameState));
+		if (casterUnit == GetSession().GameState.CurrentPlayerGuid && Settings.ClientSpellDelay > 0)
 		{
 			Thread.Sleep(Settings.ClientSpellDelay);
 		}
@@ -8592,27 +8592,27 @@ public class WorldClient
 		}
 		WowGuid128 castId;
 		uint spellVisual;
-		if (this.GetSession().GameState.CurrentPlayerGuid == casterUnit && this.GetSession().GameState.CurrentClientNormalCast != null && this.GetSession().GameState.CurrentClientNormalCast.SpellId == spellId)
+		if (GetSession().GameState.CurrentPlayerGuid == casterUnit && GetSession().GameState.CurrentClientNormalCast != null && GetSession().GameState.CurrentClientNormalCast.SpellId == spellId)
 		{
-			castId = this.GetSession().GameState.CurrentClientNormalCast.ServerGUID;
-			spellVisual = this.GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
+			castId = GetSession().GameState.CurrentClientNormalCast.ServerGUID;
+			spellVisual = GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
 		}
-		else if (this.GetSession().GameState.CurrentPetGuid == casterUnit && this.GetSession().GameState.CurrentClientPetCast != null && this.GetSession().GameState.CurrentClientPetCast.SpellId == spellId)
+		else if (GetSession().GameState.CurrentPetGuid == casterUnit && GetSession().GameState.CurrentClientPetCast != null && GetSession().GameState.CurrentClientPetCast.SpellId == spellId)
 		{
-			castId = this.GetSession().GameState.CurrentClientPetCast.ServerGUID;
-			spellVisual = this.GetSession().GameState.CurrentClientPetCast.SpellXSpellVisualId;
+			castId = GetSession().GameState.CurrentClientPetCast.ServerGUID;
+			spellVisual = GetSession().GameState.CurrentClientPetCast.SpellXSpellVisualId;
 		}
-		else if (casterUnit == this.GetSession().GameState.CurrentPlayerGuid && this.GetSession().GameState.CurrentChanneledSpellId == spellId && this.GetSession().GameState.CurrentChanneledCastId != null)
+		else if (casterUnit == GetSession().GameState.CurrentPlayerGuid && GetSession().GameState.CurrentChanneledSpellId == spellId && GetSession().GameState.CurrentChanneledCastId != null)
 		{
 			// Channeled spell failure (e.g. fishing cancel) — use stored cast info
-			castId = this.GetSession().GameState.CurrentChanneledCastId;
-			spellVisual = this.GetSession().GameState.CurrentChanneledSpellVisualId;
-			this.GetSession().GameState.CurrentChanneledSpellId = 0;
-			this.GetSession().GameState.CurrentChanneledCastId = null;
+			castId = GetSession().GameState.CurrentChanneledCastId;
+			spellVisual = GetSession().GameState.CurrentChanneledSpellVisualId;
+			GetSession().GameState.CurrentChanneledSpellId = 0;
+			GetSession().GameState.CurrentChanneledCastId = null;
 		}
 		else
 		{
-			castId = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, this.GetSession().GameState.CurrentMapId.Value, spellId, spellId + casterUnit.GetCounter());
+			castId = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, spellId, spellId + casterUnit.GetCounter());
 			spellVisual = GameData.GetSpellVisual(spellId);
 		}
 		SpellFailure spell = new SpellFailure();
@@ -8621,68 +8621,68 @@ public class WorldClient
 		spell.SpellID = spellId;
 		spell.SpellXSpellVisualID = spellVisual;
 		spell.Reason = reason;
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 		SpellFailedOther spell2 = new SpellFailedOther();
 		spell2.CasterUnit = casterUnit;
 		spell2.CastID = castId;
 		spell2.SpellID = spellId;
 		spell2.SpellXSpellVisualID = spellVisual;
 		spell2.Reason = reason;
-		this.SendPacketToClient(spell2);
+		SendPacketToClient(spell2);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_START)]
 	private void HandleSpellStart(WorldPacket packet)
 	{
-		if (!this.GetSession().GameState.CurrentMapId.HasValue)
+		if (!GetSession().GameState.CurrentMapId.HasValue)
 		{
 			return;
 		}
 		SpellStart spell = new SpellStart();
-		spell.Cast = this.HandleSpellStartOrGo(packet, isSpellGo: false);
+		spell.Cast = HandleSpellStartOrGo(packet, isSpellGo: false);
 		byte failPending = 0;
-		if (this.GetSession().GameState.CurrentPlayerGuid == spell.Cast.CasterUnit && this.GetSession().GameState.CurrentClientNormalCast != null && this.GetSession().GameState.CurrentClientNormalCast.SpellId == spell.Cast.SpellID)
+		if (GetSession().GameState.CurrentPlayerGuid == spell.Cast.CasterUnit && GetSession().GameState.CurrentClientNormalCast != null && GetSession().GameState.CurrentClientNormalCast.SpellId == spell.Cast.SpellID)
 		{
-			spell.Cast.CastID = this.GetSession().GameState.CurrentClientNormalCast.ServerGUID;
-			spell.Cast.SpellXSpellVisualID = this.GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
-			this.GetSession().GameState.CurrentClientNormalCast.HasStarted = true;
+			spell.Cast.CastID = GetSession().GameState.CurrentClientNormalCast.ServerGUID;
+			spell.Cast.SpellXSpellVisualID = GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
+			GetSession().GameState.CurrentClientNormalCast.HasStarted = true;
 			SpellPrepare prepare = new SpellPrepare();
-			prepare.ClientCastID = this.GetSession().GameState.CurrentClientNormalCast.ClientGUID;
+			prepare.ClientCastID = GetSession().GameState.CurrentClientNormalCast.ClientGUID;
 			prepare.ServerCastID = spell.Cast.CastID;
-			this.SendPacketToClient(prepare);
+			SendPacketToClient(prepare);
 			failPending = 1;
 		}
-		else if (this.GetSession().GameState.CurrentPetGuid == spell.Cast.CasterUnit && this.GetSession().GameState.CurrentClientPetCast != null && this.GetSession().GameState.CurrentClientPetCast.SpellId == spell.Cast.SpellID)
+		else if (GetSession().GameState.CurrentPetGuid == spell.Cast.CasterUnit && GetSession().GameState.CurrentClientPetCast != null && GetSession().GameState.CurrentClientPetCast.SpellId == spell.Cast.SpellID)
 		{
-			spell.Cast.CastID = this.GetSession().GameState.CurrentClientPetCast.ServerGUID;
-			spell.Cast.SpellXSpellVisualID = this.GetSession().GameState.CurrentClientPetCast.SpellXSpellVisualId;
-			this.GetSession().GameState.CurrentClientPetCast.HasStarted = true;
+			spell.Cast.CastID = GetSession().GameState.CurrentClientPetCast.ServerGUID;
+			spell.Cast.SpellXSpellVisualID = GetSession().GameState.CurrentClientPetCast.SpellXSpellVisualId;
+			GetSession().GameState.CurrentClientPetCast.HasStarted = true;
 			SpellPrepare prepare2 = new SpellPrepare();
-			prepare2.ClientCastID = this.GetSession().GameState.CurrentClientPetCast.ClientGUID;
+			prepare2.ClientCastID = GetSession().GameState.CurrentClientPetCast.ClientGUID;
 			prepare2.ServerCastID = spell.Cast.CastID;
-			this.SendPacketToClient(prepare2);
+			SendPacketToClient(prepare2);
 			failPending = 2;
 		}
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) && GameData.DispellSpells.Contains((uint)spell.Cast.SpellID))
 		{
-			this.GetSession().GameState.LastDispellSpellId = (uint)spell.Cast.SpellID;
+			GetSession().GameState.LastDispellSpellId = (uint)spell.Cast.SpellID;
 		}
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 		switch (failPending)
 		{
 		case 1:
-			foreach (ClientCastRequest pending2 in this.GetSession().GameState.PendingClientCasts)
+			foreach (ClientCastRequest pending2 in GetSession().GameState.PendingClientCasts)
 			{
-				this.GetSession().InstanceSocket.SendCastRequestFailed(pending2, isPet: false);
+				GetSession().InstanceSocket.SendCastRequestFailed(pending2, isPet: false);
 			}
-			this.GetSession().GameState.PendingClientCasts.Clear();
+			GetSession().GameState.PendingClientCasts.Clear();
 			break;
 		case 2:
-			foreach (ClientCastRequest pending in this.GetSession().GameState.PendingClientPetCasts)
+			foreach (ClientCastRequest pending in GetSession().GameState.PendingClientPetCasts)
 			{
-				this.GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: true);
+				GetSession().InstanceSocket.SendCastRequestFailed(pending, isPet: true);
 			}
-			this.GetSession().GameState.PendingClientPetCasts.Clear();
+			GetSession().GameState.PendingClientPetCasts.Clear();
 			break;
 		}
 	}
@@ -8690,51 +8690,51 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_SPELL_GO)]
 	private void HandleSpellGo(WorldPacket packet)
 	{
-		if (!this.GetSession().GameState.CurrentMapId.HasValue)
+		if (!GetSession().GameState.CurrentMapId.HasValue)
 		{
 			return;
 		}
 		SpellGo spell = new SpellGo();
-		spell.Cast = this.HandleSpellStartOrGo(packet, isSpellGo: true);
+		spell.Cast = HandleSpellStartOrGo(packet, isSpellGo: true);
 		// 3.3.5a SpellGo doesn't set CAST_FLAG_HAS_TRAJECTORY but 3.4.3 always expects it
 		spell.Cast.CastFlags |= (uint)CastFlag.HasTrajectory;
-		if (this.GetSession().GameState.CurrentPlayerGuid == spell.Cast.CasterUnit && this.GetSession().GameState.CurrentClientNormalCast != null && this.GetSession().GameState.CurrentClientNormalCast.SpellId == spell.Cast.SpellID)
+		if (GetSession().GameState.CurrentPlayerGuid == spell.Cast.CasterUnit && GetSession().GameState.CurrentClientNormalCast != null && GetSession().GameState.CurrentClientNormalCast.SpellId == spell.Cast.SpellID)
 		{
-			spell.Cast.CastID = this.GetSession().GameState.CurrentClientNormalCast.ServerGUID;
-			spell.Cast.SpellXSpellVisualID = this.GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
+			spell.Cast.CastID = GetSession().GameState.CurrentClientNormalCast.ServerGUID;
+			spell.Cast.SpellXSpellVisualID = GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
 			// Save cast info for channeled spells — needed for cancel/failure after channel starts
-			this.GetSession().GameState.CurrentChanneledCastId = this.GetSession().GameState.CurrentClientNormalCast.ServerGUID;
-			this.GetSession().GameState.CurrentChanneledSpellVisualId = this.GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
-			this.GetSession().GameState.CurrentClientNormalCast = null;
+			GetSession().GameState.CurrentChanneledCastId = GetSession().GameState.CurrentClientNormalCast.ServerGUID;
+			GetSession().GameState.CurrentChanneledSpellVisualId = GetSession().GameState.CurrentClientNormalCast.SpellXSpellVisualId;
+			GetSession().GameState.CurrentClientNormalCast = null;
 		}
-		else if (this.GetSession().GameState.CurrentPlayerGuid == spell.Cast.CasterUnit && this.GetSession().GameState.CurrentClientSpecialCast != null && this.GetSession().GameState.CurrentClientSpecialCast.SpellId == spell.Cast.SpellID)
+		else if (GetSession().GameState.CurrentPlayerGuid == spell.Cast.CasterUnit && GetSession().GameState.CurrentClientSpecialCast != null && GetSession().GameState.CurrentClientSpecialCast.SpellId == spell.Cast.SpellID)
 		{
-			spell.Cast.CastID = this.GetSession().GameState.CurrentClientSpecialCast.ServerGUID;
-			spell.Cast.SpellXSpellVisualID = this.GetSession().GameState.CurrentClientSpecialCast.SpellXSpellVisualId;
-			this.GetSession().GameState.CurrentClientSpecialCast = null;
+			spell.Cast.CastID = GetSession().GameState.CurrentClientSpecialCast.ServerGUID;
+			spell.Cast.SpellXSpellVisualID = GetSession().GameState.CurrentClientSpecialCast.SpellXSpellVisualId;
+			GetSession().GameState.CurrentClientSpecialCast = null;
 		}
-		else if (this.GetSession().GameState.CurrentPetGuid == spell.Cast.CasterUnit && this.GetSession().GameState.CurrentClientPetCast != null && this.GetSession().GameState.CurrentClientPetCast.SpellId == spell.Cast.SpellID)
+		else if (GetSession().GameState.CurrentPetGuid == spell.Cast.CasterUnit && GetSession().GameState.CurrentClientPetCast != null && GetSession().GameState.CurrentClientPetCast.SpellId == spell.Cast.SpellID)
 		{
-			spell.Cast.CastID = this.GetSession().GameState.CurrentClientPetCast.ServerGUID;
-			spell.Cast.SpellXSpellVisualID = this.GetSession().GameState.CurrentClientPetCast.SpellXSpellVisualId;
-			this.GetSession().GameState.CurrentClientPetCast = null;
+			spell.Cast.CastID = GetSession().GameState.CurrentClientPetCast.ServerGUID;
+			spell.Cast.SpellXSpellVisualID = GetSession().GameState.CurrentClientPetCast.SpellXSpellVisualId;
+			GetSession().GameState.CurrentClientPetCast = null;
 		}
 		if (!spell.Cast.CasterUnit.IsEmpty() && GameData.AuraSpells.Contains((uint)spell.Cast.SpellID))
 		{
 			foreach (WowGuid128 target in spell.Cast.HitTargets)
 			{
-				this.GetSession().GameState.StoreLastAuraCasterOnTarget(target, (uint)spell.Cast.SpellID, spell.Cast.CasterUnit);
+				GetSession().GameState.StoreLastAuraCasterOnTarget(target, (uint)spell.Cast.SpellID, spell.Cast.CasterUnit);
 			}
 		}
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	private SpellCastData HandleSpellStartOrGo(WorldPacket packet, bool isSpellGo)
 	{
 		SpellCastData dbdata = new SpellCastData();
-		dbdata.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		dbdata.CasterUnit = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		if (dbdata.CasterUnit == this.GetSession().GameState.CurrentPlayerGuid && Settings.ClientSpellDelay > 0)
+		dbdata.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		dbdata.CasterUnit = packet.ReadPackedGuid().To128(GetSession().GameState);
+		if (dbdata.CasterUnit == GetSession().GameState.CurrentPlayerGuid && Settings.ClientSpellDelay > 0)
 		{
 			Thread.Sleep(Settings.ClientSpellDelay);
 		}
@@ -8744,7 +8744,7 @@ public class WorldClient
 		}
 		dbdata.SpellID = packet.ReadInt32();
 		dbdata.SpellXSpellVisualID = GameData.GetSpellVisual((uint)dbdata.SpellID);
-		dbdata.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, this.GetSession().GameState.CurrentMapId.Value, (uint)dbdata.SpellID, (ulong)dbdata.SpellID + dbdata.CasterUnit.GetCounter());
+		dbdata.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, (uint)dbdata.SpellID, (ulong)dbdata.SpellID + dbdata.CasterUnit.GetCounter());
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) && LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056) && !isSpellGo)
 		{
 			packet.ReadUInt8();
@@ -8759,13 +8759,13 @@ public class WorldClient
 			byte hitCount = packet.ReadUInt8();
 			for (int i = 0; i < hitCount; i++)
 			{
-				WowGuid128 hitTarget = packet.ReadGuid().To128(this.GetSession().GameState);
+				WowGuid128 hitTarget = packet.ReadGuid().To128(GetSession().GameState);
 				dbdata.HitTargets.Add(hitTarget);
 			}
 			byte missCount = packet.ReadUInt8();
 			for (int j = 0; j < missCount; j++)
 			{
-				WowGuid128 missTarget = packet.ReadGuid().To128(this.GetSession().GameState);
+				WowGuid128 missTarget = packet.ReadGuid().To128(GetSession().GameState);
 				SpellMissInfo missType = (SpellMissInfo)packet.ReadUInt8();
 				SpellMissInfo reflectType = SpellMissInfo.None;
 				if (missType == SpellMissInfo.Reflect)
@@ -8781,13 +8781,13 @@ public class WorldClient
 		WowGuid128 unitTarget = WowGuid128.Empty;
 		if (targetFlags.HasAnyFlag(SpellCastTargetFlags.CorpseMask | SpellCastTargetFlags.Unit | SpellCastTargetFlags.GameObject | SpellCastTargetFlags.UnitMinipet))
 		{
-			unitTarget = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			unitTarget = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		dbdata.Target.Unit = unitTarget;
 		WowGuid128 itemTarget = WowGuid128.Empty;
 		if (targetFlags.HasAnyFlag(SpellCastTargetFlags.Item | SpellCastTargetFlags.TradeItem))
 		{
-			itemTarget = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			itemTarget = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		dbdata.Target.Item = itemTarget;
 		if (targetFlags.HasAnyFlag(SpellCastTargetFlags.SourceLocation))
@@ -8796,7 +8796,7 @@ public class WorldClient
 			dbdata.Target.SrcLocation.Transport = WowGuid128.Empty;
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_2_0_10192))
 			{
-				dbdata.Target.SrcLocation.Transport = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+				dbdata.Target.SrcLocation.Transport = packet.ReadPackedGuid().To128(GetSession().GameState);
 			}
 			dbdata.Target.SrcLocation.Location = packet.ReadVector3();
 		}
@@ -8806,7 +8806,7 @@ public class WorldClient
 			dbdata.Target.DstLocation.Transport = WowGuid128.Empty;
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_8_9464))
 			{
-				dbdata.Target.DstLocation.Transport = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+				dbdata.Target.DstLocation.Transport = packet.ReadPackedGuid().To128(GetSession().GameState);
 			}
 			dbdata.Target.DstLocation.Location = packet.ReadVector3();
 		}
@@ -8866,7 +8866,7 @@ public class WorldClient
 						for (int l = 0; l < targetCount; l++)
 						{
 							location.Location = packet.ReadVector3();
-							location.Transport = packet.ReadGuid().To128(this.GetSession().GameState);
+							location.Transport = packet.ReadGuid().To128(GetSession().GameState);
 						}
 						dbdata.TargetPoints.Add(location);
 					}
@@ -8899,20 +8899,20 @@ public class WorldClient
 		{
 			Thread.Sleep(Settings.ClientSpellDelay);
 		}
-		if (this.GetSession().GameState.CurrentClientSpecialCast != null && GameData.AutoRepeatSpells.Contains(this.GetSession().GameState.CurrentClientSpecialCast.SpellId))
+		if (GetSession().GameState.CurrentClientSpecialCast != null && GameData.AutoRepeatSpells.Contains(GetSession().GameState.CurrentClientSpecialCast.SpellId))
 		{
-			this.GetSession().GameState.CurrentClientSpecialCast = null;
+			GetSession().GameState.CurrentClientSpecialCast = null;
 		}
 		CancelAutoRepeat cancel = new CancelAutoRepeat();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			cancel.Guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			cancel.Guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			cancel.Guid = this.GetSession().GameState.CurrentPlayerGuid;
+			cancel.Guid = GetSession().GameState.CurrentPlayerGuid;
 		}
-		this.SendPacketToClient(cancel);
+		SendPacketToClient(cancel);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_COOLDOWN)]
@@ -8921,7 +8921,7 @@ public class WorldClient
 		SpellCooldownPkt cooldown = new SpellCooldownPkt();
 		try
 		{
-			cooldown.Caster = packet.ReadGuid().To128(this.GetSession().GameState);
+			cooldown.Caster = packet.ReadGuid().To128(GetSession().GameState);
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
 				cooldown.Flags = packet.ReadUInt8();
@@ -8939,11 +8939,11 @@ public class WorldClient
 			packet.ResetReadPos();
 			SpellCooldownStruct cd2 = new SpellCooldownStruct();
 			cd2.SpellID = packet.ReadUInt32();
-			cooldown.Caster = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			cooldown.Caster = packet.ReadPackedGuid().To128(GetSession().GameState);
 			cd2.ForcedCooldown = packet.ReadUInt32();
 			cooldown.SpellCooldowns.Add(cd2);
 		}
-		this.SendPacketToClient(cooldown);
+		SendPacketToClient(cooldown);
 	}
 
 	[PacketHandler(Opcode.SMSG_COOLDOWN_EVENT)]
@@ -8953,7 +8953,7 @@ public class WorldClient
 		cooldown.SpellID = packet.ReadUInt32();
 		WowGuid guid = packet.ReadGuid();
 		cooldown.IsPet = guid.GetHighType() == HighGuidType.Pet;
-		this.SendPacketToClient(cooldown);
+		SendPacketToClient(cooldown);
 	}
 
 	[PacketHandler(Opcode.SMSG_CLEAR_COOLDOWN)]
@@ -8963,26 +8963,26 @@ public class WorldClient
 		cooldown.SpellID = packet.ReadUInt32();
 		WowGuid guid = packet.ReadGuid();
 		cooldown.IsPet = guid.GetHighType() == HighGuidType.Pet;
-		this.SendPacketToClient(cooldown);
+		SendPacketToClient(cooldown);
 	}
 
 	[PacketHandler(Opcode.SMSG_COOLDOWN_CHEAT)]
 	private void HandleCooldownCheat(WorldPacket packet)
 	{
 		CooldownCheat cooldown = new CooldownCheat();
-		cooldown.Guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		this.SendPacketToClient(cooldown);
+		cooldown.Guid = packet.ReadGuid().To128(GetSession().GameState);
+		SendPacketToClient(cooldown);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_NON_MELEE_DAMAGE_LOG)]
 	private void HandleSpellNonMeleeDamageLog(WorldPacket packet)
 	{
 		SpellNonMeleeDamageLog spell = new SpellNonMeleeDamageLog();
-		spell.TargetGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		spell.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		spell.TargetGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		spell.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		spell.SpellID = packet.ReadUInt32();
 		spell.SpellXSpellVisualID = GameData.GetSpellVisual(spell.SpellID);
-		spell.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, this.GetSession().GameState.CurrentMapId.Value, spell.SpellID, spell.SpellID + spell.CasterGUID.GetCounter());
+		spell.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Normal, GetSession().GameState.CurrentMapId.Value, spell.SpellID, spell.SpellID + spell.CasterGUID.GetCounter());
 		spell.Damage = packet.ReadInt32();
 		spell.OriginalDamage = spell.Damage;
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_3_9183))
@@ -8996,7 +8996,7 @@ public class WorldClient
 		byte school = packet.ReadUInt8();
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			school = (byte)(1 << (int)school);
+			school = (byte)(1 << school);
 		}
 		spell.SchoolMask = school;
 		spell.Absorbed = packet.ReadInt32();
@@ -9027,15 +9027,15 @@ public class WorldClient
 				packet.ReadFloat();
 			}
 		}
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_HEAL_LOG)]
 	private void HandleSpellHealLog(WorldPacket packet)
 	{
 		SpellHealLog spell = new SpellHealLog();
-		spell.TargetGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		spell.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		spell.TargetGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		spell.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		spell.SpellID = packet.ReadUInt32();
 		spell.HealAmount = packet.ReadInt32();
 		spell.OriginalHealAmount = spell.HealAmount;
@@ -9053,15 +9053,15 @@ public class WorldClient
 			spell.CritRollMade = packet.ReadFloat();
 			spell.CritRollNeeded = packet.ReadFloat();
 		}
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_PERIODIC_AURA_LOG)]
 	private void HandleSpellPeriodicAuraLog(WorldPacket packet)
 	{
 		SpellPeriodicAuraLog spell = new SpellPeriodicAuraLog();
-		spell.TargetGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		spell.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		spell.TargetGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		spell.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		spell.SpellID = packet.ReadUInt32();
 		int count = packet.ReadInt32();
 		for (int i = 0; i < count; i++)
@@ -9083,7 +9083,7 @@ public class WorldClient
 				uint school = packet.ReadUInt32();
 				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 				{
-					school = (uint)(1 << (int)(byte)school);
+					school = (uint)(1 << (byte)school);
 				}
 				effect4.SchoolMaskOrPower = school;
 				effect4.AbsorbedOrAmplitude = packet.ReadUInt32();
@@ -9139,19 +9139,19 @@ public class WorldClient
 			}
 			}
 		}
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_ENERGIZE_LOG)]
 	private void HandleSpellEnergizeLog(WorldPacket packet)
 	{
 		SpellEnergizeLog spell = new SpellEnergizeLog();
-		spell.TargetGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		spell.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		spell.TargetGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		spell.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		spell.SpellID = packet.ReadUInt32();
 		spell.Type = (PowerType)packet.ReadUInt32();
 		spell.Amount = packet.ReadInt32();
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_DELAYED)]
@@ -9160,14 +9160,14 @@ public class WorldClient
 		SpellDelayed delay = new SpellDelayed();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			delay.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			delay.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			delay.CasterGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			delay.CasterGUID = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		delay.Delay = packet.ReadInt32();
-		this.SendPacketToClient(delay);
+		SendPacketToClient(delay);
 	}
 
 	[PacketHandler(Opcode.MSG_CHANNEL_START)]
@@ -9176,21 +9176,21 @@ public class WorldClient
 		SpellChannelStart channel = new SpellChannelStart();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			channel.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			channel.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			channel.CasterGUID = this.GetSession().GameState.CurrentPlayerGuid;
+			channel.CasterGUID = GetSession().GameState.CurrentPlayerGuid;
 		}
 		channel.SpellID = packet.ReadUInt32();
 		channel.SpellXSpellVisualID = GameData.GetSpellVisual(channel.SpellID);
 		channel.Duration = packet.ReadUInt32();
 		// Store channeled spell ID so cancel can use the real ID
-		if (channel.CasterGUID == this.GetSession().GameState.CurrentPlayerGuid)
+		if (channel.CasterGUID == GetSession().GameState.CurrentPlayerGuid)
 		{
-			this.GetSession().GameState.CurrentChanneledSpellId = (uint)channel.SpellID;
+			GetSession().GameState.CurrentChanneledSpellId = channel.SpellID;
 		}
-		this.SendPacketToClient(channel);
+		SendPacketToClient(channel);
 	}
 
 	[PacketHandler(Opcode.MSG_CHANNEL_UPDATE)]
@@ -9199,27 +9199,27 @@ public class WorldClient
 		SpellChannelUpdate channel = new SpellChannelUpdate();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			channel.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			channel.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			channel.CasterGUID = this.GetSession().GameState.CurrentPlayerGuid;
+			channel.CasterGUID = GetSession().GameState.CurrentPlayerGuid;
 		}
 		channel.TimeRemaining = packet.ReadInt32();
-		if (channel.TimeRemaining == 0 && channel.CasterGUID == this.GetSession().GameState.CurrentPlayerGuid)
+		if (channel.TimeRemaining == 0 && channel.CasterGUID == GetSession().GameState.CurrentPlayerGuid)
 		{
-			this.GetSession().GameState.CurrentChanneledSpellId = 0;
-			Log.Print(LogType.Debug, $"[ChannelUpdate] Channel ended (TimeRemaining=0)", "HandleSpellChannelUpdate", "");
+			GetSession().GameState.CurrentChanneledSpellId = 0;
+			Log.Print(LogType.Debug, "[ChannelUpdate] Channel ended (TimeRemaining=0)", "");
 		}
-		this.SendPacketToClient(channel);
+		SendPacketToClient(channel);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_DAMAGE_SHIELD)]
 	private void HandleSpellDamageShield(WorldPacket packet)
 	{
 		SpellDamageShield spell = new SpellDamageShield();
-		spell.VictimGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		spell.CasterGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+		spell.VictimGUID = packet.ReadGuid().To128(GetSession().GameState);
+		spell.CasterGUID = packet.ReadGuid().To128(GetSession().GameState);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			spell.SpellID = packet.ReadUInt32();
@@ -9237,22 +9237,22 @@ public class WorldClient
 		uint school = packet.ReadUInt32();
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			school = (uint)(1 << (int)(byte)school);
+			school = (uint)(1 << (byte)school);
 		}
 		spell.SchoolMask = school;
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_ENVIRONMENTAL_DAMAGE_LOG)]
 	private void HandleEnvironmentalDamageLog(WorldPacket packet)
 	{
 		EnvironmentalDamageLog damage = new EnvironmentalDamageLog();
-		damage.Victim = packet.ReadGuid().To128(this.GetSession().GameState);
+		damage.Victim = packet.ReadGuid().To128(GetSession().GameState);
 		damage.Type = (EnvironmentalDamage)packet.ReadUInt8();
 		damage.Amount = packet.ReadInt32();
 		damage.Absorbed = packet.ReadInt32();
 		damage.Resisted = packet.ReadInt32();
-		this.SendPacketToClient(damage);
+		SendPacketToClient(damage);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_INSTAKILL_LOG)]
@@ -9261,30 +9261,30 @@ public class WorldClient
 		SpellInstakillLog spell = new SpellInstakillLog();
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			spell.CasterGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-			spell.TargetGUID = packet.ReadGuid().To128(this.GetSession().GameState);
+			spell.CasterGUID = packet.ReadGuid().To128(GetSession().GameState);
+			spell.TargetGUID = packet.ReadGuid().To128(GetSession().GameState);
 		}
 		else
 		{
-			spell.CasterGUID = (spell.TargetGUID = packet.ReadGuid().To128(this.GetSession().GameState));
+			spell.CasterGUID = (spell.TargetGUID = packet.ReadGuid().To128(GetSession().GameState));
 		}
 		spell.SpellID = packet.ReadUInt32();
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_SPELL_DISPELL_LOG)]
 	private void HandleSpellDispellLog(WorldPacket packet)
 	{
 		SpellDispellLog spell = new SpellDispellLog();
-		spell.TargetGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-		spell.CasterGUID = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		spell.TargetGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
+		spell.CasterGUID = packet.ReadPackedGuid().To128(GetSession().GameState);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
 			spell.DispelledBySpellID = packet.ReadUInt32();
 		}
 		else
 		{
-			spell.DispelledBySpellID = this.GetSession().GameState.LastDispellSpellId;
+			spell.DispelledBySpellID = GetSession().GameState.LastDispellSpellId;
 		}
 		bool hasDebug = LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180) && packet.ReadBool();
 		int count = packet.ReadInt32();
@@ -9305,25 +9305,25 @@ public class WorldClient
 			packet.ReadInt32();
 			packet.ReadInt32();
 		}
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAY_SPELL_VISUAL)]
 	private void HandlePlaySpellVisualKit(WorldPacket packet)
 	{
 		PlaySpellVisualKit spell = new PlaySpellVisualKit();
-		spell.Unit = packet.ReadGuid().To128(this.GetSession().GameState);
+		spell.Unit = packet.ReadGuid().To128(GetSession().GameState);
 		spell.KitRecID = packet.ReadUInt32();
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_PLAY_SPELL_IMPACT)]
 	private void HandlePlaySpellImpact(WorldPacket packet)
 	{
 		PlaySpellVisualKit spell = new PlaySpellVisualKit();
-		spell.Unit = packet.ReadGuid().To128(this.GetSession().GameState);
+		spell.Unit = packet.ReadGuid().To128(GetSession().GameState);
 		spell.KitRecID = packet.ReadUInt32();
-		this.SendPacketToClient(spell);
+		SendPacketToClient(spell);
 	}
 
 	[PacketHandler(Opcode.SMSG_UPDATE_AURA_DURATION)]
@@ -9331,23 +9331,23 @@ public class WorldClient
 	{
 		byte slot = packet.ReadUInt8();
 		int duration = packet.ReadInt32();
-		WowGuid128 guid = this.GetSession().GameState.CurrentPlayerGuid;
+		WowGuid128 guid = GetSession().GameState.CurrentPlayerGuid;
 		if (guid == null)
 		{
 			return;
 		}
-		this.GetSession().GameState.StoreAuraDurationLeft(guid, slot, duration, (int)packet.GetReceivedTime());
+		GetSession().GameState.StoreAuraDurationLeft(guid, slot, duration, (int)packet.GetReceivedTime());
 		if (duration <= 0)
 		{
 			return;
 		}
-		Dictionary<int, UpdateField> updateFields = this.GetSession().GameState.GetCachedObjectFieldsLegacy(guid);
+		Dictionary<int, UpdateField> updateFields = GetSession().GameState.GetCachedObjectFieldsLegacy(guid);
 		if (updateFields != null)
 		{
 			AuraInfo aura = new AuraInfo
 			{
 				Slot = slot,
-				AuraData = this.ReadAuraSlot(slot, guid, updateFields)
+				AuraData = ReadAuraSlot(slot, guid, updateFields)
 			};
 			if (aura.AuraData != null)
 			{
@@ -9356,7 +9356,7 @@ public class WorldClient
 				aura.AuraData.Remaining = duration;
 				AuraUpdate update = new AuraUpdate(guid, all: false);
 				update.Auras.Add(aura);
-				this.SendPacketToClient(update);
+				SendPacketToClient(update);
 			}
 		}
 	}
@@ -9365,7 +9365,7 @@ public class WorldClient
 	[PacketHandler(Opcode.SMSG_SET_EXTRA_AURA_INFO_NEED_UPDATE)]
 	private void HandleSetExtraAuraInfo(WorldPacket packet)
 	{
-		WowGuid128 guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+		WowGuid128 guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 		if (!packet.CanRead())
 		{
 			return;
@@ -9374,33 +9374,33 @@ public class WorldClient
 		uint spellId = packet.ReadUInt32();
 		int durationFull = packet.ReadInt32();
 		int durationLeft = packet.ReadInt32();
-		this.GetSession().GameState.StoreAuraDurationFull(guid, slot, durationFull);
-		this.GetSession().GameState.StoreAuraDurationLeft(guid, slot, durationLeft, (int)packet.GetReceivedTime());
+		GetSession().GameState.StoreAuraDurationFull(guid, slot, durationFull);
+		GetSession().GameState.StoreAuraDurationLeft(guid, slot, durationLeft, (int)packet.GetReceivedTime());
 		if (packet.GetUniversalOpcode(isModern: false) == Opcode.SMSG_SET_EXTRA_AURA_INFO_NEED_UPDATE)
 		{
-			this.GetSession().GameState.StoreAuraCaster(guid, slot, this.GetSession().GameState.CurrentPlayerGuid);
+			GetSession().GameState.StoreAuraCaster(guid, slot, GetSession().GameState.CurrentPlayerGuid);
 		}
 		if (durationFull <= 0 && durationLeft <= 0)
 		{
 			return;
 		}
-		Dictionary<int, UpdateField> updateFields = this.GetSession().GameState.GetCachedObjectFieldsLegacy(guid);
+		Dictionary<int, UpdateField> updateFields = GetSession().GameState.GetCachedObjectFieldsLegacy(guid);
 		if (updateFields != null)
 		{
 			AuraInfo aura = new AuraInfo
 			{
 				Slot = slot,
-				AuraData = this.ReadAuraSlot(slot, guid, updateFields)
+				AuraData = ReadAuraSlot(slot, guid, updateFields)
 			};
 			if (aura.AuraData != null && aura.AuraData.SpellID == spellId)
 			{
-				aura.AuraData.CastUnit = this.GetSession().GameState.GetAuraCaster(guid, slot, spellId);
+				aura.AuraData.CastUnit = GetSession().GameState.GetAuraCaster(guid, slot, spellId);
 				aura.AuraData.Flags |= AuraFlagsModern.Duration;
 				aura.AuraData.Duration = durationFull;
 				aura.AuraData.Remaining = durationLeft;
 				AuraUpdate update = new AuraUpdate(guid, all: false);
 				update.Auras.Add(aura);
-				this.SendPacketToClient(update);
+				SendPacketToClient(update);
 			}
 		}
 	}
@@ -9410,12 +9410,12 @@ public class WorldClient
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			WowGuid128 guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			WowGuid128 guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 			AuraUpdate update = new AuraUpdate(guid, all: false);
-			this.ReadSingleAura(packet, guid, update);
+			ReadSingleAura(packet, guid, update);
 			if (update.Auras.Count > 0)
 			{
-					this.SendPacketToClient(update);
+					SendPacketToClient(update);
 			}
 		}
 	}
@@ -9425,15 +9425,15 @@ public class WorldClient
 	{
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
-			WowGuid128 guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			WowGuid128 guid = packet.ReadPackedGuid().To128(GetSession().GameState);
 			AuraUpdate update = new AuraUpdate(guid, all: true);
 			while (packet.CanRead())
 			{
-				this.ReadSingleAura(packet, guid, update);
+				ReadSingleAura(packet, guid, update);
 			}
 			if (update.Auras.Count > 0)
 			{
-				this.SendPacketToClient(update);
+				SendPacketToClient(update);
 			}
 		}
 	}
@@ -9450,15 +9450,15 @@ public class WorldClient
 		{
 			aura.AuraData = null;
 			update.Auras.Add(aura);
-			if (guid == this.GetSession().GameState.CurrentPlayerGuid)
-				Log.Print(LogType.Debug, $"[AuraUpdate] REMOVE slot={slot} for player", "ReadSingleAura", "");
+			if (guid == GetSession().GameState.CurrentPlayerGuid)
+				Log.Print(LogType.Debug, $"[AuraUpdate] REMOVE slot={slot} for player", "");
 			return;
 		}
-		if (guid == this.GetSession().GameState.CurrentPlayerGuid)
-			Log.Print(LogType.Debug, $"[AuraUpdate] SET slot={slot} spellId={spellId} for player", "ReadSingleAura", "");
+		if (guid == GetSession().GameState.CurrentPlayerGuid)
+			Log.Print(LogType.Debug, $"[AuraUpdate] SET slot={slot} spellId={spellId} for player", "");
 		AuraDataInfo data = new AuraDataInfo();
 		data.SpellID = spellId;
-		data.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Aura, this.GetSession().GameState.CurrentMapId.Value, spellId, guid.GetCounter());
+		data.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Aura, GetSession().GameState.CurrentMapId.Value, spellId, guid.GetCounter());
 		data.SpellXSpellVisualID = GameData.GetSpellVisual(spellId);
 		byte flags = packet.ReadUInt8();
 		data.CastLevel = packet.ReadUInt8();
@@ -9487,7 +9487,7 @@ public class WorldClient
 		}
 		if ((flags & 8) == 0)
 		{
-			data.CastUnit = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			data.CastUnit = packet.ReadPackedGuid().To128(GetSession().GameState);
 		}
 		else
 		{
@@ -9521,13 +9521,13 @@ public class WorldClient
 	private void HandleResurrectRequest(WorldPacket packet)
 	{
 		ResurrectRequest revive = new ResurrectRequest();
-		revive.CasterGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-		revive.CasterVirtualRealmAddress = this.GetSession().RealmId.GetAddress();
+		revive.CasterGUID = packet.ReadGuid().To128(GetSession().GameState);
+		revive.CasterVirtualRealmAddress = GetSession().RealmId.GetAddress();
 		packet.ReadUInt32();
 		revive.Name = packet.ReadCString();
 		revive.Sickness = packet.ReadBool();
 		revive.UseTimer = packet.ReadBool();
-		this.SendPacketToClient(revive);
+		SendPacketToClient(revive);
 	}
 
 	[PacketHandler(Opcode.SMSG_TOTEM_CREATED)]
@@ -9535,10 +9535,10 @@ public class WorldClient
 	{
 		TotemCreated totem = new TotemCreated();
 		totem.Slot = packet.ReadUInt8();
-		totem.Totem = packet.ReadGuid().To128(this.GetSession().GameState);
+		totem.Totem = packet.ReadGuid().To128(GetSession().GameState);
 		totem.Duration = packet.ReadUInt32();
 		totem.SpellId = packet.ReadUInt32();
-		this.SendPacketToClient(totem);
+		SendPacketToClient(totem);
 	}
 
 	[PacketHandler(Opcode.SMSG_SET_FLAT_SPELL_MODIFIER)]
@@ -9548,7 +9548,7 @@ public class WorldClient
 		byte classIndex = packet.ReadUInt8();
 		byte modIndex = packet.ReadUInt8();
 		int modValue = packet.ReadInt32();
-		if (this.GetSession().GameState.CurrentPlayerCreateTime != 0)
+		if (GetSession().GameState.CurrentPlayerCreateTime != 0)
 		{
 			SetSpellModifier spell = new SetSpellModifier(packet.GetUniversalOpcode(isModern: false));
 			SpellModifierInfo mod = new SpellModifierInfo();
@@ -9560,15 +9560,15 @@ public class WorldClient
 			data.ModifierValue = modValue;
 			mod.ModifierData.Add(data);
 			spell.Modifiers.Add(mod);
-			this.SendPacketToClient(spell);
+			SendPacketToClient(spell);
 		}
 		if (packet.GetUniversalOpcode(isModern: false) == Opcode.SMSG_SET_FLAT_SPELL_MODIFIER)
 		{
-			this.GetSession().GameState.SetFlatSpellMod(modIndex, classIndex, modValue);
+			GetSession().GameState.SetFlatSpellMod(modIndex, classIndex, modValue);
 		}
 		else
 		{
-			this.GetSession().GameState.SetPctSpellMod(modIndex, classIndex, modValue);
+			GetSession().GameState.SetPctSpellMod(modIndex, classIndex, modValue);
 		}
 	}
 
@@ -9578,13 +9578,13 @@ public class WorldClient
 		LegacyGmTicketResponse response = (LegacyGmTicketResponse)packet.ReadUInt32();
 		bool flag = ((response == LegacyGmTicketResponse.CreateSuccess || response == LegacyGmTicketResponse.UpdateSuccess) ? true : false);
 		bool isError = !flag;
-		this.Session.SendHermesTextMessage($"GM Ticket Status: {response}", isError);
+		Session.SendHermesTextMessage($"GM Ticket Status: {response}", isError);
 	}
 
 	[PacketHandler(Opcode.SMSG_FEATURE_SYSTEM_STATUS)]
 	private void HandleFeatureSystemStatus(WorldPacket packet)
 	{
-		this.GetSession().RealmSocket.SendFeatureSystemStatus();
+		GetSession().RealmSocket.SendFeatureSystemStatus();
 	}
 
 	[PacketHandler(Opcode.SMSG_MOTD)]
@@ -9596,11 +9596,11 @@ public class WorldClient
 		{
 			motd.Text.Add(packet.ReadCString());
 		}
-		this.SendPacketToClient(motd);
+		SendPacketToClient(motd);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 		{
-			this.GetSession().RealmSocket.SendSetTimeZoneInformation();
-			this.GetSession().RealmSocket.SendSeasonInfo();
+			GetSession().RealmSocket.SendSetTimeZoneInformation();
+			GetSession().RealmSocket.SendSeasonInfo();
 		}
 	}
 
@@ -9608,28 +9608,28 @@ public class WorldClient
 	private void HandleTaxiNodeStatus(WorldPacket packet)
 	{
 		TaxiNodeStatusPkt taxi = new TaxiNodeStatusPkt();
-		taxi.FlightMaster = packet.ReadGuid().To128(this.GetSession().GameState);
+		taxi.FlightMaster = packet.ReadGuid().To128(GetSession().GameState);
 		bool learned = packet.ReadBool();
 		taxi.Status = (learned ? TaxiNodeStatus.Learned : TaxiNodeStatus.Unlearned);
-		this.SendPacketToClient(taxi);
+		SendPacketToClient(taxi);
 	}
 
 	[PacketHandler(Opcode.SMSG_SHOW_TAXI_NODES)]
 	private void HandleShowTaxiNodes(WorldPacket packet)
 	{
-		uint playerFlags = this.GetSession().GameState.GetLegacyFieldValueUInt32(this.GetSession().GameState.CurrentPlayerGuid, PlayerField.PLAYER_FLAGS);
+		uint playerFlags = GetSession().GameState.GetLegacyFieldValueUInt32(GetSession().GameState.CurrentPlayerGuid, PlayerField.PLAYER_FLAGS);
 		if (playerFlags.HasAnyFlag(PlayerFlags.GM))
 		{
-			ChatPkt chat = new ChatPkt(this.GetSession(), ChatMessageTypeModern.System, "Disable GM mode before talking to taxi master or your game will freeze.");
-			this.SendPacketToClient(chat);
+			ChatPkt chat = new ChatPkt(GetSession(), ChatMessageTypeModern.System, "Disable GM mode before talking to taxi master or your game will freeze.");
+			SendPacketToClient(chat);
 			return;
 		}
 		ShowTaxiNodes taxi = new ShowTaxiNodes();
 		if (packet.ReadUInt32() != 0)
 		{
 			taxi.WindowInfo = new ShowTaxiNodesWindowInfo();
-			taxi.WindowInfo.UnitGUID = packet.ReadGuid().To128(this.GetSession().GameState);
-			taxi.WindowInfo.CurrentNode = (this.GetSession().GameState.CurrentTaxiNode = packet.ReadUInt32());
+			taxi.WindowInfo.UnitGUID = packet.ReadGuid().To128(GetSession().GameState);
+			taxi.WindowInfo.CurrentNode = (GetSession().GameState.CurrentTaxiNode = packet.ReadUInt32());
 		}
 		while (packet.CanRead())
 		{
@@ -9637,15 +9637,15 @@ public class WorldClient
 			taxi.CanLandNodes.Add(nodesMask);
 			taxi.CanUseNodes.Add(nodesMask);
 		}
-		this.GetSession().GameState.UsableTaxiNodes = taxi.CanUseNodes;
-		this.SendPacketToClient(taxi);
+		GetSession().GameState.UsableTaxiNodes = taxi.CanUseNodes;
+		SendPacketToClient(taxi);
 	}
 
 	[PacketHandler(Opcode.SMSG_NEW_TAXI_PATH)]
 	private void HandleNewTaxiPath(WorldPacket packet)
 	{
 		NewTaxiPath taxi = new NewTaxiPath();
-		this.SendPacketToClient(taxi);
+		SendPacketToClient(taxi);
 	}
 
 	[PacketHandler(Opcode.SMSG_ACTIVATE_TAXI_REPLY)]
@@ -9656,8 +9656,8 @@ public class WorldClient
 		{
 			ActivateTaxiReplyPkt taxi = new ActivateTaxiReplyPkt();
 			taxi.Reply = reply;
-			this.SendPacketToClient(taxi);
-			this.GetSession().GameState.IsWaitingForTaxiStart = false;
+			SendPacketToClient(taxi);
+			GetSession().GameState.IsWaitingForTaxiStart = false;
 		}
 	}
 
@@ -9666,28 +9666,28 @@ public class WorldClient
 	{
 		TradeStatusPkt trade = new TradeStatusPkt();
 		trade.Status = (TradeStatus)packet.ReadUInt32();
-		TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
+		TradeSession tradeSession = GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
 			TradeStatus status = trade.Status;
 			TradeStatus tradeStatus = status;
 			if ((uint)(tradeStatus - 1) > 1u)
 			{
-				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS without trade session (status: {trade.Status})", "HandleTradeStatus", "TradeHandler.cs");
-				this.SendPacketToClient(new TradeStatusPkt
+				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS without trade session (status: {trade.Status})", "TradeHandler.cs");
+				SendPacketToClient(new TradeStatusPkt
 				{
 					Status = TradeStatus.Cancelled
 				});
 				return;
 			}
 			tradeSession = new TradeSession();
-			this.GetSession().GameState.CurrentTrade = tradeSession;
+			GetSession().GameState.CurrentTrade = tradeSession;
 		}
 		switch (trade.Status)
 		{
 		case TradeStatus.Proposed:
-			trade.Partner = (tradeSession.Partner = packet.ReadGuid().To128(this.GetSession().GameState));
-			trade.PartnerAccount = (tradeSession.PartnerAccount = this.GetSession().GetGameAccountGuidForPlayer(trade.Partner));
+			trade.Partner = (tradeSession.Partner = packet.ReadGuid().To128(GetSession().GameState));
+			trade.PartnerAccount = (tradeSession.PartnerAccount = GetSession().GetGameAccountGuidForPlayer(trade.Partner));
 			break;
 		case TradeStatus.Initiated:
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -9727,18 +9727,18 @@ public class WorldClient
 		}
 		if (!flag)
 		{
-			this.GetSession().GameState.CurrentTrade = null;
+			GetSession().GameState.CurrentTrade = null;
 		}
-		this.SendPacketToClient(trade);
+		SendPacketToClient(trade);
 	}
 
 	[PacketHandler(Opcode.SMSG_TRADE_STATUS_EXTENDED)]
 	private void HandleTradeStatusExtended(WorldPacket packet)
 	{
-		TradeSession tradeSession = this.GetSession().GameState.CurrentTrade;
+		TradeSession tradeSession = GetSession().GameState.CurrentTrade;
 		if (tradeSession == null)
 		{
-			Log.Print(LogType.Error, "Got SMSG_TRADE_STATUS_EXTENDED without trade session", "HandleTradeStatusExtended", "TradeHandler.cs");
+			Log.Print(LogType.Error, "Got SMSG_TRADE_STATUS_EXTENDED without trade session", "TradeHandler.cs");
 			return;
 		}
 		tradeSession.ServerStateIndex++;
@@ -9749,7 +9749,7 @@ public class WorldClient
 			uint actualTradeId = packet.ReadUInt32();
 			if (actualTradeId != trade.Id)
 			{
-				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS_EXTENDED with wrong tradeId (expected {trade.Id} but got {actualTradeId})", "HandleTradeStatusExtended", "TradeHandler.cs");
+				Log.Print(LogType.Error, $"Got SMSG_TRADE_STATUS_EXTENDED with wrong tradeId (expected {trade.Id} but got {actualTradeId})", "TradeHandler.cs");
 				return;
 			}
 		}
@@ -9769,7 +9769,7 @@ public class WorldClient
 			packet.ReadUInt32();
 			item.StackCount = packet.ReadInt32();
 			packet.ReadUInt32();
-			item.GiftCreator = packet.ReadGuid().To128(this.GetSession().GameState);
+			item.GiftCreator = packet.ReadGuid().To128(GetSession().GameState);
 			item.Unwrapped.EnchantID = packet.ReadInt32();
 			if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
 			{
@@ -9778,7 +9778,7 @@ public class WorldClient
 					packet.ReadUInt32();
 				}
 			}
-			item.Unwrapped.Creator = packet.ReadGuid().To128(this.GetSession().GameState);
+			item.Unwrapped.Creator = packet.ReadGuid().To128(GetSession().GameState);
 			item.Unwrapped.Charges = packet.ReadInt32();
 			item.Item.RandomPropertiesSeed = packet.ReadUInt32();
 			item.Item.RandomPropertiesID = packet.ReadUInt32();
@@ -9787,67 +9787,67 @@ public class WorldClient
 			item.Unwrapped.Durability = packet.ReadUInt32();
 			trade.Items.Add(item);
 		}
-		this.SendPacketToClient(trade);
+		SendPacketToClient(trade);
 	}
 
 	[PacketHandler(Opcode.SMSG_DESTROY_OBJECT)]
 	private void HandleDestroyObject(WorldPacket packet)
 	{
-		WowGuid128 guid = packet.ReadGuid().To128(this.GetSession().GameState);
-		Log.Print(LogType.Debug, $"[DestroyObject] Destroying {guid} type={guid.GetHighType()}", "HandleDestroyObject", "");
-		this.GetSession().GameState.ObjectCacheMutex.WaitOne();
-		this.GetSession().GameState.ObjectCacheLegacy.Remove(guid);
-		this.GetSession().GameState.ObjectCacheModern.Remove(guid);
-		this.GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
-		this.GetSession().GameState.LastAuraCasterOnTarget.Remove(guid);
+		WowGuid128 guid = packet.ReadGuid().To128(GetSession().GameState);
+		Log.Print(LogType.Debug, $"[DestroyObject] Destroying {guid} type={guid.GetHighType()}", "");
+		GetSession().GameState.ObjectCacheMutex.WaitOne();
+		GetSession().GameState.ObjectCacheLegacy.Remove(guid);
+		GetSession().GameState.ObjectCacheModern.Remove(guid);
+		GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
+		GetSession().GameState.LastAuraCasterOnTarget.Remove(guid);
 		// Send both DestroyObject (for 3.4.3 GO cleanup) and UpdateObject (for compatibility)
 		if (ModernVersion.GetCurrentOpcode(Opcode.SMSG_DESTROY_OBJECT) != 0)
 		{
-			this.SendPacketToClient(new DestroyObject(guid));
+			SendPacketToClient(new DestroyObject(guid));
 		}
-		UpdateObject updateObject = new UpdateObject(this.GetSession().GameState);
+		UpdateObject updateObject = new UpdateObject(GetSession().GameState);
 		updateObject.DestroyedGuids.Add(guid);
-		this.SendPacketToClient(updateObject);
+		SendPacketToClient(updateObject);
 	}
 
 	[PacketHandler(Opcode.SMSG_COMPRESSED_UPDATE_OBJECT)]
 	private void HandleCompressedUpdateObject(WorldPacket packet)
 	{
 		using WorldPacket packet2 = packet.Inflate(packet.ReadInt32());
-		this.HandleUpdateObject(packet2);
+		HandleUpdateObject(packet2);
 	}
 
 	[PacketHandler(Opcode.SMSG_UPDATE_OBJECT)]
 	private void HandleUpdateObject(WorldPacket packet)
 	{
 		uint count = packet.ReadUInt32();
-		this.PrintString($"Updates Count = {count}");
+		PrintString($"Updates Count = {count}");
 		if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 		{
 			packet.ReadBool();
 		}
 		HashSet<uint> missingItemTemplates = new HashSet<uint>();
 		List<AuraUpdate> auraUpdates = new List<AuraUpdate>();
-		UpdateObject updateObject = new UpdateObject(this.GetSession().GameState);
+		UpdateObject updateObject = new UpdateObject(GetSession().GameState);
 		for (int i = 0; i < count; i++)
 		{
 			UpdateTypeLegacy type = (UpdateTypeLegacy)packet.ReadUInt8();
-			this.PrintString($"Update Type = {type}", i);
+			PrintString($"Update Type = {type}", i);
 			switch (type)
 			{
 			case UpdateTypeLegacy.Values:
 			{
-				WowGuid128 guid3 = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-				this.PrintString("Guid = " + guid3.ToString(), i);
-				ObjectUpdate updateData2 = new ObjectUpdate(guid3, UpdateTypeModern.Values, this.GetSession());
+				WowGuid128 guid3 = packet.ReadPackedGuid().To128(GetSession().GameState);
+				PrintString("Guid = " + guid3, i);
+				ObjectUpdate updateData2 = new ObjectUpdate(guid3, UpdateTypeModern.Values, GetSession());
 				AuraUpdate auraUpdate2 = new AuraUpdate(guid3, all: false);
 				PowerUpdate powerUpdate = new PowerUpdate(guid3);
-				this.ReadValuesUpdateBlock(packet, guid3, updateData2, auraUpdate2, powerUpdate, i);
+				ReadValuesUpdateBlock(packet, guid3, updateData2, auraUpdate2, powerUpdate, i);
 				if (powerUpdate.Powers.Count != 0)
 				{
-					this.SendPacketToClient(powerUpdate);
+					SendPacketToClient(powerUpdate);
 				}
-				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
+				if (guid3 == GetSession().GameState.CurrentPlayerGuid)
 				{
 					// 3.4.3 client is unstable when legacy player Values updates carry
 					// Object/Player/ActivePlayer sections (loot/inventory/quest state churn).
@@ -9857,29 +9857,29 @@ public class WorldClient
 					updateData2.ActivePlayerData = null;
 				}
 				// DestroyObject + CreateObject2 on revive: ghost→alive transition
-				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid && this.GetSession().GameState.NeedPlayerRecreate)
+				if (guid3 == GetSession().GameState.CurrentPlayerGuid && GetSession().GameState.NeedPlayerRecreate)
 				{
-					this.GetSession().GameState.NeedPlayerRecreate = false;
-					Log.Print(LogType.Debug, "[DeathRevive] Performing DestroyObject + CreateObject2 for revive", "HandleUpdateObject", "");
+					GetSession().GameState.NeedPlayerRecreate = false;
+					Log.Print(LogType.Debug, "[DeathRevive] Performing DestroyObject + CreateObject2 for revive", "");
 
 					// 1. Send DestroyObject to remove stale ghost-flagged player from client
-					UpdateObject destroyPacket = new UpdateObject(this.GetSession().GameState);
+					UpdateObject destroyPacket = new UpdateObject(GetSession().GameState);
 					destroyPacket.DestroyedGuids.Add(guid3);
-					this.SendPacketToClient(destroyPacket);
+					SendPacketToClient(destroyPacket);
 
 					// 2. Clear modern cache so CreateObject2 starts fresh
-					this.GetSession().GameState.ObjectCacheMutex.WaitOne();
-					this.GetSession().GameState.ObjectCacheModern.Remove(guid3);
-					this.GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
+					GetSession().GameState.ObjectCacheMutex.WaitOne();
+					GetSession().GameState.ObjectCacheModern.Remove(guid3);
+					GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
 
 					// 3. Build full CreateObject2 from cached legacy fields
-					Dictionary<int, UpdateField> cachedFields = this.GetSession().GameState.GetCachedObjectFieldsLegacy(guid3);
-					if (cachedFields != null && this.GetSession().GameState.LastSelfPlayerMoveInfo != null)
+					Dictionary<int, UpdateField> cachedFields = GetSession().GameState.GetCachedObjectFieldsLegacy(guid3);
+					if (cachedFields != null && GetSession().GameState.LastSelfPlayerMoveInfo != null)
 					{
-						ObjectUpdate createUpdate = new ObjectUpdate(guid3, UpdateTypeModern.CreateObject2, this.GetSession());
+						ObjectUpdate createUpdate = new ObjectUpdate(guid3, UpdateTypeModern.CreateObject2, GetSession());
 						createUpdate.CreateData.ObjectType = ObjectType.ActivePlayer;
 						createUpdate.CreateData.ThisIsYou = true;
-						createUpdate.CreateData.MoveInfo = this.GetSession().GameState.LastSelfPlayerMoveInfo.CopyFromMe();
+						createUpdate.CreateData.MoveInfo = GetSession().GameState.LastSelfPlayerMoveInfo.CopyFromMe();
 
 						// Build full update mask from all cached fields
 						int maxKey = 0;
@@ -9891,21 +9891,21 @@ public class WorldClient
 
 						// Populate all field values via StoreObjectUpdate
 						AuraUpdate createAuraUpdate = new AuraUpdate(guid3, all: true);
-						this.StoreObjectUpdate(guid3, ObjectType.ActivePlayer, fullMask, cachedFields, createAuraUpdate, null, true, createUpdate, fullMask);
+						StoreObjectUpdate(guid3, ObjectType.ActivePlayer, fullMask, cachedFields, createAuraUpdate, null, true, createUpdate, fullMask);
 
 						// Also apply completed quests
-						this.GetSession().GameState.CurrentPlayerStorage.CompletedQuests.WriteAllCompletedIntoArray(createUpdate.ActivePlayerData.QuestCompleted);
+						GetSession().GameState.CurrentPlayerStorage.CompletedQuests.WriteAllCompletedIntoArray(createUpdate.ActivePlayerData.QuestCompleted);
 
 						updateObject.ObjectUpdates.Add(createUpdate);
 						if (createAuraUpdate.Auras.Count != 0)
 						{
 							auraUpdates.Add(createAuraUpdate);
 						}
-						Log.Print(LogType.Debug, $"[DeathRevive] Created full CreateObject2 with {cachedFields.Count} fields, pos={createUpdate.CreateData.MoveInfo.Position}", "HandleUpdateObject", "");
+						Log.Print(LogType.Debug, $"[DeathRevive] Created full CreateObject2 with {cachedFields.Count} fields, pos={createUpdate.CreateData.MoveInfo.Position}", "");
 					}
 					else
 					{
-						Log.Print(LogType.Error, "[DeathRevive] Cannot recreate player — missing cached fields or MoveInfo, sending Values update instead", "HandleUpdateObject", "");
+						Log.Print(LogType.Error, "[DeathRevive] Cannot recreate player — missing cached fields or MoveInfo, sending Values update instead", "");
 						// Fall through to normal Values update as fallback
 						goto normalValuesUpdate;
 					}
@@ -9917,7 +9917,7 @@ public class WorldClient
 					break;
 				}
 				normalValuesUpdate:
-				if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
+				if (guid3 == GetSession().GameState.CurrentPlayerGuid)
 				{
 					// 3.4.3 client can disconnect/crash on player Values packets containing
 					// Object/Player/ActivePlayer blocks or Unit blocks 0+1 fields.
@@ -10013,7 +10013,7 @@ public class WorldClient
 				if (hasAnythingToSend)
 				{
 					// Debug: log stat/resistance updates for the player
-					if (guid3 == this.GetSession().GameState.CurrentPlayerGuid && updateData2.UnitData != null)
+					if (guid3 == GetSession().GameState.CurrentPlayerGuid && updateData2.UnitData != null)
 					{
 						var u = updateData2.UnitData;
 						string statInfo = "";
@@ -10027,7 +10027,7 @@ public class WorldClient
 						if (u.BaseMana.HasValue) statInfo += $" BaseMana={u.BaseMana.Value}";
 						if (u.BaseHealth.HasValue) statInfo += $" BaseHP={u.BaseHealth.Value}";
 						if (statInfo.Length > 0)
-							Log.Print(LogType.Debug, $"[PlayerUpdate] SENDING stats:{statInfo}", "HandleUpdateObject", "");
+							Log.Print(LogType.Debug, $"[PlayerUpdate] SENDING stats:{statInfo}", "");
 						if (updateData2.PlayerData?.VisibleItems != null)
 						{
 							string visInfo = "";
@@ -10035,14 +10035,14 @@ public class WorldClient
 								if (updateData2.PlayerData.VisibleItems[vi] != null)
 									visInfo += $" Slot{vi}=ItemID:{updateData2.PlayerData.VisibleItems[vi].ItemID}";
 							if (visInfo.Length > 0)
-								Log.Print(LogType.Debug, $"[PlayerUpdate] SENDING visItems:{visInfo}", "HandleUpdateObject", "");
+								Log.Print(LogType.Debug, $"[PlayerUpdate] SENDING visItems:{visInfo}", "");
 						}
 					}
 					updateObject.ObjectUpdates.Add(updateData2);
 				}
-				else if (guid3 == this.GetSession().GameState.CurrentPlayerGuid)
+				else if (guid3 == GetSession().GameState.CurrentPlayerGuid)
 				{
-					Log.Print(LogType.Debug, "[PlayerUpdate] DROPPED - no sendable data", "HandleUpdateObject", "");
+					Log.Print(LogType.Debug, "[PlayerUpdate] DROPPED - no sendable data", "");
 				}
 				if (auraUpdate2.Auras.Count != 0)
 				{
@@ -10053,8 +10053,8 @@ public class WorldClient
 			case UpdateTypeLegacy.Movement:
 			{
 				WowGuid64 guid2 = (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_1_2_9901) ? packet.ReadPackedGuid() : packet.ReadGuid());
-				this.PrintString("Guid = " + guid2.ToString(), i);
-				this.ReadMovementUpdateBlock(packet, guid2, null, i);
+				PrintString("Guid = " + guid2, i);
+				ReadMovementUpdateBlock(packet, guid2, null, i);
 				break;
 			}
 			case UpdateTypeLegacy.CreateObject1:
@@ -10062,41 +10062,41 @@ public class WorldClient
 				WowGuid64 oldGuid2 = packet.ReadPackedGuid();
 				if (oldGuid2.GetHighType() == HighGuidType.Creature || oldGuid2.GetHighType() == HighGuidType.GameObject)
 				{
-					if (!this.GetSession().GameState.ObjectSpawnCount.ContainsKey(oldGuid2))
+					if (!GetSession().GameState.ObjectSpawnCount.ContainsKey(oldGuid2))
 					{
-						this.GetSession().GameState.ObjectSpawnCount.Add(oldGuid2, 0);
+						GetSession().GameState.ObjectSpawnCount.Add(oldGuid2, 0);
 					}
-					else if (oldGuid2.GetHighType() == HighGuidType.GameObject && this.GetSession().GameState.DespawnedGameObjects.Contains(oldGuid2))
+					else if (oldGuid2.GetHighType() == HighGuidType.GameObject && GetSession().GameState.DespawnedGameObjects.Contains(oldGuid2))
 					{
-						this.GetSession().GameState.IncrementObjectSpawnCounter(oldGuid2);
+						GetSession().GameState.IncrementObjectSpawnCounter(oldGuid2);
 					}
 				}
-				WowGuid128 guid4 = oldGuid2.To128(this.GetSession().GameState);
-				this.PrintString("Guid = " + guid4.ToString(), i);
-				if (guid4 == this.GetSession().GameState.CurrentPlayerGuid && this.GetSession().GameState.IsInFarSight)
+				WowGuid128 guid4 = oldGuid2.To128(GetSession().GameState);
+				PrintString("Guid = " + guid4, i);
+				if (guid4 == GetSession().GameState.CurrentPlayerGuid && GetSession().GameState.IsInFarSight)
 				{
-					UpdateObject updateObject2 = new UpdateObject(this.GetSession().GameState);
-					ObjectUpdate updateData3 = new ObjectUpdate(guid4, UpdateTypeModern.Values, this.GetSession());
+					UpdateObject updateObject2 = new UpdateObject(GetSession().GameState);
+					ObjectUpdate updateData3 = new ObjectUpdate(guid4, UpdateTypeModern.Values, GetSession());
 					updateData3.ActivePlayerData.FarsightObject = WowGuid128.Empty;
 					updateObject2.ObjectUpdates.Add(updateData3);
-					this.SendPacketToClient(updateObject2);
+					SendPacketToClient(updateObject2);
 				}
-				ObjectUpdate updateData4 = new ObjectUpdate(guid4, UpdateTypeModern.CreateObject1, this.GetSession());
+				ObjectUpdate updateData4 = new ObjectUpdate(guid4, UpdateTypeModern.CreateObject1, GetSession());
 				AuraUpdate auraUpdate3 = new AuraUpdate(guid4, all: true);
-				this.ReadCreateObjectBlock(packet, guid4, updateData4, auraUpdate3, i);
-				if (updateData4.Guid == this.GetSession().GameState.CurrentPlayerGuid)
+				ReadCreateObjectBlock(packet, guid4, updateData4, auraUpdate3, i);
+				if (updateData4.Guid == GetSession().GameState.CurrentPlayerGuid)
 				{
-					this.GetSession().GameState.CurrentPlayerStorage.CompletedQuests.WriteAllCompletedIntoArray(updateData4.ActivePlayerData.QuestCompleted);
+					GetSession().GameState.CurrentPlayerStorage.CompletedQuests.WriteAllCompletedIntoArray(updateData4.ActivePlayerData.QuestCompleted);
 				}
 				if (guid4.IsItem() && updateData4.ObjectData.EntryID.HasValue && !GameData.ItemTemplates.ContainsKey((uint)updateData4.ObjectData.EntryID.Value))
 				{
 					uint entryId4 = (uint)updateData4.ObjectData.EntryID.Value;
 					missingItemTemplates.Add(entryId4);
 					// Buffer this item create until its template arrives via hotfix
-					if (!this.GetSession().GameState.PendingItemCreates.ContainsKey(entryId4))
-						this.GetSession().GameState.PendingItemCreates[entryId4] = new List<ObjectUpdate>();
-					this.GetSession().GameState.PendingItemCreates[entryId4].Add(updateData4);
-					Log.Print(LogType.Debug, $"Buffering item CreateObject {guid4} entry={entryId4} until template arrives.", "HandleUpdateObject", "");
+					if (!GetSession().GameState.PendingItemCreates.ContainsKey(entryId4))
+						GetSession().GameState.PendingItemCreates[entryId4] = new List<ObjectUpdate>();
+					GetSession().GameState.PendingItemCreates[entryId4].Add(updateData4);
+					Log.Print(LogType.Debug, $"Buffering item CreateObject {guid4} entry={entryId4} until template arrives.", "");
 				}
 				else if (updateData4.CreateData.MoveInfo != null || !guid4.IsWorldObject())
 				{
@@ -10108,7 +10108,7 @@ public class WorldClient
 				}
 				else
 				{
-					Log.Print(LogType.Error, $"Broken create1 without position for {guid4}", "HandleUpdateObject", "UpdateHandler.cs");
+					Log.Print(LogType.Error, $"Broken create1 without position for {guid4}", "UpdateHandler.cs");
 				}
 				break;
 			}
@@ -10117,33 +10117,33 @@ public class WorldClient
 				WowGuid64 oldGuid = packet.ReadPackedGuid();
 				if (oldGuid.GetHighType() == HighGuidType.Creature || oldGuid.GetHighType() == HighGuidType.GameObject)
 				{
-					this.GetSession().GameState.IncrementObjectSpawnCounter(oldGuid);
+					GetSession().GameState.IncrementObjectSpawnCounter(oldGuid);
 				}
-				WowGuid128 guid = oldGuid.To128(this.GetSession().GameState);
-				this.PrintString("Guid = " + guid.ToString(), i);
+				WowGuid128 guid = oldGuid.To128(GetSession().GameState);
+				PrintString("Guid = " + guid, i);
 				// In 3.4.3, CreateObject2 is ONLY for the self-player.
 				// Legacy 3.3.5a uses CreateObject2 for all nearby objects, so downgrade non-self objects to CreateObject1.
-				UpdateTypeModern createType = (guid == this.GetSession().GameState.CurrentPlayerGuid)
+				UpdateTypeModern createType = (guid == GetSession().GameState.CurrentPlayerGuid)
 					? UpdateTypeModern.CreateObject2
 					: UpdateTypeModern.CreateObject1;
-				ObjectUpdate updateData = new ObjectUpdate(guid, createType, this.GetSession());
+				ObjectUpdate updateData = new ObjectUpdate(guid, createType, GetSession());
 				AuraUpdate auraUpdate = new AuraUpdate(guid, all: true);
-				this.ReadCreateObjectBlock(packet, guid, updateData, auraUpdate, i);
+				ReadCreateObjectBlock(packet, guid, updateData, auraUpdate, i);
 				// Cache MoveInfo for self player — needed for DestroyObject+CreateObject2 on revive
-				if (guid == this.GetSession().GameState.CurrentPlayerGuid && updateData.CreateData?.MoveInfo != null)
+				if (guid == GetSession().GameState.CurrentPlayerGuid && updateData.CreateData?.MoveInfo != null)
 				{
-					this.GetSession().GameState.LastSelfPlayerMoveInfo = updateData.CreateData.MoveInfo.CopyFromMe();
-					Log.Print(LogType.Debug, $"[DeathRevive] Cached self player MoveInfo pos={updateData.CreateData.MoveInfo.Position}", "HandleUpdateObject", "");
+					GetSession().GameState.LastSelfPlayerMoveInfo = updateData.CreateData.MoveInfo.CopyFromMe();
+					Log.Print(LogType.Debug, $"[DeathRevive] Cached self player MoveInfo pos={updateData.CreateData.MoveInfo.Position}", "");
 				}
 				if (guid.IsItem() && updateData.ObjectData.EntryID.HasValue && !GameData.ItemTemplates.ContainsKey((uint)updateData.ObjectData.EntryID.Value))
 				{
 					uint entryId2 = (uint)updateData.ObjectData.EntryID.Value;
 					missingItemTemplates.Add(entryId2);
 					// Buffer this item create until its template arrives via hotfix
-					if (!this.GetSession().GameState.PendingItemCreates.ContainsKey(entryId2))
-						this.GetSession().GameState.PendingItemCreates[entryId2] = new List<ObjectUpdate>();
-					this.GetSession().GameState.PendingItemCreates[entryId2].Add(updateData);
-					Log.Print(LogType.Debug, $"Buffering item CreateObject {guid} entry={entryId2} until template arrives.", "HandleUpdateObject", "");
+					if (!GetSession().GameState.PendingItemCreates.ContainsKey(entryId2))
+						GetSession().GameState.PendingItemCreates[entryId2] = new List<ObjectUpdate>();
+					GetSession().GameState.PendingItemCreates[entryId2].Add(updateData);
+					Log.Print(LogType.Debug, $"Buffering item CreateObject {guid} entry={entryId2} until template arrives.", "");
 				}
 				else if (updateData.CreateData.MoveInfo != null || !guid.IsWorldObject())
 				{
@@ -10155,19 +10155,19 @@ public class WorldClient
 				}
 				else
 				{
-					Log.Print(LogType.Error, $"Broken create2 without position for {guid}", "HandleUpdateObject", "UpdateHandler.cs");
+					Log.Print(LogType.Error, $"Broken create2 without position for {guid}", "UpdateHandler.cs");
 				}
 				break;
 			}
 			case UpdateTypeLegacy.NearObjects:
-				this.ReadNearObjectsBlock(packet, i);
+				ReadNearObjectsBlock(packet, i);
 				break;
 			case UpdateTypeLegacy.FarObjects:
-				this.ReadFarObjectsBlock(packet, updateObject, i);
+				ReadFarObjectsBlock(packet, updateObject, i);
 				break;
 			}
 		}
-		if (updateObject.ObjectUpdates.Count == 0 && this.GetSession().GameState.IsWaitingForNewWorld)
+		if (updateObject.ObjectUpdates.Count == 0 && GetSession().GameState.IsWaitingForNewWorld)
 		{
 			return;
 		}
@@ -10179,7 +10179,7 @@ public class WorldClient
 			{
 				packet2.WriteGuid(WowGuid64.Empty);
 			}
-			this.SendPacketToServer(packet2);
+			SendPacketToServer(packet2);
 		}
 		int activePlayerUpdateIndex = -1;
 		for (int j = 0; j < updateObject.ObjectUpdates.Count; j++)
@@ -10192,10 +10192,10 @@ public class WorldClient
 		}
 		if (activePlayerUpdateIndex >= 0)
 		{
-			if (this.GetSession().GameState.FlatSpellMods.Count > 0)
+			if (GetSession().GameState.FlatSpellMods.Count > 0)
 			{
 				SetSpellModifier spell = new SetSpellModifier(Opcode.SMSG_SET_FLAT_SPELL_MODIFIER);
-				foreach (KeyValuePair<byte, Dictionary<byte, int>> modItr in this.GetSession().GameState.FlatSpellMods)
+				foreach (KeyValuePair<byte, Dictionary<byte, int>> modItr in GetSession().GameState.FlatSpellMods)
 				{
 					SpellModifierInfo mod = new SpellModifierInfo();
 					mod.ModIndex = modItr.Key;
@@ -10210,12 +10210,12 @@ public class WorldClient
 					}
 					spell.Modifiers.Add(mod);
 				}
-				this.SendPacketToClient(spell);
+				SendPacketToClient(spell);
 			}
-			if (this.GetSession().GameState.PctSpellMods.Count > 0)
+			if (GetSession().GameState.PctSpellMods.Count > 0)
 			{
 				SetSpellModifier spell2 = new SetSpellModifier(Opcode.SMSG_SET_PCT_SPELL_MODIFIER);
-				foreach (KeyValuePair<byte, Dictionary<byte, int>> modItr2 in this.GetSession().GameState.PctSpellMods)
+				foreach (KeyValuePair<byte, Dictionary<byte, int>> modItr2 in GetSession().GameState.PctSpellMods)
 				{
 					SpellModifierInfo mod2 = new SpellModifierInfo();
 					mod2.ModIndex = modItr2.Key;
@@ -10230,7 +10230,7 @@ public class WorldClient
 					}
 					spell2.Modifiers.Add(mod2);
 				}
-				this.SendPacketToClient(spell2);
+				SendPacketToClient(spell2);
 			}
 		}
 		if (activePlayerUpdateIndex > 0)
@@ -10239,12 +10239,12 @@ public class WorldClient
 			updateObject.ObjectUpdates[0] = updateObject.ObjectUpdates[activePlayerUpdateIndex];
 			updateObject.ObjectUpdates[activePlayerUpdateIndex] = tmp;
 		}
-		if (this.GetSession().GameState.CurrentMapId == 489)
+		if (GetSession().GameState.CurrentMapId == 489)
 		{
 			bool resetBgPlayerPositions = false;
 			foreach (WowGuid128 guid5 in updateObject.OutOfRangeGuids)
 			{
-				if (guid5.IsPlayer() && this.GetSession().GameState.FlagCarrierGuids.Contains(guid5))
+				if (guid5.IsPlayer() && GetSession().GameState.FlagCarrierGuids.Contains(guid5))
 				{
 					resetBgPlayerPositions = true;
 					break;
@@ -10253,11 +10253,11 @@ public class WorldClient
 			if (resetBgPlayerPositions)
 			{
 				BattlegroundPlayerPositions bglist = new BattlegroundPlayerPositions();
-				this.SendPacketToClient(bglist);
+				SendPacketToClient(bglist);
 			}
 		}
 		// Split player Values updates into a separate packet from creature updates
-		WowGuid128 playerGuid = this.GetSession().GameState.CurrentPlayerGuid;
+		WowGuid128 playerGuid = GetSession().GameState.CurrentPlayerGuid;
 		List<ObjectUpdate> playerValuesUpdates = new List<ObjectUpdate>();
 		List<ObjectUpdate> otherUpdates = new List<ObjectUpdate>();
 		foreach (var upd in updateObject.ObjectUpdates)
@@ -10271,52 +10271,52 @@ public class WorldClient
 		{
 			updateObject.ObjectUpdates.Clear();
 			updateObject.ObjectUpdates.AddRange(otherUpdates);
-			this.SendPacketToClient(updateObject);
+			SendPacketToClient(updateObject);
 		}
 		if (playerValuesUpdates.Count != 0)
 		{
-			UpdateObject playerUpdateObject = new UpdateObject(this.GetSession().GameState);
+			UpdateObject playerUpdateObject = new UpdateObject(GetSession().GameState);
 			playerUpdateObject.ObjectUpdates.AddRange(playerValuesUpdates);
-			this.SendPacketToClient(playerUpdateObject);
+			SendPacketToClient(playerUpdateObject);
 		}
 		foreach (AuraUpdate auraUpdate4 in auraUpdates)
 		{
-			this.SendPacketToClient(auraUpdate4);
+			SendPacketToClient(auraUpdate4);
 		}
 	}
 
 	public void ReadNearObjectsBlock(WorldPacket packet, object index)
 	{
 		int objCount = packet.ReadInt32();
-		this.PrintString($"NearObjectsCount = {objCount}", index);
+		PrintString($"NearObjectsCount = {objCount}", index);
 		for (int j = 0; j < objCount; j++)
 		{
 			WowGuid64 guid = packet.ReadPackedGuid();
-			this.PrintString($"Guid = {objCount}", index, j);
+			PrintString($"Guid = {objCount}", index, j);
 		}
 	}
 
 	public void ReadFarObjectsBlock(WorldPacket packet, UpdateObject updateObject, object index)
 	{
 		int objCount = packet.ReadInt32();
-		this.PrintString($"FarObjectsCount = {objCount}", index);
+		PrintString($"FarObjectsCount = {objCount}", index);
 		for (int j = 0; j < objCount; j++)
 		{
-			WowGuid128 guid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
-			if (!(guid == this.GetSession().GameState.CurrentPlayerGuid))
+			WowGuid128 guid = packet.ReadPackedGuid().To128(GetSession().GameState);
+			if (!(guid == GetSession().GameState.CurrentPlayerGuid))
 			{
-				this.PrintString($"Guid = {objCount}", index, j);
-				this.GetSession().GameState.ObjectCacheMutex.WaitOne();
-				this.GetSession().GameState.ObjectCacheLegacy.Remove(guid);
-				this.GetSession().GameState.ObjectCacheModern.Remove(guid);
-				this.GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
-				this.GetSession().GameState.LastAuraCasterOnTarget.Remove(guid);
-				if (this.GetSession().GameState.CurrentPetGuid == guid)
+				PrintString($"Guid = {objCount}", index, j);
+				GetSession().GameState.ObjectCacheMutex.WaitOne();
+				GetSession().GameState.ObjectCacheLegacy.Remove(guid);
+				GetSession().GameState.ObjectCacheModern.Remove(guid);
+				GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
+				GetSession().GameState.LastAuraCasterOnTarget.Remove(guid);
+				if (GetSession().GameState.CurrentPetGuid == guid)
 				{
-					UpdateObject updateObject2 = new UpdateObject(this.GetSession().GameState);
-					ObjectUpdate updateData2 = new ObjectUpdate(guid, UpdateTypeModern.Values, this.GetSession());
+					UpdateObject updateObject2 = new UpdateObject(GetSession().GameState);
+					ObjectUpdate updateData2 = new ObjectUpdate(guid, UpdateTypeModern.Values, GetSession());
 					updateObject2.ObjectUpdates.Add(updateData2);
-					this.SendPacketToClient(updateObject2);
+					SendPacketToClient(updateObject2);
 				}
 				updateObject.OutOfRangeGuids.Add(guid);
 			}
@@ -10326,60 +10326,60 @@ public class WorldClient
 	private void ReadCreateObjectBlock(WorldPacket packet, WowGuid128 guid, ObjectUpdate updateData, AuraUpdate auraUpdate, object index)
 	{
 		updateData.CreateData.ObjectType = ObjectTypeConverter.Convert((ObjectTypeLegacy)packet.ReadUInt8());
-		this.GetSession().GameState.StoreOriginalObjectType(guid, updateData.CreateData.ObjectType);
-		this.ReadMovementUpdateBlock(packet, guid, updateData, index);
-		this.ReadValuesUpdateBlockOnCreate(packet, guid, updateData.CreateData.ObjectType, updateData, auraUpdate, index);
+		GetSession().GameState.StoreOriginalObjectType(guid, updateData.CreateData.ObjectType);
+		ReadMovementUpdateBlock(packet, guid, updateData, index);
+		ReadValuesUpdateBlockOnCreate(packet, guid, updateData.CreateData.ObjectType, updateData, auraUpdate, index);
 	}
 
 	public void ReadValuesUpdateBlockOnCreate(WorldPacket packet, WowGuid128 guid, ObjectType type, ObjectUpdate updateData, AuraUpdate auraUpdate, object index)
 	{
 		BitArray updateMaskArray = null;
 		BitArray actuallyChangedValuesMaskArray;
-		Dictionary<int, UpdateField> updates = this.ReadValuesUpdateBlock(packet, ref type, index, isCreating: true, null, out updateMaskArray, out actuallyChangedValuesMaskArray);
-		this.StoreObjectUpdate(guid, type, updateMaskArray, updates, auraUpdate, null, isCreate: true, updateData, actuallyChangedValuesMaskArray);
-		this.GetSession().GameState.ObjectCacheMutex.WaitOne();
-		if (!this.GetSession().GameState.ObjectCacheLegacy.ContainsKey(guid))
+		Dictionary<int, UpdateField> updates = ReadValuesUpdateBlock(packet, ref type, index, isCreating: true, null, out updateMaskArray, out actuallyChangedValuesMaskArray);
+		StoreObjectUpdate(guid, type, updateMaskArray, updates, auraUpdate, null, isCreate: true, updateData, actuallyChangedValuesMaskArray);
+		GetSession().GameState.ObjectCacheMutex.WaitOne();
+		if (!GetSession().GameState.ObjectCacheLegacy.ContainsKey(guid))
 		{
-			this.GetSession().GameState.ObjectCacheLegacy.Add(guid, updates);
+			GetSession().GameState.ObjectCacheLegacy.Add(guid, updates);
 		}
 		else
 		{
-			this.GetSession().GameState.ObjectCacheLegacy[guid] = updates;
+			GetSession().GameState.ObjectCacheLegacy[guid] = updates;
 		}
-		this.GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
+		GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
 	}
 
 	public void ReadValuesUpdateBlock(WorldPacket packet, WowGuid128 guid, ObjectUpdate updateData, AuraUpdate auraUpdate, PowerUpdate powerUpdate, int index)
 	{
 		BitArray updateMaskArray = null;
-		ObjectType type = this.GetSession().GameState.GetOriginalObjectType(guid);
+		ObjectType type = GetSession().GameState.GetOriginalObjectType(guid);
 		BitArray actuallyChangedValuesMaskArray;
-		Dictionary<int, UpdateField> updates = this.ReadValuesUpdateBlock(packet, ref type, index, isCreating: false, this.GetSession().GameState.GetCachedObjectFieldsLegacy(guid), out updateMaskArray, out actuallyChangedValuesMaskArray);
-		this.StoreObjectUpdate(guid, type, updateMaskArray, updates, auraUpdate, powerUpdate, isCreate: false, updateData, actuallyChangedValuesMaskArray);
+		Dictionary<int, UpdateField> updates = ReadValuesUpdateBlock(packet, ref type, index, isCreating: false, GetSession().GameState.GetCachedObjectFieldsLegacy(guid), out updateMaskArray, out actuallyChangedValuesMaskArray);
+		StoreObjectUpdate(guid, type, updateMaskArray, updates, auraUpdate, powerUpdate, isCreate: false, updateData, actuallyChangedValuesMaskArray);
 
 		// Merge changed fields back into ObjectCacheLegacy so inventory slot
 		// GUIDs and other values stay current for subsequent lookups
 		// (e.g. HandleItemPushResult reading GetInventorySlotItem).
-		this.GetSession().GameState.ObjectCacheMutex.WaitOne();
-		if (this.GetSession().GameState.ObjectCacheLegacy.TryGetValue(guid, out var cached))
+		GetSession().GameState.ObjectCacheMutex.WaitOne();
+		if (GetSession().GameState.ObjectCacheLegacy.TryGetValue(guid, out var cached))
 		{
 			foreach (var kvp in updates)
 				cached[kvp.Key] = kvp.Value;
 		}
 		else
 		{
-			this.GetSession().GameState.ObjectCacheLegacy[guid] = updates;
+			GetSession().GameState.ObjectCacheLegacy[guid] = updates;
 		}
-		this.GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
+		GetSession().GameState.ObjectCacheMutex.ReleaseMutex();
 	}
 
 	private string GetIndexString(params object[] values)
 	{
 		IEnumerable<object> list = values.Flatten();
-		return list.Where((object value) => value != null).Aggregate(string.Empty, delegate(string current, object value)
+		return list.Where(value => value != null).Aggregate(string.Empty, delegate(string current, object value)
 		{
 			string text = ((value is string) ? "()" : "[]");
-			return current + text[0] + value.ToString() + text[1] + " ";
+			return current + text[0] + value + text[1] + " ";
 		});
 	}
 
@@ -10632,7 +10632,7 @@ public class WorldClient
 						guid |= fieldData[guidI * guidSize].UInt32Value;
 						if (!isCreating || guid != 0)
 						{
-							this.PrintValue(key + ((guidCount > 1) ? (" + " + guidI) : ""), new WowGuid64(guid), index);
+							PrintValue(key + ((guidCount > 1) ? (" + " + guidI) : ""), new WowGuid64(guid), index);
 						}
 						continue;
 					}
@@ -10644,7 +10644,7 @@ public class WorldClient
 					high |= fieldData[guidI * guidSize + 2].UInt32Value;
 					if (!isCreating || high != 0L || low != 0)
 					{
-						this.PrintValue(key + ((guidCount > 1) ? (" + " + guidI) : ""), new WowGuid128(low, high), index);
+						PrintValue(key + ((guidCount > 1) ? (" + " + guidI) : ""), new WowGuid128(low, high), index);
 					}
 				}
 				break;
@@ -10664,7 +10664,7 @@ public class WorldClient
 					}
 					if (hasQuatValue)
 					{
-						this.PrintValue(key + ((quaternionCount > 1) ? (" + " + quatI) : ""), new Framework.GameMath.Quaternion(fieldData[quatI * 4].FloatValue, fieldData[quatI * 4 + 1].FloatValue, fieldData[quatI * 4 + 2].FloatValue, fieldData[quatI * 4 + 3].FloatValue), index);
+						PrintValue(key + ((quaternionCount > 1) ? (" + " + quatI) : ""), new Quaternion(fieldData[quatI * 4].FloatValue, fieldData[quatI * 4 + 1].FloatValue, fieldData[quatI * 4 + 2].FloatValue, fieldData[quatI * 4 + 3].FloatValue), index);
 					}
 				}
 				break;
@@ -10687,7 +10687,7 @@ public class WorldClient
 						long quat = fieldData[num5 * 2 + 1].UInt32Value;
 						quat <<= 32;
 						quat |= fieldData[num5 * 2].UInt32Value;
-						this.PrintValue(key + ((quaternionCount2 > 1) ? (" + " + num5) : ""), new Framework.GameMath.Quaternion(quat), index);
+						PrintValue(key + ((quaternionCount2 > 1) ? (" + " + num5) : ""), new Quaternion(quat), index);
 					}
 				}
 				break;
@@ -10698,7 +10698,7 @@ public class WorldClient
 				{
 					if (mask[start + num] && (!isCreating || fieldData[num].UInt32Value != 0))
 					{
-						this.PrintValue((num > 0) ? (key + " + " + num) : key, fieldData[num].UInt32Value, index);
+						PrintValue((num > 0) ? (key + " + " + num) : key, fieldData[num].UInt32Value, index);
 					}
 				}
 				break;
@@ -10709,7 +10709,7 @@ public class WorldClient
 				{
 					if (mask[start + num7] && (!isCreating || fieldData[num7].UInt32Value != 0))
 					{
-						this.PrintValue((num7 > 0) ? (key + " + " + num7) : key, fieldData[num7].Int32Value, index);
+						PrintValue((num7 > 0) ? (key + " + " + num7) : key, fieldData[num7].Int32Value, index);
 					}
 				}
 				break;
@@ -10720,7 +10720,7 @@ public class WorldClient
 				{
 					if (mask[start + num4] && (!isCreating || fieldData[num4].UInt32Value != 0))
 					{
-						this.PrintValue((num4 > 0) ? (key + " + " + num4) : key, fieldData[num4].FloatValue, index);
+						PrintValue((num4 > 0) ? (key + " + " + num4) : key, fieldData[num4].FloatValue, index);
 					}
 				}
 				break;
@@ -10732,7 +10732,7 @@ public class WorldClient
 					if (mask[start + num2] && (!isCreating || fieldData[num2].UInt32Value != 0))
 					{
 						byte[] intBytes = BitConverter.GetBytes(fieldData[num2].UInt32Value);
-						this.PrintValue((num2 > 0) ? (key + " + " + num2) : key, intBytes[0] + "/" + intBytes[1] + "/" + intBytes[2] + "/" + intBytes[3], index);
+						PrintValue((num2 > 0) ? (key + " + " + num2) : key, intBytes[0] + "/" + intBytes[1] + "/" + intBytes[2] + "/" + intBytes[3], index);
 					}
 				}
 				break;
@@ -10743,7 +10743,7 @@ public class WorldClient
 				{
 					if (mask[start + n] && (!isCreating || fieldData[n].UInt32Value != 0))
 					{
-						this.PrintValue((n > 0) ? (key + " + " + n) : key, (short)(fieldData[n].UInt32Value & 0xFFFF) + "/" + (short)(fieldData[n].UInt32Value >> 16), index);
+						PrintValue((n > 0) ? (key + " + " + n) : key, (short)(fieldData[n].UInt32Value & 0xFFFF) + "/" + (short)(fieldData[n].UInt32Value >> 16), index);
 					}
 				}
 				break;
@@ -10754,7 +10754,7 @@ public class WorldClient
 				{
 					if (mask[start + m] && (!isCreating || fieldData[m].UInt32Value != 0))
 					{
-						this.PrintValue((m > 0) ? (key + " + " + m) : key, fieldData[m].UInt32Value + "/" + fieldData[m].FloatValue, index);
+						PrintValue((m > 0) ? (key + " + " + m) : key, fieldData[m].UInt32Value + "/" + fieldData[m].FloatValue, index);
 					}
 				}
 				break;
@@ -10788,12 +10788,12 @@ public class WorldClient
 			{
 				updateData.CreateData.ThisIsYou = true;
 			}
-			this.GetSession().GameState.CurrentPlayerCreateTime = packet.GetReceivedTime();
+			GetSession().GameState.CurrentPlayerCreateTime = packet.GetReceivedTime();
 		}
 		if (flags.HasAnyFlag(UpdateFlag.Living))
 		{
 			moveInfo = new MovementInfo();
-			moveInfo.ReadMovementInfoLegacy(packet, this.GetSession().GameState);
+			moveInfo.ReadMovementInfoLegacy(packet, GetSession().GameState);
 			uint moveFlags = moveInfo.Flags;
 			moveInfo.WalkSpeed = packet.ReadFloat();
 			moveInfo.RunSpeed = packet.ReadFloat();
@@ -10834,7 +10834,7 @@ public class WorldClient
 					hasTaxiFlightFlags = splineFlags == (SplineFlagWotLK.WalkMode | SplineFlagWotLK.Flying);
 					if (splineFlags.HasAnyFlag(SplineFlagWotLK.FinalTarget))
 					{
-						monsterMove.FinalFacingGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+						monsterMove.FinalFacingGuid = packet.ReadGuid().To128(GetSession().GameState);
 						monsterMove.SplineType = SplineTypeModern.FacingTarget;
 					}
 					else if (splineFlags.HasAnyFlag(SplineFlagWotLK.FinalOrientation))
@@ -10856,7 +10856,7 @@ public class WorldClient
 					hasTaxiFlightFlags = splineFlags2 == (SplineFlagTBC.Runmode | SplineFlagTBC.Flying);
 					if (splineFlags2.HasAnyFlag(SplineFlagTBC.FinalTarget))
 					{
-						monsterMove.FinalFacingGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+						monsterMove.FinalFacingGuid = packet.ReadGuid().To128(GetSession().GameState);
 						monsterMove.SplineType = SplineTypeModern.FacingTarget;
 					}
 					else if (splineFlags2.HasAnyFlag(SplineFlagTBC.FinalOrientation))
@@ -10878,7 +10878,7 @@ public class WorldClient
 					hasTaxiFlightFlags = splineFlags3 == (SplineFlagVanilla.Runmode | SplineFlagVanilla.Flying);
 					if (splineFlags3.HasAnyFlag(SplineFlagVanilla.FinalTarget))
 					{
-						monsterMove.FinalFacingGuid = packet.ReadGuid().To128(this.GetSession().GameState);
+						monsterMove.FinalFacingGuid = packet.ReadGuid().To128(GetSession().GameState);
 						monsterMove.SplineType = SplineTypeModern.FacingTarget;
 					}
 					else if (splineFlags3.HasAnyFlag(SplineFlagVanilla.FinalOrientation))
@@ -10908,10 +10908,10 @@ public class WorldClient
 					packet.ReadInt32();
 				}
 				uint splineCount = (monsterMove.SplineCount = packet.ReadUInt32());
-				monsterMove.SplinePoints = new List<Framework.GameMath.Vector3>();
+				monsterMove.SplinePoints = new List<Vector3>();
 				for (int i = 0; i < splineCount; i++)
 				{
-					Framework.GameMath.Vector3 vec = packet.ReadVector3();
+					Vector3 vec = packet.ReadVector3();
 					monsterMove.SplinePoints.Add(vec);
 				}
 				if (LegacyVersion.AddedInVersion(ClientVersionBuild.V3_0_8_9464))
@@ -10928,7 +10928,7 @@ public class WorldClient
 		else if (flags.HasAnyFlag(UpdateFlag.GOPosition))
 		{
 			moveInfo = new MovementInfo();
-			moveInfo.TransportGuid = packet.ReadPackedGuid().To128(this.GetSession().GameState);
+			moveInfo.TransportGuid = packet.ReadPackedGuid().To128(GetSession().GameState);
 			moveInfo.Position = packet.ReadVector3();
 			moveInfo.TransportOffset = packet.ReadVector3();
 			moveInfo.Orientation = packet.ReadFloat();
@@ -10954,7 +10954,7 @@ public class WorldClient
 			WowGuid64 attackGuid = packet.ReadPackedGuid();
 			if (updateData != null)
 			{
-				updateData.CreateData.AutoAttackVictim = attackGuid.To128(this.GetSession().GameState);
+				updateData.CreateData.AutoAttackVictim = attackGuid.To128(GetSession().GameState);
 			}
 		}
 		if (flags.HasAnyFlag(UpdateFlag.Transport))
@@ -10977,7 +10977,7 @@ public class WorldClient
 		}
 		if (flags.HasAnyFlag(UpdateFlag.GORotation))
 		{
-			Framework.GameMath.Quaternion rotation = packet.ReadPackedQuaternion();
+			Quaternion rotation = packet.ReadPackedQuaternion();
 			if (moveInfo != null)
 			{
 				moveInfo.Rotation = rotation;
@@ -11032,8 +11032,8 @@ public class WorldClient
 			}
 			questLog.QuestID = updates[index].Int32Value;
 			// Cache the QuestID for this slot
-			this.GetSession().GameState.QuestLogQuestIDs[i] = questLog.QuestID.Value;
-			Log.Print(LogType.Debug, $"[QuestLogRead] slot={i} QuestID={questLog.QuestID.Value} fieldIndex={index}", "ReadQuestLogEntry", "");
+			GetSession().GameState.QuestLogQuestIDs[i] = questLog.QuestID.Value;
+			Log.Print(LogType.Debug, $"[QuestLogRead] slot={i} QuestID={questLog.QuestID.Value} fieldIndex={index}", "");
 		}
 		if ((updateMaskArray != null && updateMaskArray[index + stateOffset]) || (updateMaskArray == null && updates.ContainsKey(index + stateOffset)))
 		{
@@ -11104,7 +11104,7 @@ public class WorldClient
 		// fill QuestID from the cache (set during CreateObject or earlier Values update)
 		if (questLog != null && !questLog.QuestID.HasValue)
 		{
-			int cachedId = this.GetSession().GameState.QuestLogQuestIDs[i];
+			int cachedId = GetSession().GameState.QuestLogQuestIDs[i];
 			if (cachedId != 0)
 			{
 				questLog.QuestID = cachedId;
@@ -11113,7 +11113,7 @@ public class WorldClient
 		// If QuestID was explicitly set to 0, clear the cache (quest abandoned/completed)
 		if (questLog != null && questLog.QuestID.HasValue && questLog.QuestID.Value == 0)
 		{
-			this.GetSession().GameState.QuestLogQuestIDs[i] = 0;
+			GetSession().GameState.QuestLogQuestIDs[i] = 0;
 		}
 		return questLog;
 	}
@@ -11134,7 +11134,7 @@ public class WorldClient
 			return null;
 		}
 		AuraDataInfo data = new AuraDataInfo();
-		data.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Aura, this.GetSession().GameState.CurrentMapId.Value, spellId, guid.GetCounter());
+		data.CastID = WowGuid128.Create(HighGuidType703.Cast, SpellCastSource.Aura, GetSession().GameState.CurrentMapId.Value, spellId, guid.GetCounter());
 		data.SpellID = spellId;
 		data.SpellXSpellVisualID = GameData.GetSpellVisual(spellId);
 		if (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_0_1_6180))
@@ -11209,8 +11209,8 @@ public class WorldClient
 
 	public void StoreObjectUpdate(WowGuid128 guid, ObjectType objectType, BitArray updateMaskArray, Dictionary<int, UpdateField> updates, AuraUpdate auraUpdate, PowerUpdate powerUpdate, bool isCreate, ObjectUpdate updateData, BitArray actuallyChangedValuesMaskArray)
 	{
-		this.StoreObjectUpdateInternal(guid, objectType, updateMaskArray, updates, auraUpdate, powerUpdate, isCreate, updateData);
-		this.AfterStoreObjectUpdateHook(guid, objectType, updateMaskArray, updates, auraUpdate, powerUpdate, isCreate, updateData, actuallyChangedValuesMaskArray);
+		StoreObjectUpdateInternal(guid, objectType, updateMaskArray, updates, auraUpdate, powerUpdate, isCreate, updateData);
+		AfterStoreObjectUpdateHook(guid, objectType, updateMaskArray, updates, auraUpdate, powerUpdate, isCreate, updateData, actuallyChangedValuesMaskArray);
 	}
 
 	private void AfterStoreObjectUpdateHook(WowGuid128 guid, ObjectType objectType, BitArray updateMaskArray, Dictionary<int, UpdateField> updates, AuraUpdate auraUpdate, PowerUpdate powerUpdate, bool isCreate, ObjectUpdate updateData, BitArray changedValuesMask)
@@ -11226,9 +11226,9 @@ public class WorldClient
 		{
 			return;
 		}
-		int nativeDisplayId = this.Session.GameState.GetLegacyFieldValueInt32(guid, UnitField.UNIT_FIELD_DISPLAYID);
-		int mountDisplayId = this.Session.GameState.GetLegacyFieldValueInt32(guid, UnitField.UNIT_FIELD_MOUNTDISPLAYID);
-		float rawScaleX = this.Session.GameState.GetLegacyFieldValueFloat(guid, ObjectField.OBJECT_FIELD_SCALE_X);
+		int nativeDisplayId = Session.GameState.GetLegacyFieldValueInt32(guid, UnitField.UNIT_FIELD_DISPLAYID);
+		int mountDisplayId = Session.GameState.GetLegacyFieldValueInt32(guid, UnitField.UNIT_FIELD_MOUNTDISPLAYID);
+		float rawScaleX = Session.GameState.GetLegacyFieldValueFloat(guid, ObjectField.OBJECT_FIELD_SCALE_X);
 		if (rawScaleX != 0f)
 		{
 			float regularNativeDisplaySize = GameData.GetUnitCompleteDisplayScale((uint)nativeDisplayId);
@@ -11262,7 +11262,7 @@ public class WorldClient
 				Reason = reason,
 				MountDisplayID = (uint)mountDisplayId
 			};
-			this.SendPacketToClient(height, Opcode.SMSG_UPDATE_OBJECT);
+			SendPacketToClient(height, Opcode.SMSG_UPDATE_OBJECT);
 		}
 	}
 
@@ -11271,7 +11271,7 @@ public class WorldClient
 		int OBJECT_FIELD_GUID = LegacyVersion.GetUpdateField(ObjectField.OBJECT_FIELD_GUID);
 		if (OBJECT_FIELD_GUID >= 0 && updateMaskArray[OBJECT_FIELD_GUID])
 		{
-			updateData.ObjectData.Guid = WorldClient.GetGuidValue(updates, ObjectField.OBJECT_FIELD_GUID).To128(this.GetSession().GameState);
+			updateData.ObjectData.Guid = GetGuidValue(updates, ObjectField.OBJECT_FIELD_GUID).To128(GetSession().GameState);
 		}
 		int OBJECT_FIELD_ENTRY = LegacyVersion.GetUpdateField(ObjectField.OBJECT_FIELD_ENTRY);
 		if (OBJECT_FIELD_ENTRY >= 0 && updateMaskArray[OBJECT_FIELD_ENTRY])
@@ -11288,22 +11288,22 @@ public class WorldClient
 			int ITEM_FIELD_OWNER = LegacyVersion.GetUpdateField(ItemField.ITEM_FIELD_OWNER);
 			if (ITEM_FIELD_OWNER >= 0 && updateMaskArray[ITEM_FIELD_OWNER])
 			{
-				updateData.ItemData.Owner = WorldClient.GetGuidValue(updates, ItemField.ITEM_FIELD_OWNER).To128(this.GetSession().GameState);
+				updateData.ItemData.Owner = GetGuidValue(updates, ItemField.ITEM_FIELD_OWNER).To128(GetSession().GameState);
 			}
 			int ITEM_FIELD_CONTAINED = LegacyVersion.GetUpdateField(ItemField.ITEM_FIELD_CONTAINED);
 			if (ITEM_FIELD_CONTAINED >= 0 && updateMaskArray[ITEM_FIELD_CONTAINED])
 			{
-				updateData.ItemData.ContainedIn = WorldClient.GetGuidValue(updates, ItemField.ITEM_FIELD_CONTAINED).To128(this.GetSession().GameState);
+				updateData.ItemData.ContainedIn = GetGuidValue(updates, ItemField.ITEM_FIELD_CONTAINED).To128(GetSession().GameState);
 			}
 			int ITEM_FIELD_CREATOR = LegacyVersion.GetUpdateField(ItemField.ITEM_FIELD_CREATOR);
 			if (ITEM_FIELD_CREATOR >= 0 && updateMaskArray[ITEM_FIELD_CREATOR])
 			{
-				updateData.ItemData.Creator = WorldClient.GetGuidValue(updates, ItemField.ITEM_FIELD_CREATOR).To128(this.GetSession().GameState);
+				updateData.ItemData.Creator = GetGuidValue(updates, ItemField.ITEM_FIELD_CREATOR).To128(GetSession().GameState);
 			}
 			int ITEM_FIELD_GIFTCREATOR = LegacyVersion.GetUpdateField(ItemField.ITEM_FIELD_GIFTCREATOR);
 			if (ITEM_FIELD_GIFTCREATOR >= 0 && updateMaskArray[ITEM_FIELD_GIFTCREATOR])
 			{
-				updateData.ItemData.GiftCreator = WorldClient.GetGuidValue(updates, ItemField.ITEM_FIELD_GIFTCREATOR).To128(this.GetSession().GameState);
+				updateData.ItemData.GiftCreator = GetGuidValue(updates, ItemField.ITEM_FIELD_GIFTCREATOR).To128(GetSession().GameState);
 			}
 			int ITEM_FIELD_STACK_COUNT = LegacyVersion.GetUpdateField(ItemField.ITEM_FIELD_STACK_COUNT);
 			if (ITEM_FIELD_STACK_COUNT >= 0 && updateMaskArray[ITEM_FIELD_STACK_COUNT])
@@ -11369,46 +11369,46 @@ public class WorldClient
 				};
 				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180))
 				{
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Perm] = ReadEnchantData(HermesProxy.World.Enums.Vanilla.EnchantmentSlot.Perm);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Temp] = ReadEnchantData(HermesProxy.World.Enums.Vanilla.EnchantmentSlot.Temp);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop0] = ReadEnchantData(HermesProxy.World.Enums.Vanilla.EnchantmentSlot.Prop0);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop1] = ReadEnchantData(HermesProxy.World.Enums.Vanilla.EnchantmentSlot.Prop1);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop2] = ReadEnchantData(HermesProxy.World.Enums.Vanilla.EnchantmentSlot.Prop2);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop3] = ReadEnchantData(HermesProxy.World.Enums.Vanilla.EnchantmentSlot.Prop3);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Perm] = ReadEnchantData(Enums.Vanilla.EnchantmentSlot.Perm);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Temp] = ReadEnchantData(Enums.Vanilla.EnchantmentSlot.Temp);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop0] = ReadEnchantData(Enums.Vanilla.EnchantmentSlot.Prop0);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop1] = ReadEnchantData(Enums.Vanilla.EnchantmentSlot.Prop1);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop2] = ReadEnchantData(Enums.Vanilla.EnchantmentSlot.Prop2);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop3] = ReadEnchantData(Enums.Vanilla.EnchantmentSlot.Prop3);
 				}
 				else if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056))
 				{
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Perm] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Perm);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Temp] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Temp);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Sock1] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Sock1);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Sock2] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Sock2);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Sock3] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Sock3);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Bonus] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Bonus);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop0] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Prop0);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop1] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Prop1);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop2] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Prop2);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop3] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Prop3);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop4] = ReadEnchantData(HermesProxy.World.Enums.TBC.EnchantmentSlot.Prop4);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Perm] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Perm);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Temp] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Temp);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Sock1] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Sock1);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Sock2] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Sock2);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Sock3] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Sock3);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Bonus] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Bonus);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop0] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Prop0);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop1] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Prop1);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop2] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Prop2);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop3] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Prop3);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop4] = ReadEnchantData(Enums.TBC.EnchantmentSlot.Prop4);
 				}
 				else
 				{
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Perm] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Perm);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Temp] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Temp);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Sock1] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Sock1);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Sock2] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Sock2);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Sock3] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Sock3);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Bonus] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Bonus);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prismatic] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Prismatic);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop0] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Prop0);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop1] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Prop1);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop2] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Prop2);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop3] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Prop3);
-					updateData.ItemData.Enchantment[HermesProxy.World.Enums.Classic.EnchantmentSlot.Prop4] = ReadEnchantData(HermesProxy.World.Enums.WotLK.EnchantmentSlot.Prop4);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Perm] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Perm);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Temp] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Temp);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Sock1] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Sock1);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Sock2] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Sock2);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Sock3] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Sock3);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Bonus] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Bonus);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prismatic] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Prismatic);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop0] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Prop0);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop1] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Prop1);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop2] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Prop2);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop3] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Prop3);
+					updateData.ItemData.Enchantment[EnchantmentSlot.Prop4] = ReadEnchantData(Enums.WotLK.EnchantmentSlot.Prop4);
 				}
 				uint?[] gems = new uint?[3];
 				for (int i2 = 0; i2 < 3; i2++)
 				{
-					int slot = HermesProxy.World.Enums.Classic.EnchantmentSlot.Sock1 + i2;
+					int slot = EnchantmentSlot.Sock1 + i2;
 					if (updateData.ItemData.Enchantment[slot] != null && updateData.ItemData.Enchantment[slot].ID.HasValue)
 					{
 						uint itemId = GameData.GetGemFromEnchantId((uint)updateData.ItemData.Enchantment[slot].ID.Value);
@@ -11421,7 +11421,7 @@ public class WorldClient
 				}
 				if (updateData.ItemData.HasGemsUpdate)
 				{
-					this.GetSession().GameState.SaveGemsForItem(guid, gems);
+					GetSession().GameState.SaveGemsForItem(guid, gems);
 				}
 			}
 			int ITEM_FIELD_PROPERTY_SEED = LegacyVersion.GetUpdateField(ItemField.ITEM_FIELD_PROPERTY_SEED);
@@ -11459,7 +11459,7 @@ public class WorldClient
 				{
 					if (updateMaskArray[CONTAINER_FIELD_SLOT_1 + i3 * 2])
 					{
-						updateData.ContainerData.Slots[i3] = WorldClient.GetGuidValue(updates, CONTAINER_FIELD_SLOT_1 + i3 * 2).To128(this.GetSession().GameState);
+						updateData.ContainerData.Slots[i3] = GetGuidValue(updates, CONTAINER_FIELD_SLOT_1 + i3 * 2).To128(GetSession().GameState);
 					}
 				}
 			}
@@ -11469,37 +11469,37 @@ public class WorldClient
 			int UNIT_FIELD_CHARM = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_CHARM);
 			if (UNIT_FIELD_CHARM >= 0 && updateMaskArray[UNIT_FIELD_CHARM])
 			{
-				updateData.UnitData.Charm = WorldClient.GetGuidValue(updates, UnitField.UNIT_FIELD_CHARM).To128(this.GetSession().GameState);
+				updateData.UnitData.Charm = GetGuidValue(updates, UnitField.UNIT_FIELD_CHARM).To128(GetSession().GameState);
 			}
 			int UNIT_FIELD_SUMMON = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_SUMMON);
 			if (UNIT_FIELD_SUMMON >= 0 && updateMaskArray[UNIT_FIELD_SUMMON])
 			{
-				updateData.UnitData.Summon = WorldClient.GetGuidValue(updates, UnitField.UNIT_FIELD_SUMMON).To128(this.GetSession().GameState);
+				updateData.UnitData.Summon = GetGuidValue(updates, UnitField.UNIT_FIELD_SUMMON).To128(GetSession().GameState);
 			}
 			int UNIT_FIELD_CHARMEDBY = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_CHARMEDBY);
 			if (UNIT_FIELD_CHARMEDBY >= 0 && updateMaskArray[UNIT_FIELD_CHARMEDBY])
 			{
-				updateData.UnitData.CharmedBy = WorldClient.GetGuidValue(updates, UnitField.UNIT_FIELD_CHARMEDBY).To128(this.GetSession().GameState);
+				updateData.UnitData.CharmedBy = GetGuidValue(updates, UnitField.UNIT_FIELD_CHARMEDBY).To128(GetSession().GameState);
 			}
 			int UNIT_FIELD_SUMMONEDBY = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_SUMMONEDBY);
 			if (UNIT_FIELD_SUMMONEDBY >= 0 && updateMaskArray[UNIT_FIELD_SUMMONEDBY])
 			{
-				updateData.UnitData.SummonedBy = WorldClient.GetGuidValue(updates, UnitField.UNIT_FIELD_SUMMONEDBY).To128(this.GetSession().GameState);
+				updateData.UnitData.SummonedBy = GetGuidValue(updates, UnitField.UNIT_FIELD_SUMMONEDBY).To128(GetSession().GameState);
 			}
 			int UNIT_FIELD_CREATEDBY = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_CREATEDBY);
 			if (UNIT_FIELD_CREATEDBY >= 0 && updateMaskArray[UNIT_FIELD_CREATEDBY])
 			{
-				updateData.UnitData.CreatedBy = WorldClient.GetGuidValue(updates, UnitField.UNIT_FIELD_CREATEDBY).To128(this.GetSession().GameState);
+				updateData.UnitData.CreatedBy = GetGuidValue(updates, UnitField.UNIT_FIELD_CREATEDBY).To128(GetSession().GameState);
 			}
 			int UNIT_FIELD_TARGET = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_TARGET);
 			if (UNIT_FIELD_TARGET >= 0 && updateMaskArray[UNIT_FIELD_TARGET])
 			{
-				updateData.UnitData.Target = WorldClient.GetGuidValue(updates, UnitField.UNIT_FIELD_TARGET).To128(this.GetSession().GameState);
+				updateData.UnitData.Target = GetGuidValue(updates, UnitField.UNIT_FIELD_TARGET).To128(GetSession().GameState);
 			}
 			int UNIT_FIELD_CHANNEL_OBJECT = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_CHANNEL_OBJECT);
 			if (UNIT_FIELD_CHANNEL_OBJECT >= 0 && updateMaskArray[UNIT_FIELD_CHANNEL_OBJECT])
 			{
-				updateData.UnitData.ChannelObject = WorldClient.GetGuidValue(updates, UnitField.UNIT_FIELD_CHANNEL_OBJECT).To128(this.GetSession().GameState);
+				updateData.UnitData.ChannelObject = GetGuidValue(updates, UnitField.UNIT_FIELD_CHANNEL_OBJECT).To128(GetSession().GameState);
 			}
 			int UNIT_FIELD_HEALTH = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_HEALTH);
 			if (UNIT_FIELD_HEALTH >= 0 && updateMaskArray[UNIT_FIELD_HEALTH])
@@ -11516,7 +11516,7 @@ public class WorldClient
 			{
 				updateData.UnitData.Level = updates[UNIT_FIELD_LEVEL].Int32Value;
 				// Compute GlyphsEnabled for current player based on level
-				if (guid == this.GetSession().GameState.CurrentPlayerGuid)
+				if (guid == GetSession().GameState.CurrentPlayerGuid)
 				{
 					int lvl = updates[UNIT_FIELD_LEVEL].Int32Value;
 					byte ge = 0;
@@ -11525,7 +11525,7 @@ public class WorldClient
 					if (lvl >= 50) ge |= 0x04;
 					if (lvl >= 70) ge |= 0x10;
 					if (lvl >= 80) ge |= 0x20;
-					this.GetSession().GameState.GlyphsEnabled = ge;
+					GetSession().GameState.GlyphsEnabled = ge;
 				}
 			}
 			int UNIT_FIELD_FACTIONTEMPLATE = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_FACTIONTEMPLATE);
@@ -11542,11 +11542,11 @@ public class WorldClient
 				updateData.UnitData.DisplayPower = (byte)((updates[UNIT_FIELD_BYTES_0].UInt32Value >> 24) & 0xFF);
 				if (guid.GetHighType() == HighGuidType.Pet && updateData.UnitData.DisplayPower == 2)
 				{
-					this.GetSession().GameState.HunterPetGuids.Add(guid);
+					GetSession().GameState.HunterPetGuids.Add(guid);
 				}
 				if (objectType == ObjectType.Unit)
 				{
-					this.GetSession().GameState.StoreCreatureClass(guid.GetEntry(), (Class)updateData.UnitData.ClassId.Value);
+					GetSession().GameState.StoreCreatureClass(guid.GetEntry(), (Class)updateData.UnitData.ClassId.Value);
 				}
 				else
 				{
@@ -11560,18 +11560,18 @@ public class WorldClient
 				{
 					if (updateMaskArray[UNIT_FIELD_POWER1 + i4])
 					{
-						if (powerUpdate != null && (guid == this.GetSession().GameState.CurrentPlayerGuid || guid == this.GetSession().GameState.CurrentPetGuid))
+						if (powerUpdate != null && (guid == GetSession().GameState.CurrentPlayerGuid || guid == GetSession().GameState.CurrentPetGuid))
 						{
 							powerUpdate.Powers.Add(new PowerUpdatePower(updates[UNIT_FIELD_POWER1 + i4].Int32Value, (byte)i4));
 						}
 						sbyte powerSlot;
-						if (this.GetSession().GameState.HunterPetGuids.Contains(guid))
+						if (GetSession().GameState.HunterPetGuids.Contains(guid))
 						{
 							powerSlot = ClassPowerTypes.GetPowerSlotForPet((PowerType)i4);
 						}
 						else
 						{
-							Class classId = ((!updateData.UnitData.ClassId.HasValue) ? this.GetSession().GameState.GetUnitClass(guid.To128(this.GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
+							Class classId = ((!updateData.UnitData.ClassId.HasValue) ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
 							powerSlot = ClassPowerTypes.GetPowerSlotForClass(classId, (PowerType)i4);
 						}
 						if (powerSlot >= 0)
@@ -11590,8 +11590,8 @@ public class WorldClient
 					{
 						continue;
 					}
-					Class classId2 = ((!updateData.UnitData.ClassId.HasValue) ? this.GetSession().GameState.GetUnitClass(guid.To128(this.GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
-					sbyte powerSlot2 = ((!this.GetSession().GameState.HunterPetGuids.Contains(guid)) ? ClassPowerTypes.GetPowerSlotForClass(classId2, (PowerType)i5) : ClassPowerTypes.GetPowerSlotForPet((PowerType)i5));
+					Class classId2 = ((!updateData.UnitData.ClassId.HasValue) ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
+					sbyte powerSlot2 = ((!GetSession().GameState.HunterPetGuids.Contains(guid)) ? ClassPowerTypes.GetPowerSlotForClass(classId2, (PowerType)i5) : ClassPowerTypes.GetPowerSlotForPet((PowerType)i5));
 					if (powerSlot2 >= 0)
 					{
 						updateData.UnitData.MaxPower[powerSlot2] = updates[UNIT_FIELD_MAXPOWER1 + i5].Int32Value;
@@ -11684,14 +11684,14 @@ public class WorldClient
 				{
 					updateData.UnitData.Flags = updates[UNIT_FIELD_FLAGS].UInt32Value;
 				}
-				if (updateData.UnitData.Flags.HasAnyFlag(UnitFlags.ServerControlled) && isCreate && guid == this.GetSession().GameState.CurrentPlayerGuid && updateData.CreateData.MoveSpline == null)
+				if (updateData.UnitData.Flags.HasAnyFlag(UnitFlags.ServerControlled) && isCreate && guid == GetSession().GameState.CurrentPlayerGuid && updateData.CreateData.MoveSpline == null)
 				{
 					UnitData unitData = updateData.UnitData;
 					unitData.Flags &= 4294967294u;
 				}
 				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056) && !updateData.UnitData.PvpFlags.HasValue)
 				{
-					updateData.UnitData.PvpFlags = this.ReadPvPFlags(updates);
+					updateData.UnitData.PvpFlags = ReadPvPFlags(updates);
 				}
 			}
 			int UNIT_FIELD_FLAGS_2 = LegacyVersion.GetUpdateField(UnitField.UNIT_FIELD_FLAGS_2);
@@ -11838,7 +11838,7 @@ public class WorldClient
 				int channelSpellId = updates[UNIT_CHANNEL_SPELL].Int32Value;
 				if (channelSpellId == 0)
 				{
-					this.GetSession().GameState.CurrentChanneledSpellId = 0;
+					GetSession().GameState.CurrentChanneledSpellId = 0;
 					// Don't write ChannelData with SpellID=0 — SMSG_SPELL_CHANNEL_UPDATE
 					// handles channel end. Writing it causes the 3.4.3 client to get stuck.
 				}
@@ -11861,7 +11861,7 @@ public class WorldClient
 			if (UNIT_CREATED_BY_SPELL >= 0 && updateMaskArray[UNIT_CREATED_BY_SPELL])
 			{
 				updateData.UnitData.CreatedBySpell = updates[UNIT_CREATED_BY_SPELL].Int32Value;
-				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) && isCreate && updateData.UnitData.CreatedBy == this.GetSession().GameState.CurrentPlayerGuid)
+				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V2_0_1_6180) && isCreate && updateData.UnitData.CreatedBy == GetSession().GameState.CurrentPlayerGuid)
 				{
 					int totemSlot = GameData.GetTotemSlotForSpell((uint)updateData.UnitData.CreatedBySpell.Value);
 					if (totemSlot >= 0)
@@ -11872,7 +11872,7 @@ public class WorldClient
 						totem.Duration = 120000u;
 						totem.SpellId = (uint)updateData.UnitData.CreatedBySpell.Value;
 						totem.CannotDismiss = true;
-						this.SendPacketToClient(totem);
+						SendPacketToClient(totem);
 					}
 				}
 			}
@@ -12070,11 +12070,11 @@ public class WorldClient
 					AuraInfo aura = new AuraInfo
 					{
 						Slot = i17,
-						AuraData = this.ReadAuraSlot(i17, guid, updates)
+						AuraData = ReadAuraSlot(i17, guid, updates)
 					};
 					if (aura.AuraData != null)
 					{
-						this.GetSession().GameState.GetAuraDuration(guid, i17, out var durationLeft, out var durationFull);
+						GetSession().GameState.GetAuraDuration(guid, i17, out var durationLeft, out var durationFull);
 						if (durationLeft > 0 && durationFull > 0)
 						{
 							AuraDataInfo auraData = aura.AuraData;
@@ -12082,12 +12082,12 @@ public class WorldClient
 							aura.AuraData.Duration = durationFull;
 							aura.AuraData.Remaining = durationLeft;
 						}
-						aura.AuraData.CastUnit = this.GetSession().GameState.GetAuraCaster(guid, i17, aura.AuraData.SpellID);
+						aura.AuraData.CastUnit = GetSession().GameState.GetAuraCaster(guid, i17, aura.AuraData.SpellID);
 					}
 					else if (updateMaskArray[UNIT_FIELD_AURA + i17])
 					{
-						this.GetSession().GameState.ClearAuraDuration(guid, i17);
-						this.GetSession().GameState.ClearAuraCaster(guid, i17);
+						GetSession().GameState.ClearAuraDuration(guid, i17);
+						GetSession().GameState.ClearAuraCaster(guid, i17);
 					}
 					if (aura.AuraData != null || updateMaskArray[UNIT_FIELD_AURA + i17])
 					{
@@ -12101,24 +12101,24 @@ public class WorldClient
 			int PLAYER_DUEL_ARBITER = LegacyVersion.GetUpdateField(PlayerField.PLAYER_DUEL_ARBITER);
 			if (PLAYER_DUEL_ARBITER >= 0 && updateMaskArray[PLAYER_DUEL_ARBITER])
 			{
-				updateData.PlayerData.DuelArbiter = WorldClient.GetGuidValue(updates, PlayerField.PLAYER_DUEL_ARBITER).To128(this.GetSession().GameState);
+				updateData.PlayerData.DuelArbiter = GetGuidValue(updates, PlayerField.PLAYER_DUEL_ARBITER).To128(GetSession().GameState);
 			}
 			int PLAYER_FLAGS = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FLAGS);
 			if (PLAYER_FLAGS >= 0 && updateMaskArray[PLAYER_FLAGS])
 			{
 				PlayerFlagsLegacy legacyFlags = (PlayerFlagsLegacy)updates[PLAYER_FLAGS].UInt32Value;
 				PlayerFlags flags2 = legacyFlags.CastFlags<PlayerFlags>();
-				if (updateData.Guid == this.GetSession().GameState.CurrentPlayerGuid)
+				if (updateData.Guid == GetSession().GameState.CurrentPlayerGuid)
 				{
-					this.GetSession().GameState.CurrentPlayerStorage.Settings.PatchFlags(ref flags2);
+					GetSession().GameState.CurrentPlayerStorage.Settings.PatchFlags(ref flags2);
 					// Detect ghost→alive transition for DestroyObject+CreateObject2 revive fix
 					bool isGhostNow = legacyFlags.HasAnyFlag(PlayerFlagsLegacy.Ghost);
-					if (this.GetSession().GameState.IsPlayerGhost && !isGhostNow)
+					if (GetSession().GameState.IsPlayerGhost && !isGhostNow)
 					{
 						Log.Print(LogType.Debug, "[DeathRevive] Ghost→Alive transition detected, will recreate player object", "StoreObjectUpdate", "");
-						this.GetSession().GameState.NeedPlayerRecreate = true;
+						GetSession().GameState.NeedPlayerRecreate = true;
 					}
-					this.GetSession().GameState.IsPlayerGhost = isGhostNow;
+					GetSession().GameState.IsPlayerGhost = isGhostNow;
 				}
 				// Ghost flag now sent through — DestroyObject+CreateObject2 on revive clears the grey overlay
 				updateData.PlayerData.PlayerFlags = (uint)flags2;
@@ -12129,7 +12129,7 @@ public class WorldClient
 				// 3.4.3 uses ActivePlayerData.LocalFlags for death UI (RELEASE_TIMER=0x08)
 				// 3.3.5a doesn't have this — only inject when actually ghost
 				// Setting LocalFlags=0 on every update floods ActivePlayerData and may break bag updates
-				if (updateData.Guid == this.GetSession().GameState.CurrentPlayerGuid
+				if (updateData.Guid == GetSession().GameState.CurrentPlayerGuid
 					&& legacyFlags.HasAnyFlag(PlayerFlagsLegacy.Ghost))
 				{
 					updateData.ActivePlayerData.LocalFlags = 0x08u; // PLAYER_LOCAL_FLAG_RELEASE_TIMER
@@ -12146,18 +12146,18 @@ public class WorldClient
 				}
 				if (LegacyVersion.RemovedInVersion(ClientVersionBuild.V3_0_2_9056) && !updateData.UnitData.PvpFlags.HasValue)
 				{
-					updateData.UnitData.PvpFlags = this.ReadPvPFlags(updates);
+					updateData.UnitData.PvpFlags = ReadPvPFlags(updates);
 				}
 			}
-			else if (updateData.Guid == this.GetSession().GameState.CurrentPlayerGuid && this.GetSession().GameState.CurrentPlayerStorage.Settings.NeedToForcePatchFlags)
+			else if (updateData.Guid == GetSession().GameState.CurrentPlayerGuid && GetSession().GameState.CurrentPlayerStorage.Settings.NeedToForcePatchFlags)
 			{
-				PlayerFlags flags3 = this.GetSession().GameState.CurrentPlayerStorage.Settings.CreateNewFlags();
+				PlayerFlags flags3 = GetSession().GameState.CurrentPlayerStorage.Settings.CreateNewFlags();
 				updateData.PlayerData.PlayerFlags = (uint)flags3;
 			}
 			int PLAYER_GUILDID = LegacyVersion.GetUpdateField(PlayerField.PLAYER_GUILDID);
 			if (PLAYER_GUILDID >= 0 && updateMaskArray[PLAYER_GUILDID])
 			{
-				this.GetSession().GameState.StorePlayerGuildId(guid, updates[PLAYER_GUILDID].UInt32Value);
+				GetSession().GameState.StorePlayerGuildId(guid, updates[PLAYER_GUILDID].UInt32Value);
 				updateData.UnitData.GuildGUID = WowGuid128.Create(HighGuidType703.Guild, updates[PLAYER_GUILDID].UInt32Value);
 			}
 			int PLAYER_GUILDRANK = LegacyVersion.GetUpdateField(PlayerField.PLAYER_GUILDRANK);
@@ -12177,7 +12177,7 @@ public class WorldClient
 				int questsCount = LegacyVersion.GetQuestLogSize();
 				for (int i18 = 0; i18 < questsCount; i18++)
 				{
-					updateData.PlayerData.QuestLog[i18] = this.ReadQuestLogEntry(i18, updateMaskArray, updates);
+					updateData.PlayerData.QuestLog[i18] = ReadQuestLogEntry(i18, updateMaskArray, updates);
 				}
 			}
 			int PLAYER_CHOSEN_TITLE = LegacyVersion.GetUpdateField(PlayerField.PLAYER_CHOSEN_TITLE);
@@ -12229,7 +12229,7 @@ public class WorldClient
 				{
 					if (updateMaskArray[PLAYER_FIELD_INV_SLOT_HEAD + i21 * 2])
 					{
-						updateData.ActivePlayerData.InvSlots[i21] = WorldClient.GetGuidValue(updates, PLAYER_FIELD_INV_SLOT_HEAD + i21 * 2).To128(this.GetSession().GameState);
+						updateData.ActivePlayerData.InvSlots[i21] = GetGuidValue(updates, PLAYER_FIELD_INV_SLOT_HEAD + i21 * 2).To128(GetSession().GameState);
 						if (i21 >= 15 && i21 <= 18)
 							Log.Print(LogType.Debug, $"[InvSlot] Slot {i21} = {updateData.ActivePlayerData.InvSlots[i21]}", "HandleUpdateObject", "");
 					}
@@ -12242,7 +12242,7 @@ public class WorldClient
 				{
 					if (updateMaskArray[PLAYER_FIELD_PACK_SLOT_1 + i22 * 2])
 					{
-						updateData.ActivePlayerData.PackSlots[i22] = WorldClient.GetGuidValue(updates, PLAYER_FIELD_PACK_SLOT_1 + i22 * 2).To128(this.GetSession().GameState);
+						updateData.ActivePlayerData.PackSlots[i22] = GetGuidValue(updates, PLAYER_FIELD_PACK_SLOT_1 + i22 * 2).To128(GetSession().GameState);
 						Log.Print(LogType.Debug, $"[InvUpdate] PackSlot[{i22}] = {updateData.ActivePlayerData.PackSlots[i22]} (modern idx {35 + i22})", "HandleUpdateObject", "");
 					}
 				}
@@ -12255,7 +12255,7 @@ public class WorldClient
 				{
 					if (updateMaskArray[PLAYER_FIELD_BANK_SLOT_1 + i23 * 2])
 					{
-						updateData.ActivePlayerData.BankSlots[i23] = WorldClient.GetGuidValue(updates, PLAYER_FIELD_BANK_SLOT_1 + i23 * 2).To128(this.GetSession().GameState);
+						updateData.ActivePlayerData.BankSlots[i23] = GetGuidValue(updates, PLAYER_FIELD_BANK_SLOT_1 + i23 * 2).To128(GetSession().GameState);
 						Log.Print(LogType.Debug, $"[InvUpdate] BankSlot[{i23}] = {updateData.ActivePlayerData.BankSlots[i23]} (modern idx {59 + i23})", "HandleUpdateObject", "");
 					}
 				}
@@ -12268,7 +12268,7 @@ public class WorldClient
 				{
 					if (updateMaskArray[PLAYER_FIELD_BANKBAG_SLOT_1 + i24 * 2])
 					{
-						updateData.ActivePlayerData.BankBagSlots[i24] = WorldClient.GetGuidValue(updates, PLAYER_FIELD_BANKBAG_SLOT_1 + i24 * 2).To128(this.GetSession().GameState);
+						updateData.ActivePlayerData.BankBagSlots[i24] = GetGuidValue(updates, PLAYER_FIELD_BANKBAG_SLOT_1 + i24 * 2).To128(GetSession().GameState);
 					}
 				}
 			}
@@ -12279,7 +12279,7 @@ public class WorldClient
 				{
 					if (updateMaskArray[PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + i25 * 2])
 					{
-						updateData.ActivePlayerData.BuyBackSlots[i25] = WorldClient.GetGuidValue(updates, PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + i25 * 2).To128(this.GetSession().GameState);
+						updateData.ActivePlayerData.BuyBackSlots[i25] = GetGuidValue(updates, PLAYER_FIELD_VENDORBUYBACK_SLOT_1 + i25 * 2).To128(GetSession().GameState);
 					}
 				}
 			}
@@ -12290,7 +12290,7 @@ public class WorldClient
 				{
 					if (updateMaskArray[PLAYER_FIELD_KEYRING_SLOT_1 + i26 * 2])
 					{
-						updateData.ActivePlayerData.KeyringSlots[i26] = WorldClient.GetGuidValue(updates, PLAYER_FIELD_KEYRING_SLOT_1 + i26 * 2).To128(this.GetSession().GameState);
+						updateData.ActivePlayerData.KeyringSlots[i26] = GetGuidValue(updates, PLAYER_FIELD_KEYRING_SLOT_1 + i26 * 2).To128(GetSession().GameState);
 					}
 				}
 			}
@@ -12307,7 +12307,7 @@ public class WorldClient
 				hairStyle = (byte)((updates[PLAYER_BYTES].UInt32Value >> 16) & 0xFF);
 				hairColor = (byte)((updates[PLAYER_BYTES].UInt32Value >> 24) & 0xFF);
 			}
-			RestInfo restInfo = ((isCreate && guid == this.GetSession().GameState.CurrentPlayerGuid) ? new RestInfo() : null);
+			RestInfo restInfo = ((isCreate && guid == GetSession().GameState.CurrentPlayerGuid) ? new RestInfo() : null);
 			if (restInfo != null)
 			{
 				restInfo.StateID = 2u;
@@ -12317,7 +12317,7 @@ public class WorldClient
 			{
 				facialHair = (byte)(updates[PLAYER_BYTES_2].UInt32Value & 0xFF);
 				updateData.PlayerData.NumBankSlots = (byte)((updates[PLAYER_BYTES_2].UInt32Value >> 16) & 0xFF);
-				if (restInfo == null && guid == this.GetSession().GameState.CurrentPlayerGuid)
+				if (restInfo == null && guid == GetSession().GameState.CurrentPlayerGuid)
 				{
 					restInfo = new RestInfo();
 				}
@@ -12338,7 +12338,7 @@ public class WorldClient
 				{
 					sexId = (Gender)updateData.UnitData.SexId.Value;
 				}
-				if ((raceId == Race.None || sexId == Gender.None) && this.GetSession().GameState.CachedPlayers.TryGetValue(guid.To128(this.GetSession().GameState), out var cache))
+				if ((raceId == Race.None || sexId == Gender.None) && GetSession().GameState.CachedPlayers.TryGetValue(guid.To128(GetSession().GameState), out var cache))
 				{
 					raceId = cache.RaceId;
 					sexId = cache.SexId;
@@ -12355,7 +12355,7 @@ public class WorldClient
 			int PLAYER_REST_STATE_EXPERIENCE = LegacyVersion.GetUpdateField(PlayerField.PLAYER_REST_STATE_EXPERIENCE);
 			if (PLAYER_REST_STATE_EXPERIENCE >= 0 && updateMaskArray[PLAYER_REST_STATE_EXPERIENCE])
 			{
-				if (restInfo == null && guid == this.GetSession().GameState.CurrentPlayerGuid)
+				if (restInfo == null && guid == GetSession().GameState.CurrentPlayerGuid)
 				{
 					restInfo = new RestInfo();
 				}
@@ -12385,12 +12385,12 @@ public class WorldClient
 			int PLAYER_FARSIGHT = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FARSIGHT);
 			if (PLAYER_FARSIGHT >= 0 && updateMaskArray[PLAYER_FARSIGHT])
 			{
-				updateData.ActivePlayerData.FarsightObject = WorldClient.GetGuidValue(updates, PlayerField.PLAYER_FARSIGHT).To128(this.GetSession().GameState);
+				updateData.ActivePlayerData.FarsightObject = GetGuidValue(updates, PlayerField.PLAYER_FARSIGHT).To128(GetSession().GameState);
 			}
 			int PLAYER_FIELD_COMBO_TARGET = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_COMBO_TARGET);
 			if (PLAYER_FIELD_COMBO_TARGET >= 0 && updateMaskArray[PLAYER_FIELD_COMBO_TARGET])
 			{
-				updateData.ActivePlayerData.ComboTarget = WorldClient.GetGuidValue(updates, PlayerField.PLAYER_FIELD_COMBO_TARGET).To128(this.GetSession().GameState);
+				updateData.ActivePlayerData.ComboTarget = GetGuidValue(updates, PlayerField.PLAYER_FIELD_COMBO_TARGET).To128(GetSession().GameState);
 			}
 			int PLAYER_FIELD_KNOWN_TITLES = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_KNOWN_TITLES);
 			if (PLAYER_FIELD_KNOWN_TITLES >= 0)
@@ -12444,7 +12444,7 @@ public class WorldClient
 			{
 				updateData.ActivePlayerData.CharacterPoints = updates[PLAYER_CHARACTER_POINTS1].Int32Value;
 				// MaxTalentTiers = total talent points (from SMSG_UPDATE_TALENT_DATA)
-				int totalTalentPoints = this.GetSession().GameState.TotalTalentPoints;
+				int totalTalentPoints = GetSession().GameState.TotalTalentPoints;
 				if (totalTalentPoints > 0)
 					updateData.ActivePlayerData.MaxTalentTiers = totalTalentPoints;
 				else
@@ -12641,11 +12641,11 @@ public class WorldClient
 				{
 					byte comboPoints = (byte)((updates[PLAYER_FIELD_BYTES].UInt32Value >> 8) & 0xFF);
 					Class classId3 = Class.None;
-					classId3 = ((!updateData.UnitData.ClassId.HasValue) ? this.GetSession().GameState.GetUnitClass(guid.To128(this.GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
+					classId3 = ((!updateData.UnitData.ClassId.HasValue) ? GetSession().GameState.GetUnitClass(guid.To128(GetSession().GameState)) : ((Class)updateData.UnitData.ClassId.Value));
 					sbyte powerSlot3 = ClassPowerTypes.GetPowerSlotForClass(classId3, PowerType.ComboPoints);
 					if (powerSlot3 >= 0)
 					{
-						if (powerUpdate != null && guid == this.GetSession().GameState.CurrentPlayerGuid)
+						if (powerUpdate != null && guid == GetSession().GameState.CurrentPlayerGuid)
 						{
 							powerUpdate.Powers.Add(new PowerUpdatePower(comboPoints, 14));
 						}
@@ -12796,23 +12796,23 @@ public class WorldClient
 				for (int i42 = 0; i42 < 3; i42++)
 				{
 					int startOffset = PLAYER_FIELD_ARENA_TEAM_INFO_1_1 + i42 * sizePerEntry2;
-					if (updateMaskArray[startOffset + teamIdOffset] && guid == this.GetSession().GameState.CurrentPlayerGuid)
+					if (updateMaskArray[startOffset + teamIdOffset] && guid == GetSession().GameState.CurrentPlayerGuid)
 					{
-						uint teamId = (this.GetSession().GameState.CurrentArenaTeamIds[i42] = updates[startOffset + teamIdOffset].UInt32Value);
+						uint teamId = (GetSession().GameState.CurrentArenaTeamIds[i42] = updates[startOffset + teamIdOffset].UInt32Value);
 						if (teamId != 0)
 						{
 							WorldPacket packet = new WorldPacket(Opcode.CMSG_ARENA_TEAM_QUERY);
 							packet.WriteUInt32(teamId);
-							this.SendPacketToServer(packet);
+							SendPacketToServer(packet);
 							WorldPacket packet2 = new WorldPacket(Opcode.CMSG_ARENA_TEAM_ROSTER);
 							packet2.WriteUInt32(teamId);
-							this.SendPacketToServer(packet2);
+							SendPacketToServer(packet2);
 						}
 						else
 						{
 							ArenaTeamRosterResponse response = new ArenaTeamRosterResponse();
 							response.TeamSize = ModernVersion.GetArenaTeamSizeFromIndex((uint)i42);
-							this.SendPacketToClient(response);
+							SendPacketToClient(response);
 						}
 					}
 					if (updateMaskArray[startOffset + teamGamesWeekOffset])
@@ -12849,7 +12849,7 @@ public class WorldClient
 					}
 				}
 			}
-			if (guid == this.GetSession().GameState.CurrentPlayerGuid && ModernVersion.ExpansionVersion > 1)
+			if (guid == GetSession().GameState.CurrentPlayerGuid && ModernVersion.ExpansionVersion > 1)
 			{
 				int PLAYER_FIELD_HONOR_CURRENCY = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_HONOR_CURRENCY);
 				int PLAYER_FIELD_ARENA_CURRENCY = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_ARENA_CURRENCY);
@@ -12874,7 +12874,7 @@ public class WorldClient
 						};
 						currencies.Data.Add(honor2);
 					}
-					this.SendPacketToClient(currencies);
+					SendPacketToClient(currencies);
 				}
 			}
 			int PLAYER_FIELD_MOD_MANA_REGEN = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_MOD_MANA_REGEN);
@@ -12888,13 +12888,13 @@ public class WorldClient
 				updateData.ActivePlayerData.MaxLevel = updates[PLAYER_FIELD_MAX_LEVEL].Int32Value;
 			}
 			int PLAYER_FIELD_DAILY_QUESTS_1 = LegacyVersion.GetUpdateField(PlayerField.PLAYER_FIELD_DAILY_QUESTS_1);
-			if (PLAYER_FIELD_DAILY_QUESTS_1 >= 0 && guid == this.GetSession().GameState.CurrentPlayerGuid)
+			if (PLAYER_FIELD_DAILY_QUESTS_1 >= 0 && guid == GetSession().GameState.CurrentPlayerGuid)
 			{
 				for (int i43 = 0; i43 < 25; i43++)
 				{
 					if (updateMaskArray[PLAYER_FIELD_DAILY_QUESTS_1 + i43])
 					{
-						this.GetSession().GameState.SetDailyQuestSlot((uint)i43, updates[PLAYER_FIELD_DAILY_QUESTS_1 + i43].UInt32Value);
+						GetSession().GameState.SetDailyQuestSlot((uint)i43, updates[PLAYER_FIELD_DAILY_QUESTS_1 + i43].UInt32Value);
 						updateData.ActivePlayerData.HasDailyQuestsUpdate = true;
 					}
 				}
@@ -12905,7 +12905,7 @@ public class WorldClient
 			int GAMEOBJECT_FIELD_CREATED_BY = LegacyVersion.GetUpdateField(GameObjectField.GAMEOBJECT_FIELD_CREATED_BY);
 			if (GAMEOBJECT_FIELD_CREATED_BY >= 0 && updateMaskArray[GAMEOBJECT_FIELD_CREATED_BY])
 			{
-				updateData.GameObjectData.CreatedBy = WorldClient.GetGuidValue(updates, GameObjectField.GAMEOBJECT_FIELD_CREATED_BY).To128(this.GetSession().GameState);
+				updateData.GameObjectData.CreatedBy = GetGuidValue(updates, GameObjectField.GAMEOBJECT_FIELD_CREATED_BY).To128(GetSession().GameState);
 			}
 			int GAMEOBJECT_DISPLAYID = LegacyVersion.GetUpdateField(GameObjectField.GAMEOBJECT_DISPLAYID);
 			if (GAMEOBJECT_DISPLAYID >= 0 && updateMaskArray[GAMEOBJECT_DISPLAYID])
@@ -13036,7 +13036,7 @@ public class WorldClient
 			int DYNAMICOBJECT_CASTER = LegacyVersion.GetUpdateField(DynamicObjectField.DYNAMICOBJECT_CASTER);
 			if (DYNAMICOBJECT_CASTER >= 0 && updateMaskArray[DYNAMICOBJECT_CASTER])
 			{
-				updateData.DynamicObjectData.Caster = WorldClient.GetGuidValue(updates, DynamicObjectField.DYNAMICOBJECT_CASTER).To128(this.GetSession().GameState);
+				updateData.DynamicObjectData.Caster = GetGuidValue(updates, DynamicObjectField.DYNAMICOBJECT_CASTER).To128(GetSession().GameState);
 			}
 			int DYNAMICOBJECT_SPELLID = LegacyVersion.GetUpdateField(DynamicObjectField.DYNAMICOBJECT_SPELLID);
 			if (DYNAMICOBJECT_SPELLID >= 0 && updateMaskArray[DYNAMICOBJECT_SPELLID])
@@ -13057,7 +13057,7 @@ public class WorldClient
 		int CORPSE_FIELD_OWNER = LegacyVersion.GetUpdateField(CorpseField.CORPSE_FIELD_OWNER);
 		if (CORPSE_FIELD_OWNER >= 0 && updateMaskArray[CORPSE_FIELD_OWNER])
 		{
-			updateData.CorpseData.Owner = WorldClient.GetGuidValue(updates, CorpseField.CORPSE_FIELD_OWNER).To128(this.GetSession().GameState);
+			updateData.CorpseData.Owner = GetGuidValue(updates, CorpseField.CORPSE_FIELD_OWNER).To128(GetSession().GameState);
 		}
 		int CORPSE_FIELD_DISPLAY_ID = LegacyVersion.GetUpdateField(CorpseField.CORPSE_FIELD_DISPLAY_ID);
 		if (CORPSE_FIELD_DISPLAY_ID >= 0 && updateMaskArray[CORPSE_FIELD_DISPLAY_ID])
@@ -13129,11 +13129,11 @@ public class WorldClient
 	{
 		InitWorldStates states = new InitWorldStates();
 		states.MapID = packet.ReadUInt32();
-		this.GetSession().GameState.CurrentMapId = states.MapID;
+		GetSession().GameState.CurrentMapId = states.MapID;
 		states.ZoneID = packet.ReadUInt32();
 		states.AreaID = (LegacyVersion.AddedInVersion(ClientVersionBuild.V2_1_0_6692) ? packet.ReadUInt32() : states.ZoneID);
-		this.GetSession().GameState.HasWsgAllyFlagCarrier = false;
-		this.GetSession().GameState.HasWsgHordeFlagCarrier = false;
+		GetSession().GameState.HasWsgAllyFlagCarrier = false;
+		GetSession().GameState.HasWsgHordeFlagCarrier = false;
 		ushort count = packet.ReadUInt16();
 		for (ushort i = 0; i < count; i++)
 		{
@@ -13146,40 +13146,40 @@ public class WorldClient
 			switch (variable)
 			{
 			case 2339u:
-				this.GetSession().GameState.HasWsgAllyFlagCarrier = value == 2;
+				GetSession().GameState.HasWsgAllyFlagCarrier = value == 2;
 				break;
 			case 2338u:
-				this.GetSession().GameState.HasWsgHordeFlagCarrier = value == 2;
+				GetSession().GameState.HasWsgHordeFlagCarrier = value == 2;
 				break;
 			}
 		}
 		states.AddClassicStates();
-		this.SendPacketToClient(states);
+		SendPacketToClient(states);
 		if (LegacyVersion.ExpansionVersion <= 1 || ModernVersion.ExpansionVersion <= 1)
 		{
-			this.SendPacketToClient(new SetupCurrency());
+			SendPacketToClient(new SetupCurrency());
 		}
 		// AllAccountCriteria removed — was sending empty criteria after real SMSG_ALL_ACHIEVEMENT_DATA
-		if (this.GetSession().GameState.HasWsgHordeFlagCarrier || this.GetSession().GameState.HasWsgAllyFlagCarrier)
+		if (GetSession().GameState.HasWsgHordeFlagCarrier || GetSession().GameState.HasWsgAllyFlagCarrier)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);
-			this.SendPacket(packet2);
+			SendPacket(packet2);
 		}
-		if (this.GetSession().GameState.CurrentZoneId == states.ZoneID)
+		if (GetSession().GameState.CurrentZoneId == states.ZoneID)
 		{
 			return;
 		}
-		string oldZoneName = GameData.GetAreaName(this.GetSession().GameState.CurrentZoneId);
+		string oldZoneName = GameData.GetAreaName(GetSession().GameState.CurrentZoneId);
 		string newZoneName = GameData.GetAreaName(states.ZoneID);
-		this.GetSession().GameState.CurrentZoneId = states.ZoneID;
+		GetSession().GameState.CurrentZoneId = states.ZoneID;
 		if (string.IsNullOrEmpty(oldZoneName) || string.IsNullOrEmpty(newZoneName))
 		{
 			return;
 		}
 		foreach (ChatChannel channel in GameData.GetChatChannelsWithFlags(ChannelFlags.AutoJoin | ChannelFlags.ZoneBased))
 		{
-			this.SendChatLeaveChannel(1, channel.Name + " - " + oldZoneName);
-			this.SendChatJoinChannel(1, channel.Name + " - " + newZoneName, "");
+			SendChatLeaveChannel(1, channel.Name + " - " + oldZoneName);
+			SendChatJoinChannel(1, channel.Name + " - " + newZoneName, "");
 		}
 	}
 
@@ -13189,64 +13189,64 @@ public class WorldClient
 		UpdateWorldState update = new UpdateWorldState();
 		update.VariableID = packet.ReadUInt32();
 		update.Value = packet.ReadInt32();
-		this.SendPacketToClient(update);
+		SendPacketToClient(update);
 		if (update.VariableID == 2339)
 		{
 			WorldPacket packet2 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);
-			this.SendPacket(packet2);
-			this.GetSession().GameState.HasWsgAllyFlagCarrier = update.Value == 2;
+			SendPacket(packet2);
+			GetSession().GameState.HasWsgAllyFlagCarrier = update.Value == 2;
 		}
 		else if (update.VariableID == 2338)
 		{
 			WorldPacket packet3 = new WorldPacket(Opcode.MSG_BATTLEGROUND_PLAYER_POSITIONS);
-			this.SendPacket(packet3);
-			this.GetSession().GameState.HasWsgHordeFlagCarrier = update.Value == 2;
+			SendPacket(packet3);
+			GetSession().GameState.HasWsgHordeFlagCarrier = update.Value == 2;
 		}
 	}
 
 	public WorldClient()
 	{
-		this.InitializePacketHandlers();
+		InitializePacketHandlers();
 	}
 
 	public GlobalSessionData GetSession()
 	{
-		return this._globalSession;
+		return _globalSession;
 	}
 
 	public bool ConnectToWorldServer(Realm realm, GlobalSessionData globalSession)
 	{
-		this._worldCrypt = null;
-		this._realm = realm;
-		this._globalSession = globalSession;
-		this._username = globalSession.Username;
-		this._isSuccessful = null;
-		this._delayedPacketsToServer = new Dictionary<Opcode, List<WorldPacket>>();
-		this._delayedPacketsToClient = new Dictionary<Opcode, List<ServerPacket>>();
-		Log.Print(LogType.Network, "Connecting to world server...", "ConnectToWorldServer", "WorldClient.cs");
+		_worldCrypt = null;
+		_realm = realm;
+		_globalSession = globalSession;
+		_username = globalSession.Username;
+		_isSuccessful = null;
+		_delayedPacketsToServer = new Dictionary<Opcode, List<WorldPacket>>();
+		_delayedPacketsToClient = new Dictionary<Opcode, List<ServerPacket>>();
+		Log.Print(LogType.Network, "Connecting to world server...", "WorldClient.cs");
 		try
 		{
 			IPAddress ip = NetworkUtils.ResolveOrDirectIPv4(realm.ExternalAddress);
-			Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{realm.Port}", "ConnectToWorldServer", "WorldClient.cs");
-			this._clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			Log.Print(LogType.Network, $"World Server address {realm.ExternalAddress}:{realm.Port} resolved as {ip}:{realm.Port}", "WorldClient.cs");
+			_clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			IPEndPoint endPoint = new IPEndPoint(ip, realm.Port);
-			this._clientSocket.BeginConnect(endPoint, ConnectCallback, null);
+			_clientSocket.BeginConnect(endPoint, ConnectCallback, null);
 		}
 		catch (Exception ex)
 		{
-			Log.Print(LogType.Error, "Socket Error: " + ex.Message, "ConnectToWorldServer", "WorldClient.cs");
-			this._isSuccessful = false;
+			Log.Print(LogType.Error, "Socket Error: " + ex.Message, "WorldClient.cs");
+			_isSuccessful = false;
 		}
-		while (!this._isSuccessful.HasValue)
+		while (!_isSuccessful.HasValue)
 		{
 			Thread.Sleep(100);
 		}
-		return this._isSuccessful.Value;
+		return _isSuccessful.Value;
 	}
 
 	public bool IsAuthenticated()
 	{
-		return this._isSuccessful == true;
+		return _isSuccessful == true;
 	}
 
 	private void InitializeEncryption(byte[] sessionKey)
@@ -13256,59 +13256,59 @@ public class WorldClient
 		case ClientVersionBuild.V1_12_1_5875:
 		case ClientVersionBuild.V1_12_2_6005:
 		case ClientVersionBuild.V1_12_3_6141:
-			this._worldCrypt = new VanillaWorldCrypt();
+			_worldCrypt = new VanillaWorldCrypt();
 			break;
 		case ClientVersionBuild.V2_4_3_8606:
-			this._worldCrypt = new TbcWorldCrypt();
+			_worldCrypt = new TbcWorldCrypt();
 			break;
 		case ClientVersionBuild.V3_3_5a_12340:
-			this._worldCrypt = new WotlkWorldCrypt();
+			_worldCrypt = new WotlkWorldCrypt();
 			break;
 		}
-		if (this._worldCrypt != null)
+		if (_worldCrypt != null)
 		{
-			this._worldCrypt.Initialize(sessionKey);
+			_worldCrypt.Initialize(sessionKey);
 		}
 	}
 
 	public void Disconnect()
 	{
-		if (this.IsConnected())
+		if (IsConnected())
 		{
-			this._clientSocket.Shutdown(SocketShutdown.Both);
-			this._clientSocket.Disconnect(reuseSocket: false);
-			if (this.GetSession().WorldClient == this)
+			_clientSocket.Shutdown(SocketShutdown.Both);
+			_clientSocket.Disconnect(reuseSocket: false);
+			if (GetSession().WorldClient == this)
 			{
-				this.GetSession().WorldClient = null;
+				GetSession().WorldClient = null;
 			}
 		}
 	}
 
 	public bool IsConnected()
 	{
-		return this._clientSocket != null && this._clientSocket.Connected;
+		return _clientSocket != null && _clientSocket.Connected;
 	}
 
 	public uint GetQueuePosition()
 	{
-		return this._queuePosition;
+		return _queuePosition;
 	}
 
 	private void ConnectCallback(IAsyncResult AR)
 	{
 		try
 		{
-			Log.Print(LogType.Network, "Connection established!", "ConnectCallback", "WorldClient.cs");
-			this._clientSocket.EndConnect(AR);
-			this._clientSocket.ReceiveBufferSize = 65535;
+			Log.Print(LogType.Network, "Connection established!", "WorldClient.cs");
+			_clientSocket.EndConnect(AR);
+			_clientSocket.ReceiveBufferSize = 65535;
 			Task.Run((Func<Task?>)ReceiveLoop);
 		}
 		catch (Exception ex)
 		{
-			Log.Print(LogType.Error, "Connect Error: " + ex.Message, "ConnectCallback", "WorldClient.cs");
-			if (!this._isSuccessful.HasValue)
+			Log.Print(LogType.Error, "Connect Error: " + ex.Message, "WorldClient.cs");
+			if (!_isSuccessful.HasValue)
 			{
-				this._isSuccessful = false;
+				_isSuccessful = false;
 			}
 		}
 	}
@@ -13319,7 +13319,7 @@ public class WorldClient
 		for (int alreadyReceived = 0; alreadyReceived < bufferToFill.Count; alreadyReceived += receive)
 		{
 			ArraySegment<byte> tmpArrayBuffer = new ArraySegment<byte>(bufferToFill.Array, alreadyReceived + bufferToFill.Offset, bufferToFill.Count - alreadyReceived);
-			receive = await this._clientSocket.ReceiveAsync(tmpArrayBuffer, SocketFlags.None);
+			receive = await _clientSocket.ReceiveAsync(tmpArrayBuffer, SocketFlags.None);
 			if (receive == 0)
 			{
 				return false;
@@ -13335,71 +13335,71 @@ public class WorldClient
 			while (true)
 			{
 				byte[] headerBuffer = new byte[4];
-				if (!(await this.ReceiveBufferFully(headerBuffer)))
+				if (!(await ReceiveBufferFully(headerBuffer)))
 				{
-					Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (header)", "ReceiveLoop", "WorldClient.cs");
-					if (!this._isSuccessful.HasValue)
+					Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (header)", "WorldClient.cs");
+					if (!_isSuccessful.HasValue)
 					{
-						this._isSuccessful = false;
+						_isSuccessful = false;
 					}
-					else if (this.GetSession().WorldClient == this)
+					else if (GetSession().WorldClient == this)
 					{
-						this.GetSession().OnDisconnect();
+						GetSession().OnDisconnect();
 					}
 					return;
 				}
-				if (this._worldCrypt != null)
+				if (_worldCrypt != null)
 				{
-					this._worldCrypt.Decrypt(headerBuffer, 4);
+					_worldCrypt.Decrypt(headerBuffer, 4);
 				}
 				LegacyServerPacketHeader header = new LegacyServerPacketHeader();
 				header.Read(headerBuffer);
 				ushort packetSize = header.Size;
 				if (header.Opcode != 221)
 				{
-					Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Decoded header: size={packetSize}, opcode={header.Opcode} (0x{header.Opcode:X4}), crypt={((this._worldCrypt != null) ? "ON" : "OFF")}", "ReceiveLoop", "WorldClient.cs");
+					Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Decoded header: size={packetSize}, opcode={header.Opcode} (0x{header.Opcode:X4}), crypt={((_worldCrypt != null) ? "ON" : "OFF")}", "WorldClient.cs");
 				}
 				if (packetSize != 0)
 				{
 					byte[] buffer = new byte[packetSize];
 					buffer[0] = headerBuffer[2];
 					buffer[1] = headerBuffer[3];
-					if (!(await this.ReceiveBufferFully(new ArraySegment<byte>(buffer, 2, buffer.Length - 2))))
+					if (!(await ReceiveBufferFully(new ArraySegment<byte>(buffer, 2, buffer.Length - 2))))
 					{
 						break;
 					}
 					WorldPacket packet = new WorldPacket(buffer);
 					packet.SetReceiveTime(Environment.TickCount);
-					this.HandlePacket(packet);
+					HandlePacket(packet);
 				}
 			}
-			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (payload)", "ReceiveLoop", "WorldClient.cs");
-			if (!this._isSuccessful.HasValue)
+			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Socket Closed By GameWorldServer (payload)", "WorldClient.cs");
+			if (!_isSuccessful.HasValue)
 			{
-				this._isSuccessful = false;
+				_isSuccessful = false;
 			}
-			else if (this.GetSession().WorldClient == this)
+			else if (GetSession().WorldClient == this)
 			{
-				this.GetSession().OnDisconnect();
+				GetSession().OnDisconnect();
 			}
 		}
 		catch (Exception ex)
 		{
 			Exception e = ex;
-			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Packet Read Error: " + e.Message + Environment.NewLine + e.StackTrace, "ReceiveLoop", "WorldClient.cs");
-			if (!this._isSuccessful.HasValue)
+			Log.PrintNet(LogType.Error, LogNetDir.S2P, "Packet Read Error: " + e.Message + Environment.NewLine + e.StackTrace, "WorldClient.cs");
+			if (!_isSuccessful.HasValue)
 			{
-				this._isSuccessful = false;
+				_isSuccessful = false;
 				return;
 			}
-			this.Disconnect();
-			this.GetSession().OnDisconnect();
+			Disconnect();
+			GetSession().OnDisconnect();
 		}
 	}
 
 	private void SendPacket(WorldPacket packet)
 	{
-		this._sendMutex.WaitOne();
+		_sendMutex.WaitOne();
 		try
 		{
 			ByteBuffer buffer = new ByteBuffer();
@@ -13407,29 +13407,29 @@ public class WorldClient
 			header.Size = (ushort)(packet.GetSize() + 4);
 			header.Opcode = packet.GetOpcode();
 			header.Write(buffer);
-			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Sending opcode {LegacyVersion.GetUniversalOpcode(header.Opcode)} ({header.Opcode}) with size {header.Size}.", "SendPacket", "WorldClient.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Sending opcode {LegacyVersion.GetUniversalOpcode(header.Opcode)} ({header.Opcode}) with size {header.Size}.", "WorldClient.cs");
 			byte[] headerArray = buffer.GetData();
-			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Raw header ({headerArray.Length} bytes): {BitConverter.ToString(headerArray, 0, Math.Min(headerArray.Length, 6))}", "SendPacket", "WorldClient.cs");
-			if (this._worldCrypt != null)
+			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Raw header ({headerArray.Length} bytes): {BitConverter.ToString(headerArray, 0, Math.Min(headerArray.Length, 6))}", "WorldClient.cs");
+			if (_worldCrypt != null)
 			{
-				this._worldCrypt.Encrypt(headerArray, 6);
+				_worldCrypt.Encrypt(headerArray, 6);
 			}
 			buffer.Clear();
 			buffer.WriteBytes(headerArray);
 			buffer.WriteBytes(packet.GetData(), packet.GetSize());
 			byte[] finalData = buffer.GetData();
-			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Total bytes on wire: {finalData.Length}, first 16: {BitConverter.ToString(finalData, 0, Math.Min(finalData.Length, 16))}", "SendPacket", "WorldClient.cs");
-			this._clientSocket.Send(finalData, SocketFlags.None);
+			Log.PrintNet(LogType.Debug, LogNetDir.P2S, $"Total bytes on wire: {finalData.Length}, first 16: {BitConverter.ToString(finalData, 0, Math.Min(finalData.Length, 16))}", "WorldClient.cs");
+			_clientSocket.Send(finalData, SocketFlags.None);
 		}
 		catch (Exception ex)
 		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Write Error: " + ex.Message, "SendPacket", "WorldClient.cs");
-			if (!this._isSuccessful.HasValue)
+			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Packet Write Error: " + ex.Message, "WorldClient.cs");
+			if (!_isSuccessful.HasValue)
 			{
-				this._isSuccessful = false;
+				_isSuccessful = false;
 			}
 		}
-		this._sendMutex.ReleaseMutex();
+		_sendMutex.ReleaseMutex();
 	}
 
 	public void SendPacketToClient(ServerPacket packet, Opcode delayUntilOpcode = Opcode.MSG_NULL_ACTION)
@@ -13437,42 +13437,42 @@ public class WorldClient
 		Opcode opcode = packet.GetUniversalOpcode();
 		if (delayUntilOpcode != Opcode.MSG_NULL_ACTION)
 		{
-			if (this._delayedPacketsToClient.ContainsKey(delayUntilOpcode))
+			if (_delayedPacketsToClient.ContainsKey(delayUntilOpcode))
 			{
-				this._delayedPacketsToClient[delayUntilOpcode].Add(packet);
+				_delayedPacketsToClient[delayUntilOpcode].Add(packet);
 				return;
 			}
 			List<ServerPacket> packets = new List<ServerPacket>();
 			packets.Add(packet);
-			this._delayedPacketsToClient.Add(delayUntilOpcode, packets);
+			_delayedPacketsToClient.Add(delayUntilOpcode, packets);
 		}
 		else
 		{
-			this.SendPacketToClientDirect(packet);
-			this.SendDelayedPacketsToClientOnOpcode(opcode);
+			SendPacketToClientDirect(packet);
+			SendDelayedPacketsToClientOnOpcode(opcode);
 		}
 	}
 
 	private void SendPacketToClientDirect(ServerPacket packet)
 	{
-		if (this.GetSession()?.GameState == null)
+		if (GetSession()?.GameState == null)
 		{
-			Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Dropping {packet.GetUniversalOpcode()} - session/gamestate not ready", "SendPacketToClientDirect", "WorldClient.cs");
+			Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Dropping {packet.GetUniversalOpcode()} - session/gamestate not ready", "WorldClient.cs");
 			return;
 		}
-		Queue<ServerPacket> pendingPackets = this.GetSession().GameState.PendingUninstancedPackets;
+		Queue<ServerPacket> pendingPackets = GetSession().GameState.PendingUninstancedPackets;
 		if (packet.GetConnection() == ConnectionType.Realm)
 		{
-			if (this.GetSession().RealmSocket == null)
+			if (GetSession().RealmSocket == null)
 			{
-				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Queuing {packet.GetUniversalOpcode()} - RealmSocket not ready yet", "SendPacketToClientDirect", "WorldClient.cs");
+				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Queuing {packet.GetUniversalOpcode()} - RealmSocket not ready yet", "WorldClient.cs");
 				lock (pendingPackets)
 				{
 					pendingPackets.Enqueue(packet);
 					return;
 				}
 			}
-			WorldSocket realmSocket = this.GetSession().RealmSocket;
+			WorldSocket realmSocket = GetSession().RealmSocket;
 			if (pendingPackets.Count > 0)
 			{
 				lock (pendingPackets)
@@ -13487,34 +13487,34 @@ public class WorldClient
 			realmSocket.SendPacket(packet);
 			return;
 		}
-		if (this.GetSession().InstanceSocket == null && !this.GetSession().GameState.IsConnectedToInstance)
+		if (GetSession().InstanceSocket == null && !GetSession().GameState.IsConnectedToInstance)
 		{
 			lock (pendingPackets)
 			{
-				if (this.GetSession().InstanceSocket == null && !this.GetSession().GameState.IsConnectedToInstance)
+				if (GetSession().InstanceSocket == null && !GetSession().GameState.IsConnectedToInstance)
 				{
 					pendingPackets.Enqueue(packet);
-					Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (Initial Check)", "SendPacketToClientDirect", "WorldClient.cs");
+					Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (Initial Check)", "WorldClient.cs");
 					return;
 				}
 			}
 		}
-		while (this.GetSession().InstanceSocket == null && this.GetSession().GameState.IsConnectedToInstance)
+		while (GetSession().InstanceSocket == null && GetSession().GameState.IsConnectedToInstance)
 		{
-			Log.PrintNet(LogType.Network, LogNetDir.P2C, $"Waiting to send {packet.GetUniversalOpcode()} ({packet.GetOpcode()}).", "SendPacketToClientDirect", "WorldClient.cs");
+			Log.PrintNet(LogType.Network, LogNetDir.P2C, $"Waiting to send {packet.GetUniversalOpcode()} ({packet.GetOpcode()}).", "WorldClient.cs");
 			Thread.Sleep(200);
-			if (this.GetSession()?.GameState == null) return;
+			if (GetSession()?.GameState == null) return;
 		}
-		if (this.GetSession().InstanceSocket == null)
+		if (GetSession().InstanceSocket == null)
 		{
 			lock (pendingPackets)
 			{
 				pendingPackets.Enqueue(packet);
-				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (State: {this.GetSession().GameState.IsConnectedToInstance})", "SendPacketToClientDirect", "WorldClient.cs");
+				Log.PrintNet(LogType.Warn, LogNetDir.P2C, $"Can't send opcode {packet.GetUniversalOpcode()} ({packet.GetOpcode()}) before entering world! Queue (State: {GetSession().GameState.IsConnectedToInstance})", "WorldClient.cs");
 				return;
 			}
 		}
-		WorldSocket instanceSocket = this.GetSession().InstanceSocket;
+		WorldSocket instanceSocket = GetSession().InstanceSocket;
 		if (pendingPackets.Count > 0)
 		{
 			lock (pendingPackets)
@@ -13534,30 +13534,30 @@ public class WorldClient
 		Opcode opcode = packet.GetUniversalOpcode(isModern: false);
 		if (delayUntilOpcode != Opcode.MSG_NULL_ACTION)
 		{
-			if (this._delayedPacketsToServer.ContainsKey(delayUntilOpcode))
+			if (_delayedPacketsToServer.ContainsKey(delayUntilOpcode))
 			{
-				this._delayedPacketsToServer[delayUntilOpcode].Add(packet);
+				_delayedPacketsToServer[delayUntilOpcode].Add(packet);
 				return;
 			}
 			List<WorldPacket> packets = new List<WorldPacket>();
 			packets.Add(packet);
-			this._delayedPacketsToServer.Add(delayUntilOpcode, packets);
+			_delayedPacketsToServer.Add(delayUntilOpcode, packets);
 		}
 		else
 		{
-			this.SendPacket(packet);
-			this.SendDelayedPacketsToServerOnOpcode(opcode);
+			SendPacket(packet);
+			SendDelayedPacketsToServerOnOpcode(opcode);
 		}
 	}
 
 	private void SendDelayedPacketsToServerOnOpcode(Opcode opcode)
 	{
-		if (this._delayedPacketsToServer.ContainsKey(opcode))
+		if (_delayedPacketsToServer.ContainsKey(opcode))
 		{
-			List<WorldPacket> packets = this._delayedPacketsToServer[opcode];
+			List<WorldPacket> packets = _delayedPacketsToServer[opcode];
 			for (int i = packets.Count - 1; i >= 0; i--)
 			{
-				this.SendPacket(packets[i]);
+				SendPacket(packets[i]);
 				packets.RemoveAt(i);
 			}
 		}
@@ -13565,12 +13565,12 @@ public class WorldClient
 
 	private void SendDelayedPacketsToClientOnOpcode(Opcode opcode)
 	{
-		if (this._delayedPacketsToClient.ContainsKey(opcode))
+		if (_delayedPacketsToClient.ContainsKey(opcode))
 		{
-			List<ServerPacket> packets = this._delayedPacketsToClient[opcode];
+			List<ServerPacket> packets = _delayedPacketsToClient[opcode];
 			for (int i = packets.Count - 1; i >= 0; i--)
 			{
-				this.SendPacketToClientDirect(packets[i]);
+				SendPacketToClientDirect(packets[i]);
 				packets.RemoveAt(i);
 			}
 		}
@@ -13578,11 +13578,11 @@ public class WorldClient
 
 	public void FlushPendingPackets()
 	{
-		if (this.GetSession()?.GameState == null)
+		if (GetSession()?.GameState == null)
 		{
 			return;
 		}
-		Queue<ServerPacket> pendingPackets = this.GetSession().GameState.PendingUninstancedPackets;
+		Queue<ServerPacket> pendingPackets = GetSession().GameState.PendingUninstancedPackets;
 		if (pendingPackets.Count == 0)
 		{
 			return;
@@ -13592,7 +13592,7 @@ public class WorldClient
 			ServerPacket next;
 			while (pendingPackets.TryPeek(out next))
 			{
-				WorldSocket socket = (next.GetConnection() == ConnectionType.Realm) ? this.GetSession().RealmSocket : this.GetSession().InstanceSocket;
+				WorldSocket socket = (next.GetConnection() == ConnectionType.Realm) ? GetSession().RealmSocket : GetSession().InstanceSocket;
 				if (socket != null)
 				{
 					pendingPackets.TryDequeue(out next);
@@ -13618,44 +13618,44 @@ public class WorldClient
 	{
 		Opcode universalOpcode = packet.GetUniversalOpcode(isModern: false);
 		if (!_suppressedLogOpcodes.Contains(universalOpcode))
-			Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Received opcode {universalOpcode} ({packet.GetOpcode()}).", "HandlePacket", "WorldClient.cs");
+			Log.PrintNet(LogType.Debug, LogNetDir.S2P, $"Received opcode {universalOpcode} ({packet.GetOpcode()}).", "WorldClient.cs");
 		switch (universalOpcode)
 		{
 		case Opcode.SMSG_AUTH_CHALLENGE:
-			this.HandleAuthChallenge(packet);
+			HandleAuthChallenge(packet);
 			break;
 		case Opcode.SMSG_AUTH_RESPONSE:
-			this.HandleAuthResponse(packet);
+			HandleAuthResponse(packet);
 			break;
 		default:
-			if (this._packetHandlers.ContainsKey(universalOpcode))
+			if (_packetHandlers.ContainsKey(universalOpcode))
 			{
 				try
 				{
-					this._packetHandlers[universalOpcode](packet);
+					_packetHandlers[universalOpcode](packet);
 				}
-				catch (System.OutOfMemoryException ex)
+				catch (OutOfMemoryException ex)
 				{
 					Log.Print(LogType.Error, $"OOM handling {universalOpcode}: {ex.Message}");
 				}
-				catch (System.Exception ex)
+				catch (Exception ex)
 				{
 					Log.Print(LogType.Error, $"Exception handling {universalOpcode}: {ex.Message}");
 					Log.Print(LogType.Error, ex.StackTrace ?? string.Empty);
 				}
 				break;
 			}
-			Log.PrintNet(LogType.Warn, LogNetDir.S2P, $"No handler for opcode {universalOpcode} ({packet.GetOpcode()}) (Got unknown packet from WorldServer)", "HandlePacket", "WorldClient.cs");
+			Log.PrintNet(LogType.Warn, LogNetDir.S2P, $"No handler for opcode {universalOpcode} ({packet.GetOpcode()}) (Got unknown packet from WorldServer)", "WorldClient.cs");
 			MissingOpcodeTracker.LogUnhandledLegacySMSG(universalOpcode, packet.GetOpcode());
-			if (!this._isSuccessful.HasValue)
+			if (!_isSuccessful.HasValue)
 			{
-				this._isSuccessful = false;
+				_isSuccessful = false;
 			}
 			break;
 		case Opcode.SMSG_ADDON_INFO:
 			break;
 		}
-		this.SendDelayedPacketsToServerOnOpcode(universalOpcode);
+		SendDelayedPacketsToServerOnOpcode(universalOpcode);
 	}
 
 	private void HandleAuthChallenge(WorldPacket packet)
@@ -13674,17 +13674,17 @@ public class WorldClient
 		byte[] bytes = new byte[4];
 		rand.GetBytes(bytes);
 		BigInteger ourSeed = bytes.ToBigInteger();
-		this.SendAuthResponse((uint)ourSeed, seed);
+		SendAuthResponse((uint)ourSeed, seed);
 	}
 
 	public void SendAuthResponse(uint clientSeed, uint serverSeed)
 	{
 		uint zero = 0u;
-		byte[] authResponse = Framework.Cryptography.HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(this._username.ToUpper()), BitConverter.GetBytes(zero), BitConverter.GetBytes(clientSeed), BitConverter.GetBytes(serverSeed), this.GetSession().AuthClient.GetSessionKey());
+		byte[] authResponse = HashAlgorithm.SHA1.Hash(Encoding.ASCII.GetBytes(_username.ToUpper()), BitConverter.GetBytes(zero), BitConverter.GetBytes(clientSeed), BitConverter.GetBytes(serverSeed), GetSession().AuthClient.GetSessionKey());
 		WorldPacket packet = new WorldPacket(Opcode.CMSG_AUTH_SESSION);
 		packet.WriteUInt32((uint)Settings.ServerBuild);
-		packet.WriteUInt32(this._realm.Id.Index);
-		packet.WriteBytes(this._username.ToUpper().ToCString());
+		packet.WriteUInt32(_realm.Id.Index);
+		packet.WriteBytes(_username.ToUpper().ToCString());
 		if (Settings.ServerBuild >= ClientVersionBuild.V3_0_2_9056)
 		{
 			packet.WriteUInt32(zero);
@@ -13692,9 +13692,9 @@ public class WorldClient
 		packet.WriteUInt32(clientSeed);
 		if (Settings.ServerBuild >= ClientVersionBuild.V3_3_5a_12340)
 		{
-			packet.WriteUInt32(this._realm.Id.Region);
-			packet.WriteUInt32(this._realm.Id.Site);
-			packet.WriteUInt32(this._realm.Id.Index);
+			packet.WriteUInt32(_realm.Id.Region);
+			packet.WriteUInt32(_realm.Id.Site);
+			packet.WriteUInt32(_realm.Id.Index);
 		}
 		if (Settings.ServerBuild >= ClientVersionBuild.V3_2_0_10192)
 		{
@@ -13723,8 +13723,8 @@ public class WorldClient
 			198, 159, 190, 1, 43, 0, 141, 195
 		};
 		packet.WriteBytes(addonBytes);
-		this.SendPacket(packet);
-		this.InitializeEncryption(this.GetSession().AuthClient.GetSessionKey());
+		SendPacket(packet);
+		InitializeEncryption(GetSession().AuthClient.GetSessionKey());
 	}
 
 	private void HandleInitialSpells(WorldPacket packet)
@@ -13739,12 +13739,12 @@ public class WorldClient
 			packet.ReadUInt16(); // unknown
 			modern.Spells.Add(spellId);
 		}
-		this.SendPacketToClient(modern);
+		SendPacketToClient(modern);
 	}
 	private void HandleAuthResponse(WorldPacket packet)
 	{
 		AuthResult result = (AuthResult)packet.ReadUInt8();
-		if (!this._isSuccessful.HasValue)
+		if (!_isSuccessful.HasValue)
 		{
 			uint billingTimeRemaining = packet.ReadUInt32();
 			byte billingFlags = packet.ReadUInt8();
@@ -13757,11 +13757,11 @@ public class WorldClient
 		switch (result)
 		{
 		case AuthResult.AUTH_OK:
-			Log.Print(LogType.Network, "Authentication succeeded!", "HandleAuthResponse", "WorldClient.cs");
-			if (this._queuePosition != 0 && this.GetSession().RealmSocket != null)
+			Log.Print(LogType.Network, "Authentication succeeded!", "WorldClient.cs");
+			if (_queuePosition != 0 && GetSession().RealmSocket != null)
 			{
-				this._queuePosition = 0u;
-				this.GetSession().RealmSocket.SendAuthWaitQue(this._queuePosition);
+				_queuePosition = 0u;
+				GetSession().RealmSocket.SendAuthWaitQue(_queuePosition);
 			}
 			// Proactively query all transport entries so cache is populated before CreateObjects
 			foreach (uint transportEntry in GameData.TransportPeriods.Keys)
@@ -13772,38 +13772,38 @@ public class WorldClient
 				SendPacket(goQuery);
 			}
 			Log.Print(LogType.Network, $"Pre-queried {GameData.TransportPeriods.Count} transport entries");
-			this._isSuccessful = true;
+			_isSuccessful = true;
 			break;
 		case AuthResult.AUTH_WAIT_QUEUE:
-			this._queuePosition = packet.ReadUInt32();
-			Log.Print(LogType.Network, $"Position in queue is {this._queuePosition}.", "HandleAuthResponse", "WorldClient.cs");
-			if (this._isSuccessful.HasValue && this.GetSession().RealmSocket != null)
+			_queuePosition = packet.ReadUInt32();
+			Log.Print(LogType.Network, $"Position in queue is {_queuePosition}.", "WorldClient.cs");
+			if (_isSuccessful.HasValue && GetSession().RealmSocket != null)
 			{
-				this.GetSession().RealmSocket.SendAuthWaitQue(this._queuePosition);
+				GetSession().RealmSocket.SendAuthWaitQue(_queuePosition);
 			}
-			this._isSuccessful = true;
+			_isSuccessful = true;
 			break;
 		default:
-			Log.Print(LogType.Network, "Authentication failed!", "HandleAuthResponse", "WorldClient.cs");
-			this._isSuccessful = false;
+			Log.Print(LogType.Network, "Authentication failed!", "WorldClient.cs");
+			_isSuccessful = false;
 			break;
 		}
 	}
 
 	public void SendPing(uint ping, uint latency)
 	{
-		if (this.IsConnected() && this._isSuccessful != false)
+		if (IsConnected() && _isSuccessful != false)
 		{
 			WorldPacket packet = new WorldPacket(Opcode.CMSG_PING);
 			packet.WriteUInt32(ping);
 			packet.WriteUInt32(latency);
-			this.SendPacket(packet);
+			SendPacket(packet);
 		}
 	}
 
 	public void InitializePacketHandlers()
 	{
-		this._packetHandlers = new Dictionary<Opcode, Action<WorldPacket>>();
+		_packetHandlers = new Dictionary<Opcode, Action<WorldPacket>>();
 		MethodInfo[] methods = typeof(WorldClient).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic);
 		foreach (MethodInfo methodInfo in methods)
 		{
@@ -13813,25 +13813,25 @@ public class WorldClient
 				{
 					continue;
 				}
-				if (this._packetHandlers.ContainsKey(msgAttr.Opcode))
+				if (_packetHandlers.ContainsKey(msgAttr.Opcode))
 				{
-					Log.Print(LogType.Error, $"Tried to override OpcodeHandler of {this._packetHandlers[msgAttr.Opcode]} with {methodInfo.Name} (Opcode {msgAttr.Opcode})", "InitializePacketHandlers", "WorldClient.cs");
+					Log.Print(LogType.Error, $"Tried to override OpcodeHandler of {_packetHandlers[msgAttr.Opcode]} with {methodInfo.Name} (Opcode {msgAttr.Opcode})", "WorldClient.cs");
 				}
 				else
 				{
 					ParameterInfo[] parameters = methodInfo.GetParameters();
 					if (parameters.Length == 0)
 					{
-						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " Has no parameters", "InitializePacketHandlers", "WorldClient.cs");
+						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " Has no parameters", "WorldClient.cs");
 						continue;
 					}
 					if (parameters[0].ParameterType != typeof(WorldPacket))
 					{
-						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " has wrong BaseType", "InitializePacketHandlers", "WorldClient.cs");
+						Log.Print(LogType.Error, "Method: " + methodInfo.Name + " has wrong BaseType", "WorldClient.cs");
 						continue;
 					}
 					Action<WorldPacket> del = (Action<WorldPacket>)Delegate.CreateDelegate(typeof(Action<WorldPacket>), this, methodInfo);
-					this._packetHandlers[msgAttr.Opcode] = del;
+					_packetHandlers[msgAttr.Opcode] = del;
 				}
 			}
 		}

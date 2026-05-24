@@ -65,74 +65,74 @@ public class QuestGiverQuestDetails : ServerPacket
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			this.Rewards.FactionCapIn[i] = 7;
+			Rewards.FactionCapIn[i] = 7;
 		}
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.QuestGiverGUID);
-		base._worldPacket.WritePackedGuid128(this.InformUnit);
-		base._worldPacket.WriteInt32((int)this.QuestID);
-		base._worldPacket.WriteInt32(this.QuestPackageID);
-		base._worldPacket.WriteInt32((int)this.PortraitGiver);
-		base._worldPacket.WriteUInt32(this.PortraitGiverMount);
-		base._worldPacket.WriteUInt32(this.PortraitGiverModelSceneID);
-		base._worldPacket.WriteInt32((int)this.PortraitTurnIn);
-		base._worldPacket.WriteUInt32(this.QuestFlags[0]);
-		base._worldPacket.WriteUInt32(this.QuestFlags[1]);
+		_worldPacket.WritePackedGuid128(QuestGiverGUID);
+		_worldPacket.WritePackedGuid128(InformUnit);
+		_worldPacket.WriteInt32((int)QuestID);
+		_worldPacket.WriteInt32(QuestPackageID);
+		_worldPacket.WriteInt32((int)PortraitGiver);
+		_worldPacket.WriteUInt32(PortraitGiverMount);
+		_worldPacket.WriteUInt32(PortraitGiverModelSceneID);
+		_worldPacket.WriteInt32((int)PortraitTurnIn);
+		_worldPacket.WriteUInt32(QuestFlags[0]);
+		_worldPacket.WriteUInt32(QuestFlags[1]);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteUInt32((this.QuestFlags.Length > 2) ? this.QuestFlags[2] : 0u);
+			_worldPacket.WriteUInt32((QuestFlags.Length > 2) ? QuestFlags[2] : 0u);
 		}
-		base._worldPacket.WriteInt32((int)this.SuggestedPartyMembers);
-		base._worldPacket.WriteUInt32((uint)this.LearnSpells.Count);
-		base._worldPacket.WriteUInt32((uint)this.DescEmotes.Length);
-		base._worldPacket.WriteUInt32((uint)this.Objectives.Count);
-		base._worldPacket.WriteInt32(this.QuestStartItemID);
-		base._worldPacket.WriteInt32(this.QuestSessionBonus);
+		_worldPacket.WriteInt32((int)SuggestedPartyMembers);
+		_worldPacket.WriteUInt32((uint)LearnSpells.Count);
+		_worldPacket.WriteUInt32((uint)DescEmotes.Length);
+		_worldPacket.WriteUInt32((uint)Objectives.Count);
+		_worldPacket.WriteInt32(QuestStartItemID);
+		_worldPacket.WriteInt32(QuestSessionBonus);
 		if (ModernVersion.ExpansionVersion >= 3)
 		{
-			base._worldPacket.WriteInt32(this.QuestGiverCreatureID);
-			base._worldPacket.WriteUInt32(0u);
+			_worldPacket.WriteInt32(QuestGiverCreatureID);
+			_worldPacket.WriteUInt32(0u);
 		}
-		foreach (uint spell in this.LearnSpells)
+		foreach (uint spell in LearnSpells)
 		{
-			base._worldPacket.WriteInt32((int)spell);
+			_worldPacket.WriteInt32((int)spell);
 		}
-		QuestDescEmote[] descEmotes = this.DescEmotes;
+		QuestDescEmote[] descEmotes = DescEmotes;
 		for (int i = 0; i < descEmotes.Length; i++)
 		{
 			QuestDescEmote emote = descEmotes[i];
-			base._worldPacket.WriteInt32((int)emote.Type);
-			base._worldPacket.WriteUInt32(emote.Delay);
+			_worldPacket.WriteInt32((int)emote.Type);
+			_worldPacket.WriteUInt32(emote.Delay);
 		}
-		foreach (QuestObjectiveSimple obj in this.Objectives)
+		foreach (QuestObjectiveSimple obj in Objectives)
 		{
-			base._worldPacket.WriteInt32((int)obj.Id);
-			base._worldPacket.WriteInt32(obj.ObjectID);
-			base._worldPacket.WriteInt32(obj.Amount);
-			base._worldPacket.WriteUInt8(obj.Type);
+			_worldPacket.WriteInt32((int)obj.Id);
+			_worldPacket.WriteInt32(obj.ObjectID);
+			_worldPacket.WriteInt32(obj.Amount);
+			_worldPacket.WriteUInt8(obj.Type);
 		}
-		base._worldPacket.WriteBits(this.QuestTitle.GetByteCount(), 9);
-		base._worldPacket.WriteBits(this.DescriptionText.GetByteCount(), 12);
-		base._worldPacket.WriteBits(this.LogDescription.GetByteCount(), 12);
-		base._worldPacket.WriteBits(this.PortraitGiverText.GetByteCount(), 10);
-		base._worldPacket.WriteBits(this.PortraitGiverName.GetByteCount(), 8);
-		base._worldPacket.WriteBits(this.PortraitTurnInText.GetByteCount(), 10);
-		base._worldPacket.WriteBits(this.PortraitTurnInName.GetByteCount(), 8);
-		base._worldPacket.WriteBit(this.AutoLaunched);
-		base._worldPacket.WriteBit(bit: false);
-		base._worldPacket.WriteBit(this.StartCheat);
-		base._worldPacket.WriteBit(this.DisplayPopup);
-		base._worldPacket.FlushBits();
-		this.Rewards.Write(base._worldPacket);
-		base._worldPacket.WriteString(this.QuestTitle);
-		base._worldPacket.WriteString(this.DescriptionText);
-		base._worldPacket.WriteString(this.LogDescription);
-		base._worldPacket.WriteString(this.PortraitGiverText);
-		base._worldPacket.WriteString(this.PortraitGiverName);
-		base._worldPacket.WriteString(this.PortraitTurnInText);
-		base._worldPacket.WriteString(this.PortraitTurnInName);
+		_worldPacket.WriteBits(QuestTitle.GetByteCount(), 9);
+		_worldPacket.WriteBits(DescriptionText.GetByteCount(), 12);
+		_worldPacket.WriteBits(LogDescription.GetByteCount(), 12);
+		_worldPacket.WriteBits(PortraitGiverText.GetByteCount(), 10);
+		_worldPacket.WriteBits(PortraitGiverName.GetByteCount(), 8);
+		_worldPacket.WriteBits(PortraitTurnInText.GetByteCount(), 10);
+		_worldPacket.WriteBits(PortraitTurnInName.GetByteCount(), 8);
+		_worldPacket.WriteBit(AutoLaunched);
+		_worldPacket.WriteBit(bit: false);
+		_worldPacket.WriteBit(StartCheat);
+		_worldPacket.WriteBit(DisplayPopup);
+		_worldPacket.FlushBits();
+		Rewards.Write(_worldPacket);
+		_worldPacket.WriteString(QuestTitle);
+		_worldPacket.WriteString(DescriptionText);
+		_worldPacket.WriteString(LogDescription);
+		_worldPacket.WriteString(PortraitGiverText);
+		_worldPacket.WriteString(PortraitGiverName);
+		_worldPacket.WriteString(PortraitTurnInText);
+		_worldPacket.WriteString(PortraitTurnInName);
 	}
 }

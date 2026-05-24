@@ -14,7 +14,7 @@ public class QuestGiverInfo
 
 	public QuestGiverInfo(WowGuid128 guid, QuestGiverStatusModern status)
 	{
-		this.Guid = guid;
-		this.Status = status;
+		Guid = guid;
+		Status = status;
 	}
 }

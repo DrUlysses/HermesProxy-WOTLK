@@ -12,9 +12,9 @@ public class ItemEnchantData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.ID);
-		data.WriteUInt32(this.Expiration);
-		data.WriteInt32(this.Charges);
-		data.WriteUInt8(this.Slot);
+		data.WriteUInt32(ID);
+		data.WriteUInt32(Expiration);
+		data.WriteInt32(Charges);
+		data.WriteUInt8(Slot);
 	}
 }

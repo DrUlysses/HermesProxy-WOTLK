@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Report.V2 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/api/client/v2/report_types.proto</summary>
@@ -195,7 +195,7 @@ namespace Bgs.Protocol.Report.V2 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(MessageId, other.MessageId)) return false;
+      if (!Equals(MessageId, other.MessageId)) return false;
       if (TypeCase != other.TypeCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -421,10 +421,10 @@ namespace Bgs.Protocol.Report.V2 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(TargetId, other.TargetId)) return false;
+      if (!Equals(TargetId, other.TargetId)) return false;
       if (Type != other.Type) return false;
       if (Source != other.Source) return false;
-      if (!object.Equals(Item, other.Item)) return false;
+      if (!Equals(Item, other.Item)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -726,7 +726,7 @@ namespace Bgs.Protocol.Report.V2 {
       if (StreamId != other.StreamId) return false;
       if (Type != other.Type) return false;
       if (Source != other.Source) return false;
-      if (!object.Equals(Item, other.Item)) return false;
+      if (!Equals(Item, other.Item)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 

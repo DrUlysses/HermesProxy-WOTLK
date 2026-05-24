@@ -36,35 +36,35 @@ internal class SpellHealLog : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.TargetGUID);
-		base._worldPacket.WritePackedGuid128(this.CasterGUID);
-		base._worldPacket.WriteUInt32(this.SpellID);
-		base._worldPacket.WriteInt32(this.HealAmount);
-		base._worldPacket.WriteInt32(this.OriginalHealAmount);
-		base._worldPacket.WriteUInt32(this.OverHeal);
-		base._worldPacket.WriteUInt32(this.Absorbed);
-		base._worldPacket.WriteUInt32(0); // Supporters count
-		base._worldPacket.WriteBit(this.Crit);
-		base._worldPacket.WriteBit(this.CritRollMade.HasValue);
-		base._worldPacket.WriteBit(this.CritRollNeeded.HasValue);
-		base._worldPacket.WriteBit(this.LogData != null);
-		base._worldPacket.WriteBit(this.ContentTuning != null);
-		base._worldPacket.FlushBits();
-		if (this.LogData != null)
+		_worldPacket.WritePackedGuid128(TargetGUID);
+		_worldPacket.WritePackedGuid128(CasterGUID);
+		_worldPacket.WriteUInt32(SpellID);
+		_worldPacket.WriteInt32(HealAmount);
+		_worldPacket.WriteInt32(OriginalHealAmount);
+		_worldPacket.WriteUInt32(OverHeal);
+		_worldPacket.WriteUInt32(Absorbed);
+		_worldPacket.WriteUInt32(0); // Supporters count
+		_worldPacket.WriteBit(Crit);
+		_worldPacket.WriteBit(CritRollMade.HasValue);
+		_worldPacket.WriteBit(CritRollNeeded.HasValue);
+		_worldPacket.WriteBit(LogData != null);
+		_worldPacket.WriteBit(ContentTuning != null);
+		_worldPacket.FlushBits();
+		if (LogData != null)
 		{
-			this.LogData.Write(base._worldPacket);
+			LogData.Write(_worldPacket);
 		}
-		if (this.CritRollMade.HasValue)
+		if (CritRollMade.HasValue)
 		{
-			base._worldPacket.WriteFloat(this.CritRollMade.Value);
+			_worldPacket.WriteFloat(CritRollMade.Value);
 		}
-		if (this.CritRollNeeded.HasValue)
+		if (CritRollNeeded.HasValue)
 		{
-			base._worldPacket.WriteFloat(this.CritRollNeeded.Value);
+			_worldPacket.WriteFloat(CritRollNeeded.Value);
 		}
-		if (this.ContentTuning != null)
+		if (ContentTuning != null)
 		{
-			this.ContentTuning.Write(base._worldPacket);
+			ContentTuning.Write(_worldPacket);
 		}
 	}
 }

@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.GameUtilities.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/game_utilities_service.proto</summary>
@@ -292,11 +292,11 @@ namespace Bgs.Protocol.GameUtilities.V1 {
         return true;
       }
       if(!attribute_.Equals(other.attribute_)) return false;
-      if (!object.Equals(Host, other.Host)) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(Host, other.Host)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
       if (Program != other.Program) return false;
-      if (!object.Equals(ClientInfo, other.ClientInfo)) return false;
+      if (!Equals(ClientInfo, other.ClientInfo)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -691,7 +691,7 @@ namespace Bgs.Protocol.GameUtilities.V1 {
       }
       if(!attribute_.Equals(other.attribute_)) return false;
       if (Program != other.Program) return false;
-      if (!object.Equals(Host, other.Host)) return false;
+      if (!Equals(Host, other.Host)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1049,10 +1049,10 @@ namespace Bgs.Protocol.GameUtilities.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(Id, other.Id)) return false;
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
-      if (!object.Equals(AccountId, other.AccountId)) return false;
-      if (!object.Equals(Host, other.Host)) return false;
+      if (!Equals(Id, other.Id)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(AccountId, other.AccountId)) return false;
+      if (!Equals(Host, other.Host)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1309,8 +1309,8 @@ namespace Bgs.Protocol.GameUtilities.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
-      if (!object.Equals(Host, other.Host)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(Host, other.Host)) return false;
       if (SessionId != other.SessionId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1541,8 +1541,8 @@ namespace Bgs.Protocol.GameUtilities.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(GameAccountId, other.GameAccountId)) return false;
-      if (!object.Equals(Host, other.Host)) return false;
+      if (!Equals(GameAccountId, other.GameAccountId)) return false;
+      if (!Equals(Host, other.Host)) return false;
       if (SessionId != other.SessionId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1776,7 +1776,7 @@ namespace Bgs.Protocol.GameUtilities.V1 {
         return true;
       }
       if (AttributeKey != other.AttributeKey) return false;
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if (Program != other.Program) return false;
       return Equals(_unknownFields, other._unknownFields);
     }

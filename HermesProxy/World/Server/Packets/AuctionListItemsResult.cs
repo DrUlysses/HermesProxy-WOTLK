@@ -20,22 +20,22 @@ public class AuctionListItemsResult : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Items.Count);
-		base._worldPacket.WriteUInt32(0u); // Unknown830
-		base._worldPacket.WriteInt32(this.TotalItemsCount);
-		base._worldPacket.WriteUInt32(this.DesiredDelay);
-		base._worldPacket.WriteBits(0, 2); // ListType
-		base._worldPacket.WriteBit(this.HasMoreResults);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteInt32(Items.Count);
+		_worldPacket.WriteUInt32(0u); // Unknown830
+		_worldPacket.WriteInt32(TotalItemsCount);
+		_worldPacket.WriteUInt32(DesiredDelay);
+		_worldPacket.WriteBits(0, 2); // ListType
+		_worldPacket.WriteBit(HasMoreResults);
+		_worldPacket.FlushBits();
 		// Empty AuctionBucketKey: ItemID=0, no optional fields
-		base._worldPacket.WriteBits(0, 20); // ItemID
-		base._worldPacket.WriteBit(false); // no BattlePetSpeciesID
-		base._worldPacket.WriteBits(0, 11); // ItemLevel
-		base._worldPacket.WriteBit(false); // no SuffixItemNameDescriptionID
-		base._worldPacket.FlushBits();
-		foreach (AuctionItem item in this.Items)
+		_worldPacket.WriteBits(0, 20); // ItemID
+		_worldPacket.WriteBit(false); // no BattlePetSpeciesID
+		_worldPacket.WriteBits(0, 11); // ItemLevel
+		_worldPacket.WriteBit(false); // no SuffixItemNameDescriptionID
+		_worldPacket.FlushBits();
+		foreach (AuctionItem item in Items)
 		{
-			item.Write(base._worldPacket);
+			item.Write(_worldPacket);
 		}
 	}
 }

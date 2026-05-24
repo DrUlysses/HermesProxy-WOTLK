@@ -13,7 +13,7 @@ internal class ReadyCheckResponseClient : ClientPacket
 
 	public override void Read()
 	{
-		this.PartyIndex = base._worldPacket.ReadUInt8();
-		this.IsReady = base._worldPacket.HasBit();
+		PartyIndex = _worldPacket.ReadUInt8();
+		IsReady = _worldPacket.HasBit();
 	}
 }

@@ -10,8 +10,8 @@ public struct CTROptions
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt32(this.ContentTuningConditionMask);
-		data.WriteInt32(this.Unused901);
-		data.WriteUInt32(this.ExpansionLevelMask);
+		data.WriteUInt32(ContentTuningConditionMask);
+		data.WriteInt32(Unused901);
+		data.WriteUInt32(ExpansionLevelMask);
 	}
 }

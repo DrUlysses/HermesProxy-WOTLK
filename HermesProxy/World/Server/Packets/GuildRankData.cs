@@ -20,16 +20,16 @@ public class GuildRankData
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8(this.RankID);
-		data.WriteUInt32(this.RankOrder);
-		data.WriteUInt32(this.Flags);
-		data.WriteInt32(this.WithdrawGoldLimit);
+		data.WriteUInt8(RankID);
+		data.WriteUInt32(RankOrder);
+		data.WriteUInt32(Flags);
+		data.WriteInt32(WithdrawGoldLimit);
 		for (byte i = 0; i < 6; i++)
 		{
-			data.WriteUInt32(this.TabFlags[i]);
-			data.WriteUInt32(this.TabWithdrawItemLimit[i]);
+			data.WriteUInt32(TabFlags[i]);
+			data.WriteUInt32(TabWithdrawItemLimit[i]);
 		}
-		data.WriteBits(this.RankName.GetByteCount(), 7);
-		data.WriteString(this.RankName);
+		data.WriteBits(RankName.GetByteCount(), 7);
+		data.WriteString(RankName);
 	}
 }

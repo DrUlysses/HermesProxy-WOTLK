@@ -19,9 +19,9 @@ internal class BattlenetResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Status);
-		this.Method.Write(base._worldPacket);
-		base._worldPacket.WriteUInt32(this.Data.GetSize());
-		base._worldPacket.WriteBytes(this.Data);
+		_worldPacket.WriteUInt32((uint)Status);
+		Method.Write(_worldPacket);
+		_worldPacket.WriteUInt32(Data.GetSize());
+		_worldPacket.WriteBytes(Data);
 	}
 }

@@ -13,6 +13,6 @@ public class GMTicketSystemStatus : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.Status);
+		_worldPacket.WriteInt32(Status);
 	}
 }

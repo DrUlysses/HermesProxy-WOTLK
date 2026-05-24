@@ -12,17 +12,17 @@ public class ContactList : ServerPacket
 	public ContactList()
 		: base(Opcode.SMSG_CONTACT_LIST)
 	{
-		this.Contacts = new List<ContactInfo>();
+		Contacts = new List<ContactInfo>();
 	}
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32((uint)this.Flags);
-		base._worldPacket.WriteBits(this.Contacts.Count, 8);
-		base._worldPacket.FlushBits();
-		foreach (ContactInfo contact in this.Contacts)
+		_worldPacket.WriteUInt32((uint)Flags);
+		_worldPacket.WriteBits(Contacts.Count, 8);
+		_worldPacket.FlushBits();
+		foreach (ContactInfo contact in Contacts)
 		{
-			contact.Write(base._worldPacket);
+			contact.Write(_worldPacket);
 		}
 	}
 }

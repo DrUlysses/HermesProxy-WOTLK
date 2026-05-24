@@ -15,8 +15,8 @@ public class SetTradeItem : ClientPacket
 
 	public override void Read()
 	{
-		this.TradeSlot = base._worldPacket.ReadUInt8();
-		this.PackSlot = base._worldPacket.ReadUInt8();
-		this.ItemSlotInPack = base._worldPacket.ReadUInt8();
+		TradeSlot = _worldPacket.ReadUInt8();
+		PackSlot = _worldPacket.ReadUInt8();
+		ItemSlotInPack = _worldPacket.ReadUInt8();
 	}
 }

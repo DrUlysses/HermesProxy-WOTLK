@@ -11,9 +11,9 @@ public class ItemBonuses
 
 	public void Write(WorldPacket data)
 	{
-		data.WriteUInt8((byte)this.Context);
-		data.WriteInt32(this.BonusListIDs.Count);
-		foreach (uint bonusID in this.BonusListIDs)
+		data.WriteUInt8((byte)Context);
+		data.WriteInt32(BonusListIDs.Count);
+		foreach (uint bonusID in BonusListIDs)
 		{
 			data.WriteUInt32(bonusID);
 		}
@@ -21,13 +21,13 @@ public class ItemBonuses
 
 	public void Read(WorldPacket data)
 	{
-		this.Context = (ItemContext)data.ReadUInt8();
+		Context = (ItemContext)data.ReadUInt8();
 		uint bonusListIdSize = data.ReadUInt32();
-		this.BonusListIDs = new List<uint>();
+		BonusListIDs = new List<uint>();
 		for (uint i = 0u; i < bonusListIdSize; i++)
 		{
 			uint bonusId = data.ReadUInt32();
-			this.BonusListIDs.Add(bonusId);
+			BonusListIDs.Add(bonusId);
 		}
 	}
 }

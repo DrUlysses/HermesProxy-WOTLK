@@ -14,13 +14,13 @@ public class LegacyServerPacketHeader
 
 	public void Read(byte[] buffer)
 	{
-		this.Size = NetworkUtility.EndianConvert(BitConverter.ToUInt16(buffer, 0));
-		this.Opcode = BitConverter.ToUInt16(buffer, 2);
+		Size = NetworkUtility.EndianConvert(BitConverter.ToUInt16(buffer, 0));
+		Opcode = BitConverter.ToUInt16(buffer, 2);
 	}
 
 	public void Write(ByteBuffer byteBuffer)
 	{
-		byteBuffer.WriteUInt16(this.Size);
-		byteBuffer.WriteUInt16(this.Opcode);
+		byteBuffer.WriteUInt16(Size);
+		byteBuffer.WriteUInt16(Opcode);
 	}
 }

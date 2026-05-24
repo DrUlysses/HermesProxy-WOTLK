@@ -12,6 +12,6 @@ public class EmptyEquipmentSetList : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(0u);
+		_worldPacket.WriteUInt32(0u);
 	}
 }

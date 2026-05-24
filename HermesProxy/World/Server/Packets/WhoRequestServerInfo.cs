@@ -10,8 +10,8 @@ public class WhoRequestServerInfo
 
 	public void Read(WorldPacket data)
 	{
-		this.FactionGroup = data.ReadInt32();
-		this.Locale = data.ReadInt32();
-		this.RequesterVirtualRealmAddress = data.ReadUInt32();
+		FactionGroup = data.ReadInt32();
+		Locale = data.ReadInt32();
+		RequesterVirtualRealmAddress = data.ReadUInt32();
 	}
 }

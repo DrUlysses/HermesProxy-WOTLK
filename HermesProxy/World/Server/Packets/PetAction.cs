@@ -19,9 +19,9 @@ internal class PetAction : ClientPacket
 
 	public override void Read()
 	{
-		this.PetGUID = base._worldPacket.ReadPackedGuid128();
-		this.Action = base._worldPacket.ReadUInt32();
-		this.TargetGUID = base._worldPacket.ReadPackedGuid128();
-		this.ActionPosition = base._worldPacket.ReadVector3();
+		PetGUID = _worldPacket.ReadPackedGuid128();
+		Action = _worldPacket.ReadUInt32();
+		TargetGUID = _worldPacket.ReadPackedGuid128();
+		ActionPosition = _worldPacket.ReadVector3();
 	}
 }

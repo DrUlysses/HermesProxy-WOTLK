@@ -13,7 +13,7 @@ internal class SummonResponse : ClientPacket
 
 	public override void Read()
 	{
-		this.SummonerGUID = base._worldPacket.ReadPackedGuid128();
-		this.Accept = base._worldPacket.HasBit();
+		SummonerGUID = _worldPacket.ReadPackedGuid128();
+		Accept = _worldPacket.HasBit();
 	}
 }

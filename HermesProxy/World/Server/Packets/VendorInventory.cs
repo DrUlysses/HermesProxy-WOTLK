@@ -19,12 +19,12 @@ public class VendorInventory : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.VendorGUID);
-		base._worldPacket.WriteUInt8(this.Reason);
-		base._worldPacket.WriteInt32(this.Items.Count);
-		foreach (VendorItem item in this.Items)
+		_worldPacket.WritePackedGuid128(VendorGUID);
+		_worldPacket.WriteUInt8(Reason);
+		_worldPacket.WriteInt32(Items.Count);
+		foreach (VendorItem item in Items)
 		{
-			item.Write(base._worldPacket);
+			item.Write(_worldPacket);
 		}
 	}
 }

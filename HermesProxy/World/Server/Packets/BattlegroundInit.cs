@@ -15,7 +15,7 @@ public class BattlegroundInit : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.Milliseconds);
-		base._worldPacket.WriteUInt16(this.BattlegroundPoints);
+		_worldPacket.WriteUInt32(Milliseconds);
+		_worldPacket.WriteUInt16(BattlegroundPoints);
 	}
 }

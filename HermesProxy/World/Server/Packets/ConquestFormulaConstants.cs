@@ -22,10 +22,10 @@ public class ConquestFormulaConstants : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.PvpMinCPPerWeek);
-		base._worldPacket.WriteInt32(this.PvpMaxCPPerWeek);
-		base._worldPacket.WriteFloat(this.PvpCPBaseCoefficient);
-		base._worldPacket.WriteFloat(this.PvpCPExpCoefficient);
-		base._worldPacket.WriteFloat(this.PvpCPNumerator);
+		_worldPacket.WriteInt32(PvpMinCPPerWeek);
+		_worldPacket.WriteInt32(PvpMaxCPPerWeek);
+		_worldPacket.WriteFloat(PvpCPBaseCoefficient);
+		_worldPacket.WriteFloat(PvpCPExpCoefficient);
+		_worldPacket.WriteFloat(PvpCPNumerator);
 	}
 }

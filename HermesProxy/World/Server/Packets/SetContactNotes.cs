@@ -15,8 +15,8 @@ public class SetContactNotes : ClientPacket
 
 	public override void Read()
 	{
-		this.VirtualRealmAddress = base._worldPacket.ReadUInt32();
-		this.Guid = base._worldPacket.ReadPackedGuid128();
-		this.Notes = base._worldPacket.ReadString(base._worldPacket.ReadBits<uint>(10));
+		VirtualRealmAddress = _worldPacket.ReadUInt32();
+		Guid = _worldPacket.ReadPackedGuid128();
+		Notes = _worldPacket.ReadString(_worldPacket.ReadBits<uint>(10));
 	}
 }

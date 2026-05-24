@@ -11,6 +11,6 @@ public class SetAutoDeclineGuildInvites : ClientPacket
 
 	public override void Read()
 	{
-		this.GuildInvitesShouldGetBlocked = base._worldPacket.ReadBool();
+		GuildInvitesShouldGetBlocked = _worldPacket.ReadBool();
 	}
 }

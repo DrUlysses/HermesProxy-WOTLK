@@ -12,50 +12,50 @@ public struct RealmId : IEquatable<RealmId>
 
 	public RealmId(byte region, byte battlegroup, uint index)
 	{
-		this.Region = region;
-		this.Site = battlegroup;
-		this.Index = index;
+		Region = region;
+		Site = battlegroup;
+		Index = index;
 	}
 
 	public RealmId(uint realmAddress)
 	{
-		this.Region = (byte)((realmAddress >> 24) & 0xFF);
-		this.Site = (byte)((realmAddress >> 16) & 0xFF);
-		this.Index = realmAddress & 0xFFFF;
+		Region = (byte)((realmAddress >> 24) & 0xFF);
+		Site = (byte)((realmAddress >> 16) & 0xFF);
+		Index = realmAddress & 0xFFFF;
 	}
 
 	public uint GetAddress()
 	{
-		return (uint)((this.Region << 24) | (this.Site << 16) | (ushort)this.Index);
+		return (uint)((Region << 24) | (Site << 16) | (ushort)Index);
 	}
 
 	public string GetAddressString()
 	{
-		return $"{this.Region}-{this.Site}-{this.Index}";
+		return $"{Region}-{Site}-{Index}";
 	}
 
 	public string GetSubRegionAddress()
 	{
-		return $"{this.Region}-{this.Site}-0";
+		return $"{Region}-{Site}-0";
 	}
 
 	public override bool Equals(object obj)
 	{
-		return obj != null && obj is RealmId && this.Equals((RealmId)obj);
+		return obj != null && obj is RealmId && Equals((RealmId)obj);
 	}
 
 	public bool Equals(RealmId other)
 	{
-		return other.Index == this.Index;
+		return other.Index == Index;
 	}
 
 	public override int GetHashCode()
 	{
-		return new { this.Site, this.Region, this.Index }.GetHashCode();
+		return new { Site, Region, Index }.GetHashCode();
 	}
 
 	public override string ToString()
 	{
-		return $"Realm{{Index={this.Index},Region={this.Region},Index={this.Index}}}";
+		return $"Realm{{Index={Index},Region={Region},Index={Index}}}";
 	}
 }

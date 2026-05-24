@@ -13,7 +13,7 @@ public class MovementAckMessage : ClientPacket
 
 	public override void Read()
 	{
-		this.MoverGUID = base._worldPacket.ReadPackedGuid128();
-		this.Ack.Read(base._worldPacket);
+		MoverGUID = _worldPacket.ReadPackedGuid128();
+		Ack.Read(_worldPacket);
 	}
 }

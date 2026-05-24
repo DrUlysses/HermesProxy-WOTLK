@@ -10,8 +10,8 @@ public struct SpellOptionalReagent
 
 	public void Read(WorldPacket data)
 	{
-		this.ItemID = data.ReadInt32();
-		this.Slot = data.ReadInt32();
-		this.Count = data.ReadInt32();
+		ItemID = data.ReadInt32();
+		Slot = data.ReadInt32();
+		Count = data.ReadInt32();
 	}
 }

@@ -11,6 +11,6 @@ internal class SetPvP : ClientPacket
 
 	public override void Read()
 	{
-		this.Enable = base._worldPacket.HasBit();
+		Enable = _worldPacket.HasBit();
 	}
 }

@@ -16,12 +16,12 @@ public class WhoResponsePkt : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.RequestID);
-		base._worldPacket.WriteBits(this.Players.Count, 6);
-		base._worldPacket.FlushBits();
-		this.Players.ForEach(delegate(WhoEntry p)
+		_worldPacket.WriteUInt32(RequestID);
+		_worldPacket.WriteBits(Players.Count, 6);
+		_worldPacket.FlushBits();
+		Players.ForEach(delegate(WhoEntry p)
 		{
-			p.Write(base._worldPacket);
+			p.Write(_worldPacket);
 		});
 	}
 }

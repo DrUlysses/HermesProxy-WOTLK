@@ -14,6 +14,6 @@ internal class StartLightningStorm : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.LightningStormId);
+		_worldPacket.WriteUInt32(LightningStormId);
 	}
 }

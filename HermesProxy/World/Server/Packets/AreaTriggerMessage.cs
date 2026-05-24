@@ -13,6 +13,6 @@ internal class AreaTriggerMessage : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.AreaTriggerID);
+		_worldPacket.WriteUInt32(AreaTriggerID);
 	}
 }

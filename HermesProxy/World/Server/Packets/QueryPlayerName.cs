@@ -11,6 +11,6 @@ public class QueryPlayerName : ClientPacket
 
 	public override void Read()
 	{
-		this.Player = base._worldPacket.ReadPackedGuid128();
+		Player = _worldPacket.ReadPackedGuid128();
 	}
 }

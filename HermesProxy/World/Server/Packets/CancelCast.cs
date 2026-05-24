@@ -13,7 +13,7 @@ public class CancelCast : ClientPacket
 
 	public override void Read()
 	{
-		this.CastID = base._worldPacket.ReadPackedGuid128();
-		this.SpellID = base._worldPacket.ReadUInt32();
+		CastID = _worldPacket.ReadPackedGuid128();
+		SpellID = _worldPacket.ReadUInt32();
 	}
 }

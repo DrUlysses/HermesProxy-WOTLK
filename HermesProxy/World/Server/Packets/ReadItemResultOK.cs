@@ -13,6 +13,6 @@ internal class ReadItemResultOK : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WritePackedGuid128(this.ItemGUID);
+		_worldPacket.WritePackedGuid128(ItemGUID);
 	}
 }

@@ -8,7 +8,7 @@
 using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
-using scg = global::System.Collections.Generic;
+
 namespace Bgs.Protocol.Presence.V1 {
 
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/presence_service.proto</summary>
@@ -239,8 +239,8 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if (ObjectId != other.ObjectId) return false;
       if(!program_.Equals(other.program_)) return false;
       if(!key_.Equals(other.key_)) return false;
@@ -490,8 +490,8 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if (ObjectId != other.ObjectId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -733,10 +733,10 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if(!fieldOperation_.Equals(other.fieldOperation_)) return false;
       if (NoCreate != other.NoCreate) return false;
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -958,9 +958,9 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if(!key_.Equals(other.key_)) return false;
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1315,7 +1315,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if(!entityId_.Equals(other.entityId_)) return false;
       if(!program_.Equals(other.program_)) return false;
       if(!key_.Equals(other.key_)) return false;
@@ -1531,7 +1531,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(EntityId, other.EntityId)) return false;
+      if (!Equals(EntityId, other.EntityId)) return false;
       if (Result != other.Result) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -1851,7 +1851,7 @@ namespace Bgs.Protocol.Presence.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!object.Equals(AgentId, other.AgentId)) return false;
+      if (!Equals(AgentId, other.AgentId)) return false;
       if(!entityId_.Equals(other.entityId_)) return false;
       if (ObjectId != other.ObjectId) return false;
       return Equals(_unknownFields, other._unknownFields);

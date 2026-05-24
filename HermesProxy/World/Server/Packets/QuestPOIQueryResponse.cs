@@ -45,39 +45,39 @@ public class QuestPOIQueryResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteInt32(this.QuestPOIDataStats.Count);
-		base._worldPacket.WriteInt32(this.QuestPOIDataStats.Count);
+		_worldPacket.WriteInt32(QuestPOIDataStats.Count);
+		_worldPacket.WriteInt32(QuestPOIDataStats.Count);
 
-		foreach (QuestPOIData questData in this.QuestPOIDataStats)
+		foreach (QuestPOIData questData in QuestPOIDataStats)
 		{
-			base._worldPacket.WriteInt32(questData.QuestID);
-			base._worldPacket.WriteInt32(questData.Blobs.Count);
+			_worldPacket.WriteInt32(questData.QuestID);
+			_worldPacket.WriteInt32(questData.Blobs.Count);
 
 			foreach (QuestPOIBlobData blob in questData.Blobs)
 			{
-				base._worldPacket.WriteInt32(blob.BlobIndex);
-				base._worldPacket.WriteInt32(blob.ObjectiveIndex);
-				base._worldPacket.WriteInt32(blob.QuestObjectiveID);
-				base._worldPacket.WriteInt32(blob.QuestObjectID);
-				base._worldPacket.WriteInt32(blob.MapID);
-				base._worldPacket.WriteInt32(blob.UiMapID);
-				base._worldPacket.WriteInt32(blob.Priority);
-				base._worldPacket.WriteInt32(blob.Flags);
-				base._worldPacket.WriteInt32(blob.WorldEffectID);
-				base._worldPacket.WriteInt32(blob.PlayerConditionID);
-				base._worldPacket.WriteInt32(blob.NavigationPlayerConditionID);
-				base._worldPacket.WriteInt32(blob.SpawnTrackingID);
-				base._worldPacket.WriteInt32(blob.Points.Count);
+				_worldPacket.WriteInt32(blob.BlobIndex);
+				_worldPacket.WriteInt32(blob.ObjectiveIndex);
+				_worldPacket.WriteInt32(blob.QuestObjectiveID);
+				_worldPacket.WriteInt32(blob.QuestObjectID);
+				_worldPacket.WriteInt32(blob.MapID);
+				_worldPacket.WriteInt32(blob.UiMapID);
+				_worldPacket.WriteInt32(blob.Priority);
+				_worldPacket.WriteInt32(blob.Flags);
+				_worldPacket.WriteInt32(blob.WorldEffectID);
+				_worldPacket.WriteInt32(blob.PlayerConditionID);
+				_worldPacket.WriteInt32(blob.NavigationPlayerConditionID);
+				_worldPacket.WriteInt32(blob.SpawnTrackingID);
+				_worldPacket.WriteInt32(blob.Points.Count);
 
 				foreach (QuestPOIBlobPoint point in blob.Points)
 				{
-					base._worldPacket.WriteInt16(point.X);
-					base._worldPacket.WriteInt16(point.Y);
-					base._worldPacket.WriteInt16(point.Z);
+					_worldPacket.WriteInt16(point.X);
+					_worldPacket.WriteInt16(point.Y);
+					_worldPacket.WriteInt16(point.Z);
 				}
 
-				base._worldPacket.WriteBit(blob.AlwaysAllowMergingBlobs);
-				base._worldPacket.FlushBits();
+				_worldPacket.WriteBit(blob.AlwaysAllowMergingBlobs);
+				_worldPacket.FlushBits();
 			}
 		}
 	}

@@ -18,17 +18,17 @@ public class AccountInfo
 
 	public Dictionary<uint, GameAccountInfo> GameAccounts;
 
-	public WowGuid128 BnetAccountGuid => WowGuid128.Create(HighGuidType703.BNetAccount, this.Id);
+	public WowGuid128 BnetAccountGuid => WowGuid128.Create(HighGuidType703.BNetAccount, Id);
 
 	public AccountInfo(string name)
 	{
-		this.Id = 1u;
-		this.Login = name;
-		this.LoginTicketExpiry = (uint)(Time.UnixTime + 10000);
-		this.IsBanned = false;
-		this.IsPermanenetlyBanned = false;
-		this.GameAccounts = new Dictionary<uint, GameAccountInfo>();
+		Id = 1u;
+		Login = name;
+		LoginTicketExpiry = (uint)(Time.UnixTime + 10000);
+		IsBanned = false;
+		IsPermanenetlyBanned = false;
+		GameAccounts = new Dictionary<uint, GameAccountInfo>();
 		GameAccountInfo account = new GameAccountInfo(name);
-		this.GameAccounts[1u] = account;
+		GameAccounts[1u] = account;
 	}
 }

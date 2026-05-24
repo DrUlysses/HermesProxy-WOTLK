@@ -21,11 +21,11 @@ internal class RaidInstanceMessage : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt8((byte)this.Type);
-		base._worldPacket.WriteUInt32(this.MapID);
-		base._worldPacket.WriteUInt32((uint)this.DifficultyID);
-		base._worldPacket.WriteBit(this.Locked);
-		base._worldPacket.WriteBit(this.Extended);
-		base._worldPacket.FlushBits();
+		_worldPacket.WriteUInt8((byte)Type);
+		_worldPacket.WriteUInt32(MapID);
+		_worldPacket.WriteUInt32((uint)DifficultyID);
+		_worldPacket.WriteBit(Locked);
+		_worldPacket.WriteBit(Extended);
+		_worldPacket.FlushBits();
 	}
 }

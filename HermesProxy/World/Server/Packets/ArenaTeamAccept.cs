@@ -13,7 +13,7 @@ public class ArenaTeamAccept : ClientPacket
 
 	public override void Read()
 	{
-		this.PlayerGuid = base._worldPacket.ReadPackedGuid128();
-		this.TeamGuid = base._worldPacket.ReadPackedGuid128();
+		PlayerGuid = _worldPacket.ReadPackedGuid128();
+		TeamGuid = _worldPacket.ReadPackedGuid128();
 	}
 }

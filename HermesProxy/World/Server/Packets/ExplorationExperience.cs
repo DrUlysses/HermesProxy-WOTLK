@@ -15,7 +15,7 @@ public class ExplorationExperience : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.AreaID);
-		base._worldPacket.WriteUInt32(this.Experience);
+		_worldPacket.WriteUInt32(AreaID);
+		_worldPacket.WriteUInt32(Experience);
 	}
 }

@@ -15,12 +15,12 @@ internal class ArenaTeamQueryResponse : ServerPacket
 
 	protected override void Write()
 	{
-		base._worldPacket.WriteUInt32(this.TeamId);
-		base._worldPacket.WriteBit(this.Emblem != null);
-		base._worldPacket.FlushBits();
-		if (this.Emblem != null)
+		_worldPacket.WriteUInt32(TeamId);
+		_worldPacket.WriteBit(Emblem != null);
+		_worldPacket.FlushBits();
+		if (Emblem != null)
 		{
-			this.Emblem.Write(base._worldPacket);
+			Emblem.Write(_worldPacket);
 		}
 	}
 }
