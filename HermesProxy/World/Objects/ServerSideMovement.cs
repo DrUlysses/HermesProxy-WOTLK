@@ -30,7 +30,7 @@ public sealed class ServerSideMovement
 
 	public WowGuid128 FinalFacingGuid;
 
-	public WowGuid128 TransportGuid;
+	public WowGuid128? TransportGuid;
 
 	public sbyte TransportSeat;
 

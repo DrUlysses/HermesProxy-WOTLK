@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Framework.Constants;
 using Framework.GameMath;
@@ -8,13 +9,13 @@ namespace HermesProxy.World.Server.Packets;
 
 public class MonsterMove : ServerPacket
 {
-	public readonly WowGuid128 MoverGUID;
+	private readonly WowGuid128 MoverGUID;
 
-	public readonly ServerSideMovement MoveSpline;
+	private readonly ServerSideMovement MoveSpline;
 
-	public readonly List<Vector3> Points = new();
+	private readonly List<Vector3> Points = new();
 
-	public readonly List<Vector3> PackedDeltas = new();
+	private readonly List<Vector3> PackedDeltas = new();
 
 	public MonsterMove(WowGuid128 guid, ServerSideMovement moveSpline)
 		: base(Opcode.SMSG_ON_MONSTER_MOVE, ConnectionType.Instance)
@@ -50,9 +51,9 @@ public class MonsterMove : ServerPacket
 			if (moveSpline.SplinePoints.Count > 0)
 			{
 				var middle = (moveSpline.StartPosition + moveSpline.EndPosition) / 2f;
-				for (var i = 0; i < moveSpline.SplinePoints.Count; i++)
+				foreach (var splinePoint in moveSpline.SplinePoints)
 				{
-					PackedDeltas.Add(middle - moveSpline.SplinePoints[i]);
+					PackedDeltas.Add(middle - splinePoint);
 				}
 			}
 		}
@@ -90,12 +91,15 @@ public class MonsterMove : ServerPacket
 			_worldPacket.WriteVector3(MoveSpline.FinalFacingSpot);
 			break;
 		case SplineTypeModern.FacingTarget:
-			_worldPacket.WriteFloat(MoveSpline.FinalOrientation);
 			_worldPacket.WritePackedGuid128(MoveSpline.FinalFacingGuid);
 			break;
 		case SplineTypeModern.FacingAngle:
 			_worldPacket.WriteFloat(MoveSpline.FinalOrientation);
 			break;
+		case SplineTypeModern.None:
+			break;
+		default:
+			throw new ArgumentOutOfRangeException();
 		}
 		foreach (var pos in Points)
 		{

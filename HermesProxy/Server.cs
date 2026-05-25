@@ -62,12 +62,11 @@ internal class Server
 		if (!AesGcm.IsSupported)
 		{
 			Log.Print(LogType.Error, "AesGcm is not supported on your platform", "Server.cs");
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				Log.Print(LogType.Error, "Since you are on MacOS, you can install openssl@3 via homebrew", "Server.cs");
-				Log.Print(LogType.Error, "Run this:      brew install openssl@3", "Server.cs");
-				Log.Print(LogType.Error, "Start Hermes:  DYLD_LIBRARY_PATH=/opt/homebrew/opt/openssl@3/lib ./HermesProxy", "Server.cs");
-			}
+			if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+				return;
+			Log.Print(LogType.Error, "Since you are on MacOS, you can install openssl@3 via homebrew", "Server.cs");
+			Log.Print(LogType.Error, "Run this:      brew install openssl@3", "Server.cs");
+			Log.Print(LogType.Error, "Start Hermes:  DYLD_LIBRARY_PATH=/opt/homebrew/opt/openssl@3/lib ./HermesProxy", "Server.cs");
 			return;
 		}
 		Log.Print(LogType.Server, $"Modern (Client) Build: {Settings.ClientBuild}", "Server.cs");
