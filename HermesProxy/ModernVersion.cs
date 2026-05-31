@@ -46,17 +46,17 @@ public static class ModernVersion
 
 	private static readonly Dictionary<Type, Dictionary<string, int>> UpdateFieldNameDictionary;
 
-	public static byte ExpansionVersion { get; private set; }
+	public static byte ExpansionVersion { get; }
 
-	public static byte MajorVersion { get; private set; }
+	public static byte MajorVersion { get; }
 
-	public static byte MinorVersion { get; private set; }
+	public static byte MinorVersion { get; }
 
-	public static ClientVersionBuild Build { get; private set; }
+	private static ClientVersionBuild Build { get; }
 
 	public static int BuildInt => (int)Build;
 
-	public static string VersionString => Build.ToString();
+	private static string VersionString => Build.ToString();
 
 	static ModernVersion()
 	{

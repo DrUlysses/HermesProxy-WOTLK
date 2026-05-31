@@ -13,7 +13,7 @@ namespace Bgs.Protocol.Channel.V1 {
   /// <summary>Holder for reflection information generated from bgs/low/pb/client/api/client/v1/channel_id.proto</summary>
   public static partial class ChannelIdReflection {
 
-    #region Descriptor
+    #region DescriptorOriginalHash
     /// <summary>File descriptor for bgs/low/pb/client/api/client/v1/channel_id.proto</summary>
     public static pbr::FileDescriptor Descriptor {
       get { return descriptor; }

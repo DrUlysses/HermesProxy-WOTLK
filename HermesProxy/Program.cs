@@ -13,7 +13,7 @@ namespace HermesProxy;
 
 public class Program
 {
-	public static class CommandLineArgumentsTemplate
+	private static class CommandLineArgumentsTemplate
 	{
 		public static readonly Option<string?> ConfigFileLocation = new("--config", delegate(ArgumentResult result)
 		{
@@ -22,12 +22,10 @@ public class Program
 				return "HermesProxy.config";
 			}
 			var value = result.Tokens.Single().Value;
-			if (!File.Exists(value))
-			{
-				result.ErrorMessage = "Error: config file '" + value + "' does not exist";
-				return null;
-			}
-			return value;
+			if (File.Exists(value)) 
+				return value;
+			result.ErrorMessage = "Error: config file '" + value + "' does not exist";
+			return null;
 		}, isDefault: true, "The config file that will be used");
 
 		public static readonly Option<string?> WorkingDirectory = new("--workDir", delegate(ArgumentResult result)
@@ -37,12 +35,10 @@ public class Program
 				return ".";
 			}
 			var value = result.Tokens.Single().Value;
-			if (!Directory.Exists(value))
-			{
-				result.ErrorMessage = "Error: directory '" + value + "' does not exist";
-				return null;
-			}
-			return value;
+			if (Directory.Exists(value)) 
+				return value;
+			result.ErrorMessage = "Error: directory '" + value + "' does not exist";
+			return null;
 		}, isDefault: true, "The working directory that will be used");
 
 		public static readonly Option<bool> DisableVersionCheck = new("--no-version-check", "Disables the initial version update check");
@@ -83,12 +79,12 @@ public class Program
 		{
 			Console.WriteLine($"Error occured: {value}");
 		}
-		if (OsSpecific.AreWeInOurOwnConsole())
-		{
-			Thread.Sleep(TimeSpan.FromSeconds(3.0));
-			Console.WriteLine("Press enter to close");
-			Console.ReadLine();
-		}
+
+		if (!OsSpecific.AreWeInOurOwnConsole())
+			return exitCode;
+		Thread.Sleep(TimeSpan.FromSeconds(3.0));
+		Console.WriteLine("Press enter to close");
+		Console.ReadLine();
 		return exitCode;
 	}
 

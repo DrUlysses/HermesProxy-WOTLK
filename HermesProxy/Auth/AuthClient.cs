@@ -142,23 +142,6 @@ public class AuthClient
 		}
 	}
 
-	private void ReconnectCallback(IAsyncResult AR)
-	{
-		try
-		{
-			_clientSocket.EndConnect(AR);
-			_clientSocket.ReceiveBufferSize = 65535;
-			var buffer = new byte[_clientSocket.ReceiveBufferSize];
-			_clientSocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ReceiveCallback, buffer);
-			SendLogonChallenge(reconnect: true);
-		}
-		catch (Exception ex)
-		{
-			Log.PrintNet(LogType.Error, LogNetDir.P2S, "Connect Error: " + ex.Message, "Auth\\AuthClient.cs");
-			SetAuthResponse(AuthResult.FAIL_INTERNAL_ERROR);
-		}
-	}
-
 	private void ReceiveCallback(IAsyncResult AR)
 	{
 		try

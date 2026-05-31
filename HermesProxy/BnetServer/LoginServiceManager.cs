@@ -68,11 +68,7 @@ public class LoginServiceManager : Singleton<LoginServiceManager>
 
 	public IPEndPoint GetAddressForClient(IPAddress address)
 	{
-		if (IPAddress.IsLoopback(address))
-		{
-			return localAddress;
-		}
-		return externalAddress;
+		return IPAddress.IsLoopback(address) ? localAddress : externalAddress;
 	}
 
 	public FormInputs GetFormInput()

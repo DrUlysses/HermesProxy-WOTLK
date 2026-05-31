@@ -33,15 +33,6 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 		AsyncHandshake(BnetServerCertificate.Certificate).Wait();
 	}
 
-	public override bool Update()
-	{
-		if (!base.Update())
-		{
-			return false;
-		}
-		return true;
-	}
-
 	public override async Task ReadHandler(byte[] data, int receivedLength)
 	{
 		if (IsOpen())
@@ -107,7 +98,7 @@ public class BnetTcpSession : SSLSocket, BnetServices.INetwork
 		AsyncWrite(buffer.GetData()).Wait();
 	}
 
-	private byte[] GetHeaderSize(Header header)
+	private static byte[] GetHeaderSize(Header header)
 	{
 		var size = (ushort)header.CalculateSize();
 		var bytes = new byte[2]
